@@ -137,7 +137,10 @@
   '';
 
   # enable flakes and nix-command
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix = {
+    package = pkgs.nixFlakes;
+    settings.experimental-features = [ "nix-command" "flakes" ];
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

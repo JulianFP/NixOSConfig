@@ -41,6 +41,7 @@
     lutris
     webcord
     heroic
+    texlive.combined.scheme-full
 
     # Fonts
     roboto-mono

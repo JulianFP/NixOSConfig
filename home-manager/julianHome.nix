@@ -1,9 +1,9 @@
-{ config, pkgs, nixneovim, ... }:
+{ config, pkgs, nixvim, ... }:
 
 {
   imports = 
     [
-      nixneovim.nixosModules.homeManager #import nixneovim module
+      nixvim.homeManagerModules.nixvim #import nixvim module
       ./packages.nix #Packages and Fonts installed for this user
       ./hyprland.nix #Hyprland stuff
       ./terminal.nix #Terminal stuff (Alacritty, zsh, ...) 
