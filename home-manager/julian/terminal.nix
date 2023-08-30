@@ -5,7 +5,7 @@
   programs.zsh = {
     enable = true;
     enableCompletion = true;
-    shellAliases = {
+    shellAliases = { #set vi and vim as aliases for neovim
       vi = "nvim";
       vim = "nvim";
     };
@@ -13,6 +13,12 @@
       enable = true;
       plugins = [ "git" ];
       theme = "juanghurtado";
+    };
+
+    #environmental variables for zsh session
+    sessionVariables = {
+      EDITOR = "nvim"; #set neovim as default editor
+      GPG_TTY = "$(tty)"; #for ssh yubikey support
     };
   };
 

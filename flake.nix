@@ -42,8 +42,8 @@
 	        inherit nixvim;  
 	      };
 	      users = {
-	        julian = import ./home-manager/julianHome.nix;
-	        root = import ./home-manager/rootHome.nix;
+	        julian = import ./home-manager/julian/home.nix;
+	        root = import ./home-manager/root/home.nix;
 	      };
 	    };
 	  }

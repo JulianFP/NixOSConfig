@@ -80,7 +80,6 @@ env = QT_AUTO_SCREEN_SCALE_FACTOR,1
 env = QT_WAYLAND_DISABLE_WINDOWDECORATION,1
 env = GDK_BACKEND,wayland,x11
 env = CLUTTER_BACKEND,wayland
-env = GPG_TTY,$(tty) #for ssh yubikey support
 env = NIXOS_OZONE_WL,1
 
 # For all categories, see https://wiki.hyprland.org/Configuring/Variables/
