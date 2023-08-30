@@ -8,6 +8,7 @@
     shellAliases = { #set vi and vim as aliases for neovim
       vi = "nvim";
       vim = "nvim";
+      sudo = "sudo "; #https://askubuntu.com/questions/22037/aliases-not-available-when-using-sudo
     };
     oh-my-zsh = {
       enable = true;
