@@ -118,6 +118,8 @@
   services.fwupd.enable = true; #for Firmware updates
   services.pcscd.enable = true; #for Yubikey stuff
   hardware.opentabletdriver.enable = true; #setup driver for wacom tablet
+  services.flatpak.enable = true; #enable flatpak
+  xdg.portal.enable = true; #enable xdg desktop integration (mainly for flatpaks)
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget

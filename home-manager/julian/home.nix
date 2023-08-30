@@ -90,6 +90,10 @@
   # set defaultApplications through mime types
   xdg = {
     enable = true;
+    systemDirs.data = [ # add flatpak dirs to path
+      "/usr/share:/var/lib/flatpak/exports/share"
+      "\$HOME/.local/share/flatpak/exports/share"
+    ];
     mime.enable = false; #set mime apps manually
     mimeApps = {
       enable = true;

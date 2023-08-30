@@ -31,6 +31,7 @@
     thunderbird
     libreoffice-fresh
     xournalpp
+    logseq
     keepassxc
     nextcloud-client
     signal-desktop
