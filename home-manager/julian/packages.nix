@@ -5,42 +5,58 @@
   fonts.fontconfig.enable = true;
 
   home.packages = with pkgs; [
+    # Hyprland additions, desktop stuff
     wl-clipboard
     cliphist
     playerctl
     brightnessctl
     pulseaudio
-    swaylock
-    sway-contrib.grimshot
-    gnome.adwaita-icon-theme
-    tree
-    unzip
     pavucontrol
-    htop-vim
-    s-tui
     networkmanagerapplet
-    firefox
-    thunderbird
-    keepassxc
-    libsForQt5.ark
-    libsForQt5.dolphin
-    libsForQt5.filelight
     libsForQt5.polkit-kde-agent
     libsForQt5.kwalletmanager
     libsForQt5.kwallet
-    libsForQt5.okular
+    swaylock
+    sway-contrib.grimshot
+    gnome.adwaita-icon-theme
+
+    # CLI Applications
+    tree
+    unzip
+    htop-vim
+    s-tui
+
+    # Applications
+    firefox
+    thunderbird
+    libreoffice-fresh
+    xournalpp
+    keepassxc
     nextcloud-client
     signal-desktop
+    webcord
+    libsForQt5.ark
+    libsForQt5.dolphin
+    libsForQt5.filelight
+    libsForQt5.okular
+
+    # Multimedia
+    libsForQt5.gwenview
+    libsForQt5.kimageformats
+    libsForQt5.qt5.qtimageformats
+    mpv
+    vlc
+
+    # Gaming
     wineWowPackages.stagingFull
     winetricks
     gamescope
     gamemode
     steam
     lutris
-    webcord
     heroic
 
-    # development
+    # Development
     texlive.combined.scheme-full
     gcc
     cmake

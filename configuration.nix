@@ -117,6 +117,7 @@
   programs.dconf.enable = true; #needed for home-manager
   services.fwupd.enable = true; #for Firmware updates
   services.pcscd.enable = true; #for Yubikey stuff
+  hardware.opentabletdriver.enable = true; #setup driver for wacom tablet
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget

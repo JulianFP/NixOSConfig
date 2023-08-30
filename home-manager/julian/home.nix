@@ -76,16 +76,45 @@
       # Movement
       gd = "cd ~/Documents";
       gD = "cd ~/Downloads";
-      gc = "~/.config";
-      gu = "~/Nextcloud/Dokumente/Studium";
+      gc = "cd ~/.config";
+      gu = "cd ~/Nextcloud/Dokumente/Studium";
 
       # execute current file 
       x = "\$\$f";
       X = "!\$f";
-      s = "toggle";
     };
   };
   xdg.configFile."lf/icons".source = ./lf-icons;
+
+  # set defaultApplications through mime types
+  xdg = {
+    enable = true;
+    mime.enable = false; #set mime apps manually
+    mimeApps = {
+      enable = true;
+      defaultApplications = {
+        "application/pdf" = [ "org.kde.okular.desktop" "firefox.desktop" ]; #pdf
+        "application/x-xz" = [ "org.kde.ark.desktop" ]; #.tar.xz
+        "application/gzip" = [ "org.kde.ark.desktop" ]; #.tar.gz
+        "application/zip" = [ "org.kde.ark.desktop" ]; #.zip
+        "application/vnd.oasis.opendocument.spreadsheet" = [ "calc.desktop" ]; #.ods
+        "application/vnd.oasis.opendocument.text" = [ "writer.desktop" ]; #.odt
+        "application/vnd.oasis.opendocument.presentation" = [ "impress.desktop" ]; #.odp
+        "text/plain" = [ "nvim.desktop" ];
+        "text/x-c" = [ "nvim.desktop" ]; #.cpp
+        "text/x-file" = [ "nvim.desktop" ]; #.h
+        "text/x-shellscript" = [ "nvim.desktop" ]; #.sh
+        "text/x-script.python" = [ "nvim.desktop" ]; #.py
+        "text/csv" = [ "calc.desktop" "nvim.desktop" ]; #.csv, .log
+        "video/mp4" = [ "mpv.desktop" "vlc.desktop" ]; #.mp4
+        "video/webm" = [ "mpv.desktop" "vlc.desktop" ]; #.webm
+        "image/png" = [ "org.kde.gwenview.desktop" ]; #.png
+        "image/jpeg" = [ "org.kde.gwenview.desktop" ]; #.jpg
+        "image/webp" = [ "org.kde.gwenview.desktop" ]; #.webp
+        "image/gif" = [ "org.kde.gwenview.desktop" ]; #.gif
+      };
+    };
+  };
 
   # Mako
   services.mako = {
@@ -142,6 +171,19 @@
       [Appearance]
       icon_theme=Papirus-Dark
       style=kvantum-dark
+    '';
+    "kdeglobals".text = ''
+      [Colors:View]
+      BackgroundNormal=#272727
+
+      [KFileDialog Settings]
+      Automatically select filename extension=true
+      Show Bookmarks=true
+      Show Full Path=true
+      Show hidden files=true
+      Sort by=name
+      Sort directories first=false
+      View Style=DetailTree
     '';
   };
   gtk = {
