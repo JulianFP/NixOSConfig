@@ -21,8 +21,8 @@
       vimtex_view_general_options = "--unique file:@pdf\#src:@line@tex";
 
       # for custom build and run commands
-      dir = "expand('%:p:h:t')";
-      file = "expand('%:t')";
+      dir = "%:p:h:t";
+      file = "%:t";
     };
 
     options = {
@@ -70,12 +70,12 @@
 	desc = "builds the current project in release mode (CreateCMakeFile has to run first)";
       };
       "RunDebug" = {
-	command = "execute ':silent !alacritty --hold -e ./buildDebug/' . g:dir";
+	command = "execute ':silent !alacritty --hold -e ~/.systemScripts/launch.sh ' . g:dir . ' buildDebug ' . g:file";
 	bang = true;
 	desc = "runs debug binary of the current project (BuildDebug has to run first)";
       };
       "RunRelease" = {
-        command = "execute ':silent !alacritty --hold -e ./buildRelease/' . g:dir";
+        command = "execute ':silent !alacritty --hold -e ~/.systemScripts/launch.sh ' . g:dir . ' buildRelease ' . g:file";
 	bang = true;
 	desc = "runs release binary of the current project (BuildRelease has to run first)";
       };

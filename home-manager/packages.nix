@@ -41,7 +41,13 @@
     lutris
     webcord
     heroic
+
+    # development
     texlive.combined.scheme-full
+    gcc
+    cmake
+    gnumake
+    valgrind
 
     # Fonts
     roboto-mono

@@ -13,6 +13,13 @@
   home.username = "julian";
   home.homeDirectory = "/home/julian";
 
+  # setup scripts that will be used throughout this config
+  home.file.".systemScripts" = {
+    source = ./systemScripts;
+    recursive = true;
+    executable = true;
+  };
+
   # ssh (with yubikey support) stuff
   programs.ssh = {
     enable = true;

@@ -1,25 +1,6 @@
 { config, pkgs, ... }:
 
 {
-  # set scripts for extended Hyprland behavior (suspend, lock, etc.)
-  home.file = {
-    "clamshell_mode_hypr.sh" = {
-      target = ".systemScripts/clamshell_mode_hypr.sh";
-      source = ./systemScripts/clamshell_mode_hypr.sh;
-      executable = true;
-    };
-    "gamingMode_hypr.sh" = {
-      target = ".systemScripts/gamingMode_hypr.sh";
-      source = ./systemScripts/gamingMode_hypr.sh;
-      executable = true;
-    };
-    "lockAndSuspend.sh" = {
-      target = ".systemScripts/lockAndSuspend.sh";
-      source = ./systemScripts/lockAndSuspend.sh;
-      executable = true;
-    };
-  };
-
   # Hyprland config
   wayland.windowManager.hyprland = {
     enable = true;
