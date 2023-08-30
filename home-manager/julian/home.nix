@@ -8,6 +8,7 @@
       ./hyprland.nix #Hyprland stuff
       ./terminal.nix #Terminal stuff (Alacritty, zsh, ...) 
       ./neovim.nix #Neovim stuff
+      ./mangohud.nix #mangohud config
     ];
 
   home.username = "julian";
