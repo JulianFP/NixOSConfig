@@ -61,6 +61,32 @@
     };
   };
 
+  # lf
+  programs.lf = {
+    enable = true;
+    commands = {
+      get-mime-type = "%xdg-mime query filetype \"$f\"";
+      open = "$$OPENER $f";
+    };
+    extraConfig = ''
+      set shell zsh
+      set icons true
+    '';
+    keybindings = {
+      # Movement
+      gd = "cd ~/Documents";
+      gD = "cd ~/Downloads";
+      gc = "~/.config";
+      gu = "~/Nextcloud/Dokumente/Studium";
+
+      # execute current file 
+      x = "\$\$f";
+      X = "!\$f";
+      s = "toggle";
+    };
+  };
+  xdg.configFile."lf/icons".source = ./lf-icons;
+
   # Mako
   services.mako = {
     enable = true;
