@@ -127,7 +127,23 @@
     wget
     git
     bluez
+    libsForQt5.frameworkintegration
+    libsForQt5.qtstyleplugin-kvantum
+    qt6Packages.qtstyleplugin-kvantum
+    qt5.qtwayland
+    qt6.qtwayland
+    qt6ct
   ];
+
+  # qt theming stuff (has to be done on system level to proberly work because it uses qts plugin system)
+  environment.variables = {
+    QT_STYLE_OVERRIDE = "kvantum";
+    QT_QPA_PLATFORMTHEME = lib.mkForce "qt6ct";
+  };
+  qt = {
+    enable = true;
+    platformTheme = "qt5ct";
+  };
 
   # Swaylock needs an entry in PAM to proberly unlock
   security.pam.services.swaylock.text = ''

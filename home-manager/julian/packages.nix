@@ -25,12 +25,10 @@
     libsForQt5.ark
     libsForQt5.dolphin
     libsForQt5.filelight
-    libsForQt5.qtstyleplugin-kvantum
     libsForQt5.polkit-kde-agent
     libsForQt5.kwalletmanager
     libsForQt5.kwallet
     libsForQt5.okular
-    qt6Packages.qtstyleplugin-kvantum
     nextcloud-client
     signal-desktop
     wineWowPackages.stagingFull

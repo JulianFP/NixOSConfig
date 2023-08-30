@@ -98,10 +98,6 @@
   };
 
   # Theming
-  qt = {
-    enable = true;
-    platformTheme = "qtct";
-  };
   xdg.configFile = {
     "Kvantum/kvantum.kvconfig".text = ''
       [General]
