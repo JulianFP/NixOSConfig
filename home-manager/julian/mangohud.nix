@@ -3,7 +3,6 @@
 {
   programs.mangohud = {
     enable = true;
-    enableSessionWide = true;
     settings = {
       legacy_layout = false;
       gpu_stats = true;
@@ -53,12 +52,6 @@
       toggle_logging = "Shift_L+F2";
       upload_log = "F5";
       output_folder=/home/julian/Documents;
-    };
-
-    settingsPerApplication = {
-      mpv = {
-        no_display = true;
-      };
     };
   };
 }
