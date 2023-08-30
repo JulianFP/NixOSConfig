@@ -214,7 +214,6 @@
       nvim-cmp = {
         enable = true;
 	mapping = {
-	  "<Esc>" = "cmp.mapping.abort()";
 	  "<CR>" = "cmp.mapping.confirm({select = true})";
 	  "<Tab>" = {
 	    modes = [ "i" "s" ];

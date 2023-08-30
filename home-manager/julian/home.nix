@@ -67,9 +67,8 @@
     backgroundColor = "#2B303B9A";
     borderRadius = 4;
     borderSize = 2;
-    font = "Roboto Mono Medium 12";
+    font = "'Roboto Mono Medium' 12";
     height = 300;
-    groupBy = "category";
     extraConfig = ''
     [urgency=low]
     border-color=#CCCCCCFF
