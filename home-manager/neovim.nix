@@ -21,7 +21,8 @@
       vimtex_view_general_options = "--unique file:@pdf\#src:@line@tex";
 
       # for custom build and run commands
-      dir = "%:p:h:t";
+      dir = "%:p:h";
+      folder = "%:p:h:t";
       file = "%:t";
     };
 
@@ -55,7 +56,7 @@
     # custom build and run commands (they depend on alacritty and a custom bash script)
     userCommands = {
       "CreateCMakeFile" = {
-        command = "execute '!bash ~/.config/nvim/createCMakeFile.sh ' . g:dir . ' ' . g:file";
+        command = "execute '!bash ~/.systemScripts/createCMakeFile.sh ' . g:folder . ' ' . g:file";
 	bang = true;
 	desc = "create CMakeFile and vimspector file for current project";
       };
@@ -70,12 +71,12 @@
 	desc = "builds the current project in release mode (CreateCMakeFile has to run first)";
       };
       "RunDebug" = {
-	command = "execute ':silent !alacritty --hold -e ~/.systemScripts/launch.sh ' . g:dir . ' buildDebug ' . g:file";
+	command = "execute ':silent !alacritty --hold -e ~/.systemScripts/launch.sh ' . g:dir . ' buildDebug ' . g:folder";
 	bang = true;
 	desc = "runs debug binary of the current project (BuildDebug has to run first)";
       };
       "RunRelease" = {
-        command = "execute ':silent !alacritty --hold -e ~/.systemScripts/launch.sh ' . g:dir . ' buildRelease ' . g:file";
+        command = "execute ':silent !alacritty --hold -e ~/.systemScripts/launch.sh ' . g:dir . ' buildRelease ' . g:folder";
 	bang = true;
 	desc = "runs release binary of the current project (BuildRelease has to run first)";
       };
@@ -212,8 +213,16 @@
     ];
   };
 
-  xdg.configFile."nvim/createCMakeFile.sh" = {
-    executable = true;
-    source = ./createCMakeFile.sh;
+  home.file = {
+    "launch.sh" = {
+      target = ".systemScripts/launch.sh";
+      source = ./systemScripts/launch.sh;
+      executable = true;
+    };
+    "createCMakeFile.sh" = {
+      target = ".systemScripts/launch.sh";
+      source = ./systemScripts/createCMakeFile.sh;
+      executable = true;
+    };
   };
 }
