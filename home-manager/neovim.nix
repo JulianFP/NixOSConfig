@@ -20,6 +20,9 @@
       vimtex_view_general_viewer = "okular";
       vimtex_view_general_options = "--unique file:@pdf\#src:@line@tex";
 
+      # for vimspector
+      # vimspector_install_gadgets = [ "debugpy" "vscode-cpptools" "CodeLLDB" ];
+
       # for custom build and run commands
       dir = "%:p:h";
       folder = "%:p:h:t";
@@ -30,7 +33,7 @@
       compatible = false; 	#disable compatibility to old-time vi
       showmatch = true; 	#show matching
       ignorecase = true; 	#case insensitive
-      mouse = "v"; 		#middle-click paste with
+      mouse = "a"; 		#enable mouse for all modes
       hlsearch = true; 		#highlight search
       incsearch = true; 	#incremental search
       tabstop = 4; 		#how wide tab character should be displayed
@@ -138,11 +141,38 @@
 
       # for normal mode
       normal = {
+        #for custom build and run
         "<Leader>bc" = ":CreateCMakeFile<CR>";
         "<Leader>bd" = ":BuildDebug<CR>";
         "<Leader>br" = ":BuildRelease<CR>";
         "<Leader>rd" = ":RunDebug<CR>";
         "<Leader>rr" = ":RunRelease<CR>";
+
+	#for vimspector
+	/*
+	"<LocalLeader>c" = "<Plug>VimspectorContinue";
+	"<LocalLeader>q" = ":call vimspector#Reset()<CR>";
+	"<LocalLeader>r" = "<Plug>VimspectorRestart";
+	"<LocalLeader>p" = "<Plug>VimspectorPause";
+	"<LocalLeader>b" = "<Plug>VimspectorToggleBreakpoint";
+	"<LocalLeader>o" = "<Plug>VimspectorToggleConditionalBreakpoint";
+	"<LocalLeader>h" = "<Plug>VimspectorRunToCursor";
+	"<LocalLeader>n" = "<Plug>VimspectorStepOver";
+	"<LocalLeader>s" = "<Plug>VimspectorStepInto";
+	"<LocalLeader>f" = "<Plug>VimspectorStepOut";
+	"<LocalLeader>e" = "<Plug>VimspectorBalloonEval";
+	"<LocalLeader>u" = "<Plug>VimspectorUpFrame";
+	"<LocalLeader>d" = "<Plug>VimspectorDownFrame";
+	"<LocalLeader>B" = "<Plug>VimspectorBreakpoints";
+	"<LocalLeader>D" = "<Plug>VimspectorDisassemble";
+	"<LocalLeader>t" = "<Plug>VimspectorShowOutput";
+	*/
+      };
+
+      # for visual mode
+      visual = {
+        # for vimspector
+	#"<LocalLeader>e" = "<Plug>VimspectorBalloonEval";
       };
     };
 
@@ -210,6 +240,8 @@
     };
     extraPlugins = with pkgs.vimPlugins; [
       friendly-snippets
+      #vimspector doesn't work currently because of gadgets it needs to install. Todo: contribute vimspector module to nixvim
+      #vimspector
     ];
   };
 
@@ -220,7 +252,7 @@
       executable = true;
     };
     "createCMakeFile.sh" = {
-      target = ".systemScripts/launch.sh";
+      target = ".systemScripts/createCMakeFile.sh";
       source = ./systemScripts/createCMakeFile.sh;
       executable = true;
     };
