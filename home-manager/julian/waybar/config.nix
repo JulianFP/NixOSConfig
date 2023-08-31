@@ -82,7 +82,7 @@
       format-linked = "{ifname} (No IP) ";
       format-disconnected = "Disconnected ⚠";
       format-alt = "{ifname}: {ipaddr}/{cidr}";
-      on-click-right = "alacritty -e nmtui";
+      on-click-right = "alacritty -e ~/.systemScripts/launch.sh nmtui"; #nmtui renders weirdly without using launch.sh
       on-click-middle = "nm-connection-editor";
     };
 

@@ -118,6 +118,7 @@
   services.fwupd.enable = true; #for Firmware updates
   services.pcscd.enable = true; #for Yubikey stuff
   hardware.opentabletdriver.enable = true; #setup driver for wacom tablet
+  hardware.xone.enable = true; #enable xone driver for Xbox One Controller Adapter
   services.flatpak.enable = true; #enable flatpak
   xdg.portal.enable = true; #enable xdg desktop integration (mainly for flatpaks)
 
