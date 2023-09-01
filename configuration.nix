@@ -144,6 +144,7 @@
   environment.variables = {
     QT_STYLE_OVERRIDE = "kvantum";
     QT_QPA_PLATFORMTHEME = lib.mkForce "qt6ct";
+    RADV_PERFTEST = "nosam"; #performance improvement for eGPUs
   };
   qt = {
     enable = true;

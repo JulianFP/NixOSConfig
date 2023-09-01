@@ -57,6 +57,7 @@
     steam
     lutris
     heroic
+    protonup-qt
 
     # Development
     texlive.combined.scheme-full
