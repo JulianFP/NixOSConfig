@@ -40,6 +40,9 @@
     libsForQt5.dolphin
     libsForQt5.filelight
     libsForQt5.okular
+    partition-manager
+    yubioath-flutter
+    yubikey-manager-qt
 
     # Multimedia
     libsForQt5.gwenview

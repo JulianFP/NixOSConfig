@@ -136,8 +136,6 @@
 
     # networking stuff
     networkmanager-l2tp
-    strongswan
-    xl2tpd
   ];
 
   # qt theming stuff (has to be done on system level to proberly work because it uses qts plugin system)
