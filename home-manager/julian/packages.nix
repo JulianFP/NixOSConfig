@@ -47,6 +47,7 @@
     libsForQt5.qt5.qtimageformats
     mpv
     vlc
+    freetube
 
     # Gaming
     wineWowPackages.stagingFull

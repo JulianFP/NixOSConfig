@@ -6,8 +6,9 @@
 
 {
   imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
+    [ 
+      ./hardware-configuration.nix # Include the results of the hardware scan.
+      ./networking.nix # import networking settings
     ];
 
   # config for bootloader and secure boot (refer to nixos.wiki/wiki/Secure_Boot)
@@ -57,11 +58,6 @@
   services.logind = {
     lidSwitch = "ignore";
     extraConfig = "HandlePowerKey=ignore";
-  };
-
-  networking = {
-    hostName = "JuliansFramework"; # Define your hostname.
-    networkmanager.enable = true;  # Easiest to use and most distros use this by default.
   };
 
   # Set your time zone.
@@ -137,6 +133,11 @@
     qt5.qtwayland
     qt6.qtwayland
     qt6ct
+
+    # networking stuff
+    networkmanager-l2tp
+    strongswan
+    xl2tpd
   ];
 
   # qt theming stuff (has to be done on system level to proberly work because it uses qts plugin system)
