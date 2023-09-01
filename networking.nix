@@ -25,10 +25,10 @@
 
   # nebula config
   services.nebula.networks."serverNetwork" = {
-    enable = false;
-    ca = ~/.nebula/ca.crt;
-    key = ~/.nebula/JuliansFramework.key;
-    cert = ~/.nebula/JuliansFramework.key;
+    enable = true;
+    ca = /root/.nebula/ca.crt;
+    key = /root/.nebula/JuliansFramework.key;
+    cert = /root/.nebula/JuliansFramework.crt;
     listen.port = 51821;
     lighthouses = [ "48.42.0.1" ];
     staticHostMap = {
