@@ -12,13 +12,25 @@ in {
   ];
 
   programs = {
-    inherit (juliansConfig.programs) git; #(2) copy these settings without change
+    inherit (juliansConfig.programs) git ssh gpg; #(2) copy these settings without change
     zsh = juliansTerminal.programs.zsh // { #(3) copy this and make some changes
       oh-my-zsh = juliansTerminal.programs.zsh.oh-my-zsh // {
         custom = "$HOME/.ohMyZshCustom";
         theme = "juanghurtado-rootPatch";
       };
     };
+  };
+
+  services = {
+    inherit (juliansConfig.services) gpg-agent;
+  };
+
+  home.file = {
+    inherit (juliansConfig.home.file) ".ssh/id_rsa.pub";
+  };
+
+  systemd.user.sessionVariables = {
+    inherit (juliansConfig.systemd.user.sessionVariables) SSH_AUTH_SOCK;
   };
 
   home.file.".ohMyZshCustom/themes/juanghurtado-rootPatch.zsh-theme" = {
