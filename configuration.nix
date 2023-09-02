@@ -117,6 +117,7 @@
   hardware.xone.enable = true; #enable xone driver for Xbox One Controller Adapter
   services.flatpak.enable = true; #enable flatpak
   xdg.portal.enable = true; #enable xdg desktop integration (mainly for flatpaks)
+  services.hardware.bolt.enable = true; #enable Thunderbolt Device management
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
