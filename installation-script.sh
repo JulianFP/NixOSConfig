@@ -60,7 +60,7 @@ mkdir /mnt/home
 mkdir /mnt/boot
 mkdir /mnt/swap
 umount /root/boot
-mount "$EFI_MNT" /mnt/boot
+mount "$2" /mnt/boot
 mount "/dev/mapper/$LUKSROOT" /mnt/home -o subvol=home
 mount "/dev/mapper/$LUKSROOT" /mnt/swap -o subvol=swap
 btrfs filesystem mkswapfile --size 8G /mnt/swap/swapfile
