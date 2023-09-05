@@ -59,6 +59,7 @@ mount "/dev/mapper/$LUKSROOT" /mnt -o subvol=root
 mkdir /mnt/home
 mkdir /mnt/boot
 mkdir /mnt/swap
+mkdir /mnt/etc
 umount /root/boot
 mount "$2" /mnt/boot
 mount "/dev/mapper/$LUKSROOT" /mnt/home -o subvol=home
