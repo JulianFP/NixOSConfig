@@ -24,7 +24,7 @@ This script expects the following parameters:
 e.g.: bash installation-script.sh 1 /dev/nvme0n1p1 /dev/nvme0n1p2
 be ready to input the second factor password!
 '
-cc -O3 -I$(nix-build "<nixpkgs>" --no-build-output -A openssl.dev)/include -L$(nix-build "<nixpkgs>" --no-build-output -A openssl.out)/lib $(nix eval "(with import <nixpkgs> {}; pkgs.path)")/nixos/modules/system/boot/pbkdf2-sha512.c -o ./pbkdf2-sha512 -lcrypto
+cc -O3 -I$(nix-build "<nixpkgs>" --no-build-output -A openssl.dev)/include -L$(nix-build "<nixpkgs>" --no-build-output -A openssl.out)/lib $(nix eval --impure --extra-experimental-features nix-command --expr "(with import <nixpkgs> {}; pkgs.path)")/nixos/modules/system/boot/pbkdf2-sha512.c -o ./pbkdf2-sha512 -lcrypto
 SALT_LENGTH=16
 salt="$(dd if=/dev/random bs=1 count=$SALT_LENGTH 2>/dev/null | rbtohex)"
 read -s k_user
