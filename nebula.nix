@@ -20,6 +20,10 @@
         punch = true;
         respond = true;
       };
+      tun.unsafe_routes = [{
+        route = "192.168.10.0/24";
+        via = "48.42.0.4";
+      }];
     };
     firewall = {
       outbound = [

@@ -203,7 +203,7 @@
   home.file.".local/share/applications/signal-desktop.desktop".text = ''
 [Desktop Entry]
 Name=Signal
-Exec=/nix/store/hn7djii291f7yha9fci3y84vyd5a66yv-signal-desktop-6.27.1/bin/signal-desktop --no-sandbox --start-in-tray %U
+Exec=${pkgs.signal-desktop}/bin/signal-desktop --no-sandbox --start-in-tray %U
 Terminal=false
 Type=Application
 Icon=signal-desktop

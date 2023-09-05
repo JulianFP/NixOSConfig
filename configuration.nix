@@ -135,6 +135,9 @@
     networkmanager-l2tp
   ];
 
+  # yubikey udev rules
+  services.udev.packages = [ pkgs.yubikey-personalization ];
+
   # qt theming stuff (has to be done on system level to proberly work because it uses qts plugin system)
   environment.variables = {
     QT_STYLE_OVERRIDE = "kvantum";
