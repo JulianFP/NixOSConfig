@@ -15,7 +15,7 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/f63fbab3-01d3-40cc-86e8-ef8cf4a57773";
+    { device = "/dev/disk/by-uuid/bfb60ba4-5f30-4af6-b754-4e720ebbde8e";
       fsType = "btrfs";
       options = [ "subvol=root" ];
     };
@@ -24,30 +24,30 @@
   boot.initrd.luks = {
     yubikeySupport = true;
     devices."nixosLuks" = {
-      device = "/dev/disk/by-uuid/10e4175e-8f5f-4183-97c7-115609c803ce";
+      device = "/dev/disk/by-uuid/a1540879-2cdd-495a-be71-8b6c31f93915";
       preLVM = true;
       yubikey = {
         slot = 1;
         twoFactor = true;
-        storage.device = "/dev/disk/by-uuid/02CC-F710";
+        storage.device = "/dev/disk/by-uuid/8E8F-15B7";
       };
     };
   };
 
   fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/f63fbab3-01d3-40cc-86e8-ef8cf4a57773";
+    { device = "/dev/disk/by-uuid/bfb60ba4-5f30-4af6-b754-4e720ebbde8e";
       fsType = "btrfs";
       options = [ "subvol=home" ];
     };
 
   fileSystems."/swap" =
-    { device = "/dev/disk/by-uuid/f63fbab3-01d3-40cc-86e8-ef8cf4a57773";
+    { device = "/dev/disk/by-uuid/bfb60ba4-5f30-4af6-b754-4e720ebbde8e";
       fsType = "btrfs";
       options = [ "subvol=swap" ];
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/02CC-F710";
+    { device = "/dev/disk/by-uuid/8E8F-15B7";
       fsType = "vfat";
     };
 

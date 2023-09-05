@@ -9,20 +9,16 @@
     [ 
       ./hardware-configuration.nix # Include the results of the hardware scan.
       ./networking.nix # import networking settings
+
+      # choose between the following (exactly one has to be commented out)
+      ./lanzaboote.nix # import settings for secureboot enabled bootloader
+      #./systemd-boot.nix # import settings for systems without secureboot
+
+      ./nebula.nix # import settings for nebula (comment out if keyfiles not present yet)
     ];
 
   # config for bootloader and secure boot (refer to nixos.wiki/wiki/Secure_Boot)
   boot = {
-    bootspec.enable = true;
-    loader = {
-      systemd-boot.enable = lib.mkForce false;
-      efi.canTouchEfiVariables = true;
-    };
-    lanzaboote = {
-      enable = true;
-      pkiBundle = "/etc/secureboot";
-    };
-
     #use newest stable kernel instead of LTS
     kernelPackages = pkgs.linuxPackages_latest;
 
