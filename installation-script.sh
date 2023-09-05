@@ -1,5 +1,5 @@
 #!/usr/bin/env nix-shell
-#!nix-shell -i bash -p gcc-wrapper yubikey-personalization openssl
+#!nix-shell -i bash -p gcc yubikey-personalization openssl
 
 rbtohex() {
     ( od -An -vtx1 | tr -d ' \n' )
@@ -24,6 +24,7 @@ This script expects the following parameters:
 e.g.: bash installation-script.sh 1 /dev/nvme0n1p1 /dev/nvme0n1p2
 be ready to input the second factor password!
 '
+cc -O3 -I$(nix-build "<nixpkgs>" --no-build-output -A openssl.dev)/include -L$(nix-build "<nixpkgs>" --no-build-output -A openssl.out)/lib $(nix eval "(with import <nixpkgs> {}; pkgs.path)")/nixos/modules/system/boot/pbkdf2-sha512.c -o ./pbkdf2-sha512 -lcrypto
 SALT_LENGTH=16
 salt="$(dd if=/dev/random bs=1 count=$SALT_LENGTH 2>/dev/null | rbtohex)"
 read -s k_user
@@ -31,7 +32,7 @@ challenge="$(echo -n $salt | openssl dgst -binary -sha512 | rbtohex)"
 response="$(ykchalresp -$1 -x $challenge 2>/dev/null)"
 KEY_LENGTH=512
 ITERATIONS=1000000
-k_luks="$(echo -n $k_user | pbkdf2-sha512 $(($KEY_LENGTH / 8)) $ITERATIONS $response | rbtohex)"
+k_luks="$(echo -n $k_user | ./pbkdf2-sha512 $(($KEY_LENGTH / 8)) $ITERATIONS $response | rbtohex)"
 EFI_MNT=/root/boot
 mkdir "$EFI_MNT"
 mkfs.vfat -F 32 -n uefi "$2"
