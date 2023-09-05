@@ -1,4 +1,12 @@
-#!/usr/bin/env bash
+#!/usr/bin/env nix-shell
+#!nix-shell -i bash -p gcc-wrapper yubikey-personalization openssl
+
+rbtohex() {
+    ( od -An -vtx1 | tr -d ' \n' )
+}
+hextorb() {
+    ( tr '[:lower:]' '[:upper:]' | sed -e 's/\([0-9A-F]\{2\}\)/\\\\\\x\1/gI'| xargs printf )
+}
 
 : '
 This is a script that installs the system automatically for Yubikey based Full Disk Encryption
@@ -16,7 +24,6 @@ This script expects the following parameters:
 e.g.: bash installation-script.sh 1 /dev/nvme0n1p1 /dev/nvme0n1p2
 be ready to input the second factor password!
 '
-nix-shell https://github.com/sgillespie/nixos-yubikey-luks/archive/master.tar.gz
 SALT_LENGTH=16
 salt="$(dd if=/dev/random bs=1 count=$SALT_LENGTH 2>/dev/null | rbtohex)"
 read -s k_user
