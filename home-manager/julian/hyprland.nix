@@ -60,6 +60,8 @@ exec-once=[workspace 1 silent] sleep 1 && keepassxc
 exec-once=[workspace 1 silent] sleep 1 && signal-desktop --no-sandbox --start-in-tray
 exec-once=[workspace 1 silent] sleep 1 && nextcloud
 
+exec-once=hyprctl setcursor capitaine-cursors 24
+
 # xwayland screen sharing
 windowrulev2 = opacity 0.0 override 0.0 override,class:^(xwaylandvideobridge)$
 windowrulev2 = noanim,class:^(xwaylandvideobridge)$
