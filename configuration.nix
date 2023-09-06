@@ -105,6 +105,7 @@
     ];
   };
 
+  security.polkit.enable = true; #enable polkit. polkit-kde-agent needs to be installed and started at boot seperately (will be done with Hyprland) 
   programs.hyprland.enable = true; #Hyprland NixOS Module (required)
   programs.dconf.enable = true; #needed for home-manager
   services.fwupd.enable = true; #for Firmware updates
