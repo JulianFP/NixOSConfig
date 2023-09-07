@@ -60,8 +60,6 @@ exec-once=[workspace 1 silent] sleep 1 && keepassxc
 exec-once=[workspace 1 silent] sleep 1 && signal-desktop --no-sandbox --start-in-tray
 exec-once=[workspace 1 silent] sleep 1 && nextcloud
 
-exec-once=hyprctl setcursor capitaine-cursors 24
-
 # xwayland screen sharing
 windowrulev2 = opacity 0.0 override 0.0 override,class:^(xwaylandvideobridge)$
 windowrulev2 = noanim,class:^(xwaylandvideobridge)$
@@ -73,7 +71,6 @@ exec-once = xwaylandvideobridge
 # source = ~/.config/hypr/myColors.conf
 
 # Some default env vars.
-env = XCURSOR_SIZE,24
 env = XDG_CURRENT_DESKTOP,Hyprland
 env = XDG_SESSION_TYPE,wayland
 env = XDG_SESSION_DESKTOP,Hyprland

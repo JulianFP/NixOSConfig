@@ -197,11 +197,12 @@
     theme.name = "Materia-dark-compact";
     iconTheme.package = pkgs.papirus-icon-theme;
     iconTheme.name = "Papirus-Dark";
-    cursorTheme = {
-      package = pkgs.capitaine-cursors; 
-      name = "capitaine-cursors";
-      size = 24;
-    };
+  };
+  home.pointerCursor = {
+    gtk.enable = true;
+    package = pkgs.capitaine-cursors;
+    name = "capitaine-cursors";
+    size = 24;
   };
 
   # Signal start in tray fix
