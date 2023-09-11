@@ -25,6 +25,7 @@
     unzip
     htop-vim
     s-tui
+    amdgpu_top
 
     # Applications
     firefox
