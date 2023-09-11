@@ -117,6 +117,7 @@
   xdg.portal.enable = true; #enable xdg desktop integration (mainly for flatpaks)
   services.hardware.bolt.enable = true; #enable Thunderbolt Device management
   programs.partition-manager.enable = true; #enable kde partitionmanager (can't be done in HM, requires services)
+  programs.steam.enable = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget

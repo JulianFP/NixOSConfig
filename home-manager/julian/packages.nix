@@ -55,7 +55,6 @@
     winetricks
     gamescope
     gamemode
-    steam
     lutris
     heroic
     protonup-qt
