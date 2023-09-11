@@ -157,6 +157,16 @@
     style = ./waybar/style.css;
   };
 
+  programs.mpv = {
+    enable = true;
+    config = {
+      profile = "gpu-hq";
+      hwdec = "auto-safe";
+      vo = "gpu";
+      gpu-context = "wayland";
+    };
+  };
+
   # Theming
   xdg.configFile = {
     "Kvantum/kvantum.kvconfig".text = ''

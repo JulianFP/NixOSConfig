@@ -44,8 +44,9 @@
     };
   };
 
-  # enable Vulkan (32- and 64-bit)
+  # enable Vulkan (32- and 64-bit), Hardware Video encoding/decoding is done in nixos-hardware
   hardware.opengl = {
+    enable = true;
     driSupport = true;
     driSupport32Bit = true;
   };

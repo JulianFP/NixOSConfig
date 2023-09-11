@@ -47,7 +47,6 @@
     libsForQt5.gwenview
     libsForQt5.kimageformats
     libsForQt5.qt5.qtimageformats
-    mpv
     vlc
     freetube
 
