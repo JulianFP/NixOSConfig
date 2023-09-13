@@ -19,6 +19,7 @@
     swaylock
     sway-contrib.grimshot
     gnome.adwaita-icon-theme
+    nur.repos.mikilio.xwaylandvideobridge-hypr
 
     # CLI Applications
     tree

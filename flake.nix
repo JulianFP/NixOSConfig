@@ -13,10 +13,12 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nur.url = "github:nix-community/NUR";
   };
 
 
-  outputs = { self, nixpkgs, lanzaboote, nixos-hardware, nixvim, home-manager, ...}: 
+  outputs = { self, ...} @ inputs: 
+    with inputs;
     let
       system = "x86_64-linux"; #central place where system is defined
       pkgs = import nixpkgs { #central place where pkgs is defined
@@ -24,29 +26,32 @@
         config = {
           allowUnfree = true; #allow Unfree packages
         };
+        overlays = [
+          nur.overlay
+        ];
       };
     in {
       nixosConfigurations.JuliansFramework = nixpkgs.lib.nixosSystem {
         inherit system pkgs;
         modules = [
           ./configuration.nix
-	  lanzaboote.nixosModules.lanzaboote
-	  nixos-hardware.nixosModules.framework-12th-gen-intel
-	  home-manager.nixosModules.home-manager
-	  {
-	    home-manager = {
-	      useGlobalPkgs = true;
-	      useUserPackages = true;
-	      extraSpecialArgs = {
-	        #pass nixneovim as additional Arg to home-manager config
-	        inherit nixvim;  
-	      };
-	      users = {
-	        julian = import ./home-manager/julian/home.nix;
-	        root = import ./home-manager/root/home.nix;
-	      };
-	    };
-	  }
+          lanzaboote.nixosModules.lanzaboote
+          nixos-hardware.nixosModules.framework-12th-gen-intel
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              extraSpecialArgs = {
+                #pass nixneovim as additional Arg to home-manager config
+                inherit nixvim;  
+              };
+              users = {
+                julian = import ./home-manager/julian/home.nix;
+                root = import ./home-manager/root/home.nix;
+              };
+            };
+          }
         ];
       };
     };

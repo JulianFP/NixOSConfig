@@ -4,7 +4,7 @@ This is the NixOS config for my Framework 12th Gen Laptop (home-manager config i
 ## Todo
 - [x] Fix Qt6 Theming
 - [ ] Add vimspector plugin to neovim (write nixvim module for it first?)
-- [ ] Add all-ways-egpu program to NixOS (write Nix package or flake for it)
+- [x] ~~Add all-ways-egpu program to NixOS (write Nix package or flake for it)~~ write bash scripts for gpu switching
 - [ ] Add VPNs to networking (nebula, wireguard, ipsec)
 - [x] Mangohud config
 - [x] lf config

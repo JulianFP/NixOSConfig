@@ -60,13 +60,13 @@ exec-once=[workspace 1 silent] sleep 1 && keepassxc
 exec-once=[workspace 1 silent] sleep 1 && signal-desktop --no-sandbox --start-in-tray
 exec-once=[workspace 1 silent] sleep 1 && nextcloud
 exec-once=[silent] sleep 1 && webcord -m --in-process-gpu
+exec-once=[silent] xwaylandvideobridge
 
 # xwayland screen sharing
 windowrulev2 = opacity 0.0 override 0.0 override,class:^(xwaylandvideobridge)$
 windowrulev2 = noanim,class:^(xwaylandvideobridge)$
 windowrulev2 = nofocus,class:^(xwaylandvideobridge)$
 windowrulev2 = noinitialfocus,class:^(xwaylandvideobridge)$
-exec-once = xwaylandvideobridge
 
 # Source a file (multi-file configs)
 # source = ~/.config/hypr/myColors.conf
