@@ -139,6 +139,7 @@
     networkmanager-l2tp
 
     (import ./egpu.nix {inherit pkgs;} )
+    (import ./egpu2.nix {inherit pkgs;} )
   ];
 
   # yubikey udev rules
