@@ -19,6 +19,18 @@
         ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --dport 51820 -j RETURN || true
       '';
     };
+
+    #vlan config
+    vlans = {
+      vlan3 = {
+        id = 3;
+        interface = "enp0s13f0u4u3";
+      };
+    };
+    interfaces.vlan3.ipv4.addresses = [{
+      address = "192.168.3.50";
+      prefixLength = 24;
+    }];
   };
 
   # Wireguard and other VPNs are added through networkmanager and not declaratevely through Nix
