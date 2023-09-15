@@ -20,6 +20,7 @@
       '';
     };
 
+    /*
     #vlan config
     vlans = {
       vlan3 = {
@@ -31,6 +32,7 @@
       address = "192.168.3.50";
       prefixLength = 24;
     }];
+    */
   };
 
   # Wireguard and other VPNs are added through networkmanager and not declaratevely through Nix
