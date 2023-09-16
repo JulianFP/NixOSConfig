@@ -32,6 +32,10 @@
     hostName = "NixOSTesting"; #define hostname
     networkmanager.enable = true;
     enableIPv6 = false;
+    nameservers = [
+      "192.168.3.1"
+      "1.1.1.1"
+    ];
     interfaces = {
       ens18 = {
         ipv4.addresses = [{
