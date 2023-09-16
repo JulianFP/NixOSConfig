@@ -12,13 +12,16 @@ in {
   ];
 
   programs = {
-    inherit (juliansConfig.programs) git ssh gpg; #(2) copy these settings without change
+    inherit (juliansConfig.programs) git ssh gpg lf; #(2) copy these settings without change
     zsh = juliansTerminal.programs.zsh // { #(3) copy this and make some changes
       oh-my-zsh = juliansTerminal.programs.zsh.oh-my-zsh // {
         custom = "$HOME/.ohMyZshCustom";
         theme = "juanghurtado-rootPatch";
       };
     };
+  };
+  xdg.configFile = {
+    inherit (juliansConfig.xdg.configFile) "lf/icons";
   };
 
   services = {
