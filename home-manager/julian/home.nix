@@ -42,9 +42,7 @@
   programs.gpg = {
     enable = true;
     scdaemonSettings = {
-      card-timeout = "300";
       disable-ccid = true;
-      pcsc-shared = true;
       reader-port = "Yubico Yubi";
     };
   };
