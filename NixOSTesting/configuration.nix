@@ -32,10 +32,13 @@
     hostName = "NixOSTesting"; #define hostname
     networkmanager.enable = true;
     interfaces = {
-      ens18.ipv4.addresses = [{
-        address = "192.168.3.120";
-        prefixLength = 24;
-      }];
+      ens18 = {
+        ipv4.addresses = [{
+          address = "192.168.3.120";
+          prefixLength = 24;
+        }];
+        useDHCP = false;
+      };
     };
     defaultGateway = {
       address = "192.168.3.1";
@@ -60,7 +63,6 @@
 
   #vm stuff
   services.qemuGuest.enable = true;
-  services.cloud-init.network.enable = true;
 
     # enable flakes and nix-command
   nix = {
