@@ -38,19 +38,16 @@
         {
           port = "22";
           proto = "tcp";
-          host = "any";
           group = "admin";
         }
         {
           port = "443";
           proto = "tcp";
-          host = "any";
           group = "server";
         }
         {
           port = "80";
           proto = "tcp";
-          host = "any";
           group = "server";
         }
       ];
