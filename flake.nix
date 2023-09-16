@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.05";
     lanzaboote.url = "github:nix-community/lanzaboote";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nixvim = {
@@ -14,27 +15,31 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nur.url = "github:nix-community/NUR";
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
   };
 
 
-  outputs = { self, ...} @ inputs: 
+  outputs = { self, ... } @ inputs: 
     with inputs;
     let
-      system = "x86_64-linux"; #central place where system is defined
-      pkgs = import nixpkgs { #central place where pkgs is defined
-        inherit system;
-        config = {
-          allowUnfree = true; #allow Unfree packages
-        };
-        overlays = [
-          nur.overlay
-        ];
-      };
+      system = "x86_64-linux"; #define system for all machines at once
     in {
       nixosConfigurations.JuliansFramework = nixpkgs.lib.nixosSystem {
-        inherit system pkgs;
+        pkgs = import nixpkgs {
+          inherit system;
+          config = {
+            allowUnfree = true; #allow Unfree packages
+          };
+          overlays = [
+            nur.overlay
+          ];
+        };
+        inherit system;
         modules = [
-          ./configuration.nix
+          ./JuliansFramework/configuration.nix
           lanzaboote.nixosModules.lanzaboote
           nixos-hardware.nixosModules.framework-12th-gen-intel
           home-manager.nixosModules.home-manager
@@ -47,11 +52,21 @@
                 inherit nixvim;  
               };
               users = {
-                julian = import ./home-manager/julian/home.nix;
-                root = import ./home-manager/root/home.nix;
+                julian = import ./JuliansFramework/home-manager/julian/home.nix;
+                root = import ./JuliansFramework/home-manager/root/home.nix;
               };
             };
           }
+        ];
+      };
+      nixosConfigurations.NixOSTesting = nixpkgs-stable.lib.nixosSystem {
+        pkgs = import nixpkgs-stable {
+          inherit system;
+        };
+        inherit system;
+        modules = [
+          ./NixOSTesting/configuration.nix
+          disko.nixosModules.disko
         ];
       };
     };
