@@ -33,18 +33,21 @@
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
-  console = {
-    font = "Lat2-Terminus16";
-    keyMap = "de-latin1";
-    useXkbConfig = true; # use xkbOptions in tty.
-  };
+  console.keyMap = "de-latin1";
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
+    git
   ];
+
+    # enable flakes and nix-command
+  nix = {
+    package = pkgs.nixFlakes;
+    settings.experimental-features = [ "nix-command" "flakes" ];
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
