@@ -110,7 +110,6 @@
   programs.hyprland.enable = true; #Hyprland NixOS Module (required)
   programs.dconf.enable = true; #needed for home-manager
   services.fwupd.enable = true; #for Firmware updates
-  services.pcscd.enable = true; #for Yubikey stuff
   hardware.opentabletdriver.enable = true; #setup driver for wacom tablet
   hardware.xone.enable = true; #enable xone driver for Xbox One Controller Adapter
   services.flatpak.enable = true; #enable flatpak
@@ -143,8 +142,9 @@
     (import ./vlan.nix {inherit pkgs;} )
   ];
 
-  # yubikey udev rules
+  # yubikey setup
   services.udev.packages = [ pkgs.yubikey-personalization ];
+  services.pcscd.enable = true;
 
   # qt theming stuff (has to be done on system level to proberly work because it uses qts plugin system)
   environment.variables = {
