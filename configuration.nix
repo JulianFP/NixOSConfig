@@ -140,6 +140,7 @@
 
     (import ./egpu.nix {inherit pkgs;} )
     (import ./egpu2.nix {inherit pkgs;} )
+    (import ./vlan.nix {inherit pkgs;} )
   ];
 
   # yubikey udev rules
