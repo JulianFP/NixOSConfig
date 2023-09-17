@@ -8,19 +8,7 @@
   imports =
     [ # Include the results of the hardware scan.
       (modulesPath + "/installer/scan/not-detected.nix")
-      (modulesPath + "/profiles/qemu-guest.nix")
     ];
-
-  boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "virtio_pci" "virtio_scsi" "sd_mod" "sr_mod" ];
-  boot.initrd.kernelModules = [ "dm-snapshot" ];
-
-  disko.devices = import ./disk-config.nix {
-    inherit lib;
-  };
-  boot.loader.grub = {
-    efiSupport = true;
-    efiInstallAsRemovable = true;
-  };
 
   #openssh config
   services.openssh = {
@@ -31,10 +19,27 @@
     ../id_rsa.pub
   ];
 
-  networking.hostName = "IonosVPS"; #define hostname
-  services.cloud-init = {
-    enable = true;
-    network.enable = true;
+  networking = {
+    hostName = "IonosVPS"; #define hostname
+    networkmanager.enable = true;
+    enableIPv6 = false;
+    nameservers = [
+      "212.227.123.16"
+      "212.227.123.17"
+    ];
+    interfaces = {
+      ens6 = {
+        ipv4.addresses = [{
+          address = "85.215.33.173";
+          prefixLength = 32;
+        }];
+        useDHCP = false;
+      };
+    };
+    defaultGateway = {
+      address = "85.215.33.1";
+      interface = "ens6";
+    };
   };
 
   # Set your time zone.
