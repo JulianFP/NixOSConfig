@@ -137,9 +137,9 @@
     # networking stuff
     networkmanager-l2tp
 
-    (import ./egpu.nix {inherit pkgs;} )
-    (import ./egpu2.nix {inherit pkgs;} )
-    (import ./vlan.nix {inherit pkgs;} )
+    (import ./shellScriptBin/egpu.nix {inherit pkgs;} )
+    (import ./shellScriptBin/egpu2.nix {inherit pkgs;} )
+    (import ./shellScriptBin/vlan.nix {inherit pkgs;} )
   ];
 
   # yubikey setup

@@ -21,5 +21,5 @@
     };
   };
 
-  # vlan config is done with script in ./vlan.nix
+  # vlan config is done with script in ./shellScriptBin/vlan.nix
 }

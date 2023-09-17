@@ -25,7 +25,7 @@
     };
   };
   home.file.".ssh/id_rsa.pub" = {
-    source = ./id_rsa.pub;
+    source = ../../../id_rsa.pub;
   };
   services.gpg-agent = {
     enable = true;
