@@ -31,27 +31,10 @@
     ../id_rsa.pub
   ];
 
-  networking = {
-    hostName = "IonosVPS"; #define hostname
-    networkmanager.enable = true;
-    enableIPv6 = false;
-    nameservers = [
-      "192.168.3.1"
-      "1.1.1.1"
-    ];
-    interfaces = {
-      ens18 = {
-        ipv4.addresses = [{
-          address = "192.168.3.120";
-          prefixLength = 24;
-        }];
-        useDHCP = false;
-      };
-    };
-    defaultGateway = {
-      address = "192.168.3.1";
-      interface = "ens18";
-    };
+  networking.hostName = "IonosVPS"; #define hostname
+  services.cloud-init = {
+    enable = true;
+    network.enable = true;
   };
 
   # Set your time zone.
