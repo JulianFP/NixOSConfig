@@ -5,7 +5,7 @@ This is the NixOS config for my Framework 12th Gen Laptop (home-manager config i
 - [x] Fix Qt6 Theming
 - [ ] Add vimspector plugin to neovim (write nixvim module for it first?)
 - [x] ~~Add all-ways-egpu program to NixOS (write Nix package or flake for it)~~ write bash scripts for gpu switching
-- [ ] Add VPNs to networking (nebula, wireguard, ipsec)
+- [x] Add VPNs to networking (nebula, wireguard, ipsec) (done mostly manually in networkmanager)
 - [x] Mangohud config
 - [x] lf config
 - [x] Additional applications and set default applications
@@ -21,13 +21,15 @@ This is the NixOS config for my Framework 12th Gen Laptop (home-manager config i
 - `./LaptopNixOSConfig/installation-script.sh 1 /dev/nvme0n1p1 /dev/nvme0n1p2` run the installation script (change parameters accordingly!)
 - `mv LaptopNixOSConfig /mnt/etc/nixos` move config to nixos folder of installation
 - edit `/mnt/etc/nixos/hardware-configuration.nix` and change the uuids of all partitions to the values of your system (get with the command `blkid`)
-- edit `/mnt/etc/nixos/configuration.nix` and in imports do the following: comment out nebula.nix and choose systemd-boot instead of lanzaboote. This will be changed later, but is necessary for the initial installation
+- edit `/mnt/etc/nixos/configuration.nix` and in imports do the following: choose systemd-boot instead of lanzaboote. This will be reverted later, but is necessary for the initial installation
 - `nixos-install --flake /mnt/etc/nixos/flake.nix#JuliansFramework` install system
 
 ## After initial installation (logged in as root)
 - `passwd julian` set password for users
 - `nix run nixpkgs#sbctl create-keys` generate secure boot keys
 - edit `/etc/nixos/configuration.nix` and switch from systemd-boot to lanzaboote
+- put nebula key and crt into /etc/nixos/nebulaDevice.* and run `nixos-rebuild switch`
+- Run `git update-index --skip-worktree nebulaDevice.*` while in /etc/nixos
 - reboot and put laptop into Setup Mode (from firmware)
 - `nix run nixpkgs#sbctl enroll-keys -- --microsoft` enroll keys to firmware
 - reboot again and enforce secure boot in firmware
