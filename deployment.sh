@@ -3,21 +3,21 @@
 # this script automates deployment into the cloud
 # Req
 
-#change this for different luks device
-luksUSBDevice="/dev/disk/by-uuid/66f96bfc-45f0-4436-81a1-8a07a548a5bb"
+#change these variables to make this script work for your setup
+githubRepo="JulianFP/LaptopNixOSConfig" #github repo that contains flake config (syntax: '<Github user name>/<repo name>'). Always uses default branch
+#the following variables are only required for the nebula option. You don't have to set them if you don't plan on using it
+luksUSBDevice="/dev/disk/by-uuid/66f96bfc-45f0-4436-81a1-8a07a548a5bb" #path to device which contains nebula crt (should be reproducible, i.e. relient on uuid or label)
+#luksUSBNebulaPath and nebulaFilesPath are not allowed to begin or end with '/', './' or similar
+luksUSBNebulaPath="nebula" #path to directory in which nebula crt is stored relative from root of usb device
+nebulaFilesPath="nebulaDevice" #path to nebula crt and key (without .crt and .key) from root of github repo (both files should have the same name and path except the ending)
 
 
-
-# get hostname from nix flake url (extracts everything after #)
-length=${#2}
-hastagPos=$(awk -v a="$2" -v b="#" 'BEGIN{print index(a,b)}')
-hostname=${2:$hastagPos:$length}
 
 #define function make error output easier
 echoerr() { echo "$@" 1>&2; }
 
 help() {
-    printf "usage: ./deployment.sh <option> <flakeURL> [<currentTargetIP>] [<futureTargetIP>] [<nebula name>] [<nebula ip>] [<nebula groups>]\n\n"
+    printf "usage: ./deployment.sh <option> <flakeHostname> [<currentTargetIP>] [<futureTargetIP>] [<nebula name>] [<nebula ip>] [<nebula groups>]\n\n"
     echo "option:"
     echo "   deploy   deployment without nebula using nixos-anywhere"
     echo "   nebula   deployment with nebula using nixos-anywhere"
@@ -28,10 +28,9 @@ help() {
     echo "      - configuration for target must be flake with disko and nix-command"
     echo "      - at least 1.5GB RAM (without swap), OR"
     printf "        currently booted from nixos live cd (not running on target drive)\n\n"
-    echo "flakeURL:"
-    echo "   flake url to deployment config on local system"
-    echo "   most of the time: <path to flake>#<configuration name>"
-    printf "   for example: /etc/nixos#NixOSTesting\n\n"
+    echo "flakeHostname:"
+    echo "   name of target machine used for flake url (the part after the '#' in flake url)"
+    printf "   for example: NixOSTesting\n\n"
     echo "currentTargetIP:"
     echo "   specify only when using deploy or nebula option"
     echo "   ip address that the target currently has"
@@ -75,7 +74,7 @@ deploy() {
     done
 
     # run nixos-anywhere
-    nix run github:numtide/nixos-anywhere -- --flake $2 root@$3
+    nix run github:numtide/nixos-anywhere -- --flake "github:$githubRepo#$2" root@$3
 
     #delete futureTargetIP ssh known_hosts to prevent error messages in terminal
     ssh-keygen -R "$4"
@@ -87,7 +86,7 @@ deploy() {
     done
 
     #git clone nix configuration onto target to enable changing configuration directly on target machine
-    ssh root@$4 -o "StrictHostKeyChecking no" "nix shell nixpkgs#git -c git clone https://github.com/JulianFP/LaptopNixOSConfig.git /etc/nixos"
+    ssh root@$4 -o "StrictHostKeyChecking no" "nix shell nixpkgs#git -c git clone https://github.com/$githubRepo.git /etc/nixos"
 }
 
 iso() {
@@ -98,18 +97,18 @@ iso() {
     fi
 
     #generate iso name for symlink. This takes existing files into consideration:
-    #if file "$hostname.iso" already exists, it will append a number
+    #if file "$2.iso" already exists, it will append a number
     #this number will get larger as long as it needs to in order to find an unused file name
-    isoname="$hostname.iso"
+    isoname="$2.iso"
     path=$(pwd)
     fileNum=2
     while ls $path | grep -q "$isoname"; do
-        isoname="$hostname-$fileNum.iso"
+        isoname="$2-$fileNum.iso"
         ((++fileNum))
     done
 
     #run generation script and inform user about output file name
-    nix run github:nix-community/nixos-generators -- -f iso -o "$path/$isoname" --flake $2
+    nix run github:nix-community/nixos-generators -- -f iso -o "$path/$isoname" --flake "github:$githubRepo#$2"
     echo "you can find your iso in $path/$isoname"
 }
 
@@ -123,7 +122,7 @@ nebula() {
     #create .nebula folder in /root (this will also serve as backup for nebula files)
     ssh root@$4 -o "StrictHostKeyChecking no" "mkdir /root/.nebula"
     #generate private/public keypair on target
-    ssh root@$4 -o "StrictHostKeyChecking no" "nix shell nixpkgs#nebula -c nebula-cert keygen -out-key /root/.nebula/nebulaDevice.key -out-pub /root/.nebula/nebulaDevice.pub"
+    ssh root@$4 -o "StrictHostKeyChecking no" "nix shell nixpkgs#nebula -c nebula-cert keygen -out-key /root/.nebula/$nebulaFilesPath.key -out-pub /root/.nebula/$nebulaFilesPath.pub"
 
     #wait until usb stick with ca.key is present
     until [[ -e "$luksUSBDevice" ]]; do 
@@ -135,25 +134,25 @@ nebula() {
     mount /dev/mapper/luksUSBDeviceNebula /mnt 
 
     #similar to iso name generation in iso function: find free filename for crt file on usb stick
-    nebname="$hostname"
+    nebname="$2"
     fileNum=2
-    while ls "/mnt/nebula" | grep -q "$nebname"; do
-        nebname="$hostname-$fileNum"
+    while ls "/mnt/$luksUSBNebulaPath" | grep -q "$nebname"; do
+        nebname="$2-$fileNum"
         ((++fileNum))
     done
 
     #copy public key from target machine and sign it locally with ca.key from usb stick
-    scp root@$4:/root/.nebula/nebulaDevice.pub "/mnt/nebula/$nebname.pub"
-    nix shell nixpkgs\#nebula -c nebula-cert sign -ca-crt /mnt/nebula/ca.crt -ca-key /mnt/nebula/ca.key -in-pub "/mnt/nebula/$nebname.pub" -out-crt "/mnt/nebula/$nebname.crt" -name $5 -ip $6 -groups $7
+    scp root@$4:/root/.nebula/$nebulaFilesPath.pub "/mnt/$luksUSBNebulaPath/$nebname.pub"
+    nix shell nixpkgs\#nebula -c nebula-cert sign -ca-crt "/mnt/$luksUSBNebulaPath/ca.crt" -ca-key "/mnt/$luksUSBNebulaPath/ca.key" -in-pub "/mnt/$luksUSBNebulaPath/$nebname.pub" -out-crt "/mnt/$luksUSBNebulaPath/$nebname.crt" -name $5 -ip $6 -groups $7
 
     #copy crt file to target machine and also copy them into place in /etc/nixos 
-    scp "/mnt/nebula/$nebname.crt" root@$4:/root/.nebula/nebulaDevice.crt
-    ssh root@$4 -o "StrictHostKeyChecking no" "cat /root/.nebula/nebulaDevice.crt > /etc/nixos/nebulaDevice.crt"
-    ssh root@$4 -o "StrictHostKeyChecking no" "cat /root/.nebula/nebulaDevice.key > /etc/nixos/nebulaDevice.key"
+    scp "/mnt/$luksUSBNebulaPath/$nebname.crt" root@$4:/root/.nebula/$nebulaFilesPath.crt
+    ssh root@$4 -o "StrictHostKeyChecking no" "cat /root/.nebula/$nebulaFilesPath.crt > /etc/nixos/$nebulaFilesPath.crt"
+    ssh root@$4 -o "StrictHostKeyChecking no" "cat /root/.nebula/$nebulaFilesPath.key > /etc/nixos/$nebulaFilesPath.key"
 
     #apply nebula config and configure git to ignore changed keyfiles to prevent them from being overriden or pushed to github
     ssh root@$4 -o "StrictHostKeyChecking no" "nixos-rebuild switch"
-    ssh root@$4 -o "StrictHostKeyChecking no" "nix shell nixpkgs#git -c sh -c 'cd /etc/nixos && git update-index --skip-worktree nebulaDevice.*'"
+    ssh root@$4 -o "StrictHostKeyChecking no" "nix shell nixpkgs#git -c sh -c 'cd /etc/nixos && git update-index --skip-worktree $nebulaFilesPath.*'"
 
     #unmount and lock usb stick again
     umount /mnt 
