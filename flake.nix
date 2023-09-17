@@ -76,6 +76,7 @@
         inherit system;
         modules = [
           ./IonosVPS/configuration.nix
+          disko.nixosModules.disko
         ];
       };
     };
