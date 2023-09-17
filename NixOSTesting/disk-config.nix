@@ -11,9 +11,9 @@
           size = "1M";
           type = "EF02"; #for grub MBR
         };
-        esp = {
+        ESP = {
           name = "ESP";
-          size = "500M";
+          size = "512M";
           type = "EF00";
           content = {
             type = "filesystem";
@@ -40,7 +40,6 @@
           size = "4G";
           content = {
             type = "swap";
-            randomEncryption = true;
           };
         };
         root = {
