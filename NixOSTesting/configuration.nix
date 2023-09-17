@@ -23,8 +23,12 @@
     efiSupport = true;
     efiInstallAsRemovable = true;
   };
-  services.openssh.enable = true;
 
+  #openssh config
+  services.openssh = {
+    enable = true;
+    settings.PasswordAuthentication = false;
+  };
   users.users.root.openssh.authorizedKeys.keyFiles = [
     ../id_rsa.pub
   ];
