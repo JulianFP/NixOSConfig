@@ -74,34 +74,9 @@
     
     #install nextcloud apps
     extraApps = with config.services.nextcloud.package.packages.apps; {
-      inherit bookmarks calendar contacts groupfolders keeweb news notes polls previewgenerator registration spreed tasks twofactor_webauthn;
+      inherit bookmarks calendar contacts groupfolders keeweb news notes polls registration spreed tasks twofactor_webauthn;
     };
     extraAppsEnable = true;
-  };
-
-  #setup systemd service for previewgenerator
-  systemd.services = {
-    "nextcloud_previews" = {
-      description = "Generate previews";
-      wantedBy = [ "default.target" ];
-      path = [
-        pkgs.nextcloud27
-      ];
-      serviceConfig = {
-        RestartSec = 30;
-        ExecStart = "${config.services.nextcloud.package}/occ preview:pre-generate";
-      };
-    };
-  };
-  systemd.timers = {
-    "nextcloud_previews" = {
-      enable = true;
-      description = "Generate previews";
-      wantedBy = [ "timers.target" ];
-      timerConfig = {
-        OnCalendar = "*:0/10";
-      };
-    };
   };
 
   #update password in this file before nixos-rebuild switch
