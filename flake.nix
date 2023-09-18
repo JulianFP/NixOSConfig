@@ -69,6 +69,16 @@
           disko.nixosModules.disko
         ];
       };
+      nixosConfigurations.Nextcloud = nixpkgs-stable.lib.nixosSystem {
+        pkgs = import nixpkgs-stable {
+          inherit system;
+        };
+        inherit system;
+        modules = [
+          ./IonosVPS/configuration.nix
+          disko.nixosModules.disko
+        ];
+      };
       nixosConfigurations.IonosVPS = nixpkgs-stable.lib.nixosSystem {
         pkgs = import nixpkgs-stable {
           inherit system;
