@@ -9,7 +9,7 @@
     secretFile = "/etc/nextcloud-secrets.json";
     config.defaultPhoneRegion = "DE";
     config.adminuser = "admin";
-    config.adminpassFile = ./adminpassFile.txt;
+    config.adminpassFile = "/etc/nixos/Nextcloud/adminpassFile.txt";
 
     #setup database
     database.createLocally = true;
@@ -22,6 +22,28 @@
     caching.redis = true;
     configureRedis = true;
     extraOptions.filelocking.enabled = true;
+
+    #setup php
+    maxUploadSize = "32G";
+    phpOptions = {
+      max_file_uploads = "20";
+      "opcache.enable" = "1";
+      "opcache.interned_strings_buffer" = "16";
+      "opcache.max_accelerated_files" = "10000";
+      "opcache.memory_consumption" = "192";
+      "opcache.save_comments" = "1";
+      "opcache.validate_timestamps" = "0"; #disables opcache.revalidate_freq completely
+      "opcache.jit" = "1255"; #php 8.0 or above required
+      "opcache.jit_buffer_size" = "128M"; #php 8.0 or above required
+    };
+    poolSettings = {
+      pm = "dynamic";
+      "pm.max_children" = "128";
+      "pm.start_servers" = "12";
+      "pm.max_requests" = "512";
+      "pm.min_spare_servers" = "12";
+      "pm.max_spare_servers" = "32";
+    };
 
     #setup reverse proxy config
     config = {
@@ -39,7 +61,7 @@
     #mail delivery
     extraOptions = {
       mail_smtpmode = "smtp";
-      mail_sendmailnode = "smtp";
+      mail_sendmailmode = "smtp";
       mail_from_address = "admin";
       mail_smtpauth = 1;
       mail_smtphost = "mail.partanengroup.de";
@@ -52,9 +74,34 @@
     
     #install nextcloud apps
     extraApps = with config.services.nextcloud.package.packages.apps; {
-      inherit news contacts calendar tasks talk bookmarks polls keeweb;
+      inherit bookmarks calendar contacts groupfolders keeweb news notes polls previewgenerator registration spreed tasks twofactor_webauthn;
     };
     extraAppsEnable = true;
+  };
+
+  #setup systemd service for previewgenerator
+  systemd.services = {
+    "nextcloud_previews" = {
+      description = "Generate previews";
+      wantedBy = [ "default.target" ];
+      path = [
+        pkgs.nextcloud27
+      ];
+      serviceConfig = {
+        RestartSec = 30;
+        ExecStart = "${config.services.nextcloud.package}/occ preview:pre-generate";
+      };
+    };
+  };
+  systemd.timers = {
+    "nextcloud_previews" = {
+      enable = true;
+      description = "Generate previews";
+      wantedBy = [ "timers.target" ];
+      timerConfig = {
+        OnCalendar = "*:0/10";
+      };
+    };
   };
 
   #update password in this file before nixos-rebuild switch
