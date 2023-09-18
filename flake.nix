@@ -75,7 +75,7 @@
         };
         inherit system;
         modules = [
-          ./IonosVPS/configuration.nix
+          ./Nextcloud/configuration.nix
           disko.nixosModules.disko
         ];
       };
