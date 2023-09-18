@@ -10,6 +10,9 @@
     "hyprland/workspaces" = {
       sort-by-number = true;
       on-click = "activate";
+      format-icons = {
+        urgent = "󰂚";
+      };
     };
 
     "hyprland/window" = {
