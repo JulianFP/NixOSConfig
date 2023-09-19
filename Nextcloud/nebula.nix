@@ -40,6 +40,11 @@
           proto = "tcp";
           group = "admin";
         }
+        {
+          port = "80";
+          proto = "tcp";
+          group = "edge";
+        }
       ];
     };
   };
