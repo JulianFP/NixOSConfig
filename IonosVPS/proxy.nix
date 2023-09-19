@@ -50,4 +50,7 @@ security.acme = {
       };
     };
   };
+
+  #setup firewall
+  networking.firewall.allowedTCPPorts = [ 80 443 ];
 }
