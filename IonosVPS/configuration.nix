@@ -21,6 +21,7 @@
   environment.systemPackages = with pkgs; [
     vim
     wget
+    git
   ];
 
   services.qemuGuest.enable = true;
