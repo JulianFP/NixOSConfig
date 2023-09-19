@@ -17,6 +17,14 @@
       ./nebula.nix # import settings for nebula (comment out if keyfiles not present yet)
     ];
 
+  sops = {
+    defaultSopsFile = ../secrets/example.yaml;
+    gnupg.home = "/root/.gnupg/";
+    gnupg.sshKeyPaths = [];
+    secrets.example-key = {};
+    secrets."myservice/my_subdir/my_secret" = {};
+  };
+
   # config for bootloader and secure boot (refer to nixos.wiki/wiki/Secure_Boot)
   boot = {
     #use newest stable kernel instead of LTS
