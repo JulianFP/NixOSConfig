@@ -45,10 +45,10 @@
       disable-ccid = true;
       reader-port = "Yubico Yubi";
     };
-    publicKeys."Yubikey" = {
+    publicKeys = [{
       source = ./gpg_yubikey.asc;
       trust = 5;
-    };
+    }];
   };
   systemd.user.sessionVariables = {
     SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/gnupg/S.gpg-agent.ssh";
