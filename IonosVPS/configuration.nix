@@ -15,7 +15,6 @@
 
   networking = {
     hostName = "IonosVPS";
-    enableIPv6 = false;
     domain = "";
   };
 

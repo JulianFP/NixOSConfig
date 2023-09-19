@@ -37,15 +37,15 @@ security.acme = {
       forceSSL = true;
       http2 = true;
       locations."/" = {
-        proxyPass = "http://48.42.1.150";
+        proxyPass = "http://48.42.1.150:80";
         proxyWebsockets = true;
       };
       locations."/.well-known/carddav" = {
-        proxyPass = "http://48.42.1.150/remote.php/dav";
+        proxyPass = "http://48.42.1.150:80/remote.php/dav";
         proxyWebsockets = true;
       };
       locations."/.well-known/caldav" = {
-        proxyPass = "http://48.42.1.150/remote.php/dav";
+        proxyPass = "http://48.42.1.150:80/remote.php/dav";
         proxyWebsockets = true;
       };
     };

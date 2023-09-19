@@ -53,11 +53,6 @@
       ];
       overwriteProtocol = "https";
     };
-    extraOptions = {
-      overwritehost = "test.partanengroup.de";
-      overwritecondaddr = "^192\\.168\\.3\\.100$";
-      "overwrite.cli.url" = "https://partanengroup.de";
-    };
 
     #mail delivery
     extraOptions = {
