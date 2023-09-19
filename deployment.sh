@@ -179,18 +179,18 @@ case $1 in
     deployNebula)
     privileges "$@"
     deploy "$2" "$3" "$4"
-    nebula "$3" "$5" "$6" "$7" "$8"
+    nebula "$3" "$5" "$6" "$7"
     echo "deployment with nebula completed"
     exit 0
         ;;
     nebula)
     privileges "$@"
-    nebula "$@"
+    nebula "$2" "$3" "$4" "$5"
     echo "nebula configured"
     exit 0
         ;;
     iso)
-    iso "$@"
+    iso "$2"
     exit 0
         ;;
     *)
