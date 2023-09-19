@@ -2,6 +2,7 @@
   imports = [
     ./hardware-configuration.nix
     ./nebula.nix
+    ./proxy.nix
   ];
 
   services.openssh = {

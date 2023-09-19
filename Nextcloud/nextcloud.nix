@@ -49,6 +49,7 @@
     config = {
       trustedProxies = [
         "192.168.3.100"
+        "48.42.0.5"
       ];
       overwriteProtocol = "https";
     };
