@@ -19,6 +19,7 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
+    sops-nix.url = "github:Mic92/sops-nix";
   };
 
 
@@ -42,6 +43,7 @@
           ./JuliansFramework/configuration.nix
           lanzaboote.nixosModules.lanzaboote
           nixos-hardware.nixosModules.framework-12th-gen-intel
+          sops-nix.nixosModules.sops
           home-manager.nixosModules.home-manager
           {
             home-manager = {
