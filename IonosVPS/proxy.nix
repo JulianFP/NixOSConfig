@@ -1,7 +1,13 @@
 {config, lib, pkgs, ... }:
 
-#reverse proxy config
 {
+#setup acme for let's encrypt validation
+security.acme = {
+  acceptTerms = true;
+  defaults.email = "admin@partanengroup.de";
+};
+
+#reverse proxy config
   services.nginx = {
     #boilerplate stuff
     enable = true;
