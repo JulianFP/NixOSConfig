@@ -5,6 +5,7 @@
 
 #change these variables to make this script work for your setup
 githubRepo="JulianFP/LaptopNixOSConfig" #github repo that contains flake config (syntax: '<Github user name>/<repo name>'). Always uses default branch
+githubBranch="main" #branch that contains flake config
 #the following variables are only required for the nebula option. You don't have to set them if you don't plan on using it
 luksUSBDevice="/dev/disk/by-uuid/66f96bfc-45f0-4436-81a1-8a07a548a5bb" #path to device which contains nebula crt (should be reproducible, i.e. relient on uuid or label)
 #luksUSBNebulaPath and nebulaFilesPath are not allowed to begin or end with '/', './' or similar
@@ -79,7 +80,7 @@ deploy() {
     done
 
     # run nixos-anywhere
-    nix run github:numtide/nixos-anywhere -- --flake "github:$githubRepo#$1" root@$2
+    nix run github:numtide/nixos-anywhere -- --flake "github:$githubRepo/$githubBranch#$1" root@$2
 
     #delete futureTargetIP ssh known_hosts to prevent error messages in terminal
     ssh-keygen -R "$3"
@@ -91,7 +92,7 @@ deploy() {
     done
 
     #git clone nix configuration onto target to enable changing configuration directly on target machine
-    ssh root@$3 -o "StrictHostKeyChecking no" "nix shell nixpkgs#git -c git clone https://github.com/$githubRepo.git /etc/nixos"
+    ssh root@$3 -o "StrictHostKeyChecking no" "nix shell nixpkgs#git -c git clone -b $githubBranch https://github.com/$githubRepo.git /etc/nixos"
 }
 
 #$1 flakehostname
@@ -114,7 +115,7 @@ iso() {
     done
 
     #run generation script and inform user about output file name
-    nix run github:nix-community/nixos-generators -- -f iso -o "$path/$isoname" --flake "github:$githubRepo#$1"
+    nix run github:nix-community/nixos-generators -- -f iso -o "$path/$isoname" --flake "github:$githubRepo/$githubBranch#$1"
     echo "you can find your iso in $path/$isoname"
 }
 
