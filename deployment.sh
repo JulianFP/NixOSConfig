@@ -119,7 +119,7 @@ iso() {
     echo "you can find your iso in $path/$isoname"
 }
 
-#$1: currentTargetIP, $2: nebula name, $3: nebula ip, $4: nebula groups
+#$1: futureTargetIP, $2: nebula name, $3: nebula ip, $4: nebula groups
 nebula() {
     #check if enough parameters are provided
     if [[ $# < 4 ]]; then
@@ -180,7 +180,7 @@ case $1 in
     deployNebula)
     privileges "$@"
     deploy "$2" "$3" "$4"
-    nebula "$3" "$5" "$6" "$7"
+    nebula "$4" "$5" "$6" "$7"
     echo "deployment with nebula completed"
     exit 0
         ;;
