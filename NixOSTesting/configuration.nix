@@ -28,10 +28,21 @@
   services.openssh = {
     enable = true;
     settings.PasswordAuthentication = false;
+    extraConfig = ''
+      StreamLocalBindUnlink yes
+    '';
   };
   users.users.root.openssh.authorizedKeys.keyFiles = [
     ../id_rsa.pub
   ];
+
+  sops = {
+    defaultSopsFile = ../secrets/example.yaml;
+    gnupg.home = "/root/.gnupg/";
+    gnupg.sshKeyPaths = [];
+    secrets.example-key = {};
+    secrets."myservice/my_subdir/my_secret" = {};
+  };
 
   networking = {
     hostName = "NixOSTesting"; #define hostname

@@ -14,15 +14,20 @@
   home.username = "julian";
   home.homeDirectory = "/home/julian";
 
-  # ssh (with yubikey support) stuff
+  # ssh (with yubikey support) stuff and agent forwarding (ssh and gpg)
   programs.ssh = {
     enable = true;
     matchBlocks = {
       "Ionos" = {
         hostname = "82.165.49.241";
-	user = "root";
+	      user = "root";
       };
     };
+    forwardAgent = true;
+    extraConfig = ''
+      RemoteForward /run/user/0/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra
+      Match host * exec "gpg-connect-agent UPDATESTARTUPTTY /bye"
+    '';
   };
   home.file.".ssh/id_rsa.pub" = {
     source = ../../../id_rsa.pub;
@@ -30,11 +35,12 @@
   services.gpg-agent = {
     enable = true;
     enableSshSupport = true;
+    enableExtraSocket = true;
     defaultCacheTtl = 300;
     defaultCacheTtlSsh = 300;
     maxCacheTtl = 3600;
     maxCacheTtlSsh = 3600;
-    pinentryFlavor = "qt";
+    pinentryFlavor = "tty";
     extraConfig = ''
       ttyname $GPG_TTY
     '';
@@ -46,7 +52,7 @@
       reader-port = "Yubico Yubi";
     };
     publicKeys = [{
-      source = ./gpg_yubikey.asc;
+      source = ../../../gpg_yubikey.asc;
       trust = 5;
     }];
   };

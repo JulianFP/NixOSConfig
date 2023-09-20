@@ -69,6 +69,15 @@
         modules = [
           ./NixOSTesting/configuration.nix
           disko.nixosModules.disko
+          sops-nix.nixosModules.sops
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.root = import ./NixOSTesting/home-manager/root/home.nix;
+            };
+          }
         ];
       };
       nixosConfigurations.Nextcloud = nixpkgs-stable.lib.nixosSystem {
