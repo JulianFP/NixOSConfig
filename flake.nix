@@ -65,6 +65,15 @@
           }
         ];
       };
+      nixosConfigurations.blankISO = nixpkgs-stable.lib.nixosSystem {
+        pkgs = import nixpkgs-stable {
+          inherit system;
+        };
+        inherit system;
+        modules = [
+          ./blankISO/configuration.nix
+        ];
+      };
       nixosConfigurations.NixOSTesting = nixpkgs-stable.lib.nixosSystem {
         pkgs = import nixpkgs-stable {
           inherit system;
