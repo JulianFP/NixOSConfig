@@ -2,6 +2,7 @@
 
 {
   programs.gpg = {
+    enable = true;
     publicKeys = [{
       source = ../../../gpg_yubikey.asc;
       trust = 5;
