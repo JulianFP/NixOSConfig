@@ -14,6 +14,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    home-manager-stable = {
+      url = "github:nix-community/home-manager/release-23.05";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
     nur.url = "github:nix-community/NUR";
     disko = {
       url = "github:nix-community/disko";
@@ -70,7 +74,7 @@
           ./NixOSTesting/configuration.nix
           disko.nixosModules.disko
           sops-nix.nixosModules.sops
-          home-manager.nixosModules.home-manager
+          home-manager-stable.nixosModules.home-manager
           {
             home-manager = {
               useGlobalPkgs = true;
