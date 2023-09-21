@@ -7,9 +7,6 @@ let
   netName = "serverNetwork";
 in 
 {
-  _module.args = {
-    netName = "serverNetwork";
-  };
   #sops config for nebula key
   imports = [ 
     ./sops.nix
