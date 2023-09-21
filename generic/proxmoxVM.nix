@@ -1,8 +1,9 @@
-{ lib, pkgs, vmID, ... }:
+{ lib, vmID, inputs, ... }:
 
 {
   imports =
     [ # Include the results of the hardware scan.
+      inputs.disko.nixosModules.disko
       ./server.nix
     ];
 
