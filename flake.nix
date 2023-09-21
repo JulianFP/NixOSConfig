@@ -29,7 +29,7 @@
 
   outputs = { self, ... } @ inputs: 
   with inputs; {
-    nixosConfigurations.JuliansFramework = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.JuliansFramework = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
       pkgs = import nixpkgs {
         inherit system;
@@ -68,7 +68,7 @@
         inherit inputs;
       };
     };
-    nixosConfigurations.blankISO = nixpkgs-stable.lib.nixosSystem {
+    nixosConfigurations.blankISO = nixpkgs-stable.lib.nixosSystem rec {
       system = "x86_64-linux";
       pkgs = import nixpkgs-stable {
         inherit system;
@@ -77,7 +77,7 @@
         ./blankISO/configuration.nix
       ];
     };
-    nixosConfigurations.NixOSTesting = nixpkgs-stable.lib.nixosSystem {
+    nixosConfigurations.NixOSTesting = nixpkgs-stable.lib.nixosSystem rec {
       system = "x86_64-linux";
       pkgs = import nixpkgs-stable {
         inherit system;
@@ -93,7 +93,7 @@
         inherit inputs;
       };
     };
-    nixosConfigurations.Nextcloud = nixpkgs-stable.lib.nixosSystem {
+    nixosConfigurations.Nextcloud = nixpkgs-stable.lib.nixosSystem rec {
       system = "x86_64-linux";
       pkgs = import nixpkgs-stable {
         inherit system;
@@ -103,7 +103,7 @@
         disko.nixosModules.disko
       ];
     };
-    nixosConfigurations.IonosVPS = nixpkgs-stable.lib.nixosSystem {
+    nixosConfigurations.IonosVPS = nixpkgs-stable.lib.nixosSystem rec {
       system = "x86_64-linux";
       pkgs = import nixpkgs-stable {
         inherit system;
