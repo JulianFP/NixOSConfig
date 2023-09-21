@@ -1,7 +1,7 @@
 # This file is used in setups with secureboot
 # For setups without secureboot use systemd-boot.nix instead
 
-{ config, lib, pkgs, inputs, ... }:
+{ lib, ... }:
 {
   # config for bootloader and secure boot (refer to nixos.wiki/wiki/Secure_Boot)
   boot = {

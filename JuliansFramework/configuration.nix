@@ -2,28 +2,14 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running `nixos-help`).
 
-{ config, lib, pkgs, inputs, ... }:
+{ lib, pkgs, ... }:
 
 {
   imports =
     [ 
       ./hardware-configuration.nix # Include the results of the hardware scan.
       ./networking.nix # import networking settings
-
-      # choose between the following (exactly one has to be commented out)
-      ./lanzaboote.nix # import settings for secureboot enabled bootloader
-      #./systemd-boot.nix # import settings for systems without secureboot
-
-      ./nebula.nix # import settings for nebula (comment out if keyfiles not present yet)
     ];
-
-  sops = {
-    defaultSopsFile = ../secrets/example.yaml;
-    gnupg.home = "/root/.gnupg/";
-    gnupg.sshKeyPaths = [];
-    secrets.example-key = {};
-    secrets."myservice/my_subdir/my_secret" = {};
-  };
 
   # config for bootloader and secure boot (refer to nixos.wiki/wiki/Secure_Boot)
   boot = {

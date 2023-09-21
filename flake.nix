@@ -44,7 +44,11 @@
         };
         inherit system;
         modules = [
+          #./genericNixOS/systemd-boot.nix
+          ./genericNixOS/lanzaboote.nix #requires lanzaboote module!
+          ./genericNixOS/nebula.nix#requires working /root/.gnupg + sops module + hostName!
           ./JuliansFramework/configuration.nix
+          ./JuliansFramework/nebulaAdd.nix
           lanzaboote.nixosModules.lanzaboote
           nixos-hardware.nixosModules.framework-12th-gen-intel
           sops-nix.nixosModules.sops
@@ -64,6 +68,7 @@
             };
           }
         ];
+        specialArgs = { hostName = "JuliansFramework"; };
       };
       nixosConfigurations.blankISO = nixpkgs-stable.lib.nixosSystem {
         pkgs = import nixpkgs-stable {
@@ -80,18 +85,17 @@
         };
         inherit system;
         modules = [
-          ./NixOSTesting/configuration.nix
+          ./genericNixOS/proxmoxVM.nix #requires disko module + vmID!
+          ./genericNixOS/home-manager-gnupg.nix #requires inputs
+          ./genericNixOS/nebula.nix#requires working /root/.gnupg + sops module + hostName!
           disko.nixosModules.disko
           sops-nix.nixosModules.sops
-          home-manager-stable.nixosModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              users.root = import ./NixOSTesting/home-manager/root/home.nix;
-            };
-          }
         ];
+        specialArgs = { 
+          hostName = "JuliansFramework"; 
+          vmID = "120";
+          inherit inputs;
+        };
       };
       nixosConfigurations.Nextcloud = nixpkgs-stable.lib.nixosSystem {
         pkgs = import nixpkgs-stable {

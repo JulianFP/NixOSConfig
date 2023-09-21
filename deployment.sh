@@ -5,7 +5,7 @@
 
 #change these variables to make this script work for your setup
 githubRepo="JulianFP/LaptopNixOSConfig" #github repo that contains flake config (syntax: '<Github user name>/<repo name>'). Always uses default branch
-githubBranch="main" #branch that contains flake config
+githubBranch="sops" #branch that contains flake config
 #the following variables are only required for the nebula option. You don't have to set them if you don't plan on using it
 luksUSBDevice="/dev/disk/by-uuid/66f96bfc-45f0-4436-81a1-8a07a548a5bb" #path to device which contains nebula crt (should be reproducible, i.e. relient on uuid or label)
 #luksUSBNebulaPath and nebulaFilesPath are not allowed to begin or end with '/', './' or similar
