@@ -11,7 +11,7 @@
           programs.gpg = {
             enable = true;
             publicKeys = [{
-              source = ../../../gpg_yubikey.asc;
+              source = ../gpg_yubikey.asc;
               trust = 5;
             }];
             settings.no-autostart = true;
