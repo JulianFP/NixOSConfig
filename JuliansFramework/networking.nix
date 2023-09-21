@@ -21,5 +21,13 @@
     };
   };
 
+  #setup nebula unsafe_routes
+  services.nebula.networks."serverNetwork" = {
+    settings.tun.unsafe_routes = [{
+      route = "192.168.10.0/24";
+      via = "48.42.0.4";
+    }];
+  };
+
   # vlan config is done with script in ./shellScriptBin/vlan.nix
 }

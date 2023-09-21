@@ -45,7 +45,6 @@
         ./generic/lanzaboote.nix #(imports lanzaboote module)
         ./generic/nebula.nix#requires working /root/.gnupg! (imports sops module)
         ./JuliansFramework/configuration.nix
-        ./JuliansFramework/nebulaAdd.nix
         nixos-hardware.nixosModules.framework-12th-gen-intel
         home-manager.nixosModules.home-manager
         {
@@ -86,6 +85,7 @@
         ./generic/proxmoxVM.nix #requires vmID!
         ./generic/nebula.nix#requires working /root/.gnupg! (imports sops module)
         ./generic/gnupg-server.nix
+        ./NixOSTesting/configuration.nix
       ];
       specialArgs = { 
         hostName = "NixOSTesting"; 
