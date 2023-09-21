@@ -92,7 +92,7 @@
           sops-nix.nixosModules.sops
         ];
         specialArgs = { 
-          hostName = "JuliansFramework"; 
+          hostName = "NixOSTesting"; 
           vmID = "120";
           inherit inputs;
         };
