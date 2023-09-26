@@ -12,7 +12,7 @@ in {
   ];
 
   programs = {
-    inherit (juliansConfig.programs) git gpg lf; #(2) copy these settings without change
+    inherit (juliansConfig.programs) git gpg ssh lf; #(2) copy these settings without change
     zsh = juliansTerminal.programs.zsh // { #(3) copy this and make some changes
       oh-my-zsh = juliansTerminal.programs.zsh.oh-my-zsh // {
         custom = "$HOME/.ohMyZshCustom";
@@ -20,13 +20,6 @@ in {
       };
       initExtra = ''
         cd /etc/nixos
-      '';
-    };
-    
-    ssh = juliansConfig.programs.ssh // {
-      extraConfig = ''
-        RemoteForward /run/user/0/gnupg/S.gpg-agent /run/user/0/gnupg/S.gpg-agent.extra
-        Match host * exec "gpg-connect-agent UPDATESTARTUPTTY /bye"
       '';
     };
   };

@@ -25,7 +25,6 @@
     };
     forwardAgent = true;
     extraConfig = ''
-      RemoteForward /run/user/0/gnupg/S.gpg-agent /run/user/1000/gnupg/S.gpg-agent.extra
       Match host * exec "gpg-connect-agent UPDATESTARTUPTTY /bye"
     '';
   };
@@ -35,7 +34,6 @@
   services.gpg-agent = {
     enable = true;
     enableSshSupport = true;
-    enableExtraSocket = true;
     defaultCacheTtl = 300;
     defaultCacheTtlSsh = 300;
     maxCacheTtl = 3600;
