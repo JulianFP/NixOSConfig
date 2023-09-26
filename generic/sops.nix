@@ -1,7 +1,6 @@
-{ inputs, ... }:
+{ inputs, hostName, ... }:
 
-# requires a working gnupg home at /root/.gnupg! Set it up with home-manager
-#for servers you can use genericHomeManager/gnupg.nix
+#requires you to manually update .sops.yaml file if key got generated
 #gets imported by genericNixOS/nebula.nix
 {
   imports = [
@@ -9,9 +8,11 @@
   ];
 
   sops = {
-    defaultSopsFile = ../secrets/example.yaml;
-    gnupg.home = "/root/.gnupg/";
-    gnupg.sshKeyPaths = [];
-    secrets.example-key = {};
+    defaultSopsFile = ../secrets/${hostName}/general.yaml;
+    age.keyFile = "/var/lib/sops-nix/key.txt";
+    age.generateKey = true; #generate key above if it does not exist yet (has to be added manually to .sops.yaml)
+    secrets.example-key = {
+      sopsFile = ../secrets/general.yaml;
+    };
   };
 }

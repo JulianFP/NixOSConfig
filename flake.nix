@@ -43,7 +43,7 @@
       modules = [
         #./genericNixOS/systemd-boot.nix
         ./generic/lanzaboote.nix #(imports lanzaboote module)
-        ./generic/nebula.nix#requires working /root/.gnupg! (imports sops module)
+        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./JuliansFramework/configuration.nix
         nixos-hardware.nixosModules.framework-12th-gen-intel
         home-manager.nixosModules.home-manager
@@ -83,8 +83,7 @@
       };
       modules = [
         ./generic/proxmoxVM.nix #requires vmID!
-        ./generic/nebula.nix#requires working /root/.gnupg! (imports sops module)
-        ./generic/gnupg-server.nix
+        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./NixOSTesting/configuration.nix
       ];
       specialArgs = { 

@@ -1,7 +1,6 @@
 { config, hostName, ...}:
 
-# requires a working gnupg home at /root/.gnupg! Set it up with home-manager
-#for servers you can use genericHomeManager/gnupg.nix
+# requires you to manually update .sops.yaml file if sops key got generated
 
 let
   netName = "serverNetwork";
