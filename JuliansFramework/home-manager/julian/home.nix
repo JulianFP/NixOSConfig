@@ -40,7 +40,7 @@
     defaultCacheTtlSsh = 300;
     maxCacheTtl = 3600;
     maxCacheTtlSsh = 3600;
-    pinentryFlavor = "tty";
+    pinentryFlavor = "qt";
     extraConfig = ''
       ttyname $GPG_TTY
     '';
@@ -196,6 +196,9 @@
       style=kvantum-dark
     '';
     "kdeglobals".text = ''
+      [General]
+      TerminalApplication=alacritty
+
       [Colors:View]
       BackgroundNormal=#272727
 

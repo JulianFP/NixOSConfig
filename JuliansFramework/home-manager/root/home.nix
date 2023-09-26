@@ -12,20 +12,31 @@ in {
   ];
 
   programs = {
-    inherit (juliansConfig.programs) git ssh gpg lf; #(2) copy these settings without change
+    inherit (juliansConfig.programs) git gpg lf; #(2) copy these settings without change
     zsh = juliansTerminal.programs.zsh // { #(3) copy this and make some changes
       oh-my-zsh = juliansTerminal.programs.zsh.oh-my-zsh // {
         custom = "$HOME/.ohMyZshCustom";
         theme = "juanghurtado-rootPatch";
       };
+      initExtra = ''
+        cd /etc/nixos
+      '';
+    };
+    
+    ssh = juliansConfig.programs.ssh // {
+      extraConfig = ''
+        RemoteForward /run/user/0/gnupg/S.gpg-agent /run/user/0/gnupg/S.gpg-agent.extra
+        Match host * exec "gpg-connect-agent UPDATESTARTUPTTY /bye"
+      '';
     };
   };
-  xdg.configFile = {
-    inherit (juliansConfig.xdg.configFile) "lf/icons";
+
+  services.gpg-agent = juliansConfig.services.gpg-agent // {
+    pinentryFlavor = "tty";
   };
 
-  services = {
-    inherit (juliansConfig.services) gpg-agent;
+  xdg.configFile = {
+    inherit (juliansConfig.xdg.configFile) "lf/icons";
   };
 
   home.file = {
