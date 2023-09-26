@@ -1,7 +1,7 @@
 keys:
-  - &julian 5B82BEF3C1A6617707A448FDEB6F11283183E111
+  - &yubikey 5B82BEF3C1A6617707A448FDEB6F11283183E111
 creation_rules:
   - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
     - pgp:
-      - *julian
+      - *yubikey
