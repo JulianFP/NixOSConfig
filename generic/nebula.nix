@@ -10,10 +10,23 @@ in
   imports = [ 
     ./sops.nix
   ];
-  sops.secrets."nebula/${hostName}" = {
+  sops.secrets."nebula/${hostName}.key" = {
     mode = "0440";
     owner = "nebula-${netName}";
     group = "nebula-${netName}";
+    sopsFile = ../secrets/${hostName}/nebula.yaml;
+  };
+  sops.secrets."nebula/${hostName}.crt" = {
+    mode = "0440";
+    owner = "nebula-${netName}";
+    group = "nebula-${netName}";
+    sopsFile = ../secrets/${hostName}/nebula.yaml;
+  };
+  sops.secrets."nebula/ca.crt" = {
+    mode = "0440";
+    owner = "nebula-${netName}";
+    group = "nebula-${netName}";
+    sopsFile = ../secrets/nebula.yaml;
   };
   systemd.services."nebula@${netName}" = {
     serviceConfig.SupplementaryGroups = [ config.users.groups.keys.name ];
@@ -22,9 +35,9 @@ in
   # nebula config
   services.nebula.networks."${netName}" = {
     enable = true;
-    ca = ../ca.crt;
-    key = config.sops.secrets."nebula/${hostName}".path;
-    cert = ../${hostName}/nebula.crt;
+    ca = config.sops.secrets."nebula/ca.crt".path;
+    key = config.sops.secrets."nebula/${hostName}.key".path;
+    cert = config.sops.secrets."nebula/${hostName}.crt".path;
     listen.port = 51821;
     lighthouses = [ "48.42.0.1" ];
     staticHostMap = {
