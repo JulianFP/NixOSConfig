@@ -72,7 +72,7 @@ addDevice() {
     done
 
     #clone github repo and decrypt sops file
-    git clone -b "$githubBranch" "https://github.com/$githubRepo.git" "/tmp/$gitname"
+    git clone -b "$githubBranch" "git@github.com:$githubRepo.git" "/tmp/$gitname"
     #check if files are already there and handle these cases
     if [[ !(-e "/tmp/$gitname/secrets/$1") ]]; then
         mkdir "/tmp/$gitname/secrets/$1"
@@ -91,13 +91,22 @@ addDevice() {
 
     #add changes to git and push them
     git -C "/tmp/$gitname" add "/tmp/$gitname/*"
+    git -C "/tmp/$gitname" commit -m "added nebula certificates to $1"
     git -C "/tmp/$gitname" push origin "$githubBranch"
 
-    #remove private key from usb stick, unmount and lock it
+    #remove private key from usb stick
     rm /mnt/$luksUSBNebulaPath/$nebname.key 
-    umount /mnt 
-    cryptsetup close /dev/mapper/luksUSBDeviceNebula
+
+    #umount and lock usb stick (try again if still busy)
+    until umount /mnt; do
+        sleep 1 
+    done
+    until cryptsetup close /dev/mapper/luksUSBDeviceNebula; do
+        sleep 1 
+    done
 }
+
+set -e #exit on any kind of error
 
 case $1 in
     "-h"|"--help"|"help"|"")
