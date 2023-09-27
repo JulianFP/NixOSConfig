@@ -87,7 +87,7 @@ addDevice() {
 
     #generate yaml file to store secrets
     printf "nebula:\n    NixOSTesting.key: |\n        $(sed ':a;N;$!ba;s/\n/\n        /g' /mnt/$luksUSBNebulaPath/$nebname.key)\n    NixOSTesting.crt: |\n        $(sed ':a;N;$!ba;s/\n/\n        /g' /mnt/$luksUSBNebulaPath/$nebname.crt)" > "/tmp/$gitname/secrets/$1/nebula.yaml"
-    sops -e -i "/tmp/$gitname/secrets/$1/nebula.yaml"
+    sops --config "/tmp/$gitname/.sops.yaml" -e -i "/tmp/$gitname/secrets/$1/nebula.yaml"
 
     #add changes to git and push them
     git -C "/tmp/$gitname" add "/tmp/$gitname/*"
