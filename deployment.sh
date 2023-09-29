@@ -103,9 +103,9 @@ sopsConfig() {
         sed -i "/&$1/c\\  - &$1 age$(cat /tmp/$agename | sed ':a;N;$!ba;s/\n//g')" "/tmp/$gitname/.sops.yaml"
     else
         #it is not: add it and its config 
-        sed -i -e '/&yubikey/a\' -e "  - &$1 age$(cat /tmp/$agename | sed ':a;N;$!ba;s/\n//g')" "/tmp/$gitname/.sops.yaml"
-        sed -i -e '/- key_groups:/i\' -e "  - path_regex: .*/$1/.*\n    key_groups:\n    - pgp:\n      - *yubikey\n      age:\n      - *$1" "/tmp/$gitname/.sops.yaml"
-        printf "      - *$1" >> "/tmp/$gitname/.sops.yaml"
+        sed -i -e '/&yubikey/a\' -e "  - &$1 age$(cat /tmp/$agename | sed ':a;N;$!ba;s/\n//g')" "/tmp/$gitname/.sops.yaml" #add age key to keys
+        sed -i -e '/- key_groups:/i\' -e "      - *$1" "/tmp/$gitname/.sops.yaml" #add hostname to regex for all general secrets
+        sed -i -e '/secrets\/\[/i\' -e "  - path_regex: ^secrets/$1/.*$\n    key_groups:\n    - pgp:\n      - *yubikey\n      age:\n      - *$1" "/tmp/$gitname/.sops.yaml" #add new path_regex for all keys that should only be decrypted by target
     fi
 
     #reencrypt secrets for new age key 
