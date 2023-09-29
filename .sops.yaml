@@ -3,19 +3,21 @@ keys:
   - &JuliansFramework age176a79l7kw5gnecqjw366gps4aft69lvfq0t548lxw39fczf0w3ksz9xxjq
   - &NixOSTesting age1ycjtaq3ez49q20fa2m02ytywqm2gz6qv569ysp69ga2ppy5d0quqew92uz
 creation_rules:
-  - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
-    key_groups:
-    - pgp:
-      - *yubikey
-  - path_regex: secrets/JuliansFramework/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: .*/JuliansFramework/.*
     key_groups:
     - pgp:
       - *yubikey
       age:
       - *JuliansFramework
-  - path_regex: secrets/NixOSTesting/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: .*/NixOSTesting/.*
     key_groups:
     - pgp:
       - *yubikey
       age:
+      - *NixOSTesting
+  - key_groups:
+    - pgp:
+      - *yubikey
+      age:
+      - *JuliansFramework
       - *NixOSTesting
