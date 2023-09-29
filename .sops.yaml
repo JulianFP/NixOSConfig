@@ -1,7 +1,7 @@
 keys:
   - &yubikey 5B82BEF3C1A6617707A448FDEB6F11283183E111
   - &JuliansFramework age176a79l7kw5gnecqjw366gps4aft69lvfq0t548lxw39fczf0w3ksz9xxjq
-  - &NixOSTesting age1ycjtaq3ez49q20fa2m02ytywqm2gz6qv569ysp69ga2ppy5d0quqew92uz
+  - &NixOSTesting age17lk64gfy88luvumuz0xp2wjwvlgzedatllk5ak9rmqvdmv3g0ewq0q7fcn
 creation_rules:
   - path_regex: .*/JuliansFramework/.*
     key_groups:
