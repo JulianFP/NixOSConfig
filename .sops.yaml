@@ -1,5 +1,6 @@
 keys:
   - &yubikey 5B82BEF3C1A6617707A448FDEB6F11283183E111
+  - &NixOSTesting age1cdmjtn7kpea87q2h6hp3uuqa2dqvaunnmahy7rs6uv8ncx8az5xqqcpuvu
   - &JuliansFramework age176a79l7kw5gnecqjw366gps4aft69lvfq0t548lxw39fczf0w3ksz9xxjq
 creation_rules:
   - path_regex: .*/JuliansFramework/.*
@@ -8,8 +9,15 @@ creation_rules:
       - *yubikey
       age:
       - *JuliansFramework
+  - path_regex: .*/NixOSTesting/.*
+    key_groups:
+    - pgp:
+      - *yubikey
+      age:
+      - *NixOSTesting
   - key_groups:
     - pgp:
       - *yubikey
       age:
       - *JuliansFramework
+      - *NixOSTesting
