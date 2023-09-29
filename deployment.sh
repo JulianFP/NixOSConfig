@@ -73,7 +73,7 @@ deploy() {
 }
 
 #$1: flakehostname, $2: TargetIP
-sops() {
+sopsConfig() {
     #find free filename for age public key in /tmp
     agename="ageKey.pub"
     fileNum=2
@@ -104,7 +104,8 @@ sops() {
     else
         #it is not: add it and its config 
         sed -i -e '/&yubikey/a\' -e "  - &$1 age$(cat /tmp/$agename | sed ':a;N;$!ba;s/\n//g')" "/tmp/$gitname/.sops.yaml"
-        printf "  - path_regex: secrets/$1/[^/]+\\.(yaml|json|env|ini)$\n    key_groups:\n    - pgp:\n      - *yubikey\n      age:\n      - *$1" >> "/tmp/$gitname/.sops.yaml"
+        sed -i -e '/- key_groups:/i\' -e "  - path_regex: .*/$1/.*\n    key_groups:\n    - pgp:\n      - *yubikey\n      age:\n      - *$1" "/tmp/$gitname/.sops.yaml"
+        printf "      - *$1" >> "/tmp/$gitname/.sops.yaml"
     fi
 
     #reencrypt secrets for new age key 
@@ -147,7 +148,7 @@ iso() {
     echo "you can find your iso in $path/$isoname"
 }
 
-set -ex #exit on any kind of error
+set -e #exit on any kind of error
 
 case $1 in 
     deploy)
@@ -157,7 +158,7 @@ case $1 in
         ;;
     deploySops)
     deploy "$2" "$3" "$4"
-    sops "$2" "$4"
+    sopsConfig "$2" "$4"
     echo "deployment with sops completed"
     exit 0
         ;;
