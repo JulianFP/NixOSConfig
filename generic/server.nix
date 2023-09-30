@@ -7,11 +7,6 @@
       (modulesPath + "/profiles/qemu-guest.nix")
     ];
 
-  boot.loader.grub = {
-    efiSupport = true;
-    efiInstallAsRemovable = true;
-  };
-
   #openssh config
   services.openssh = {
     enable = true;

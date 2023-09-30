@@ -19,10 +19,12 @@ help() {
     printf "general usage: ./deployment.sh <option> [...]\n\n"
     printf "usage (option: deploy): ./deployment.sh deploy <flakeHostname> <currentTargetIP> <futureTargetIP>\n\n"
     printf "usage (option: deploySops): ./deployment.sh deploySops <flakeHostname> <currentTargetIP> <futureTargetIP>\n\n"
+    printf "usage (option: sops): ./deployment.sh sops <flakeHostname> <currentTargetIP>\n\n"
     printf "usage (option: iso): ./deployment.sh iso <flakeHostname>\n\n"
     printf "option:\n"
     printf "   deploy         deployment using nixos-anywhere\n"
     printf "   deploySops     like deploy but also updates the age key in .sops.yaml and takes care of sops key decryption\n"
+    printf "   sops           does just the sops part of deploySops. Useful for machines that do not fulfill the requirements for deploy/deploySops\n"
     printf "   iso            just builds an iso containing the config without nebula\n"
     printf "   Requirements for options deploy and deploySops:\n"
     printf "      - x86_64 VM (possibly others, not tested)\n"
@@ -160,6 +162,11 @@ case $1 in
     deploy "$2" "$3" "$4"
     sopsConfig "$2" "$4"
     echo "deployment with sops completed"
+    exit 0
+        ;;
+    sops)
+    sopsConfig "$2" "$3"
+    echo "sops setup completed"
     exit 0
         ;;
     iso)
