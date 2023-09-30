@@ -86,7 +86,7 @@ addDevice() {
     nebula-cert sign -ca-crt "/mnt/$luksUSBNebulaPath/ca.crt" -ca-key "/mnt/$luksUSBNebulaPath/ca.key" -out-crt "/mnt/$luksUSBNebulaPath/$nebname.crt" -out-key "/mnt/$luksUSBNebulaPath/$nebname.key" -name $1 -ip $2 -groups $3
 
     #generate yaml file to store secrets
-    printf "nebula:\n    NixOSTesting.key: |\n        $(sed ':a;N;$!ba;s/\n/\n        /g' /mnt/$luksUSBNebulaPath/$nebname.key)\n    NixOSTesting.crt: |\n        $(sed ':a;N;$!ba;s/\n/\n        /g' /mnt/$luksUSBNebulaPath/$nebname.crt)" > "/tmp/$gitname/secrets/$1/nebula.yaml"
+    printf "nebula:\n    $1.key: |\n        $(sed ':a;N;$!ba;s/\n/\n        /g' /mnt/$luksUSBNebulaPath/$nebname.key)\n    $1.crt: |\n        $(sed ':a;N;$!ba;s/\n/\n        /g' /mnt/$luksUSBNebulaPath/$nebname.crt)" > "/tmp/$gitname/secrets/$1/nebula.yaml"
     sops --config "/tmp/$gitname/.sops.yaml" -e -i "/tmp/$gitname/secrets/$1/nebula.yaml"
 
     #add changes to git and push them
