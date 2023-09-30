@@ -243,7 +243,7 @@ Categories=Network;InstantMessaging;Chat;
   [Desktop Entry]
   Categories=Network;InstantMessaging
   Comment=A Discord and Fosscord electron-based client implemented without Discord API
-  Exec=webcord --in-process-gpu
+  Exec=webcord --safe-mode
   Icon=webcord
   Name=WebCord
   Type=Application

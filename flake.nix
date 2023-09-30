@@ -73,8 +73,14 @@
         inherit system;
       };
       modules = [
-        ./blankISO/configuration.nix
+        ./generic/server.nix
+        #don't use ./proxmoxVM.nix because ISO does not support disco and doesn't have vmID
+        ./blankISO/configuration.nix 
       ];
+      specialArgs = {
+        hostName = "blankISO"; 
+        inherit inputs;
+      };
     };
     nixosConfigurations.NixOSTesting = nixpkgs-stable.lib.nixosSystem rec {
       system = "x86_64-linux";
@@ -98,9 +104,15 @@
         inherit system;
       };
       modules = [
+        ./generic/proxmoxVM.nix #requires vmID!
+        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./Nextcloud/configuration.nix
-        disko.nixosModules.disko
       ];
+      specialArgs = { 
+        hostName = "Nextcloud"; 
+        vmID = "150";
+        inherit inputs;
+      };
     };
     nixosConfigurations.IonosVPS = nixpkgs-stable.lib.nixosSystem rec {
       system = "x86_64-linux";
@@ -108,8 +120,14 @@
         inherit system;
       };
       modules = [
+        ./generic/server.nix
+        ./generic/nebula.nix
         ./IonosVPS/configuration.nix
       ];
+      specialArgs = { 
+        hostName = "IonosVPS"; 
+        inherit inputs;
+      };
     };
   };
 }

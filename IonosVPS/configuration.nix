@@ -1,40 +1,26 @@
-{ config, lib, pkgs, ... }: {
+{ ... }: 
+
+{
   imports = [
-    ./hardware-configuration.nix
-    ./nebula.nix
     ./proxy.nix
   ];
 
-  services.openssh = {
-    enable = true;
-    settings.PasswordAuthentication = false;
-  }; 
-  users.users.root.openssh.authorizedKeys.keyFiles = [
-    ../id_rsa.pub
-  ];
+  boot.loader.grub.device = "/dev/vda";
+  boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "xen_blkfront" "vmw_pvscsi" ];
+  boot.initrd.kernelModules = [ "nvme" ];
+  fileSystems."/" = { device = "/dev/vda1"; fsType = "ext4"; };
 
-  networking = {
-    hostName = "IonosVPS";
-    domain = "";
-  };
-
-  environment.systemPackages = with pkgs; [
-    vim
-    wget
-    git
-  ];
-
-  services.qemuGuest.enable = true;
-
-  time.timeZone = "Europe/Berlin";
+  networking.domain = "";
 
   boot.tmp.cleanOnBoot = true;
   zramSwap.enable = true;
 
-  nix = {
-    package = pkgs.nixFlakes;
-    settings.experimental-features = [ "nix-command" "flakes" ];
-  };
-
-  system.stateVersion = "23.05";
+  #nebula firewall
+  services.nebula.networks."serverNetwork".firewall.inbound = [
+    {
+      port = "22";
+      proto = "tcp";
+      group = "admin";
+    }
+  ];
 }
