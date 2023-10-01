@@ -5,8 +5,8 @@
 # using the deploySops or sops option it can also update sops age keys. For this the script assumes that your sops config is in the root of the git repository and is named .sops.yaml
 
 #change these variables to make this script work for your setup
-githubRepo="JulianFP/LaptopNixOSConfig" #github repo that contains flake config (syntax: '<Github user name>/<repo name>'). Always uses default branch
-githubBranch="sops" #branch that contains flake config
+githubRepo="JulianFP/NixOSConfig" #github repo that contains flake config (syntax: '<Github user name>/<repo name>'). Always uses default branch
+githubBranch="main" #branch that contains flake config
 #the following option is only needed for the deploySops and sops option 
 ageKeyFile="/var/lib/sops-nix/key.txt" #path to ageKeyFile on target machine
 

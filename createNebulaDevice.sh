@@ -7,8 +7,8 @@
 # furthermore, this script assumes that you put your sops secrets in the directory secrets and puts the host-specific nebula key into secrets/$1/nebula.yaml
 
 #change these variables to make this script work for your setup
-githubRepo="JulianFP/LaptopNixOSConfig" #github repo that contains flake config (syntax: '<Github user name>/<repo name>'). Always uses default branch
-githubBranch="sops" #branch that contains flake config
+githubRepo="JulianFP/NixOSConfig" #github repo that contains flake config (syntax: '<Github user name>/<repo name>'). Always uses default branch
+githubBranch="main" #branch that contains flake config
 luksUSBDevice="/dev/disk/by-uuid/66f96bfc-45f0-4436-81a1-8a07a548a5bb" #path to device which contains nebula crt (should be reproducible, i.e. relient on uuid or label)
 #luksUSBNebulaPath is not allowed to begin or end with '/', './' or similar
 luksUSBNebulaPath="nebula" #path to directory in which nebula crt is stored relative from root of usb device
