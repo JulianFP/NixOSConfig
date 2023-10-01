@@ -5,6 +5,8 @@ if [ $swaylockProcesses -le 1 ]; then
 
  #do not suspend if machine already woke up recently (during the current minute). Makes it possible to wake machine pressing the power button
 elif journalctl -u sleep.target -S $(date +%H:%M) | grep -q "Stopped"; then
-    exit 0
+    if [[ $2 = 1 ]]; then #only do this if power button called this script
+        exit 0
+    fi
 fi
 systemctl suspend -i

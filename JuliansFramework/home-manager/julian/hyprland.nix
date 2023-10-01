@@ -282,7 +282,7 @@ bindle = , XF86MonBrightnessUp, exec, brightnessctl set 5%+
 bindl = , XF86AudioPlay, exec, playerctl play-pause
 bindl = , XF86AudioNext, exec, playerctl next
 bindl = , XF86AudioPrev, exec, playerctl previous
-bindl = , XF86PowerOff, exec, /home/julian/.systemScripts/lockAndSuspend.sh $lock_bg
+bindl = , XF86PowerOff, exec, /home/julian/.systemScripts/lockAndSuspend.sh $lock_bg 1
 
 # script execution
 bind = $mainMod SHIFT, G, exec, /home/julian/.systemScripts/gamingMode_hypr.sh 
