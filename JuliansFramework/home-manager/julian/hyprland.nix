@@ -270,7 +270,10 @@ bind = $mainMod, Print, exec, grimshot save area
 #lid suspend & lock screen & dpms
 bindl = , switch:Lid Switch, exec, /home/julian/.systemScripts/clamshell_mode_hypr.sh $lock_bg
 bind = $mainMod, Y, exec, swaylock -f -c 000000 -i $lock_bg
-bindl = $mainMod, X, exec, sleep 1 && hyprctl dispatch dpms off
+bindl = $mainMod SHIFT, Y, exec, sleep 1 && hyprctl dispatch dpms off
+
+# hyprctl kill 
+bind = $mainMod, X, exec, hyprctl kill
 
 # special keys
 bindle = , XF86AudioRaiseVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ +5%

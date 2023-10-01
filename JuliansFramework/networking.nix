@@ -3,7 +3,10 @@
 {
   networking = {
     hostName = hostName; # Define your hostname.
-    networkmanager.enable = true;  # Easiest to use and most distros use this by default.
+    networkmanager = {
+      enable = true;
+      enableStrongSwan = true; # For l2tp vpn
+    };
 
     # rpfilter allow Wireguard traffic (see https://nixos.wiki/wiki/WireGuard#Setting_up_WireGuard_with_NetworkManager)
     firewall = { 
@@ -19,6 +22,13 @@
         ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --dport 51820 -j RETURN || true
       '';
     };
+  };
+
+  #for l2tp vpn
+  services.xl2tpd.enable = true;
+  services.strongswan = {
+    enable = true;
+    secrets = [ "ipsec.d/ipsec.nm-l2tp.secrets" ]; #ensure that it does not write secrets on read-only filesystem
   };
 
   #setup nebula unsafe_routes
