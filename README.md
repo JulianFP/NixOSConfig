@@ -1,6 +1,6 @@
 ## About
 This is the Nix flake that defines all my NixOS systems. Look into the flake.nix and enter the folders of the individual systems to get more information about their config. Any system-specific secrets are stored encrypted in the `secrets/<hostName>` directory. The following systems are defined in this repo:
-- JuliansFramework: This is my Framework laptop 13 12th Gen and my daily driver. This is the system I use the most which is why it has the most complicated configuration.
+- **JuliansFramework**: This is my Framework laptop 13 12th Gen and my daily driver. This is the system I use the most which is why it has the most complicated configuration.
 - **blankISO**: This is a system I use to generate ISOs that help me spin up VMs. This way I can boot onto that ISO (mounted as virtual DVD e.g. in Proxmox) and then run my deployment script without having to add ssh keys or anything. Great config to get me started on anything.
 - **NixOSTesting**: Config for a Proxmox PVE VM that I use to test NixOS server and deployment stuff
 - **Nextcloud**: Config for a Proxmox PVE VM that runs my Nextcloud Instance. Currently still in testing phase.
@@ -11,8 +11,8 @@ I use the Nebula overlay network to connect to and between all my servers and ma
 The keys and certificates needed for nebula are stored using sops-nix (together with other secrets a machine might need). See `generic/sops.nix`, `.sops.yaml` and the `secrets` directory for info on the general sops setup.
 To add new systems to my nebula network quicker and more comfortably I wrote the `createNebulaDevice.sh` script. Look at its comments and run it without any parameters to get more information about how to use it, but here is an example of its usage:
     - `./createNebulaDevice.sh NixOSTesting 48.42.1.150/16 "server,edge"`
-    - **Note 1:** Don't forget to specify the subnet of the nebula ip address using the CIDR notation (in this example it is /16)
-    - **Note 2:** This script requires you to have a working ssh and gnupg setup for your root user, so that you can access your Github Repo and decrypt your sops secrets with it. Look at the home-manager configuration of JuliansFramework for an example of how to just 'inherit' the Nix setup for that from your main user.
+    - **Note 1**: Don't forget to specify the subnet of the nebula ip address using the CIDR notation (in this example it is /16)
+    - **Note 2**: This script requires you to have a working ssh and gnupg setup for your root user, so that you can access your Github Repo and decrypt your sops secrets with it. Look at the home-manager configuration of JuliansFramework for an example of how to just 'inherit' the Nix setup for that from your main user.
 
 ## Deployment 
 I wrote the `deployment.sh` script to deploy NixOS configurations more easily to machines. Look at its comments and run it without any parameters to get more information about how to use it, but here are some examples of its usage:
