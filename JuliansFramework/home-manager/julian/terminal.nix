@@ -9,7 +9,7 @@
       vi = "nvim";
       vim = "nvim";
       sudo = "sudo "; #https://askubuntu.com/questions/22037/aliases-not-available-when-using-sudo
-      config = "cd /etc/nixos/JuliansFramework/ && sudo -s";
+      root = "machinectl shell --uid 0";
     };
     oh-my-zsh = {
       enable = true;

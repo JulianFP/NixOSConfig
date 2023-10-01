@@ -1,0 +1,43 @@
+keys:
+  - &yubikey 5B82BEF3C1A6617707A448FDEB6F11283183E111
+  - &IonosVPS age1mfk3dc4sekgxccv4dyuypavzelv0tvtlerf3s5qwtfzu9rnjevts9qlxme
+  - &Nextcloud age1fset426p48js7gxpj2z6chkuw0dywgm0uul28chcpz6yp4tsqcgqedzkh9
+  - &NixOSTesting age1twvg38sttwpfurkayu0esgyv3t6kvxtu293jr8r5e7catksqwc6sylyvgr
+  - &JuliansFramework age176a79l7kw5gnecqjw366gps4aft69lvfq0t548lxw39fczf0w3ksz9xxjq
+creation_rules:
+  - path_regex: ^secrets/JuliansFramework/.*$
+    key_groups:
+    - pgp:
+      - *yubikey
+      age:
+      - *JuliansFramework
+  - path_regex: ^secrets/NixOSTesting/.*$
+    key_groups:
+    - pgp:
+      - *yubikey
+      age:
+      - *NixOSTesting
+  - path_regex: ^secrets/Nextcloud/.*$
+    key_groups:
+    - pgp:
+      - *yubikey
+      age:
+      - *Nextcloud
+  - path_regex: ^secrets/IonosVPS/.*$
+    key_groups:
+    - pgp:
+      - *yubikey
+      age:
+      - *IonosVPS
+  - path_regex: ^secrets/[^/]*$
+    key_groups:
+    - pgp:
+      - *yubikey
+      age:
+      - *JuliansFramework
+      - *NixOSTesting
+      - *Nextcloud
+      - *IonosVPS
+  - key_groups:
+    - pgp:
+      - *yubikey

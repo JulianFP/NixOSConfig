@@ -14,79 +14,120 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    home-manager-stable = {
+      url = "github:nix-community/home-manager/release-23.05";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
     nur.url = "github:nix-community/NUR";
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
+    sops-nix.url = "github:Mic92/sops-nix";
   };
 
 
   outputs = { self, ... } @ inputs: 
-    with inputs;
-    let
-      system = "x86_64-linux"; #define system for all machines at once
-    in {
-      nixosConfigurations.JuliansFramework = nixpkgs.lib.nixosSystem {
-        pkgs = import nixpkgs {
-          inherit system;
-          config = {
-            allowUnfree = true; #allow Unfree packages
-          };
-          overlays = [
-            nur.overlay
-          ];
-        };
+  with inputs; {
+    nixosConfigurations.JuliansFramework = nixpkgs.lib.nixosSystem rec {
+      system = "x86_64-linux";
+      pkgs = import nixpkgs {
         inherit system;
-        modules = [
-          ./JuliansFramework/configuration.nix
-          lanzaboote.nixosModules.lanzaboote
-          nixos-hardware.nixosModules.framework-12th-gen-intel
-          home-manager.nixosModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              extraSpecialArgs = {
-                #pass nixneovim as additional Arg to home-manager config
-                inherit nixvim;  
-              };
-              users = {
-                julian = import ./JuliansFramework/home-manager/julian/home.nix;
-                root = import ./JuliansFramework/home-manager/root/home.nix;
-              };
+        config = {
+          allowUnfree = true; #allow Unfree packages
+        };
+        overlays = [
+          nur.overlay
+        ];
+      };
+      modules = [
+        #./genericNixOS/systemd-boot.nix
+        ./generic/lanzaboote.nix #(imports lanzaboote module)
+        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
+        ./JuliansFramework/configuration.nix
+        nixos-hardware.nixosModules.framework-12th-gen-intel
+        home-manager.nixosModules.home-manager
+        {
+          home-manager = {
+            useGlobalPkgs = true;
+            useUserPackages = true;
+            extraSpecialArgs = {
+              #pass nixneovim as additional Arg to home-manager config
+              inherit nixvim;  
             };
-          }
-        ];
-      };
-      nixosConfigurations.NixOSTesting = nixpkgs-stable.lib.nixosSystem {
-        pkgs = import nixpkgs-stable {
-          inherit system;
-        };
-        inherit system;
-        modules = [
-          ./NixOSTesting/configuration.nix
-          disko.nixosModules.disko
-        ];
-      };
-      nixosConfigurations.Nextcloud = nixpkgs-stable.lib.nixosSystem {
-        pkgs = import nixpkgs-stable {
-          inherit system;
-        };
-        inherit system;
-        modules = [
-          ./Nextcloud/configuration.nix
-          disko.nixosModules.disko
-        ];
-      };
-      nixosConfigurations.IonosVPS = nixpkgs-stable.lib.nixosSystem {
-        pkgs = import nixpkgs-stable {
-          inherit system;
-        };
-        inherit system;
-        modules = [
-          ./IonosVPS/configuration.nix
-        ];
+            users = {
+              julian = import ./JuliansFramework/home-manager/julian/home.nix;
+              root = import ./JuliansFramework/home-manager/root/home.nix;
+            };
+          };
+        }
+      ];
+      specialArgs = {
+        hostName = "JuliansFramework"; 
+        inherit inputs;
       };
     };
+    nixosConfigurations.blankISO = nixpkgs-stable.lib.nixosSystem rec {
+      system = "x86_64-linux";
+      pkgs = import nixpkgs-stable {
+        inherit system;
+      };
+      modules = [
+        ./generic/server.nix
+        #don't use ./proxmoxVM.nix because ISO does not support disco and doesn't have vmID
+        ./blankISO/configuration.nix 
+      ];
+      specialArgs = {
+        hostName = "blankISO"; 
+        inherit inputs;
+      };
+    };
+    nixosConfigurations.NixOSTesting = nixpkgs-stable.lib.nixosSystem rec {
+      system = "x86_64-linux";
+      pkgs = import nixpkgs-stable {
+        inherit system;
+      };
+      modules = [
+        ./generic/proxmoxVM.nix #requires vmID!
+        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
+        ./NixOSTesting/configuration.nix
+      ];
+      specialArgs = { 
+        hostName = "NixOSTesting"; 
+        vmID = "120";
+        inherit inputs;
+      };
+    };
+    nixosConfigurations.Nextcloud = nixpkgs-stable.lib.nixosSystem rec {
+      system = "x86_64-linux";
+      pkgs = import nixpkgs-stable {
+        inherit system;
+      };
+      modules = [
+        ./generic/proxmoxVM.nix #requires vmID!
+        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
+        ./Nextcloud/configuration.nix
+      ];
+      specialArgs = { 
+        hostName = "Nextcloud"; 
+        vmID = "150";
+        inherit inputs;
+      };
+    };
+    nixosConfigurations.IonosVPS = nixpkgs-stable.lib.nixosSystem rec {
+      system = "x86_64-linux";
+      pkgs = import nixpkgs-stable {
+        inherit system;
+      };
+      modules = [
+        ./generic/server.nix
+        ./generic/nebula.nix
+        ./IonosVPS/configuration.nix
+      ];
+      specialArgs = { 
+        hostName = "IonosVPS"; 
+        inherit inputs;
+      };
+    };
+  };
 }

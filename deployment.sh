@@ -1,16 +1,14 @@
-#!/usr/bin/env bash 
+#! /usr/bin/env nix-shell
+#! nix-shell -i bash --packages git sops
 
-# this script automates deployment into the cloud
-# Req
+# this script automates deployments onto any remote Linux machine (e.g. Proxmox VMs or the cloud)
+# using the deploySops or sops option it can also update sops age keys. For this the script assumes that your sops config is in the root of the git repository and is named .sops.yaml
 
 #change these variables to make this script work for your setup
 githubRepo="JulianFP/LaptopNixOSConfig" #github repo that contains flake config (syntax: '<Github user name>/<repo name>'). Always uses default branch
-#the following variables are only required for the nebula option. You don't have to set them if you don't plan on using it
-luksUSBDevice="/dev/disk/by-uuid/66f96bfc-45f0-4436-81a1-8a07a548a5bb" #path to device which contains nebula crt (should be reproducible, i.e. relient on uuid or label)
-#luksUSBNebulaPath and nebulaFilesPath are not allowed to begin or end with '/', './' or similar
-luksUSBNebulaPath="nebula" #path to directory in which nebula crt is stored relative from root of usb device
-nebulaFilesPath="nebulaDevice" #path to nebula crt and key (without .crt and .key) from root of github repo (both files should have the same name and path except the ending)
-
+githubBranch="sops" #branch that contains flake config
+#the following option is only needed for the deploySops and sops option 
+ageKeyFile="/var/lib/sops-nix/key.txt" #path to ageKeyFile on target machine
 
 
 #define function make error output easier
@@ -19,49 +17,30 @@ echoerr() { echo "$@" 1>&2; }
 help() {
     printf "general usage: ./deployment.sh <option> [...]\n\n"
     printf "usage (option: deploy): ./deployment.sh deploy <flakeHostname> <currentTargetIP> <futureTargetIP>\n\n"
-    printf "usage (option: deployNebula): ./deployment.sh deployNebula <flakeHostname> <currentTargetIP> <futureTargetIP> <nebula name> <nebula ip> <nebula groups>\n\n"
-    printf "usage (option: nebula): ./deployment.sh nebula <currentTargetIP> <nebula name> <nebula ip> <nebula groups>\n\n"
+    printf "usage (option: deploySops): ./deployment.sh deploySops <flakeHostname> <currentTargetIP> <futureTargetIP>\n\n"
+    printf "usage (option: sops): ./deployment.sh sops <flakeHostname> <currentTargetIP>\n\n"
     printf "usage (option: iso): ./deployment.sh iso <flakeHostname>\n\n"
-    echo "option:"
-    echo "   deploy         deployment without nebula using nixos-anywhere"
-    echo "   deployNebula   deployment with nebula using nixos-anywhere"
-    echo "   nebula         configure nebula on existing nixos target (no deploy)"
-    echo "   iso            just builds an iso containing the config without nebula"
-    echo "   Requirements for options deploy and deployNebula:"
-    echo "      - x86_64 VM (possibly others, not tested)"
-    echo "      - root ssh access (with ssh key)"
-    echo "      - configuration for target must be flake with disko and nix-command"
-    echo "      - at least 1.5GB RAM (without swap), OR"
-    echo "        currently booted from nixos live cd (not running on target drive)"
-    echo "   Requirements for option nebula:"
-    echo "      - root ssh access (with ssh key)"
-    printf "      - target machine runs nixos with flake configured at top of this script and has nebula module already setup\n\n"
-    echo "flakeHostname:"
-    echo "   name of target machine used for flake url (the part after the '#' in flake url)"
+    printf "option:\n"
+    printf "   deploy         deployment using nixos-anywhere\n"
+    printf "   deploySops     like deploy but also updates the age key in .sops.yaml and takes care of sops key decryption\n"
+    printf "   sops           does just the sops part of deploySops. Useful for machines that do not fulfill the requirements for deploy/deploySops\n"
+    printf "   iso            just builds an iso containing the config without nebula\n"
+    printf "   Requirements for options deploy and deploySops:\n"
+    printf "      - x86_64 VM (possibly others, not tested)\n"
+    printf "      - root ssh access (with ssh key)\n"
+    printf "      - configuration for target must be flake with disko and nix-command\n"
+    printf "      - at least 1.5GB RAM (without swap), OR\n"
+    printf "        currently booted from nixos live cd (not running on target drive)\n"
+    printf "flakeHostname:\n"
+    printf "   name of target machine used for flake url (the part after the '#' in flake url)\n"
     printf "   for example: NixOSTesting\n\n"
-    echo "currentTargetIP:"
-    echo "   ip address that the target currently has"
+    printf "currentTargetIP:\n"
+    printf "   ip address that the target currently has\n"
     printf "   the ssh server on the target has to accessible over this ip\n\n"
-    echo "futureTargetIP:"
-    echo "   ip address that the target will have when configuration is applied"
-    echo "   useful if configuration specifies ip different from current ip"
-    printf "   will be the same than currentTargetIP in most cases\n\n"
-    echo "nebula name:"
-    printf "   name of device in nebula network\n\n"
-    echo "nebula ip:"
-    printf "   ip of device in nebula network (with prefix length)\n\n"
-    echo "nebula groups:"
-    echo "   groups of device in nebula network"
-    echo "   pass an empty string if you don't want the target to be in any group"
-}
-
-privileges() {
-    # check if the script is run as root
-    if [ "$(whoami)" != "root" ]; then
-        echo "You need to run the script with root privileges. Attempting to raise via sudo:"
-        sudo "${0}" "$@"
-        exit $?
-    fi
+    printf "futureTargetIP:\n"
+    printf "   ip address that the target will have when configuration is applied\n"
+    printf "   useful if configuration specifies ip different from current ip\n"
+    printf "   will be the same than currentTargetIP in most cases\n"
 }
 
 #$1: flakehostname, $2: currentTargetIP, $3: futureTargetIP
@@ -79,7 +58,7 @@ deploy() {
     done
 
     # run nixos-anywhere
-    nix run github:numtide/nixos-anywhere -- --flake "github:$githubRepo#$1" root@$2
+    nix run github:numtide/nixos-anywhere -- --flake "github:$githubRepo/$githubBranch#$1" root@$2
 
     #delete futureTargetIP ssh known_hosts to prevent error messages in terminal
     ssh-keygen -R "$3"
@@ -91,7 +70,59 @@ deploy() {
     done
 
     #git clone nix configuration onto target to enable changing configuration directly on target machine
-    ssh root@$3 -o "StrictHostKeyChecking no" "nix shell nixpkgs#git -c git clone https://github.com/$githubRepo.git /etc/nixos"
+    ssh root@$3 -o "StrictHostKeyChecking no" "nix shell nixpkgs#git -c git clone -b $githubBranch https://github.com/$githubRepo.git /etc/nixos"
+}
+
+#$1: flakehostname, $2: TargetIP
+sopsConfig() {
+    #find free filename for age public key in /tmp
+    agename="ageKey.pub"
+    fileNum=2
+    while ls "/tmp" | grep -q "$agename"; do
+        agename="ageKey-$fileNum.pub"
+        ((++fileNum))
+    done
+
+    #cut public key (without age prefix) out of keyFile and copy it to localhost
+    ssh root@$2 -o "StrictHostKeyChecking no" "awk -F'age|\n' '{print \$2}' $ageKeyFile > $agename"
+    scp -o "StrictHostKeyChecking no" "root@$2:$agename" "/tmp/$agename"
+
+    #find free dirname for tmp directory for github repo
+    gitname="githubRepo"
+    gitNum=2
+    while ls "/tmp" | grep -q "$gitname"; do
+        gitname="githubRepo-$gitNum"
+        ((++gitNum))
+    done
+
+    #clone github repo
+    git clone -b "$githubBranch" "git@github.com:$githubRepo.git" "/tmp/$gitname"
+
+    #check if sops config is already present for this host
+    if cat "/tmp/$gitname/.sops.yaml" | grep -q "&$1"; then
+        #it is: just update the age key
+        sed -i "/&$1/c\\  - &$1 age$(cat /tmp/$agename | sed ':a;N;$!ba;s/\n//g')" "/tmp/$gitname/.sops.yaml"
+    else
+        #it is not: add it and its config 
+        sed -i -e '/&yubikey/a\' -e "  - &$1 age$(cat /tmp/$agename | sed ':a;N;$!ba;s/\n//g')" "/tmp/$gitname/.sops.yaml" #add age key to keys
+        sed -i -e '/- key_groups:/i\' -e "      - *$1" "/tmp/$gitname/.sops.yaml" #add hostname to regex for all general secrets
+        sed -i -e '/secrets\/\[/i\' -e "  - path_regex: ^secrets/$1/.*$\n    key_groups:\n    - pgp:\n      - *yubikey\n      age:\n      - *$1" "/tmp/$gitname/.sops.yaml" #add new path_regex for all keys that should only be decrypted by target
+    fi
+
+    #reencrypt secrets for new age key 
+    sops --config /tmp/$gitname/.sops.yaml updatekeys -y /tmp/$gitname/secrets/general.yaml
+    sops --config /tmp/$gitname/.sops.yaml updatekeys -y /tmp/$gitname/secrets/nebula.yaml
+    ls -1 "/tmp/$gitname/secrets/$1" | sed -e "s/^/\/tmp\/$gitname\/secrets\/$1\//" | xargs -L1 sops --config /tmp/$gitname/.sops.yaml updatekeys -y
+
+    #add changes to git and push them
+    git -C "/tmp/$gitname" add "/tmp/$gitname/*"
+    git -C "/tmp/$gitname" add "/tmp/$gitname/.sops.yaml"
+    git -C "/tmp/$gitname" commit -m "changed age key of $1"
+    git -C "/tmp/$gitname" push origin "$githubBranch"
+
+    #pull changes on target and apply them
+    ssh root@$2 -o "StrictHostKeyChecking no" "nix shell nixpkgs#git -c git -C /etc/nixos pull origin $githubBranch"
+    ssh root@$2 -o "StrictHostKeyChecking no" "nixos-rebuild switch"
 }
 
 #$1 flakehostname
@@ -114,79 +145,27 @@ iso() {
     done
 
     #run generation script and inform user about output file name
-    nix run github:nix-community/nixos-generators -- -f iso -o "$path/$isoname" --flake "github:$githubRepo#$1"
+    nix run github:nix-community/nixos-generators -- -f iso -o "$path/$isoname" --flake "github:$githubRepo/$githubBranch#$1"
     echo "you can find your iso in $path/$isoname"
 }
 
-#$1: currentTargetIP, $2: nebula name, $3: nebula ip, $4: nebula groups
-nebula() {
-    #check if enough parameters are provided
-    if [[ $# < 4 ]]; then
-        echoerr "Missing parameters. use help option to find out how to use this script"
-        exit 1
-    fi
-
-    #get current hostname of target for nebula key name
-    hostname=$(ssh root@$1 -o "StrictHostKeyChecking no" "hostnamectl hostname")
-
-    #create .nebula folder in /root (this will also serve as backup for nebula files)
-    ssh root@$1 -o "StrictHostKeyChecking no" "mkdir /root/.nebula"
-    #generate private/public keypair on target
-    ssh root@$1 -o "StrictHostKeyChecking no" "nix shell nixpkgs#nebula -c nebula-cert keygen -out-key /root/.nebula/$nebulaFilesPath.key -out-pub /root/.nebula/$nebulaFilesPath.pub"
-
-    #wait until usb stick with ca.key is present
-    until [[ -e "$luksUSBDevice" ]]; do 
-        echo "configured usb device not found"
-        read -p "plug in usb device with nebula cert and then press enter"
-    done
-    #unlock and mount usb stick
-    cryptsetup open $luksUSBDevice luksUSBDeviceNebula
-    mount /dev/mapper/luksUSBDeviceNebula /mnt 
-
-    #similar to iso name generation in iso function: find free filename for crt file on usb stick
-    nebname="$hostname"
-    fileNum=2
-    while ls "/mnt/$luksUSBNebulaPath" | grep -q "$nebname"; do
-        nebname="$hostname-$fileNum"
-        ((++fileNum))
-    done
-
-    #copy public key from target machine and sign it locally with ca.key from usb stick
-    scp root@$1:/root/.nebula/$nebulaFilesPath.pub "/mnt/$luksUSBNebulaPath/$nebname.pub"
-    nix shell nixpkgs\#nebula -c nebula-cert sign -ca-crt "/mnt/$luksUSBNebulaPath/ca.crt" -ca-key "/mnt/$luksUSBNebulaPath/ca.key" -in-pub "/mnt/$luksUSBNebulaPath/$nebname.pub" -out-crt "/mnt/$luksUSBNebulaPath/$nebname.crt" -name $2 -ip $3 -groups $4
-
-    #copy crt file to target machine and also copy them into place in /etc/nixos 
-    scp "/mnt/$luksUSBNebulaPath/$nebname.crt" root@$1:/root/.nebula/$nebulaFilesPath.crt
-    ssh root@$1 -o "StrictHostKeyChecking no" "cat /root/.nebula/$nebulaFilesPath.crt > /etc/nixos/$nebulaFilesPath.crt"
-    ssh root@$1 -o "StrictHostKeyChecking no" "cat /root/.nebula/$nebulaFilesPath.key > /etc/nixos/$nebulaFilesPath.key"
-
-    #apply nebula config and configure git to ignore changed keyfiles to prevent them from being overriden or pushed to github
-    ssh root@$1 -o "StrictHostKeyChecking no" "nixos-rebuild switch"
-    ssh root@$1 -o "StrictHostKeyChecking no" "nix shell nixpkgs#git -c sh -c 'cd /etc/nixos && git update-index --skip-worktree $nebulaFilesPath.*'"
-
-    #unmount and lock usb stick again
-    umount /mnt 
-    cryptsetup close /dev/mapper/luksUSBDeviceNebula
-}
+set -e #exit on any kind of error
 
 case $1 in 
     deploy)
-    privileges "$@"
     deploy "$2" "$3" "$4"
     echo "deployment completed"
     exit 0
         ;;
-    deployNebula)
-    privileges "$@"
+    deploySops)
     deploy "$2" "$3" "$4"
-    nebula "$3" "$5" "$6" "$7"
-    echo "deployment with nebula completed"
+    sopsConfig "$2" "$4"
+    echo "deployment with sops completed"
     exit 0
         ;;
-    nebula)
-    privileges "$@"
-    nebula "$2" "$3" "$4" "$5"
-    echo "nebula configured"
+    sops)
+    sopsConfig "$2" "$3"
+    echo "sops setup completed"
     exit 0
         ;;
     iso)

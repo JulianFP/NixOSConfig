@@ -14,15 +14,19 @@
   home.username = "julian";
   home.homeDirectory = "/home/julian";
 
-  # ssh (with yubikey support) stuff
+  # ssh (with yubikey support) stuff and agent forwarding (ssh and gpg)
   programs.ssh = {
     enable = true;
     matchBlocks = {
       "Ionos" = {
         hostname = "82.165.49.241";
-	user = "root";
+	      user = "root";
       };
     };
+    forwardAgent = true;
+    extraConfig = ''
+      Match host * exec "gpg-connect-agent UPDATESTARTUPTTY /bye"
+    '';
   };
   home.file.".ssh/id_rsa.pub" = {
     source = ../../../id_rsa.pub;
@@ -45,6 +49,10 @@
       disable-ccid = true;
       reader-port = "Yubico Yubi";
     };
+    publicKeys = [{
+      source = ../../../gpg_yubikey.asc;
+      trust = 5;
+    }];
   };
   systemd.user.sessionVariables = {
     SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/gnupg/S.gpg-agent.ssh";
@@ -186,6 +194,9 @@
       style=kvantum-dark
     '';
     "kdeglobals".text = ''
+      [General]
+      TerminalApplication=alacritty
+
       [Colors:View]
       BackgroundNormal=#272727
 
@@ -232,7 +243,7 @@ Categories=Network;InstantMessaging;Chat;
   [Desktop Entry]
   Categories=Network;InstantMessaging
   Comment=A Discord and Fosscord electron-based client implemented without Discord API
-  Exec=webcord --in-process-gpu
+  Exec=webcord --safe-mode
   Icon=webcord
   Name=WebCord
   Type=Application

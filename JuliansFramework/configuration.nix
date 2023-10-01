@@ -2,19 +2,13 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running `nixos-help`).
 
-{ config, lib, pkgs, inputs, ... }:
+{ lib, pkgs, ... }:
 
 {
   imports =
     [ 
       ./hardware-configuration.nix # Include the results of the hardware scan.
       ./networking.nix # import networking settings
-
-      # choose between the following (exactly one has to be commented out)
-      ./lanzaboote.nix # import settings for secureboot enabled bootloader
-      #./systemd-boot.nix # import settings for systems without secureboot
-
-      ./nebula.nix # import settings for nebula (comment out if keyfiles not present yet)
     ];
 
   # config for bootloader and secure boot (refer to nixos.wiki/wiki/Secure_Boot)
@@ -116,7 +110,10 @@
   xdg.portal.enable = true; #enable xdg desktop integration (mainly for flatpaks)
   services.hardware.bolt.enable = true; #enable Thunderbolt Device management
   programs.partition-manager.enable = true; #enable kde partitionmanager (can't be done in HM, requires services)
-  programs.steam.enable = true;
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true;
+  };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
