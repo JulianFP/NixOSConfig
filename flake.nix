@@ -144,6 +144,7 @@
       ];
       specialArgs = { 
         hostName = "LocalProxy"; 
+        vmID = "130";
         edge = false;
         inherit inputs;
       };
