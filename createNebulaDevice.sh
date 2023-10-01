@@ -3,7 +3,7 @@
 
 # this script automates creation nebula certificates for a device
 # it also adds these certificates automatically to the nix configuration and pushes them to remote origin
-# this script does NOT adjust .sops.yaml file. After you run this script you either have to edit it manually or use the deployment.sh script with the deploySops option
+# this script does NOT adjust .sops.yaml file. After you run this script you either have to edit it manually or use the deployment.sh script with the deploySops or sops option
 # furthermore, this script assumes that you put your sops secrets in the directory secrets and puts the host-specific nebula key into secrets/$1/nebula.yaml
 
 #change these variables to make this script work for your setup

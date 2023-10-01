@@ -1,14 +1,13 @@
 #! /usr/bin/env nix-shell
 #! nix-shell -i bash --packages git sops
 
-# this script automates deployment into the cloud
-# for the deploy and deploySops options you need to be able to pull/push from/to the github repository below from the server (e.g. setup ssh agent forwarding for this)
-# it can also update sops age keys after doing that. For this the script assumes that your sops config is in the root of the git repository and is named .sops.yaml
+# this script automates deployments onto any remote Linux machine (e.g. Proxmox VMs or the cloud)
+# using the deploySops or sops option it can also update sops age keys. For this the script assumes that your sops config is in the root of the git repository and is named .sops.yaml
 
 #change these variables to make this script work for your setup
 githubRepo="JulianFP/LaptopNixOSConfig" #github repo that contains flake config (syntax: '<Github user name>/<repo name>'). Always uses default branch
 githubBranch="sops" #branch that contains flake config
-#the following option is only needed for the deploySops option 
+#the following option is only needed for the deploySops and sops option 
 ageKeyFile="/var/lib/sops-nix/key.txt" #path to ageKeyFile on target machine
 
 
