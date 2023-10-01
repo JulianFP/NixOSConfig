@@ -1,10 +1,16 @@
-{ ... }:
+{ lib, edge, ... }:
 
+# This is the setup for all my (reverse) proxies. Currently I have one in the cloud that is exposed to the internet (IonosVPS) and one locally that is not (LocalProxy)
+# for the first one edge is set, for the second not. The first one syncs ssl certs to the second one
 {
-#setup acme for let's encrypt validation
-security.acme = {
+#setup acme for let's encrypt validation if this is on edge
+security.acme = lib.mkIf edge {
   acceptTerms = true;
   defaults.email = "admin@partanengroup.de";
+  defaults.postRun = ''
+    scp -r . root@48.42.1.130:/var/lib/acme/
+    ssh root@48.42.1.130 "chown -R acme:nginx /var/lib/acme/*"
+  '';
 };
 
 #reverse proxy config
@@ -33,7 +39,8 @@ security.acme = {
 
     #setup nextcloud proxy host
     virtualHosts."test.partanengroup.de" = {
-      enableACME = true;
+      enableACME = lib.mkIf edge true;
+      useACMEHost = lib.mkIf (!edge) "test.partanengroup.de";
       forceSSL = true;
       http2 = true;
       locations."/" = {
@@ -48,6 +55,14 @@ security.acme = {
         proxyPass = "http://48.42.1.150:80/remote.php/dav";
         proxyWebsockets = true;
       };
+    };
+    #www redirect
+    virtualHosts."www.test.partanengroup.de" = {
+      enableACME = lib.mkIf edge true;
+      useACMEHost = lib.mkIf (!edge) "www.test.partanengroup.de";
+      forceSSL = true;
+      http2 = true;
+      globalRedirect = "test.partanengroup.de";
     };
   };
 

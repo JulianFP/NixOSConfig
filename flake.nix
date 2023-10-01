@@ -122,10 +122,29 @@
       modules = [
         ./generic/server.nix
         ./generic/nebula.nix
+        ./generic/proxy.nix #requires edge!
         ./IonosVPS/configuration.nix
       ];
       specialArgs = { 
         hostName = "IonosVPS"; 
+        edge = true;
+        inherit inputs;
+      };
+    };
+    nixosConfigurations.LocalProxy = nixpkgs-stable.lib.nixosSystem rec {
+      system = "x86_64-linux";
+      pkgs = import nixpkgs-stable {
+        inherit system;
+      };
+      modules = [
+        ./generic/proxmoxVM.nix
+        ./generic/nebula.nix
+        ./generic/proxy.nix #requires edge!
+        ./LocalProxy/configuration.nix
+      ];
+      specialArgs = { 
+        hostName = "LocalProxy"; 
+        edge = false;
         inherit inputs;
       };
     };
