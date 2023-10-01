@@ -59,7 +59,7 @@ exec-once=[workspace 1 silent] thunderbird
 exec-once=[workspace 1 silent] sleep 1 && keepassxc
 exec-once=[workspace 1 silent] sleep 1 && signal-desktop --no-sandbox --start-in-tray
 exec-once=[workspace 1 silent] sleep 1 && nextcloud
-exec-once=[silent] sleep 1 && webcord -m --in-process-gpu
+exec-once=[silent] sleep 1 && webcord -m --safe-mode
 exec-once=[silent] xwaylandvideobridge
 
 # xwayland screen sharing
