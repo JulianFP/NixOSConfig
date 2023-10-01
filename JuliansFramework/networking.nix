@@ -1,8 +1,8 @@
-{ ... }:
+{ hostName, ... }:
 
 {
   networking = {
-    hostName = "JuliansFramework"; # Define your hostname.
+    hostName = hostName; # Define your hostname.
     networkmanager.enable = true;  # Easiest to use and most distros use this by default.
 
     # rpfilter allow Wireguard traffic (see https://nixos.wiki/wiki/WireGuard#Setting_up_WireGuard_with_NetworkManager)
