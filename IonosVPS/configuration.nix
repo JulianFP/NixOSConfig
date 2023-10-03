@@ -34,9 +34,13 @@
           programs.ssh = {
             enable = true;
             userKnownHostsFile = "~/.ssh/known_hosts ~/.ssh/known_hostsHM";
-          };
-          home.file.".ssh/IonosVPS" = {
-            source = config.sops.secrets."openssh/IonosVPS".path;
+            matchBlocks = {
+              "LocalProxy" = {
+                hostname = "48.42.1.130";
+                user = "root";
+                identityFile = config.sops.secrets."openssh/IonosVPS".path;
+              };
+            };
           };
           home.file.".ssh/known_hostsHM" = {
             text = "48.42.1.130 " + builtins.readFile ../publicKeys/LocalProxy-host.pub;

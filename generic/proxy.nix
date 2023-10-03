@@ -7,8 +7,9 @@
 security.acme = lib.mkIf edge {
   acceptTerms = true;
   defaults.email = "admin@partanengroup.de";
+  #ssh matchBlock for LocalProxy has to be setup on edge server
   defaults.postRun = ''
-    scp -r . root@48.42.1.130:/var/lib/acme/
+    scp -r . LocalProxy:/var/lib/acme/
     ssh root@48.42.1.130 "chown -R acme:nginx /var/lib/acme/*"
   '';
 };
