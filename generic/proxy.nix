@@ -40,7 +40,9 @@ security.acme = lib.mkIf edge {
     #setup nextcloud proxy host
     virtualHosts."test.partanengroup.de" = {
       enableACME = lib.mkIf edge true;
-      useACMEHost = lib.mkIf (!edge) "test.partanengroup.de";
+      sslCertificate = lib.mkIf (!edge) "/var/lib/acme/test.partanengroup.de/fullchain.pem";
+      sslCertificateKey = lib.mkIf (!edge) "/var/lib/acme/test.partanengroup.de/key.pem";
+      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/acme/test.partanengroup.de/chain.pem";
       forceSSL = true;
       http2 = true;
       locations."/" = {
@@ -59,7 +61,9 @@ security.acme = lib.mkIf edge {
     #www redirect
     virtualHosts."www.test.partanengroup.de" = {
       enableACME = lib.mkIf edge true;
-      useACMEHost = lib.mkIf (!edge) "www.test.partanengroup.de";
+      sslCertificate = lib.mkIf (!edge) "/var/lib/acme/www.test.partanengroup.de/fullchain.pem";
+      sslCertificateKey = lib.mkIf (!edge) "/var/lib/acme/www.test.partanengroup.de/key.pem";
+      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/acme/www.test.partanengroup.de/chain.pem";
       forceSSL = true;
       http2 = true;
       globalRedirect = "test.partanengroup.de";

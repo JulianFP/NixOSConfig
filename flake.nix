@@ -139,7 +139,7 @@
       modules = [
         ./generic/proxmoxVM.nix
         ./generic/nebula.nix
-        #./generic/proxy.nix #requires edge!
+        ./generic/proxy.nix #requires edge!
         ./LocalProxy/configuration.nix
       ];
       specialArgs = { 

@@ -29,7 +29,7 @@
     '';
   };
   home.file.".ssh/id_rsa.pub" = {
-    source = ../../../id_rsa.pub;
+    source = ../../../publicKeys/id_rsa.pub;
   };
   services.gpg-agent = {
     enable = true;
@@ -50,7 +50,7 @@
       reader-port = "Yubico Yubi";
     };
     publicKeys = [{
-      source = ../../../gpg_yubikey.asc;
+      source = ../../../publicKeys/gpg_yubikey.asc;
       trust = 5;
     }];
   };

@@ -5,7 +5,6 @@
   sops.secrets."openssh/LocalProxy" = {
     sopsFile = ../secrets/LocalProxy/ssh.yaml;
   };
-  sops.secrets."openssh/IonosVPS.pub" = {};
   services.openssh.hostKeys = [
     {
       path =  config.sops.secrets."openssh/LocalProxy".path;
@@ -13,7 +12,7 @@
     }
   ];
   users.users.root.openssh.authorizedKeys.keyFiles = [
-    config.sops.secrets."openssh/IonosVPS.pub".path
+    ../publicKeys/IonosVPS.pub
   ];
 
 

@@ -88,13 +88,14 @@
 
   # setup zsh and define it as default shell for every user
   programs.zsh.enable = true;
+  programs.adb.enable = true;
   environment.shells = with pkgs; [ zsh ];
   users.defaultUserShell = pkgs.zsh;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.julian = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" ]; # Enable sudo and network settings for user
+    extraGroups = [ "wheel" "networkmanager" "adbusers" ]; # Enable sudo, network settings and adb for user
     packages = with pkgs; [
       rofi-wayland
     ];
