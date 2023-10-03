@@ -16,7 +16,7 @@
     '';
   };
   users.users.root.openssh.authorizedKeys.keyFiles = [
-    ../id_rsa.pub
+    ../publicKeys/id_rsa.pub
   ];
 
   networking.hostName = hostName; #define hostname
