@@ -1,4 +1,4 @@
-{ config, ... }: 
+{ config, inputs, ... }: 
 
 {
   boot.loader.grub.device = "/dev/vda";
@@ -11,17 +11,6 @@
   boot.tmp.cleanOnBoot = true;
   zramSwap.enable = true;
 
-  #openssh host key
-  sops.secrets."openssh/IonosVPS" = {
-    sopsFile = ../secrets/IonosVPS/ssh.yaml;
-  };
-  services.openssh.hostKeys = [
-    {
-      path =  config.sops.secrets."openssh/IonosVPS".path;
-      type = "ed25519";
-    }
-  ];
-
   #nebula firewall
   services.nebula.networks."serverNetwork".firewall.inbound = [
     {
@@ -30,4 +19,34 @@
       group = "admin";
     }
   ];
+
+  #openssh client key config and add LocalProxy to known_hosts
+  sops.secrets."openssh/IonosVPS" = {
+    sopsFile = ../secrets/IonosVPS/ssh.yaml;
+  };
+  imports = [
+    inputs.home-manager-stable.nixosModules.home-manager 
+    {
+      home-manager = {
+        useGlobalPkgs = true;
+        useUserPackages = true;
+        users.root = {
+          programs.ssh = {
+            enable = true;
+            userKnownHostsFile = "~/.ssh/known_hosts ~/.ssh/known_hostsHM";
+          };
+          home.file.".ssh/IonosVPS" = {
+            source = config.sops.secrets."openssh/IonosVPS".path;
+          };
+          home.file.".ssh/known_hostsHM" = {
+            text = "48.42.1.130 " + builtins.readFile ../publicKeys/LocalProxy-host.pub;
+          };
+
+          home.stateVersion = "23.05";
+          programs.home-manager.enable = true;
+        };
+      };
+    }
+  ];
+
 }

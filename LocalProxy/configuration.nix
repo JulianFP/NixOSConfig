@@ -23,6 +23,11 @@
         proto = "tcp";
         group = "admin";
       }
+      {
+        port = "22";
+        proto = "tcp";
+        group = "edge";
+      }
     ];
   };
 }
