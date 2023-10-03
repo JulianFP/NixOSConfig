@@ -1,7 +1,10 @@
-{ lib, edge, ... }:
+{ lib, pkgs, edge, ... }:
 
 # This is the setup for all my (reverse) proxies. Currently I have one in the cloud that is exposed to the internet (IonosVPS) and one locally that is not (LocalProxy)
 # for the first one edge is set, for the second not. The first one syncs ssl certs to the second one
+let 
+  subnet = if edge then "192.168.3." else "48.42.1";
+in
 {
 #setup acme for let's encrypt validation if this is on edge
 security.acme = lib.mkIf edge {
@@ -9,8 +12,10 @@ security.acme = lib.mkIf edge {
   defaults.email = "admin@partanengroup.de";
   #ssh matchBlock for LocalProxy has to be setup on edge server
   defaults.postRun = ''
-    scp -r . LocalProxy:/var/lib/acme/
-    ssh root@48.42.1.130 "chown -R acme:nginx /var/lib/acme/*"
+    ${pkgs.openssh}/bin/ssh LocalProxy "mkdir -p /var/lib/sslCerts"
+    ${pkgs.openssh}/bin/scp -r $(pwd) LocalProxy:/var/lib/sslCerts/
+    ${pkgs.openssh}/bin/ssh LocalProxy "chown -R nginx:nginx /var/lib/sslCerts/*"
+    ${pkgs.openssh}/bin/ssh LocalProxy "systemctl restart nginx.service"
   '';
 };
 
@@ -41,30 +46,30 @@ security.acme = lib.mkIf edge {
     #setup nextcloud proxy host
     virtualHosts."test.partanengroup.de" = {
       enableACME = lib.mkIf edge true;
-      sslCertificate = lib.mkIf (!edge) "/var/lib/acme/test.partanengroup.de/fullchain.pem";
-      sslCertificateKey = lib.mkIf (!edge) "/var/lib/acme/test.partanengroup.de/key.pem";
-      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/acme/test.partanengroup.de/chain.pem";
+      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/test.partanengroup.de/fullchain.pem";
+      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/test.partanengroup.de/key.pem";
+      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/test.partanengroup.de/chain.pem";
       forceSSL = true;
       http2 = true;
       locations."/" = {
-        proxyPass = "http://48.42.1.150:80";
+        proxyPass = "http://" + subnet + "150:80";
         proxyWebsockets = true;
       };
       locations."/.well-known/carddav" = {
-        proxyPass = "http://48.42.1.150:80/remote.php/dav";
+        proxyPass = "http://" + subnet + "150:80/remote.php/dav";
         proxyWebsockets = true;
       };
       locations."/.well-known/caldav" = {
-        proxyPass = "http://48.42.1.150:80/remote.php/dav";
+        proxyPass = "http://" + subnet + "150:80/remote.php/dav";
         proxyWebsockets = true;
       };
     };
     #www redirect
     virtualHosts."www.test.partanengroup.de" = {
       enableACME = lib.mkIf edge true;
-      sslCertificate = lib.mkIf (!edge) "/var/lib/acme/www.test.partanengroup.de/fullchain.pem";
-      sslCertificateKey = lib.mkIf (!edge) "/var/lib/acme/www.test.partanengroup.de/key.pem";
-      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/acme/www.test.partanengroup.de/chain.pem";
+      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.test.partanengroup.de/fullchain.pem";
+      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/www.test.partanengroup.de/key.pem";
+      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.test.partanengroup.de/chain.pem";
       forceSSL = true;
       http2 = true;
       globalRedirect = "test.partanengroup.de";
