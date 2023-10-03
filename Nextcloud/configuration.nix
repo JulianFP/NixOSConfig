@@ -61,7 +61,7 @@
     #setup reverse proxy config
     config = {
       trustedProxies = [
-        "192.168.3.100"
+        "192.168.3.130"
         "48.42.0.5"
       ];
       overwriteProtocol = "https";
