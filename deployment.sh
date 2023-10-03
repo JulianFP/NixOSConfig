@@ -123,6 +123,13 @@ sopsConfig() {
     #pull changes on target and apply them
     ssh root@$2 -o "StrictHostKeyChecking no" "nix shell nixpkgs#git -c git -C /etc/nixos pull origin $githubBranch"
     ssh root@$2 -o "StrictHostKeyChecking no" "nixos-rebuild switch"
+
+    #reboot machine and wait until it becomes reachable again
+    ssh root@$2 -o "StrictHostKeyChecking no" "reboot"
+    echo "wait for vm to become reachable after restart again"
+    until ssh -o "StrictHostKeyChecking no" root@$2 true >/dev/null 2>&1; do 
+        sleep 1 
+    done
 }
 
 #$1 flakehostname
