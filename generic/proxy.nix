@@ -3,7 +3,7 @@
 # This is the setup for all my (reverse) proxies. Currently I have one in the cloud that is exposed to the internet (IonosVPS) and one locally that is not (LocalProxy)
 # for the first one edge is set, for the second not. The first one syncs ssl certs to the second one
 let 
-  subnet = if edge then "192.168.3." else "48.42.1";
+  subnet = if edge then "48.42.1." else "192.168.3.";
 in
 {
 #setup acme for let's encrypt validation if this is on edge
