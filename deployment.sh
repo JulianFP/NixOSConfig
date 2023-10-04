@@ -20,11 +20,13 @@ help() {
     printf "usage (option: deploySops): ./deployment.sh deploySops <flakeHostname> <currentTargetIP> <futureTargetIP>\n\n"
     printf "usage (option: sops): ./deployment.sh sops <flakeHostname> <currentTargetIP>\n\n"
     printf "usage (option: iso): ./deployment.sh iso <flakeHostname>\n\n"
+    printf "usage (option: lxc): ./deployment.sh lxc <flakeHostname>\n\n"
     printf "option:\n"
     printf "   deploy         deployment using nixos-anywhere\n"
     printf "   deploySops     like deploy but also updates the age key in .sops.yaml and takes care of sops key decryption\n"
     printf "   sops           does just the sops part of deploySops. Useful for machines that do not fulfill the requirements for deploy/deploySops\n"
-    printf "   iso            just builds an iso containing the config without nebula\n"
+    printf "   iso            just builds an iso containing the config\n"
+    printf "   lxc            just builds a Proxmox LXC template containing the config\n"
     printf "   Requirements for options deploy and deploySops:\n"
     printf "      - x86_64 VM (possibly others, not tested)\n"
     printf "      - root ssh access (with ssh key)\n"
@@ -141,7 +143,7 @@ iso() {
     fi
 
     #generate iso name for symlink. This takes existing files into consideration:
-    #if file "$2.iso" already exists, it will append a number
+    #if file "$1.iso" already exists, it will append a number
     #this number will get larger as long as it needs to in order to find an unused file name
     isoname="$1.iso"
     path=$(pwd)
@@ -154,6 +156,30 @@ iso() {
     #run generation script and inform user about output file name
     nix run github:nix-community/nixos-generators -- -f iso -o "$path/$isoname" --flake "github:$githubRepo/$githubBranch#$1"
     echo "you can find your iso in $path/$isoname"
+}
+
+#$1 flakehostname
+lxc() {
+    #check if enough parameters are provided
+    if [[ $# < 1 ]]; then
+        echoerr "Missing parameters. use help option to find out how to use this script"
+        exit 1
+    fi
+
+    #generate lxc name for symlink. This takes existing files into consideration:
+    #if file "$1.tar.xz" already exists, it will append a number
+    #this number will get larger as long as it needs to in order to find an unused file name
+    templateName="$1.tar.xz"
+    path=$(pwd)
+    fileNum=2
+    while ls $path | grep -q "$templateName"; do
+        templateName="$1-$fileNum.tar.xz"
+        ((++fileNum))
+    done
+
+    #run generation script and inform user about output file name
+    nix run github:nix-community/nixos-generators -- -f proxmox-lxc -o "$path/$templateName" --flake "github:$githubRepo/$githubBranch#$1"
+    echo "you can find your Proxmox LXC template in $path/$templateName"
 }
 
 set -e #exit on any kind of error
@@ -177,6 +203,10 @@ case $1 in
         ;;
     iso)
     iso "$2"
+    exit 0
+        ;;
+    lxc)
+    lxc "$2"
     exit 0
         ;;
     *)

@@ -137,14 +137,13 @@
         inherit system;
       };
       modules = [
-        ./generic/proxmoxVM.nix
+        ./generic/proxmoxLXC.nix
         ./generic/nebula.nix
         ./generic/proxy.nix #requires edge!
         ./LocalProxy/configuration.nix
       ];
       specialArgs = { 
         hostName = "LocalProxy"; 
-        vmID = "130";
         edge = false;
         inherit inputs;
       };
