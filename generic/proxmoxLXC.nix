@@ -1,4 +1,4 @@
-{ modulesPath, vmID, ... }:
+{ lib, modulesPath, vmID, ... }:
 
 {
   imports = [
@@ -16,6 +16,7 @@
   sops.useTmpfs = true;
 
   #networking config 
+  networking.useHostResolvConf = lib.mkForce false;
   systemd.network = {
     enable = true;
     networks."10-serverLAN" = {
