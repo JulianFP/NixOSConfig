@@ -25,6 +25,7 @@
     sopsFile = ../secrets/IonosVPS/ssh.yaml;
   };
   imports = [
+    ./dnat.nix #for dnat config
     inputs.home-manager-stable.nixosModules.home-manager 
     {
       home-manager = {
