@@ -89,7 +89,6 @@
       };
       modules = [
         ./generic/proxmoxVM.nix #requires vmID!
-        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./NixOSTesting/configuration.nix
       ];
       specialArgs = { 
@@ -105,7 +104,6 @@
       };
       modules = [
         ./generic/proxmoxVM.nix #requires vmID!
-        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./Nextcloud/configuration.nix
       ];
       specialArgs = { 
@@ -121,7 +119,6 @@
       };
       modules = [
         ./generic/server.nix
-        ./generic/nebula.nix
         ./generic/proxy.nix #requires edge!
         ./IonosVPS/configuration.nix
       ];
@@ -138,12 +135,12 @@
       };
       modules = [
         ./generic/proxmoxLXC.nix
-        ./generic/nebula.nix
         ./generic/proxy.nix #requires edge!
         ./LocalProxy/configuration.nix
       ];
       specialArgs = { 
         hostName = "LocalProxy"; 
+        vmID = "130";
         edge = false;
         inherit inputs;
       };

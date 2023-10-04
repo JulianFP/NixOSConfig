@@ -3,6 +3,7 @@
 {
   imports =
     [ # Include the results of the hardware scan.
+      ./nebula.nix
       (modulesPath + "/installer/scan/not-detected.nix")
       (modulesPath + "/profiles/qemu-guest.nix")
     ];

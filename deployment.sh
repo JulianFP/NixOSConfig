@@ -77,6 +77,19 @@ deploy() {
 
 #$1: flakehostname, $2: TargetIP
 sopsConfig() {
+    #check if device is reachable over ssh and wait until user fixed it
+    until ssh -o "StrictHostKeyChecking no" root@$2 true >/dev/null 2>&1; do 
+        echo "couldn't connect to target machines root user over ssh."
+        read -p "check ssh config and then press enter to try again"
+    done
+
+    if ssh root@$2 -o "StrictHostKeyChecking no" "ls /etc/nixos" | grep -q "flake.nix"; then
+        echo "configuration already present in /etc/nixos - continuing"
+    else 
+        #git clone nix configuration onto target to enable changing configuration directly on target machine
+        ssh root@$2 -o "StrictHostKeyChecking no" "nix shell nixpkgs#git -c git clone -b $githubBranch https://github.com/$githubRepo.git /etc/nixos"
+    fi
+
     #find free filename for age public key in /tmp
     agename="ageKey.pub"
     fileNum=2
