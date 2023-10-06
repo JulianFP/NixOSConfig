@@ -60,36 +60,36 @@
     userCommands = {
       "CreateCMakeFile" = {
         command = "execute '!bash ~/.systemScripts/createCMakeFile.sh ' . g:folder . ' ' . g:file";
-	bang = true;
-	desc = "create CMakeFile and vimspector file for current project";
+        bang = true;
+        desc = "create CMakeFile and vimspector file for current project";
       };
       "BuildDebug" = {
         command = "!mkdir buildDebug -p && cd buildDebug && cmake -DCMAKE_BUILD_TYPE=Debug .. && make -j8";
-	bang = true;
-	desc = "builds the current project in debug mode (CreateCMakeFile has to run first)";
+        bang = true;
+        desc = "builds the current project in debug mode (CreateCMakeFile has to run first)";
       };
       "BuildRelease" = {
         command = "!mkdir buildRelease -p && cd buildRelease && cmake -DCMAKE_BUILD_TYPE=Release .. && make -j8";
-	bang = true;
-	desc = "builds the current project in release mode (CreateCMakeFile has to run first)";
+        bang = true;
+        desc = "builds the current project in release mode (CreateCMakeFile has to run first)";
       };
       "RunDebug" = {
-	command = "execute ':silent !alacritty --hold -e ~/.systemScripts/launch.sh ' . g:dir . '/buildDebug/' . g:folder";
-	bang = true;
-	desc = "runs debug binary of the current project (BuildDebug has to run first)";
+        command = "execute ':silent !alacritty --hold -e ~/.systemScripts/launch.sh ' . g:dir . '/buildDebug/' . g:folder";
+        bang = true;
+        desc = "runs debug binary of the current project (BuildDebug has to run first)";
       };
       "RunRelease" = {
         command = "execute ':silent !alacritty --hold -e ~/.systemScripts/launch.sh ' . g:dir . '/buildRelease/' . g:folder";
-	bang = true;
-	desc = "runs release binary of the current project (BuildRelease has to run first)";
+        bang = true;
+        desc = "runs release binary of the current project (BuildRelease has to run first)";
       };
     };
 
     autoCmd = [
       {	#change indentation for .nix files
         event = [ 
-	  "BufEnter"
-	  "BufWinEnter"
+          "BufEnter"
+          "BufWinEnter"
         ];
         pattern = "*.nix";	#set tabstop of 2 for nix files
         # Or use `vimCallback` with a vimscript function name
@@ -98,104 +98,105 @@
       }
     ];
 
-    maps = {
-      # for normal,visual,select,operator-pending modes (map)
-      normalVisualOp = {
-        # set window navigation keys
-        "<c-j>" = "'<c-w>j'";
-	"<c-k>" = "'<c-w>k'";
-	"<c-h>" = "'<c-w>h'";
-	"<c-l>" = "'<c-w>l'";
+    keymaps = [
+      #mode = "": for normal,visual,select,operator-pending modes (map)
+      #mode = "n": for normal mode
+      #mode = "i": for insert mode
 
-	# for luasnips
-        "<c-w>" = {
-	  silent = true;
-	  action = "<cmd>lua require('luasnip').jump(1)<Cr>";
-	};
-        "<c-b>" = {
-	  silent = true;
-	  action = "<cmd>lua require('luasnip').jump(-1)<Cr>";
-	};
-	"<c-n>" = {
-	  silent = true;
-	  action = "luasnip#choice_active() ? '<Plug>luasnip-next-choice'";
-	};
-      };
+      # set window navigation keys
+      {
+        mode = "";
+        key = "<c-j>";
+        action = "<c-w>j";
+      }
+      {
+        mode = "";
+        key = "<c-k>";
+        action = "<c-w>h";
+      }
+      {
+        mode = "";
+        key = "<c-l>";
+        action = "<c-w>l";
+      }
 
-      # for insert mode
-      insert = {
-        # for luasnips
-        "<c-w>" = {
-	  silent = true;
-	  action = "<cmd>lua require('luasnip').jump(1)<Cr>";
-	};
-        "<c-b>" = {
-	  silent = true;
-	  action = "<cmd>lua require('luasnip').jump(-1)<Cr>";
-	};
-	"<c-n>" = {
-	  silent = true;
-	  action = "luasnip#choice_active() ? '<Plug>luasnip-next-choice'";
-	};
-      };
+      #for luasnips
+      { 
+        mode = [
+          ""
+          "i"
+        ];
+        key = "<c-w>";
+        action = "<cmd>lua require('luasnip').jump(1)<Cr>";
+        options.silent = true;
+      }
+      { 
+        mode = [
+          ""
+          "i"
+        ];
+        key = "<c-b>";
+        action = "<cmd>lua require('luasnip').jump(-1)<Cr>";
+        options.silent = true;
+      }
+      { 
+        mode = [
+          ""
+          "i"
+        ];
+        key = "<c-n>";
+        action = "luasnip#choice_active() ? '<Plug>luasnip-next-choice'";
+        options.silent = true;
+      }
 
-      # for normal mode
-      normal = {
-        #for custom build and run
-        "<Leader>bc" = ":CreateCMakeFile<CR>";
-        "<Leader>bd" = ":BuildDebug<CR>";
-        "<Leader>br" = ":BuildRelease<CR>";
-        "<Leader>rd" = ":RunDebug<CR>";
-        "<Leader>rr" = ":RunRelease<CR>";
-
-	#for vimspector
-	/*
-	"<LocalLeader>c" = "<Plug>VimspectorContinue";
-	"<LocalLeader>q" = ":call vimspector#Reset()<CR>";
-	"<LocalLeader>r" = "<Plug>VimspectorRestart";
-	"<LocalLeader>p" = "<Plug>VimspectorPause";
-	"<LocalLeader>b" = "<Plug>VimspectorToggleBreakpoint";
-	"<LocalLeader>o" = "<Plug>VimspectorToggleConditionalBreakpoint";
-	"<LocalLeader>h" = "<Plug>VimspectorRunToCursor";
-	"<LocalLeader>n" = "<Plug>VimspectorStepOver";
-	"<LocalLeader>s" = "<Plug>VimspectorStepInto";
-	"<LocalLeader>f" = "<Plug>VimspectorStepOut";
-	"<LocalLeader>e" = "<Plug>VimspectorBalloonEval";
-	"<LocalLeader>u" = "<Plug>VimspectorUpFrame";
-	"<LocalLeader>d" = "<Plug>VimspectorDownFrame";
-	"<LocalLeader>B" = "<Plug>VimspectorBreakpoints";
-	"<LocalLeader>D" = "<Plug>VimspectorDisassemble";
-	"<LocalLeader>t" = "<Plug>VimspectorShowOutput";
-	*/
-      };
-
-      # for visual mode
-      visual = {
-        # for vimspector
-	#"<LocalLeader>e" = "<Plug>VimspectorBalloonEval";
-      };
-    };
+      #for custom build and run
+      {
+        mode = "n";
+        key = "<Leader>bc";
+        action = ":CreateCMakeFile<CR>";
+      }
+      {
+        mode = "n";
+        key = "<Leader>bd";
+        action = ":BuildDebug<CR>";
+      }
+      {
+        mode = "n";
+        key = "<Leader>br";
+        action = ":BuildRelease<CR>";
+      }
+      {
+        mode = "n";
+        key = "<Leader>rd";
+        action = ":RunDebug<CR>";
+      }
+      {
+        mode = "n";
+        key = "<Leader>rr";
+        action = ":RunRelease<CR>";
+      }
+    ];
 
     plugins = {
       lualine = {
         enable = true;
-	theme = "gruvbox";
+	      theme = "gruvbox";
       };
 
       luasnip = {
         enable = true;
-	fromVscode = [
-	  {
-	    include = [
-	      "bash"
-	      "c"
-	      "cpp"
-	      "python"
-	      "nix"
-	      "latex"
-	    ];
-	  }
-	];
+	      fromVscode = [
+          {
+            include = [
+              "bash"
+              "c"
+              "cpp"
+              "python"
+              "nix"
+              "latex"
+            ];
+          }
+	      ];
       };
       indent-blankline.enable = true;
       nvim-autopairs.enable = true;
@@ -203,33 +204,32 @@
 
       lsp = {
         enable = true;
-	servers = {
-	  bashls.enable = true;	#lsp server for Bash
-	  clangd.enable = true; #lsp server for C/C++
-	  pyright.enable = true;#lsp server for Python
-	  nil_ls.enable = true;	#lsp server for Nix
-	  texlab.enable = true; #lsp Server for LaTeX
-	};
+        servers = {
+          bashls.enable = true;	#lsp server for Bash
+          clangd.enable = true; #lsp server for C/C++
+          pyright.enable = true;#lsp server for Python
+          nil_ls.enable = true;	#lsp server for Nix
+          texlab.enable = true; #lsp Server for LaTeX
+        };
       };
       nvim-cmp = {
         enable = true;
-	mapping = {
-	  "<CR>" = "cmp.mapping.confirm({select = true})";
-	  "<Tab>" = {
-	    modes = [ "i" "s" ];
-	    action = ''
-	      function(fallback)
-		if cmp.visible() then
-		  cmp.select_next_item()
-		else
-		  fallback()
-		end
-	      end
-	    '';
-	  };
-	};
-	snippet.expand = "luasnip";
-	sources = [
+        mapping = {
+          "<Tab>" = {
+            modes = [ "i" "s" ];
+            action = ''
+              function(fallback)
+                if cmp.visible() then
+                  cmp.select_next_item()
+                else
+                  fallback()
+                end
+              end
+            '';
+          };
+        };
+        snippet.expand = "luasnip";
+        sources = [
           { name = "nvim_lsp"; }
           { name = "luasnip"; } #For luasnip users.
           { name = "path"; }
