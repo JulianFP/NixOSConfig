@@ -1,4 +1,4 @@
-{ lib, modulesPath, vmID, ... }:
+{ modulesPath, vmID, ... }:
 
 {
   imports = [
@@ -12,25 +12,25 @@
     manageNetwork = true;
   };
 
-  #use tempfs instead of ramfs because lxc has no /boot
-  sops.useTmpfs = true;
-
-  #networking config 
-  networking.useHostResolvConf = lib.mkForce false;
-  systemd.network = {
-    enable = true;
-    networks."10-serverLAN" = {
-      matchConfig.Name = "eth0@if*";
-      DHCP = "no";
-      address = [
-        "192.168.3.${vmID}/24"
-      ];
-      gateway = [
-        "192.168.3.1"
-      ];
-      dns = [
-        "1.1.1.1"
-      ];
+#networking config
+  networking = {
+    enableIPv6 = false;
+    nameservers = [
+      "192.168.3.1"
+      "1.1.1.1"
+    ];
+    interfaces = {
+      "eth0" = {
+        ipv4.addresses = [{
+          address = "192.168.3.${vmID}";
+          prefixLength = 24;
+        }];
+        useDHCP = false;
+      };
+    };
+    defaultGateway = {
+      address = "192.168.3.1";
+      interface = "eth0";
     };
   };
 }

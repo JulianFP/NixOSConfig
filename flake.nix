@@ -89,6 +89,7 @@
       };
       modules = [
         ./generic/proxmoxVM.nix #requires vmID!
+        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./NixOSTesting/configuration.nix
       ];
       specialArgs = { 
@@ -104,6 +105,7 @@
       };
       modules = [
         ./generic/proxmoxVM.nix #requires vmID!
+        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./Nextcloud/configuration.nix
       ];
       specialArgs = { 
@@ -119,6 +121,7 @@
       };
       modules = [
         ./generic/server.nix
+        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./generic/proxy.nix #requires edge!
         ./IonosVPS/configuration.nix
       ];
@@ -134,7 +137,8 @@
         inherit system;
       };
       modules = [
-        ./generic/proxmoxLXC.nix
+        ./generic/proxmoxVM.nix
+        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./generic/proxy.nix #requires edge!
         ./LocalProxy/configuration.nix
       ];
