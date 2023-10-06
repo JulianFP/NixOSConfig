@@ -1,6 +1,6 @@
 keys:
   - &yubikey 5B82BEF3C1A6617707A448FDEB6F11283183E111
-  - &LocalProxy age1nt3kfzd3sv83yk2c3fa5unm0pl83sct9mu53jhvhgdgczlcfpy2qnf80fg
+  - &LocalProxy age1gdcyxx2knxpltmnj9tglluzv7x3y9vhp03zu7ggk3jcvh86unf7qkvlrj0
   - &IonosVPS age1mfk3dc4sekgxccv4dyuypavzelv0tvtlerf3s5qwtfzu9rnjevts9qlxme
   - &Nextcloud age1fset426p48js7gxpj2z6chkuw0dywgm0uul28chcpz6yp4tsqcgqedzkh9
   - &NixOSTesting age1twvg38sttwpfurkayu0esgyv3t6kvxtu293jr8r5e7catksqwc6sylyvgr
