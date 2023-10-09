@@ -1,5 +1,6 @@
 keys:
   - &yubikey 5B82BEF3C1A6617707A448FDEB6F11283183E111
+  - &Nextcloud-Testing age1cq45a06upwqm6xr3t3hvff7pqvja30xhnrz7va9m8zzvs26ye4js4rm9v2
   - &LocalProxy age1tna8ry2maexe9dld035kk6gy2p6xnfm9lv2ngftamszfqdn2n43s2w3vas
   - &IonosVPS age1mfk3dc4sekgxccv4dyuypavzelv0tvtlerf3s5qwtfzu9rnjevts9qlxme
   - &NixOSTesting age1twvg38sttwpfurkayu0esgyv3t6kvxtu293jr8r5e7catksqwc6sylyvgr
@@ -29,6 +30,12 @@ creation_rules:
       - *yubikey
       age:
       - *LocalProxy
+  - path_regex: ^secrets/Nextcloud-Testing/.*$
+    key_groups:
+    - pgp:
+      - *yubikey
+      age:
+      - *Nextcloud-Testing
   - path_regex: ^secrets/[^/]*$
     key_groups:
     - pgp:
@@ -38,6 +45,7 @@ creation_rules:
       - *NixOSTesting
       - *IonosVPS
       - *LocalProxy
+      - *Nextcloud-Testing
   - key_groups:
     - pgp:
       - *yubikey
