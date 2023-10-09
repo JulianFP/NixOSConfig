@@ -12,7 +12,7 @@
     manageNetwork = true;
   };
 
-#networking config
+#networking config (don't use systemd-networkd because the host will manage/overwrite this config)
   networking = {
     enableIPv6 = false;
     nameservers = [
