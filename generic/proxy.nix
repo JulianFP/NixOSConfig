@@ -36,10 +36,10 @@ security.acme = lib.mkIf edge {
       map $scheme $hsts_header {
           https   "max-age=31536000; includeSubdomains; preload";
       }
-      add_header Strict-Transport-Security $hsts_header;
-      add_header 'Referrer-Policy' 'origin-when-cross-origin';
-      add_header X-Frame-Options DENY;
-      add_header X-Content-Type-Options nosniff;
+      more_set_headers 'Strict-Transport-Security: $hsts_header';
+      more_set_headers 'Referrer-Policy: strict-origin-when-cross-origin';
+      more_set_headers 'X-Frame-Options: SAMEORIGIN';
+      more_set_headers 'X-Content-Type-Options: nosniff';
       proxy_cookie_path / "/; secure; HttpOnly; SameSite=strict";
     '';
 
