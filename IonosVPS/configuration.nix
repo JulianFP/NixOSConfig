@@ -8,8 +8,7 @@
 
   networking.domain = "";
 
-  boot.tmp.cleanOnBoot = true;
-  zramSwap.enable = true;
+  zramSwap.enable = true; #enable zram (instead of swap)
 
   #nebula firewall
   services.nebula.networks."serverNetwork" = {

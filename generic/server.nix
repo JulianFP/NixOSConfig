@@ -21,6 +21,8 @@
 
   networking.hostName = hostName; #define hostname
 
+  boot.tmp.cleanOnBoot = true; #remove everything in /tmp directory at boot
+
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
 
