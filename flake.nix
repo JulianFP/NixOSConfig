@@ -113,6 +113,22 @@
       ];
       specialArgs = { 
         hostName = "Nextcloud"; 
+        vmID = "131";
+        inherit inputs;
+      };
+    };
+    nixosConfigurations.Nextcloud-Testing = nixpkgs-stable.lib.nixosSystem rec {
+      system = "x86_64-linux";
+      pkgs = import nixpkgs-stable {
+        inherit system;
+      };
+      modules = [
+        ./generic/proxmoxVM.nix #requires vmID!
+        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
+        ./Nextcloud/configuration.nix
+      ];
+      specialArgs = { 
+        hostName = "Nextcloud-Testing"; 
         vmID = "150";
         inherit inputs;
       };
