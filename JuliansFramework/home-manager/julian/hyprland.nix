@@ -1,6 +1,11 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
+  #import hyprland module from hyprland flake (uses hyprland git package)
+  imports = [
+    inputs.hyprland.homeManagerModules.default
+  ];
+
   # set scripts for extended Hyprland behavior (suspend, lock, etc.)
   home.file = {
     "clamshell_mode_hypr.sh" = {
@@ -35,7 +40,7 @@
 
 # See https://wiki.hyprland.org/Configuring/Monitors/
 # internal monitor (fractional scaling)
-monitor=eDP-1, 2256x1504, 0x0, 1.5
+monitor=eDP-1, 2256x1504, 0x0, 1.28
 # Samsung C27HG7x (ports on right and left downside)
 monitor=DP-2, 2560x1440@144, 1504x0, 1
 monitor=DP-3, 2560x1440@144, 0x0, 1
@@ -165,6 +170,7 @@ gestures {
 
 Misc {
     key_press_enables_dpms = true
+    force_hypr_chan = true
 }
 
 # Example per-device config
@@ -274,6 +280,9 @@ bindl = $mainMod SHIFT, Y, exec, sleep 1 && hyprctl dispatch dpms off
 
 # hyprctl kill 
 bind = $mainMod, X, exec, hyprctl kill
+
+# mute button 
+bindl = , Pause, exec, pactl set-source-mute @DEFAULT_SOURCE@ toggle
 
 # special keys
 bindle = , XF86AudioRaiseVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ +5%

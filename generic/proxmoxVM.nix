@@ -17,24 +17,19 @@
   disko.devices = import ./proxmoxVM-disk-config.nix {
     inherit lib;
   };
-  networking = {
-    enableIPv6 = false;
-    nameservers = [
-      "192.168.3.1"
-      "1.1.1.1"
+
+#networking config (systemd.network preferred over networking)
+  systemd.network.networks."10-serverLAN" = {
+    matchConfig.Name = "ens*";
+    address = [
+      "192.168.3.${vmID}/24"
     ];
-    interfaces = {
-      ens18 = {
-        ipv4.addresses = [{
-          address = "192.168.3.${vmID}";
-          prefixLength = 24;
-        }];
-        useDHCP = false;
-      };
-    };
-    defaultGateway = {
-      address = "192.168.3.1";
-      interface = "ens18";
-    };
+    gateway = [
+      "192.168.3.1"
+    ];
+    dns = [
+      "1.1.1.1"
+      "8.8.8.8"
+    ];
   };
 }

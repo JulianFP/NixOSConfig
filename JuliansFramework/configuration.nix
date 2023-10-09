@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running `nixos-help`).
 
-{ lib, pkgs, ... }:
+{ lib, pkgs, inputs, ... }:
 
 {
   imports =
@@ -102,7 +102,10 @@
   };
 
   security.polkit.enable = true; #enable polkit. polkit-kde-agent needs to be installed and started at boot seperately (will be done with Hyprland) 
-  programs.hyprland.enable = true; #Hyprland NixOS Module (required)
+  programs.hyprland = {
+    enable = true;
+    package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+  };
   programs.dconf.enable = true; #needed for home-manager
   services.fwupd.enable = true; #for Firmware updates
   hardware.opentabletdriver.enable = true; #setup driver for wacom tablet
@@ -165,7 +168,11 @@
   # enable flakes and nix-command
   nix = {
     package = pkgs.nixFlakes;
-    settings.experimental-features = [ "nix-command" "flakes" ];
+    settings = {
+      experimental-features = [ "nix-command" "flakes" ];
+      substituters = ["https://hyprland.cachix.org"];
+      trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
+    };
   };
 
   # This value determines the NixOS release from which the default

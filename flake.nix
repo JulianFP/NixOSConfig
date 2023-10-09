@@ -24,6 +24,8 @@
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
     sops-nix.url = "github:Mic92/sops-nix";
+
+    hyprland.url = "github:hyprwm/Hyprland";
   };
 
 
@@ -54,6 +56,7 @@
             extraSpecialArgs = {
               #pass nixneovim as additional Arg to home-manager config
               inherit nixvim;  
+              inherit inputs;
             };
             users = {
               julian = import ./JuliansFramework/home-manager/julian/home.nix;

@@ -51,6 +51,8 @@
     libsForQt5.qt5.qtimageformats
     vlc
     freetube
+    gst_all_1.gstreamer
+    gst_all_1.gst-vaapi
 
     # Gaming
     wineWowPackages.stagingFull
