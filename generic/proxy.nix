@@ -84,7 +84,7 @@ security.acme = lib.mkIf edge {
       forceSSL = true;
       http2 = true;
       locations."/" = {
-        proxyPass = "http://" + subnet + "132:80";
+        proxyPass = "http://" + subnet + "132:8096";
         proxyWebsockets = true;
       };
     };
