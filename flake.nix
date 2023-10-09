@@ -133,6 +133,22 @@
         inherit inputs;
       };
     };
+    nixosConfigurations.Jellyfin = nixpkgs-stable.lib.nixosSystem rec {
+      system = "x86_64-linux";
+      pkgs = import nixpkgs-stable {
+        inherit system;
+      };
+      modules = [
+        ./generic/proxmoxVM.nix #requires vmID!
+        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
+        ./Jellyfin/configuration.nix
+      ];
+      specialArgs = { 
+        hostName = "Jellyfin"; 
+        vmID = "132";
+        inherit inputs;
+      };
+    };
     nixosConfigurations.IonosVPS = nixpkgs-stable.lib.nixosSystem rec {
       system = "x86_64-linux";
       pkgs = import nixpkgs-stable {
