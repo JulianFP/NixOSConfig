@@ -74,6 +74,30 @@ security.acme = lib.mkIf edge {
       http2 = true;
       globalRedirect = "test.partanengroup.de";
     };
+
+    #setup jellyfin proxy host
+    virtualHosts."media.partanengroup.de" = {
+      enableACME = lib.mkIf edge true;
+      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/media.partanengroup.de/fullchain.pem";
+      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/media.partanengroup.de/key.pem";
+      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/media.partanengroup.de/chain.pem";
+      forceSSL = true;
+      http2 = true;
+      locations."/" = {
+        proxyPass = "http://" + subnet + "132:80";
+        proxyWebsockets = true;
+      };
+    };
+    #www redirect
+    virtualHosts."www.media.partanengroup.de" = {
+      enableACME = lib.mkIf edge true;
+      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.media.partanengroup.de/fullchain.pem";
+      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/www.media.partanengroup.de/key.pem";
+      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.media.partanengroup.de/chain.pem";
+      forceSSL = true;
+      http2 = true;
+      globalRedirect = "media.partanengroup.de";
+    };
   };
 
   #setup firewall
