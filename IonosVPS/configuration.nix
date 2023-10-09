@@ -12,13 +12,19 @@
   zramSwap.enable = true;
 
   #nebula firewall
-  services.nebula.networks."serverNetwork".firewall.inbound = [
-    {
-      port = "22";
-      proto = "tcp";
-      group = "admin";
-    }
-  ];
+  services.nebula.networks."serverNetwork" = {
+    firewall.inbound = [
+      {
+        port = "22";
+        proto = "tcp";
+        group = "admin";
+      }
+    ];
+    settings.tun.unsafe_routes = [{
+      route = "192.168.3.0/24";
+      via = "48.42.0.2";
+    }];
+  };
 
   #openssh client key config and add LocalProxy to known_hosts
   sops.secrets."openssh/IonosVPS" = {

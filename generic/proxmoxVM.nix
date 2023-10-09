@@ -19,10 +19,16 @@
   };
 
 #networking config (systemd.network preferred over networking)
+  networking = {
+    useDHCP = false;
+    enableIPv6 = false;
+  };
   systemd.network =  {
     enable = true;
     networks."10-serverLAN" = {
-      matchConfig.Name = "ens*";
+      name = "ens*";
+      DHCP = "no";
+      networkConfig.IPv6AcceptRA = false;
       address = [
         "192.168.3.${vmID}/24"
       ];
