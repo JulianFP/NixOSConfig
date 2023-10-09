@@ -19,17 +19,20 @@
   };
 
 #networking config (systemd.network preferred over networking)
-  systemd.network.networks."10-serverLAN" = {
-    matchConfig.Name = "ens*";
-    address = [
-      "192.168.3.${vmID}/24"
-    ];
-    gateway = [
-      "192.168.3.1"
-    ];
-    dns = [
-      "1.1.1.1"
-      "8.8.8.8"
-    ];
+  systemd.network =  {
+    enable = true;
+    networks."10-serverLAN" = {
+      matchConfig.Name = "ens*";
+      address = [
+        "192.168.3.${vmID}/24"
+      ];
+      gateway = [
+        "192.168.3.1"
+      ];
+      dns = [
+        "1.1.1.1"
+        "8.8.8.8"
+      ];
+    };
   };
 }
