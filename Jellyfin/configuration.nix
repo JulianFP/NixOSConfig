@@ -1,6 +1,11 @@
 { ... }:
 
 {
+  fileSystems."/mnt/mediadata" = {
+    fsType = "ext4";
+    device = "/dev/disk/by-uuid/70b6f055-dc90-4744-8bb4-10040dd0f2dd";
+  };
+
   services.jellyfin = {
     enable = true;
     openFirewall = true;
