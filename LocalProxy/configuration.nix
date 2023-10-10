@@ -35,7 +35,7 @@
   sops.secrets.ddns-1 = {
     sopsFile = ../secrets/LocalProxy/ddns.yaml;
   };
-  sops.template."curlDDNS.sh".content = ''
+  sops.templates."curlDDNS.sh".content = ''
     #! /usr/bin/env nix-shell
     #! nix-shell -i bash --packages curl 
     curl -X GET https://ipv4.api.hosting.ionos.com/dns/v1/dyndns?q=${config.sops.placeholder.ddns-1}
