@@ -32,13 +32,13 @@
   };
 
   #ddns update service (see https://www.ionos.de/hilfe/domains/ip-adresse-konfigurieren/dynamisches-dns-ddns-einrichten-bei-company-name/?source=helpandlearn#c170862)
-  sops.secrets."ddns/1" = {
+  sops.secrets.ddns-1 = {
     sopsFile = ../secrets/LocalProxy/ddns.yaml;
   };
   sops.template."curlDDNS.sh".content = ''
     #! /usr/bin/env nix-shell
     #! nix-shell -i bash --packages curl 
-    curl -X GET https://ipv4.api.hosting.ionos.com/dns/v1/dyndns?q=${config.sops.placeholder."ddns/1"}
+    curl -X GET https://ipv4.api.hosting.ionos.com/dns/v1/dyndns?q=${config.sops.placeholder.ddns-1}
   '';
   services.cron.systemCronJobs = [
     "*/5 * * * * ${config.sops.templates."curlDDNS.sh".path}"
