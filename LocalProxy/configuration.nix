@@ -35,12 +35,28 @@
   sops.secrets.ddns-1 = {
     sopsFile = ../secrets/LocalProxy/ddns.yaml;
   };
-  sops.templates."curlDDNS.sh".content = ''
-    #! /usr/bin/env nix-shell
-    #! nix-shell -i bash --packages curl 
-    curl -X GET https://ipv4.api.hosting.ionos.com/dns/v1/dyndns?q=${config.sops.placeholder.ddns-1}
-  '';
-  services.cron.systemCronJobs = [
-    "*/1 * * * * ${config.sops.templates."curlDDNS.sh".path}"
-  ];
+  sops.templates."curlDDNS.sh" = {
+    content = ''
+      #! ${pkgs.bash}/bin/bash
+      ${pkgs.curl}/bin/curl -X GET https://ipv4.api.hosting.ionos.com/dns/v1/dyndns?q=${config.sops.placeholder.ddns-1}
+    '';
+    mode = "0550";
+  };
+  systemd.timers."ddns" = {
+    wantedBy = [ "timers.target" ];
+      timerConfig = {
+        OnBootSec = "1m";
+        OnUnitActiveSec = "1m";
+        Unit = "ddns.service";
+      };
+  };
+  systemd.services."ddns" = {
+    script = ''
+      ${config.sops.templates."curlDDNS.sh".path}
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+      User = "root";
+    };
+  };
 }
