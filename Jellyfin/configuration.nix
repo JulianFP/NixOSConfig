@@ -11,6 +11,11 @@
     openFirewall = true;
   };
 
+  services.jellyseerr = {
+    enable = true;
+    openFirewall = true;
+  };
+
   services.nebula.networks."serverNetwork" = {
     firewall.inbound = [
       {
@@ -20,6 +25,11 @@
       }
       {
         port = "8096";
+        proto = "tcp";
+        group = "edge";
+      }
+      {
+        port = "5055";
         proto = "tcp";
         group = "edge";
       }
