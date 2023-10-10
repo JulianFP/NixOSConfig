@@ -41,6 +41,6 @@
     curl -X GET https://ipv4.api.hosting.ionos.com/dns/v1/dyndns?q=${config.sops.placeholder.ddns-1}
   '';
   services.cron.systemCronJobs = [
-    "*/5 * * * * ${config.sops.templates."curlDDNS.sh".path}"
+    "*/1 * * * * ${config.sops.templates."curlDDNS.sh".path}"
   ];
 }
