@@ -98,6 +98,28 @@ security.acme = lib.mkIf edge {
       http2 = true;
       globalRedirect = "media.partanengroup.de";
     };
+    virtualHosts."request.media.partanengroup.de" = {
+      enableACME = lib.mkIf edge true;
+      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/request.media.partanengroup.de/fullchain.pem";
+      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/request.media.partanengroup.de/key.pem";
+      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/request.media.partanengroup.de/chain.pem";
+      forceSSL = true;
+      http2 = true;
+      locations."/" = {
+        proxyPass = "http://" + subnet + "132:5055";
+        proxyWebsockets = true;
+      };
+    };
+    #www redirect
+    virtualHosts."www.request.media.partanengroup.de" = {
+      enableACME = lib.mkIf edge true;
+      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.request.media.partanengroup.de/fullchain.pem";
+      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/www.request.media.partanengroup.de/key.pem";
+      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.request.media.partanengroup.de/chain.pem";
+      forceSSL = true;
+      http2 = true;
+      globalRedirect = "request.media.partanengroup.de";
+    };
 
     #setup atm proxy config (restart minecraft server, using nebula unsafe_routes)
     virtualHosts."atm.partanengroup.de" = {
