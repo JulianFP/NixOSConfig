@@ -40,11 +40,13 @@
 
 # See https://wiki.hyprland.org/Configuring/Monitors/
 # internal monitor (fractional scaling)
-monitor=eDP-1, 2256x1504, 0x0, 1.28
+monitor=eDP-1, 2256x1504, 0x0, 1.5
 # Samsung C27HG7x (ports on right and left downside)
 monitor=DP-2, 2560x1440@144, 1504x0, 1
 monitor=DP-3, 2560x1440@144, 0x0, 1
+monitor=DP-7, 2560x1440@144, 0x0, 1
 # Iiyama PL2280H (ports over DS at right and left upside)
+monitor=HDMI-A-1, 1920x1080@60, 2560x0, 1
 monitor=DP-5, 1920x1080, 0x0, 1
 monitor=DP-6, 1920x1080, 1920x0, 1
 
@@ -87,6 +89,10 @@ env = GDK_BACKEND,wayland,x11
 env = CLUTTER_BACKEND,wayland
 env = NIXOS_OZONE_WL,1
 
+#tearing
+env = WLR_DRM_NO_ATOMIC,1
+windowrulev2 = immediate, class:^(cs2)$
+
 # For all categories, see https://wiki.hyprland.org/Configuring/Variables/
 input {
     kb_layout = de
@@ -113,6 +119,7 @@ general {
     col.inactive_border = rgba(595959aa)
 
     layout = dwindle
+    allow_tearing = true
 }
 
 xwayland {
@@ -171,6 +178,7 @@ gestures {
 Misc {
     key_press_enables_dpms = true
     force_hypr_chan = true
+    vrr = 2
 }
 
 # Example per-device config

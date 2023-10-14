@@ -151,7 +151,6 @@
 
   # qt theming stuff (has to be done on system level to proberly work because it uses qts plugin system)
   environment.variables = {
-    QT_STYLE_OVERRIDE = "kvantum";
     QT_QPA_PLATFORMTHEME = lib.mkForce "qt6ct";
     RADV_PERFTEST = "nosam"; #performance improvement for eGPUs
   };
@@ -166,6 +165,8 @@
     # the 'login' configuration file (see /etc/pam.d/login)
     auth include login
   '';
+
+  virtualisation.waydroid.enable = true;
 
   # enable flakes and nix-command
   nix = {

@@ -73,7 +73,6 @@
     enable = true;
     commands = {
       get-mime-type = "%xdg-mime query filetype \"$f\"";
-      open = "$$OPENER $f";
     };
     extraConfig = ''
       set shell zsh
@@ -191,15 +190,36 @@
       source = "${pkgs.materia-kde-theme}/share/Kvantum/MateriaDark";
       recursive = true;
     };
+    "qt5ct/qss/fixes.qss".text = ''
+      QTabBar::tab:selected {
+          color: palette(bright-text);
+      }
+      QScrollBar {
+          background: palette(dark);
+      }
+      QScrollBar::handle {
+          background: palette(highlight);
+          border-radius: 4px;
+      }
+      QScrollBar::add-line, QScrollBar::sub-line {
+          background: palette(window);
+      }
+    '';
     "qt5ct/qt5ct.conf".text = ''
       [Appearance]
       icon_theme=Papirus-Dark
       style=kvantum-dark
+
+      [Interface]
+      stylesheets=${config.home.homeDirectory}/.config/qt5ct/qss/fixes.qss
     '';
     "qt6ct/qt6ct.conf".text = ''
       [Appearance]
       icon_theme=Papirus-Dark
       style=kvantum-dark
+
+      [Interface]
+      stylesheets=${pkgs.qt6Packages.qt6ct}/share/qt6ct/qss/fusion-fixes.qss
     '';
     "kdeglobals".text = ''
       [General]

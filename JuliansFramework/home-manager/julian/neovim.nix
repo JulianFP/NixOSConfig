@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   programs.nixvim = {
@@ -19,9 +19,6 @@
       #for vimtex
       vimtex_view_general_viewer = "okular";
       vimtex_view_general_options = "--unique file:@pdf\#src:@line@tex";
-
-      # for vimspector
-      # vimspector_install_gadgets = [ "debugpy" "vscode-cpptools" "CodeLLDB" ];
 
       # for custom build and run commands
       dir = "%:p:h";
@@ -112,12 +109,17 @@
       {
         mode = "";
         key = "<c-k>";
-        action = "<c-w>h";
+        action = "<c-w>k";
       }
       {
         mode = "";
         key = "<c-l>";
         action = "<c-w>l";
+      }
+      {
+        mode = "";
+        key = "<c-h>";
+        action = "<c-w>h";
       }
 
       #for luasnips
@@ -175,14 +177,93 @@
         key = "<Leader>rr";
         action = ":RunRelease<CR>";
       }
+
+      #for dap (debugging)
+      {
+        mode = "n";
+        key = "<LocalLeader>c";
+        action = ":DapContinue<CR>";
+      }
+      {
+        mode = "n";
+        key = "<LocalLeader>n";
+        action = ":DapStepOver<CR>";
+      }
+      {
+        mode = "n";
+        key = "<LocalLeader>s";
+        action = ":DapStepInto<CR>";
+      }
+      {
+        mode = "n";
+        key = "<LocalLeader>f";
+        action = ":DapStepOut<CR>";
+      }
+      {
+        mode = "n";
+        key = "<LocalLeader>b";
+        action = ":DapToggleBreakpoint<CR>";
+      }
+      {
+        mode = "n";
+        key = "<LocalLeader>q";
+        action = ":DapTerminate<CR>";
+      }
+
+      #telescope
+      {
+        mode = "";
+        key = "<LocalLeader>t";
+        action = ":Telescope file_browser<CR>";
+      }
     ];
 
     plugins = {
+      #improved highlighting
+      treesitter = {
+        enable = true;
+        disabledLanguages = [ "latex" ];
+      };
+
+      #shows indentation levels and variable scopes (treesitter)
+      indent-blankline = {
+        enable = true;
+        useTreesitter = true;
+        useTreesitterScope = true;
+      };
+
+      #automatically creates pairs of brackets, etc.
+      nvim-autopairs.enable = true;
+
+      #LaTeX support
+      vimtex.enable = true;
+
+      #file browser/switcher
+      telescope = {
+        enable = true;
+        defaults = {
+          initial_mode = "normal";
+          mappings.n = {
+            "l" = "select_default";
+          };
+        };
+        extensions.file_browser = {
+          enable = true;
+          mappings = {
+            "n" = {
+              "h" = "goto_parent_dir";
+            };
+          };
+        };
+      };
+
+      #status bar at bottom
       lualine = {
         enable = true;
 	      theme = "gruvbox";
       };
 
+      #snippet engine
       luasnip = {
         enable = true;
 	      fromVscode = [
@@ -198,10 +279,8 @@
           }
 	      ];
       };
-      indent-blankline.enable = true;
-      nvim-autopairs.enable = true;
-      vimtex.enable = true;
 
+      #error highlighting and autocomplete
       lsp = {
         enable = true;
         servers = {
@@ -210,6 +289,7 @@
           pyright.enable = true;#lsp server for Python
           nil_ls.enable = true;	#lsp server for Nix
           texlab.enable = true; #lsp Server for LaTeX
+          java-language-server.enable = true; #lsp Server for Java
         };
       };
       nvim-cmp = {
@@ -237,11 +317,58 @@
           { name = "buffer"; }
         ];
       };
+
+      #debugging 
+      dap = {
+        enable = true; 
+        adapters.servers."codelldb" = {
+          port = 13000;
+          executable = {
+            command = "${pkgs.vscode-extensions.vadimcn.vscode-lldb}/share/vscode/extensions/vadimcn.vscode-lldb/adapter/codelldb";
+            args = [ "--port" "13000" ];
+          };
+        };
+        configurations."cpp" = [{
+          name = "Launch file";
+          type = "codelldb";
+          request = "launch";
+          program = "\${dir} .. '/buildDebug/' .. \${folder}";
+          stopOnEntry = false;
+        }];
+        extensions.dap-ui.enable = true;
+        signs.dapBreakpoint.text = "🛑";
+      };
     };
+    extraConfigLuaPost = ''
+      require("ibl").setup()
+
+      local dap, dapui =require("dap"),require("dapui")
+      dap.configurations.cpp = {
+        {
+          name = "Launch file",
+          type = "codelldb",
+          request = "launch",
+          program = function()
+            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+          end,
+          cwd = ''\'''${workspaceFolder}',
+          stopOnEntry = false,
+        },
+      }
+      dap.listeners.after.event_initialized["dapui_config"] = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated["dapui_config"] = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited["dapui_config"] = function()
+        dapui.close()
+      end
+    '';
+
+    #collection of default snippets
     extraPlugins = with pkgs.vimPlugins; [
       friendly-snippets
-      #vimspector doesn't work currently because of gadgets it needs to install. Todo: contribute vimspector module to nixvim
-      #vimspector
     ];
   };
 
