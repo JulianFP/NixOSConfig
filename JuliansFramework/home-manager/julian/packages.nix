@@ -69,6 +69,8 @@
     cmake
     gnumake
     valgrind
+    android-studio
+    jetbrains.idea-ultimate
 
     # Fonts
     roboto-mono
