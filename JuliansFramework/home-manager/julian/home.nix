@@ -266,18 +266,6 @@ MimeType=x-scheme-handler/sgnl;x-scheme-handler/signalcaptcha;
 Categories=Network;InstantMessaging;Chat;
   '';
 
-  # webcord flickering fix
-  home.file.".local/share/applications/webcord.desktop".text = ''
-  [Desktop Entry]
-  Categories=Network;InstantMessaging
-  Comment=A Discord and Fosscord electron-based client implemented without Discord API
-  Exec=webcord --safe-mode
-  Icon=webcord
-  Name=WebCord
-  Type=Application
-  Version=1.4
-  '';
-
   home.stateVersion = "23.11";
   programs.home-manager.enable = true;
 }

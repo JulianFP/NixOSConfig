@@ -226,11 +226,7 @@
       };
 
       #shows indentation levels and variable scopes (treesitter)
-      indent-blankline = {
-        enable = true;
-        useTreesitter = true;
-        useTreesitterScope = true;
-      };
+      indent-blankline.enable = true;
 
       #automatically creates pairs of brackets, etc.
       nvim-autopairs.enable = true;
