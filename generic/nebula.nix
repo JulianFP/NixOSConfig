@@ -11,25 +11,16 @@ in
     ./sops.nix
   ];
   sops.secrets."nebula/${hostName}.key" = {
-    mode = "0440";
-    owner = "nebula-${netName}";
-    group = "nebula-${netName}";
+    owner = config.systemd.services."nebula@${netName}".serviceConfig.User;
     sopsFile = ../secrets/${hostName}/nebula.yaml;
   };
   sops.secrets."nebula/${hostName}.crt" = {
-    mode = "0440";
-    owner = "nebula-${netName}";
-    group = "nebula-${netName}";
+    owner = config.systemd.services."nebula@${netName}".serviceConfig.User;
     sopsFile = ../secrets/${hostName}/nebula.yaml;
   };
   sops.secrets."nebula/ca.crt" = {
-    mode = "0440";
-    owner = "nebula-${netName}";
-    group = "nebula-${netName}";
+    owner = config.systemd.services."nebula@${netName}".serviceConfig.User;
     sopsFile = ../secrets/nebula.yaml;
-  };
-  systemd.services."nebula@${netName}" = {
-    serviceConfig.SupplementaryGroups = [ config.users.groups.keys.name ];
   };
 
   # nebula config
