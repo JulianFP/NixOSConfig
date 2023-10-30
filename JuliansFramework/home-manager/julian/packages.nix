@@ -31,13 +31,17 @@
     # Applications
     firefox
     thunderbird
-    libreoffice-fresh
+    libreoffice-qt
+    hunspell
+    hunspellDicts.en_US
+    hunspellDicts.de_DE
     xournalpp
     logseq
     keepassxc
     nextcloud-client
     signal-desktop
     webcord
+    discord
     libsForQt5.ark
     libsForQt5.dolphin
     libsForQt5.filelight
@@ -62,6 +66,7 @@
     lutris
     heroic
     protonup-qt
+    superTuxKart
 
     # Development
     texlive.combined.scheme-full

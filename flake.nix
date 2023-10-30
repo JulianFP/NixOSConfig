@@ -37,6 +37,10 @@
         inherit system;
         config = {
           allowUnfree = true; #allow Unfree packages
+          permittedInsecurePackages = [
+            "electron-24.8.6" #needed for logseq until it upgrades its electron package
+            "electron-22.3.27" #needed for freetube until it upgrades its electron package
+          ];
         };
         overlays = [
           nur.overlay
