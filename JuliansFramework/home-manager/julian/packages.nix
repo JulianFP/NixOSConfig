@@ -1,5 +1,12 @@
 { config, pkgs, ... }:
 
+let
+  my-python-packages = ps: with ps; [
+    torchWithRocm 
+    numpy
+    flask
+  ];
+in 
 {
   #Activates ability to install fonts through home-manager
   fonts.fontconfig.enable = true;
@@ -76,6 +83,7 @@
     valgrind
     android-studio
     jetbrains.idea-ultimate
+    (python3.withPackages my-python-packages)
 
     # Fonts
     roboto-mono

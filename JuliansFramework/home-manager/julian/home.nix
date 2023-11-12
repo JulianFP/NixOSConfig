@@ -180,6 +180,14 @@
     ];
   };
 
+  # virt-manager stuff. See NixOS Wiki for more
+  dconf.settings = {
+    "org/virt-manager/virt-manager/connections" = {
+      autoconnect = ["qemu:///system"];
+      uris = ["qemu:///system"];
+    };
+  };
+
   # Theming
   xdg.configFile = {
     "Kvantum/kvantum.kvconfig".text = ''

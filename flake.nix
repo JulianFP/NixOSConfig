@@ -44,6 +44,19 @@
         };
         overlays = [
           nur.overlay
+          #use electron 27 for logseq since it keeps crashing with electron 25. graph view doesn't work with this however (since it doesn't match upstream electron version)
+          (self: super: {
+            logseq = super.logseq.overrideAttrs (old: {
+              postFixup = ''
+                    # set the env "LOCAL_GIT_DIRECTORY" for dugite so that we can use the git in nixpkgs
+                    makeWrapper ${pkgs.electron_27}/bin/electron $out/bin/${old.pname} \
+                      --set "LOCAL_GIT_DIRECTORY" ${super.git} \
+                      --add-flags $out/share/${old.pname}/resources/app \
+                      --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations}}" \
+                      --prefix LD_LIBRARY_PATH : "${super.lib.makeLibraryPath [ super.stdenv.cc.cc.lib ]}"
+              '';
+              });
+           })
         ];
       };
       modules = [
@@ -52,6 +65,7 @@
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./JuliansFramework/configuration.nix
         nixos-hardware.nixosModules.framework-12th-gen-intel
+        #nixos-hardware.nixosModules.common-gpu-amd
         home-manager.nixosModules.home-manager
         {
           home-manager = {

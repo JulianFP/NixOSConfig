@@ -90,8 +90,8 @@ env = CLUTTER_BACKEND,wayland
 env = NIXOS_OZONE_WL,1
 
 #tearing
-env = WLR_DRM_NO_ATOMIC,1
-windowrulev2 = immediate, class:^(cs2)$
+#env = WLR_DRM_NO_ATOMIC,1
+#windowrulev2 = immediate, class:^(cs2)$
 
 # For all categories, see https://wiki.hyprland.org/Configuring/Variables/
 input {
@@ -119,7 +119,7 @@ general {
     col.inactive_border = rgba(595959aa)
 
     layout = dwindle
-    allow_tearing = true
+    #allow_tearing = true
 }
 
 xwayland {
@@ -178,7 +178,7 @@ gestures {
 Misc {
     key_press_enables_dpms = true
     force_hypr_chan = true
-    vrr = 2
+    # vrr = 2
 }
 
 # Example per-device config
@@ -309,6 +309,14 @@ bind = $mainMod SHIFT, G, exec, /home/julian/.systemScripts/gamingMode_hypr.sh
 
 # groups
 bind = $mainMod, W, togglegroup
+
+# virt-manager pass shortcuts to guest 
+# by entering 
+bind = CTRL, ALT_L, submap, vm 
+submap = vm 
+bind = , escape, submap, reset 
+bind = CTRL, ALT_L, submap, reset
+submap = reset
     '';
   };
 }
