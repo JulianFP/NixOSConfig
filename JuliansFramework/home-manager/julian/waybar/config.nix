@@ -40,8 +40,18 @@
 
     "clock" = {
       timezone = "Europe/Berlin";
-      tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
+      tooltip-format = "<tt><small>{calendar}</small></tt>";
       format-alt = "{:%Y-%m-%d}";
+      calendar = {
+        weeks-pos = "left";
+        format = {
+          months = "<span><big><b>{}</b></big></span>";
+          days = "<span>{}</span>";
+          weeks = "<span><b>W{}</b></span>";
+          weekdays = "<span>{}</span>";
+          today = "<span><b><u>{}</u></b></span>";
+        };
+      };
     };
 
     "cpu" = {
