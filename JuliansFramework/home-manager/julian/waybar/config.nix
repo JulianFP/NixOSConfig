@@ -40,14 +40,13 @@
 
     "clock" = {
       timezone = "Europe/Berlin";
-      tooltip-format = "<tt><small>{calendar}</small></tt>";
+      tooltip-format = "<big>{:%B %Y}</big><tt><small>{calendar}</small></tt>";
       format-alt = "{:%Y-%m-%d}";
       calendar = {
-        weeks-pos = "left";
         format = {
-          months = "<span><big><b>{}</b></big></span>";
+          months = "";
           days = "<span>{}</span>";
-          weeks = "<span><b>W{}</b></span>";
+          weeks = "<span>W{}</span>";
           weekdays = "<span>{}</span>";
           today = "<span><b><u>{}</u></b></span>";
         };
