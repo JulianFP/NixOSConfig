@@ -359,6 +359,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-logseq": {
+      "locked": {
+        "lastModified": 1698835947,
+        "narHash": "sha256-SMaJZPwvmbfaz+aNMm7q6lYBuH91QNl04q7jgEoqf/4=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "5363991a6fbb672549b6c379cdc1e423e5bf2d06",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "5363991a6fbb672549b6c379cdc1e423e5bf2d06",
+        "type": "github"
+      }
+    },
     "nixpkgs-stable": {
       "locked": {
         "lastModified": 1685801374,
@@ -601,6 +617,7 @@
         "lanzaboote": "lanzaboote",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_3",
+        "nixpkgs-logseq": "nixpkgs-logseq",
         "nixpkgs-stable": "nixpkgs-stable_2",
         "nixvim": "nixvim",
         "nur": "nur",

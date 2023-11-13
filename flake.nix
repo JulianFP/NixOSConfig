@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.05";
+    nixpkgs-logseq.url = "github:NixOS/nixpkgs/5363991a6fbb672549b6c379cdc1e423e5bf2d06";
     lanzaboote.url = "github:nix-community/lanzaboote";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nixvim = {
@@ -38,25 +39,22 @@
         config = {
           allowUnfree = true; #allow Unfree packages
           permittedInsecurePackages = [
-            "electron-24.8.6" #needed for logseq until it upgrades its electron package
             "electron-22.3.27" #needed for freetube until it upgrades its electron package
+            "electron-24.8.6" #needed for logseq
           ];
         };
         overlays = [
           nur.overlay
-          #use electron 27 for logseq since it keeps crashing with electron 25. graph view doesn't work with this however (since it doesn't match upstream electron version)
+          #use older logseq version (0.9.19) since logseq uses electron 25 since 0.9.20 which crashes on my system
           (self: super: {
-            logseq = super.logseq.overrideAttrs (old: {
-              postFixup = ''
-                    # set the env "LOCAL_GIT_DIRECTORY" for dugite so that we can use the git in nixpkgs
-                    makeWrapper ${pkgs.electron_27}/bin/electron $out/bin/${old.pname} \
-                      --set "LOCAL_GIT_DIRECTORY" ${super.git} \
-                      --add-flags $out/share/${old.pname}/resources/app \
-                      --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations}}" \
-                      --prefix LD_LIBRARY_PATH : "${super.lib.makeLibraryPath [ super.stdenv.cc.cc.lib ]}"
-              '';
-              });
-           })
+            logseq = (import inputs.nixpkgs-logseq {
+              inherit system;
+              config = {
+                allowUnfree = true;
+                permittedInsecurePackages = [ "electron-24.8.6" ];
+              };
+            }).logseq;
+          })
         ];
       };
       modules = [
