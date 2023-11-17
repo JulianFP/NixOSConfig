@@ -29,6 +29,7 @@ in
     nur.repos.mikilio.xwaylandvideobridge-hypr
 
     # CLI Applications
+    file #needed for open command of lf
     tree
     unzip
     htop-vim

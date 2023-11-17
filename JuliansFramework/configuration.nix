@@ -28,9 +28,7 @@ structure:
   /* -- nix -- */
   # enable flakes and nix-command
   nix = {
-    package = pkgs.nixFlakes;
     settings = {
-      experimental-features = [ "nix-command" "flakes" ];
       substituters = ["https://hyprland.cachix.org"];
       trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
     };
@@ -52,8 +50,6 @@ structure:
       "vm.max_map_count" = 16777216;
       "fs.file-max" = 524288;
     };
-
-    tmp.cleanOnBoot = true;
   };
 
 
@@ -121,8 +117,6 @@ structure:
 
   /* -- programs -- */
   programs = {
-    dconf.enable = true; #needed for home-manager
-    zsh.enable = true; #see environment and users for setup
     adb.enable = true; #android adb setup. See users user permission (adbusers group)
     virt-manager.enable = true; #to run qemu/kvm VMs. See virtualisation for more
     hyprland = {
@@ -155,18 +149,12 @@ structure:
       QT_QPA_PLATFORMTHEME = lib.mkForce "qt6ct";
       RADV_PERFTEST = "nosam"; #performance improvement for eGPUs
     };
-      
-    #configure zsh as available shell (default shell is set in users)
-    shells = with pkgs; [ zsh ];
 
     # List packages installed in system profile. To search, run:
     # $ nix search wget
     systemPackages = with pkgs; [
       intel-media-driver
       intel-gpu-tools
-      neovim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-      wget
-      git
       bluez
       libsForQt5.frameworkintegration
       libsForQt5.qtstyleplugin-kvantum
@@ -192,9 +180,6 @@ structure:
 
   /* -- users -- */
   users = {
-    # set zsh as default shell for all users
-    defaultUserShell = pkgs.zsh;
-
     # Define julian account. Don't forget to set a password with ‘passwd’.
     users.julian = {
       isNormalUser = true;
@@ -245,24 +230,6 @@ structure:
   powerManagement = {
     enable = true;
     powertop.enable = true;
-  };
-
-  # Set your time zone.
-  time.timeZone = "Europe/Berlin";
-
-  # Select internationalisation properties.
-  i18n = {
-    defaultLocale = "en_US.UTF-8";
-    extraLocaleSettings = {
-      LC_TIME = "de_DE.UTF-8";
-      LC_MEASUREMENT = "de_DE.UTF-8";
-      LC_MONETARY = "de_DE.UTF-8";
-    };
-  };
-  console = {
-    # font = "Lat2-Terminus16";
-    keyMap = "de";
-    useXkbConfig = false; # use xkbOptions in tty.
   };
 
   #enable xdg desktop integration (mainly for flatpaks)

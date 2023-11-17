@@ -6,13 +6,8 @@
       nixvim.homeManagerModules.nixvim #import nixvim module
       ./packages.nix #Packages and Fonts installed for this user
       ./hyprland.nix #Hyprland stuff
-      ./terminal.nix #Terminal stuff (Alacritty, zsh, ...) 
-      ./neovim.nix #Neovim stuff
       ./mangohud.nix #mangohud config
     ];
-
-  home.username = "julian";
-  home.homeDirectory = "/home/julian";
 
   # ssh (with yubikey support) stuff and agent forwarding (ssh and gpg)
   programs.ssh = {
@@ -67,30 +62,6 @@
       init.defaultBranch = "main";
     };
   };
-
-  # lf
-  programs.lf = {
-    enable = true;
-    commands = {
-      get-mime-type = "%xdg-mime query filetype \"$f\"";
-    };
-    extraConfig = ''
-      set shell zsh
-      set icons true
-    '';
-    keybindings = {
-      # Movement
-      gd = "cd ~/Documents";
-      gD = "cd ~/Downloads";
-      gc = "cd ~/.config";
-      gu = "cd ~/Nextcloud/Dokumente/Studium";
-
-      # execute current file 
-      x = "\$\$f";
-      X = "!\$f";
-    };
-  };
-  xdg.configFile."lf/icons".source = ./lf-icons;
 
   # set defaultApplications through mime types
   xdg = {
@@ -178,6 +149,57 @@
       obs-gstreamer
       obs-vaapi
     ];
+  };
+
+  # Alacritty
+  programs.alacritty = {
+    enable = true;
+    settings = {
+      # Colors (Gruvbox Material Medium Dark)
+      colors = {
+        # Default colors
+        primary = {
+          background = "#282828";
+          foreground = "#d4be98";
+        };
+        # Normal colors
+        normal = {
+          black = "#3c3836";
+          red = "#ea6962";
+          green = "#a9b665";
+          yellow = "#d8a657";
+          blue = "#7daea3";
+          magenta = "#d3869b";
+          cyan = "#89b482";
+          white = "#d4be98";
+        };
+        # Bright colors (same as normal colors)
+        bright = {
+          black = "#3c3836";
+          red = "#ea6962";
+          green = "#a9b665";
+          yellow = "#d8a657";
+          blue = "#7daea3";
+          magenta = "#d3869b";
+          cyan = "#89b482";
+          white = "#d4be98";
+        };
+      };
+      font = {
+        normal = {
+          family = "AnonymicePro Nerd Font";
+          style = "Regular";
+        };
+        size = 12;
+      };
+      key_bindings = [
+        {
+          key = "Return";
+          mods = "Super|Shift";
+          action = "SpawnNewInstance";
+        }
+      ];
+    };
   };
 
   # virt-manager stuff. See NixOS Wiki for more
@@ -273,7 +295,4 @@ Comment=Private messaging from your desktop
 MimeType=x-scheme-handler/sgnl;x-scheme-handler/signalcaptcha;
 Categories=Network;InstantMessaging;Chat;
   '';
-
-  home.stateVersion = "23.11";
-  programs.home-manager.enable = true;
 }
