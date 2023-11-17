@@ -2,7 +2,7 @@
 
 let
   my-python-packages = ps: with ps; [
-    torchWithRocm 
+    #torchWithRocm 
     numpy
     flask
   ];
