@@ -5,6 +5,8 @@ let
     #torchWithRocm 
     numpy
     flask
+    httpx
+    openai-whisper
   ];
 in 
 {

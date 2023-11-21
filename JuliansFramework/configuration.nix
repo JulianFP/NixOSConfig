@@ -247,8 +247,11 @@ structure:
     powertop.enable = true;
   };
 
-  # Set your time zone.
-  time.timeZone = "Europe/Berlin";
+  # Set your time zone and hardware clock behavior
+  time = {
+    timeZone = "Europe/Berlin";
+    hardwareClockInLocalTime = true;
+  };
 
   # Select internationalisation properties.
   i18n = {
