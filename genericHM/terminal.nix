@@ -1,7 +1,7 @@
-{ config, pkgs, nixvim, ...}:
+{ userName, ... }:
 
 {
-  imports = [ ./neovim.nix ];
+  imports = [ ./commonNeovim.nix ];
 
   #zsh
   programs.zsh = {
@@ -16,37 +16,28 @@
     oh-my-zsh = {
       enable = true;
       plugins = [ "git" ];
-      theme = "juanghurtado";
+      custom = if userName == "root" then "$HOME/.ohMyZshCustom" else "";
+      theme = if userName == "root" then "juanghurtado-rootPatch" else "juanghurtado";
     };
 
     #environmental variables for zsh session
     sessionVariables = {
       EDITOR = "nvim"; #set neovim as default editor
-      GPG_TTY = "$(tty)"; #for ssh yubikey support
     };
   };
 
-  # lf
-  programs.lf = {
+  # git
+  programs.git = {
     enable = true;
-    commands = {
-      get-mime-type = "%xdg-mime query filetype \"$f\"";
-    };
-    extraConfig = ''
-      set shell zsh
-      set icons true
-    '';
-    keybindings = {
-      # Movement
-      gd = "cd ~/Documents";
-      gD = "cd ~/Downloads";
-      gc = "cd ~/.config";
-      gu = "cd ~/Nextcloud/Dokumente/Studium";
-
-      # execute current file
-      x = "\$\$f";
-      X = "!\$f";
+    userName = "JulianFP";
+    userEmail = "julian@partanengroup.de";
+    extraConfig = {
+      init.defaultBranch = "main";
     };
   };
-  xdg.configFile."lf/icons".source = ./lf-icons;
+
+  home.file.".ohMyZshCustom/themes/juanghurtado-rootPatch.zsh-theme" = {
+    enable = if userName == "root" then true else false;
+    source = ./juanghurtado-rootPatch.zsh-theme;
+  };
 }

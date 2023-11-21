@@ -1,67 +1,36 @@
-{ config, pkgs, nixvim, ... }:
+{ config, pkgs, ... }:
 
 {
   imports = 
     [
-      nixvim.homeManagerModules.nixvim #import nixvim module
       ./packages.nix #Packages and Fonts installed for this user
       ./hyprland.nix #Hyprland stuff
       ./mangohud.nix #mangohud config
     ];
 
-  # ssh (with yubikey support) stuff and agent forwarding (ssh and gpg)
-  programs.ssh = {
+  # lf
+  programs.lf = {
     enable = true;
-    matchBlocks = {
-      "Ionos" = {
-        hostname = "82.165.49.241";
-	      user = "root";
-      };
+    commands = {
+      get-mime-type = "%xdg-mime query filetype \"$f\"";
     };
-    forwardAgent = true;
     extraConfig = ''
-      Match host * exec "gpg-connect-agent UPDATESTARTUPTTY /bye"
+      set shell zsh
+      set icons true
     '';
-  };
-  home.file.".ssh/id_rsa.pub" = {
-    source = ../../../publicKeys/id_rsa.pub;
-  };
-  services.gpg-agent = {
-    enable = true;
-    enableSshSupport = true;
-    defaultCacheTtl = 300;
-    defaultCacheTtlSsh = 300;
-    maxCacheTtl = 3600;
-    maxCacheTtlSsh = 3600;
-    pinentryFlavor = "qt";
-    extraConfig = ''
-      ttyname $GPG_TTY
-    '';
-  };
-  programs.gpg = {
-    enable = true;
-    scdaemonSettings = {
-      disable-ccid = true;
-      reader-port = "Yubico Yubi";
-    };
-    publicKeys = [{
-      source = ../../../publicKeys/gpg_yubikey.asc;
-      trust = 5;
-    }];
-  };
-  systemd.user.sessionVariables = {
-    SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/gnupg/S.gpg-agent.ssh";
-  };
+    keybindings = {
+      # Movement
+      gd = "cd ~/Documents";
+      gD = "cd ~/Downloads";
+      gc = "cd ~/.config";
+      gu = "cd ~/Nextcloud/Dokumente/Studium";
 
-  # git
-  programs.git = {
-    enable = true;
-    userName = "JulianFP";
-    userEmail = "julian@partanengroup.de";
-    extraConfig = {
-      init.defaultBranch = "main";
+      # execute current file
+      x = "\$\$f";
+      X = "!\$f";
     };
   };
+  xdg.configFile."lf/icons".source = ./lf-icons;
 
   # set defaultApplications through mime types
   xdg = {
@@ -97,7 +66,7 @@
     };
   };
 
-  # Mako
+  # Mako (notification daemon)
   services.mako = {
     enable = true;
     backgroundColor = "#2B303B9A";
@@ -117,7 +86,7 @@
     '';
   };
 
-  # Rofi
+  # Rofi (application starter and more)
   programs.rofi = {
     enable = true;
     package = pkgs.rofi-wayland;

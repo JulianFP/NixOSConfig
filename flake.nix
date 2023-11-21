@@ -70,11 +70,12 @@
         homeManagerModules = {
           julian = [ 
             ./genericHM/terminal.nix
-            ./JuliansFramework/home-manager/julian/home.nix  
+            ./genericHM/yubikey.nix
+            ./JuliansFramework/home-manager/home.nix  
           ];
           root = [ 
             ./genericHM/terminal.nix
-            ./JuliansFramework/home-manager/root/home.nix 
+            ./genericHM/yubikey.nix
           ];
         };
         hostName = "JuliansFramework"; 
