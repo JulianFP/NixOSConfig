@@ -2,15 +2,6 @@
 
 {
   programs.nixvim = {
-    #set colorscheme
-    colorschemes.gruvbox = {
-      enable = true;
-      contrastDark = "soft";
-      improvedStrings = true;
-      improvedWarnings = true;
-      trueColor = true;
-    };
-
     globals = {
       #for vimtex
       vimtex_view_general_viewer = "okular";

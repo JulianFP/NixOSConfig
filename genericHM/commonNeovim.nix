@@ -11,6 +11,15 @@
   programs.nixvim = {
     enable = true;
 
+    #set colorscheme
+    colorschemes.gruvbox = {
+      enable = true;
+      contrastDark = "soft";
+      improvedStrings = true;
+      improvedWarnings = true;
+      trueColor = true;
+    };
+
     globals = {
       mapleader = ",";
       maplocalleader = " ";

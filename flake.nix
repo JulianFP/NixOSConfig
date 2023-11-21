@@ -76,6 +76,7 @@
           root = [ 
             ./genericHM/terminal.nix
             ./genericHM/yubikey.nix
+            ./JuliansFramework/home-manager/root/home.nix
           ];
         };
         hostName = "JuliansFramework"; 

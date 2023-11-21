@@ -6,6 +6,7 @@
       ./packages.nix #Packages and Fonts installed for this user
       ./hyprland.nix #Hyprland stuff
       ./mangohud.nix #mangohud config
+      ./neovim.nix
     ];
 
   # lf
