@@ -1,4 +1,4 @@
-{ userName, ... }:
+{ config, ... }:
 
 {
   imports = [ ./commonNeovim.nix ];
@@ -16,8 +16,8 @@
     oh-my-zsh = {
       enable = true;
       plugins = [ "git" ];
-      custom = if userName == "root" then "$HOME/.ohMyZshCustom" else "";
-      theme = if userName == "root" then "juanghurtado-rootPatch" else "juanghurtado";
+      custom = if config.home.username == "root" then "$HOME/.ohMyZshCustom" else "";
+      theme = if config.home.username == "root" then "juanghurtado-rootPatch" else "juanghurtado";
     };
 
     #environmental variables for zsh session
@@ -37,7 +37,7 @@
   };
 
   home.file.".ohMyZshCustom/themes/juanghurtado-rootPatch.zsh-theme" = {
-    enable = if userName == "root" then true else false;
+    enable = if config.home.username == "root" then true else false;
     source = ./juanghurtado-rootPatch.zsh-theme;
   };
 }
