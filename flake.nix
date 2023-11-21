@@ -95,6 +95,11 @@
         ./blankISO/configuration.nix 
       ];
       specialArgs = {
+        homeManagerModules = {
+          root = [ 
+            ./genericHM/terminal.nix
+          ];
+        };
         hostName = "blankISO"; 
         inherit inputs;
       };
