@@ -71,7 +71,7 @@
           julian = [ 
             ./genericHM/terminal.nix
             ./genericHM/yubikey.nix
-            ./JuliansFramework/home-manager/home.nix  
+            ./JuliansFramework/home-manager/julian/home.nix  
           ];
           root = [ 
             ./genericHM/terminal.nix
