@@ -111,6 +111,11 @@
         ./NixOSTesting/configuration.nix
       ];
       specialArgs = { 
+        homeManagerModules = {
+          root = [ 
+            ./genericHM/terminal.nix
+          ];
+        };
         hostName = "NixOSTesting"; 
         vmID = "120";
         inherit inputs;
@@ -128,6 +133,11 @@
         ./Nextcloud/configuration.nix
       ];
       specialArgs = { 
+        homeManagerModules = {
+          root = [ 
+            ./genericHM/terminal.nix
+          ];
+        };
         hostName = "Nextcloud"; 
         vmID = "131";
         inherit inputs;
@@ -145,6 +155,11 @@
         ./Nextcloud/configuration.nix
       ];
       specialArgs = { 
+        homeManagerModules = {
+          root = [ 
+            ./genericHM/terminal.nix
+          ];
+        };
         hostName = "Nextcloud-Testing"; 
         vmID = "150";
         inherit inputs;
@@ -162,6 +177,11 @@
         ./Jellyfin/configuration.nix
       ];
       specialArgs = { 
+        homeManagerModules = {
+          root = [ 
+            ./genericHM/terminal.nix
+          ];
+        };
         hostName = "Jellyfin"; 
         vmID = "132";
         inherit inputs;
@@ -180,6 +200,11 @@
         ./IonosVPS/configuration.nix
       ];
       specialArgs = { 
+        homeManagerModules = {
+          root = [ 
+            ./genericHM/terminal.nix
+          ];
+        };
         hostName = "IonosVPS"; 
         edge = true;
         inherit inputs;
@@ -198,6 +223,11 @@
         ./LocalProxy/configuration.nix
       ];
       specialArgs = { 
+        homeManagerModules = {
+          root = [ 
+            ./genericHM/terminal.nix
+          ];
+        };
         hostName = "LocalProxy"; 
         vmID = "130";
         edge = false;
