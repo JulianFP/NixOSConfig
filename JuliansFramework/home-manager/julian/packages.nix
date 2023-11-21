@@ -2,9 +2,10 @@
 
 let
   my-python-packages = ps: with ps; [
-    torchWithRocm 
     numpy
     flask
+    openai-whisper 
+    httpx
   ];
 in 
 {
