@@ -55,34 +55,6 @@
       }
     ];
 
-    keymaps = [
-      #mode = "": for normal,visual,select,operator-pending modes (map)
-      #mode = "n": for normal mode
-      #mode = "i": for insert mode
-
-      # set window navigation keys
-      {
-        mode = "";
-        key = "<c-j>";
-        action = "<c-w>j";
-      }
-      {
-        mode = "";
-        key = "<c-k>";
-        action = "<c-w>k";
-      }
-      {
-        mode = "";
-        key = "<c-l>";
-        action = "<c-w>l";
-      }
-      {
-        mode = "";
-        key = "<c-h>";
-        action = "<c-w>h";
-      }
-    ];
-
     plugins = {
       #improved highlighting
       treesitter = {
