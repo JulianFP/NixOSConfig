@@ -1,13 +1,9 @@
-{ nixvim, ... }:
+{ ... }:
 
 # this is a neovim configuration for (pretty much) all my devices & users.
 # basic stuff only 
 # some devices/users may expand uppon this
 {
-  imports = [
-    nixvim.homeManagerModules.nixvim
-  ];
-
   programs.nixvim = {
     enable = true;
 

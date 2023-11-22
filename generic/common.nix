@@ -1,6 +1,8 @@
-{ config, pkgs, inputs, homeManagerModules, hostName, ...}:
+{ config, pkgs, inputs, homeManagerModules, hostName, stable, ...}:
 
 {
+  # import home manager module depending on if system uses stable or unstable packages
+  imports = if stable then [ inputs.home-manager-stable.nixosModules.home-manager ] else [ inputs.home-manager.nixosModules.home-manager ];
   #define hostname 
   networking.hostName = hostName;
 
@@ -57,7 +59,7 @@
     */
     users = builtins.mapAttrs ( userName: value:
       {
-        imports = value;
+        imports = if stable then value ++ [ inputs.nixvim-stable.homeManagerModules.nixvim ] else value ++ [ inputs.nixvim.homeManagerModules.nixvim ];
 
         home.username = userName;
         home.homeDirectory = if userName == "root" then "/root" else "/home/${userName}";

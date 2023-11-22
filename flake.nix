@@ -11,6 +11,10 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixvim-stable = {
+      url = "github:nix-community/nixvim/nixos-23.05";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -63,7 +67,6 @@
         ./generic/common.nix #imports common settings
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./JuliansFramework/configuration.nix
-        home-manager.nixosModules.home-manager
         nixos-hardware.nixosModules.framework-12th-gen-intel
         #nixos-hardware.nixosModules.common-gpu-amd
       ];
@@ -81,6 +84,7 @@
           ];
         };
         hostName = "JuliansFramework"; 
+        stable = false;
         inherit inputs;
       };
     };
@@ -94,7 +98,6 @@
         ./generic/server.nix
         #don't use ./proxmoxVM.nix because ISO does not support disco and doesn't have vmID
         ./blankISO/configuration.nix 
-        home-manager-stable.nixosModules.home-manager
       ];
       specialArgs = {
         homeManagerModules = {
@@ -103,6 +106,7 @@
           ];
         };
         hostName = "blankISO"; 
+        stable = true;
         inherit inputs;
       };
     };
@@ -116,7 +120,6 @@
         ./generic/proxmoxVM.nix #requires vmID!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./NixOSTesting/configuration.nix
-        home-manager-stable.nixosModules.home-manager
       ];
       specialArgs = { 
         homeManagerModules = {
@@ -125,6 +128,7 @@
           ];
         };
         hostName = "NixOSTesting"; 
+        stable = true;
         vmID = "120";
         inherit inputs;
       };
@@ -139,7 +143,6 @@
         ./generic/proxmoxVM.nix #requires vmID!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./Nextcloud/configuration.nix
-        home-manager-stable.nixosModules.home-manager
       ];
       specialArgs = { 
         homeManagerModules = {
@@ -148,6 +151,7 @@
           ];
         };
         hostName = "Nextcloud"; 
+        stable = true;
         vmID = "131";
         inherit inputs;
       };
@@ -162,7 +166,6 @@
         ./generic/proxmoxVM.nix #requires vmID!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./Nextcloud/configuration.nix
-        home-manager-stable.nixosModules.home-manager
       ];
       specialArgs = { 
         homeManagerModules = {
@@ -171,6 +174,7 @@
           ];
         };
         hostName = "Nextcloud-Testing"; 
+        stable = true;
         vmID = "150";
         inherit inputs;
       };
@@ -185,7 +189,6 @@
         ./generic/proxmoxVM.nix #requires vmID!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./Jellyfin/configuration.nix
-        home-manager-stable.nixosModules.home-manager
       ];
       specialArgs = { 
         homeManagerModules = {
@@ -194,6 +197,7 @@
           ];
         };
         hostName = "Jellyfin"; 
+        stable = true;
         vmID = "132";
         inherit inputs;
       };
@@ -209,7 +213,6 @@
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./generic/proxy.nix #requires edge!
         ./IonosVPS/configuration.nix
-        home-manager-stable.nixosModules.home-manager
       ];
       specialArgs = { 
         homeManagerModules = {
@@ -218,6 +221,7 @@
           ];
         };
         hostName = "IonosVPS"; 
+        stable = true;
         edge = true;
         inherit inputs;
       };
@@ -233,7 +237,6 @@
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./generic/proxy.nix #requires edge!
         ./LocalProxy/configuration.nix
-        home-manager-stable.nixosModules.home-manager
       ];
       specialArgs = { 
         homeManagerModules = {
@@ -242,6 +245,7 @@
           ];
         };
         hostName = "LocalProxy"; 
+        stable = true;
         vmID = "130";
         edge = false;
         inherit inputs;
