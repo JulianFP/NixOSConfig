@@ -63,6 +63,7 @@
         ./generic/common.nix #imports common settings
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./JuliansFramework/configuration.nix
+        home-manager.nixosModules.home-manager
         nixos-hardware.nixosModules.framework-12th-gen-intel
         #nixos-hardware.nixosModules.common-gpu-amd
       ];
@@ -93,6 +94,7 @@
         ./generic/server.nix
         #don't use ./proxmoxVM.nix because ISO does not support disco and doesn't have vmID
         ./blankISO/configuration.nix 
+        home-manager-stable.nixosModules.home-manager
       ];
       specialArgs = {
         homeManagerModules = {
@@ -114,6 +116,7 @@
         ./generic/proxmoxVM.nix #requires vmID!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./NixOSTesting/configuration.nix
+        home-manager-stable.nixosModules.home-manager
       ];
       specialArgs = { 
         homeManagerModules = {
@@ -136,6 +139,7 @@
         ./generic/proxmoxVM.nix #requires vmID!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./Nextcloud/configuration.nix
+        home-manager-stable.nixosModules.home-manager
       ];
       specialArgs = { 
         homeManagerModules = {
@@ -158,6 +162,7 @@
         ./generic/proxmoxVM.nix #requires vmID!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./Nextcloud/configuration.nix
+        home-manager-stable.nixosModules.home-manager
       ];
       specialArgs = { 
         homeManagerModules = {
@@ -180,6 +185,7 @@
         ./generic/proxmoxVM.nix #requires vmID!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./Jellyfin/configuration.nix
+        home-manager-stable.nixosModules.home-manager
       ];
       specialArgs = { 
         homeManagerModules = {
@@ -203,6 +209,7 @@
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./generic/proxy.nix #requires edge!
         ./IonosVPS/configuration.nix
+        home-manager-stable.nixosModules.home-manager
       ];
       specialArgs = { 
         homeManagerModules = {
@@ -226,6 +233,7 @@
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./generic/proxy.nix #requires edge!
         ./LocalProxy/configuration.nix
+        home-manager-stable.nixosModules.home-manager
       ];
       specialArgs = { 
         homeManagerModules = {

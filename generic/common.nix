@@ -1,10 +1,6 @@
 { config, pkgs, inputs, homeManagerModules, hostName, ...}:
 
 {
-  imports = with inputs; [
-    home-manager.nixosModules.home-manager
-  ];
-
   #define hostname 
   networking.hostName = hostName;
 
