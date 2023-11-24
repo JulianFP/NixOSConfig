@@ -45,6 +45,9 @@ monitor=eDP-1, 2256x1504, 0x0, 1.5
 monitor=desc:Samsung Electric Company C27HG7x HTHK300334, 2560x1440@144, 0x0, 1
 # Iiyama PL2280H
 monitor=HDMI-A-1, 1920x1080@60, 2560x0, 1
+# Eizo EV2460 Ratiodatas monitors
+monitor=desc:Eizo Nanao Corporation EV2460 51274091, 1920x1080@60, 0x0, 1
+monitor=desc:Eizo Nanao Corporation EV2460 51278091, 1920x1080@60, 1920x0, 1
 # fallback rule for random monitors
 monitor=,preferred,auto,1
 
