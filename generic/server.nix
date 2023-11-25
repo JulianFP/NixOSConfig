@@ -1,8 +1,9 @@
-{ modulesPath, pkgs, hostName, ... }:
+{ modulesPath, ... }:
 
 {
   imports =
     [ # Include the results of the hardware scan.
+      ./common.nix
       (modulesPath + "/installer/scan/not-detected.nix")
       (modulesPath + "/profiles/qemu-guest.nix")
     ];

@@ -64,7 +64,7 @@
       modules = [
         #./genericNixOS/systemd-boot.nix
         ./generic/lanzaboote.nix #(imports lanzaboote module)
-        ./generic/common.nix #imports common settings
+        ./generic/commonHM.nix #imports common settings (including home manager)
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./JuliansFramework/configuration.nix
         nixos-hardware.nixosModules.framework-12th-gen-intel
@@ -94,19 +94,12 @@
         inherit system;
       };
       modules = [
-        ./generic/common.nix #imports common settings
         ./generic/server.nix
         #don't use ./proxmoxVM.nix because ISO does not support disco and doesn't have vmID
         ./blankISO/configuration.nix 
       ];
       specialArgs = {
-        homeManagerModules = {
-          root = [ 
-            ./genericHM/terminal.nix
-          ];
-        };
         hostName = "blankISO"; 
-        stable = true;
         inherit inputs;
       };
     };
@@ -116,8 +109,7 @@
         inherit system;
       };
       modules = [
-        ./generic/common.nix #imports common settings
-        ./generic/proxmoxVM.nix #requires vmID!
+        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./NixOSTesting/configuration.nix
       ];
@@ -139,8 +131,7 @@
         inherit system;
       };
       modules = [
-        ./generic/common.nix #imports common settings
-        ./generic/proxmoxVM.nix #requires vmID!
+        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./Nextcloud/configuration.nix
       ];
@@ -162,8 +153,7 @@
         inherit system;
       };
       modules = [
-        ./generic/common.nix #imports common settings
-        ./generic/proxmoxVM.nix #requires vmID!
+        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./Nextcloud/configuration.nix
       ];
@@ -185,8 +175,7 @@
         inherit system;
       };
       modules = [
-        ./generic/common.nix #imports common settings
-        ./generic/proxmoxVM.nix #requires vmID!
+        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./Jellyfin/configuration.nix
       ];
@@ -208,20 +197,13 @@
         inherit system;
       };
       modules = [
-        ./generic/common.nix #imports common settings
         ./generic/server.nix
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./generic/proxy.nix #requires edge!
         ./IonosVPS/configuration.nix
       ];
       specialArgs = { 
-        homeManagerModules = {
-          root = [ 
-            ./genericHM/terminal.nix
-          ];
-        };
         hostName = "IonosVPS"; 
-        stable = true;
         edge = true;
         inherit inputs;
       };
@@ -232,8 +214,7 @@
         inherit system;
       };
       modules = [
-        ./generic/common.nix #imports common settings
-        ./generic/proxmoxVM.nix
+        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./generic/proxy.nix #requires edge!
         ./LocalProxy/configuration.nix
