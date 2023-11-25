@@ -1,72 +1,13 @@
-{ config, pkgs, nixvim, ... }:
+{ config, pkgs, ... }:
 
 {
   imports = 
     [
-      nixvim.homeManagerModules.nixvim #import nixvim module
       ./packages.nix #Packages and Fonts installed for this user
       ./hyprland.nix #Hyprland stuff
-      ./terminal.nix #Terminal stuff (Alacritty, zsh, ...) 
-      ./neovim.nix #Neovim stuff
       ./mangohud.nix #mangohud config
+      ./neovim.nix
     ];
-
-  home.username = "julian";
-  home.homeDirectory = "/home/julian";
-
-  # ssh (with yubikey support) stuff and agent forwarding (ssh and gpg)
-  programs.ssh = {
-    enable = true;
-    matchBlocks = {
-      "Ionos" = {
-        hostname = "82.165.49.241";
-	      user = "root";
-      };
-    };
-    forwardAgent = true;
-    extraConfig = ''
-      Match host * exec "gpg-connect-agent UPDATESTARTUPTTY /bye"
-    '';
-  };
-  home.file.".ssh/id_rsa.pub" = {
-    source = ../../../publicKeys/id_rsa.pub;
-  };
-  services.gpg-agent = {
-    enable = true;
-    enableSshSupport = true;
-    defaultCacheTtl = 300;
-    defaultCacheTtlSsh = 300;
-    maxCacheTtl = 3600;
-    maxCacheTtlSsh = 3600;
-    pinentryFlavor = "qt";
-    extraConfig = ''
-      ttyname $GPG_TTY
-    '';
-  };
-  programs.gpg = {
-    enable = true;
-    scdaemonSettings = {
-      disable-ccid = true;
-      reader-port = "Yubico Yubi";
-    };
-    publicKeys = [{
-      source = ../../../publicKeys/gpg_yubikey.asc;
-      trust = 5;
-    }];
-  };
-  systemd.user.sessionVariables = {
-    SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/gnupg/S.gpg-agent.ssh";
-  };
-
-  # git
-  programs.git = {
-    enable = true;
-    userName = "JulianFP";
-    userEmail = "julian@partanengroup.de";
-    extraConfig = {
-      init.defaultBranch = "main";
-    };
-  };
 
   # lf
   programs.lf = {
@@ -85,7 +26,7 @@
       gc = "cd ~/.config";
       gu = "cd ~/Nextcloud/Dokumente/Studium";
 
-      # execute current file 
+      # execute current file
       x = "\$\$f";
       X = "!\$f";
     };
@@ -126,7 +67,7 @@
     };
   };
 
-  # Mako
+  # Mako (notification daemon)
   services.mako = {
     enable = true;
     backgroundColor = "#2B303B9A";
@@ -146,7 +87,7 @@
     '';
   };
 
-  # Rofi
+  # Rofi (application starter and more)
   programs.rofi = {
     enable = true;
     package = pkgs.rofi-wayland;
@@ -178,6 +119,57 @@
       obs-gstreamer
       obs-vaapi
     ];
+  };
+
+  # Alacritty
+  programs.alacritty = {
+    enable = true;
+    settings = {
+      # Colors (Gruvbox Material Medium Dark)
+      colors = {
+        # Default colors
+        primary = {
+          background = "#282828";
+          foreground = "#d4be98";
+        };
+        # Normal colors
+        normal = {
+          black = "#3c3836";
+          red = "#ea6962";
+          green = "#a9b665";
+          yellow = "#d8a657";
+          blue = "#7daea3";
+          magenta = "#d3869b";
+          cyan = "#89b482";
+          white = "#d4be98";
+        };
+        # Bright colors (same as normal colors)
+        bright = {
+          black = "#3c3836";
+          red = "#ea6962";
+          green = "#a9b665";
+          yellow = "#d8a657";
+          blue = "#7daea3";
+          magenta = "#d3869b";
+          cyan = "#89b482";
+          white = "#d4be98";
+        };
+      };
+      font = {
+        normal = {
+          family = "AnonymicePro Nerd Font";
+          style = "Regular";
+        };
+        size = 12;
+      };
+      key_bindings = [
+        {
+          key = "Return";
+          mods = "Super|Shift";
+          action = "SpawnNewInstance";
+        }
+      ];
+    };
   };
 
   # virt-manager stuff. See NixOS Wiki for more
@@ -273,7 +265,4 @@ Comment=Private messaging from your desktop
 MimeType=x-scheme-handler/sgnl;x-scheme-handler/signalcaptcha;
 Categories=Network;InstantMessaging;Chat;
   '';
-
-  home.stateVersion = "23.11";
-  programs.home-manager.enable = true;
 }

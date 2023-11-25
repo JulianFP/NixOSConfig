@@ -2,11 +2,10 @@
 
 let
   my-python-packages = ps: with ps; [
-    #torchWithRocm 
     numpy
     flask
+    openai-whisper 
     httpx
-    openai-whisper
     cookiecutter
   ];
 in 
@@ -32,6 +31,7 @@ in
     nur.repos.mikilio.xwaylandvideobridge-hypr
 
     # CLI Applications
+    file #needed for open command of lf
     tree
     unzip
     htop-vim
