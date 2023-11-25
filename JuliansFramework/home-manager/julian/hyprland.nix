@@ -41,14 +41,15 @@
 # See https://wiki.hyprland.org/Configuring/Monitors/
 # internal monitor (fractional scaling)
 monitor=eDP-1, 2256x1504, 0x0, 1.5
-# Samsung C27HG7x (ports on right and left downside)
-monitor=DP-2, 2560x1440@144, 1504x0, 1
-monitor=DP-3, 2560x1440@144, 0x0, 1
-monitor=DP-7, 2560x1440@144, 0x0, 1
-# Iiyama PL2280H (ports over DS at right and left upside)
+# Samsung C27HG7x
+monitor=desc:Samsung Electric Company C27HG7x HTHK300334, 2560x1440@144, 0x0, 1
+# Iiyama PL2280H
 monitor=HDMI-A-1, 1920x1080@60, 2560x0, 1
-monitor=DP-5, 1920x1080, 0x0, 1
-monitor=DP-6, 1920x1080, 1920x0, 1
+# Eizo EV2460 Ratiodatas monitors
+monitor=desc:Eizo Nanao Corporation EV2460 51274091, 1920x1080@60, 0x0, 1
+monitor=desc:Eizo Nanao Corporation EV2460 51278091, 1920x1080@60, 1920x0, 1
+# fallback rule for random monitors
+monitor=,preferred,auto,1
 
 # See https://wiki.hyprland.org/Configuring/Keywords/ for more
 # Set lockscreen background

@@ -6,6 +6,7 @@ let
     flask
     openai-whisper 
     httpx
+    cookiecutter
   ];
 in 
 {
