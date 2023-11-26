@@ -40,7 +40,7 @@
 
 # See https://wiki.hyprland.org/Configuring/Monitors/
 # internal monitor (fractional scaling)
-monitor=eDP-1, 2256x1504, 0x0, 1.5
+monitor=desc:BOE 0x095F, 2256x1504, 0x0, 1.5
 # Samsung C27HG7x
 monitor=desc:Samsung Electric Company C27HG7x HTHK300334, 2560x1440@144, 0x0, 1
 # Iiyama PL2280H
