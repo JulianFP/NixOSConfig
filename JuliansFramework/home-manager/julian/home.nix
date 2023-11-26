@@ -1,10 +1,15 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
+let 
+  nix-colors = inputs.nix-colors;
+  nix-colors-lib = nix-colors.lib.contrib { inherit pkgs; };
+in
 {
   imports = 
     [
+      nix-colors.homeManagerModules.default
       ./packages.nix #Packages and Fonts installed for this user
-      ./hyprland.nix #Hyprland stuff
+      ./hyprland.nix #Hyprland stu
       ./mangohud.nix #mangohud config
       ./neovim.nix
     ];
@@ -77,13 +82,13 @@
     height = 300;
     extraConfig = ''
     [urgency=low]
-    border-color=#CCCCCCFF
+    border-color=#CCCCCC
     
     [urgency=normal]
-    border-color=#D08770FF
+    border-color=#D08770
 
     [urgency=high]
-    border-color=#BF616AFF
+    border-color=#BF616A
     '';
   };
 
@@ -172,7 +177,7 @@
     };
   };
 
-  # virt-manager stuff. See NixOS Wiki for more
+  # virt-manager stu. See NixOS Wiki for more
   dconf.settings = {
     "org/virt-manager/virt-manager/connections" = {
       autoconnect = ["qemu:///system"];
@@ -180,16 +185,18 @@
     };
   };
 
-  # Theming
+  /* -- theming -- */
+  #define global color scheme here. This gets applied to everything automatically
+  colorScheme = nix-colors.colorSchemes.dracula;
+  
   xdg.configFile = {
-    "Kvantum/kvantum.kvconfig".text = ''
-      [General]
-      theme=MateriaDark
+    #qt5ct config (custom color palette included)
+    "qt5ct/colors/nix-colors-${config.colorScheme.slug}.conf".text = with config.colorScheme.colors; ''
+      [ColorScheme]
+      active_colors=#ff${base0C}, #ff${base01}, #ff${base01}, #ff${base05}, #ff${base03}, #ff${base04}, #ff${base0E}, #ff${base06}, #ff${base05}, #ff${base01}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base0E}, #ff${base09}, #ff${base08}, #ff${base02}, #ff${base05}, #ff${base01}, #ff${base0E}, #8f${base0E}
+      disabled_colors=#ff${base0F}, #ff${base01}, #ff${base01}, #ff${base05}, #ff${base03}, #ff${base04}, #ff${base0F}, #ff${base0F}, #ff${base0F}, #ff${base01}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base0E}, #ff${base09}, #ff${base08}, #ff${base02}, #ff${base05}, #ff${base01}, #ff${base0F}, #8f${base0F}
+      inactive_colors=#ff${base0C}, #ff${base01}, #ff${base01}, #ff${base05}, #ff${base03}, #ff${base04}, #ff${base0E}, #ff${base06}, #ff${base05}, #ff${base01}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base0E}, #ff${base09}, #ff${base08}, #ff${base02}, #ff${base05}, #ff${base01}, #ff${base0E}, #8f${base0E}
     '';
-    "Kvantum/MateriaDark" = {
-      source = "${pkgs.materia-kde-theme}/share/Kvantum/MateriaDark";
-      recursive = true;
-    };
     "qt5ct/qss/fixes.qss".text = ''
       QTabBar::tab:selected {
           color: palette(bright-text);
@@ -207,26 +214,39 @@
     '';
     "qt5ct/qt5ct.conf".text = ''
       [Appearance]
+      color_scheme_path=${config.home.homeDirectory}/.config/qt5ct/colors/nix-colors-${config.colorScheme.slug}.conf
+      custom_palette=true 
       icon_theme=Papirus-Dark
-      style=kvantum-dark
+      style=Breeze
 
       [Interface]
       stylesheets=${config.home.homeDirectory}/.config/qt5ct/qss/fixes.qss
     '';
+
+    #qt6ct config (custom color palette included)
+    "qt6ct/colors/nix-colors-${config.colorScheme.slug}.conf".text = with config.colorScheme.colors; ''
+      [ColorScheme]
+      active_colors=#ff${base0C}, #ff${base01}, #ff${base01}, #ff${base05}, #ff${base03}, #ff${base04}, #ff${base0E}, #ff${base06}, #ff${base05}, #ff${base01}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base0E}, #ff${base09}, #ff${base08}, #ff${base02}, #ff${base05}, #ff${base01}, #ff${base0E}, #8f${base0E}
+      disabled_colors=#ff${base0F}, #ff${base01}, #ff${base01}, #ff${base05}, #ff${base03}, #ff${base04}, #ff${base0F}, #ff${base0F}, #ff${base0F}, #ff${base01}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base0E}, #ff${base09}, #ff${base08}, #ff${base02}, #ff${base05}, #ff${base01}, #ff${base0F}, #8f${base0F}
+      inactive_colors=#ff${base0C}, #ff${base01}, #ff${base01}, #ff${base05}, #ff${base03}, #ff${base04}, #ff${base0E}, #ff${base06}, #ff${base05}, #ff${base01}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base0E}, #ff${base09}, #ff${base08}, #ff${base02}, #ff${base05}, #ff${base01}, #ff${base0E}, #8f${base0E}
+    '';
     "qt6ct/qt6ct.conf".text = ''
       [Appearance]
       icon_theme=Papirus-Dark
-      style=kvantum-dark
+      custom_palette=true 
+      color_scheme_path=~/.config/qt6ct/colors/nix-colors-${config.colorScheme.slug}.conf
 
       [Interface]
       stylesheets=${pkgs.qt6Packages.qt6ct}/share/qt6ct/qss/fusion-fixes.qss
     '';
-    "kdeglobals".text = ''
+
+    #some additional fixes and settings in kdeglobals (not all theming related)
+    "kdeglobals".text = with config.colorScheme.colors; ''
       [General]
       TerminalApplication=alacritty
 
       [Colors:View]
-      BackgroundNormal=#272727
+      BackgroundNormal=#${base00}
 
       [KFileDialog Settings]
       Automatically select filename extension=true
@@ -238,13 +258,19 @@
       View Style=DetailTree
     '';
   };
+
+  #gtk theming
   gtk = {
     enable = true;
-    theme.package = pkgs.materia-theme;
-    theme.name = "Materia-dark-compact";
+    theme.package = nix-colors-lib.gtkThemeFromScheme {
+      scheme = config.colorScheme;      
+    };
+    theme.name = config.colorScheme.slug;
     iconTheme.package = pkgs.papirus-icon-theme;
     iconTheme.name = "Papirus-Dark";
   };
+
+  #cursor style
   home.pointerCursor = {
     gtk.enable = true;
     package = pkgs.capitaine-cursors;
@@ -252,6 +278,9 @@
     size = 24;
   };
 
+
+
+  /* -- misc -- */
   # Signal start in tray fix
   home.file.".local/share/applications/signal-desktop.desktop".text = ''
 [Desktop Entry]

@@ -23,6 +23,7 @@
       url = "github:nix-community/home-manager/release-23.05";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
+    nix-colors.url = "github:misterio77/nix-colors";
     nur.url = "github:nix-community/NUR";
     disko = {
       url = "github:nix-community/disko";

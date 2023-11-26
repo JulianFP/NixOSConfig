@@ -157,8 +157,8 @@ structure:
       intel-gpu-tools
       bluez
       libsForQt5.frameworkintegration
-      libsForQt5.qtstyleplugin-kvantum
-      qt6Packages.qtstyleplugin-kvantum
+      libsForQt5.qt5ct
+      libsForQt5.breeze-qt5
       qt5.qtwayland
       qt6.qtwayland
       qt6ct
