@@ -144,9 +144,7 @@ structure:
       }
     '';
 
-    #env variables for qt theming stuff. See more in qt in misc
     variables = {
-      QT_QPA_PLATFORMTHEME = lib.mkForce "qt6ct";
       RADV_PERFTEST = "nosam"; #performance improvement for eGPUs
     };
 
@@ -156,12 +154,6 @@ structure:
       intel-media-driver
       intel-gpu-tools
       bluez
-      libsForQt5.frameworkintegration
-      libsForQt5.qt5ct
-      libsForQt5.breeze-qt5
-      qt5.qtwayland
-      qt6.qtwayland
-      qt6ct
 
       # networking stuff
       networkmanager-l2tp
@@ -237,12 +229,6 @@ structure:
 
   #enable xdg desktop integration (mainly for flatpaks)
   xdg.portal.enable = true; 
-
-  # qt theming stuff (has to be done on system level to proberly work because it uses qts plugin system)
-  qt = {
-    enable = true;
-    platformTheme = "qt5ct";
-  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

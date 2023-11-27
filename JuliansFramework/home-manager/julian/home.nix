@@ -224,76 +224,140 @@ in
   };
 
   /* -- gui theming -- */
-  xdg.configFile = {
-    #qt5ct config (custom color palette included)
-    #inspiration from following base16 template: https://github.com/mnussbaum/base16-qt5ct
-    "qt5ct/colors/nix-colors-${config.colorScheme.slug}.conf".text = with config.colorScheme.colors; ''
-      [ColorScheme]
-      active_colors=#ff${base05}, #ff${base01}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base0D}, #ff${base05}, #ff${base09}, #ff${base0B}, #ff${base01}, #ff${base05}, #ff${base01}, #ff${base0C}, #8f${base08}
-      disabled_colors=#ff${base0F}, #ff${base01}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base0F}, #ff${base06}, #ff${base0F}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base0F}, #ff${base09}, #ff${base0B}, #ff${base01}, #ff${base05}, #ff${base01}, #ff${base0C}, #8f${base0F}
-      inactive_colors=#ff${base05}, #ff${base01}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base0D}, #ff${base05}, #ff${base09}, #ff${base0B}, #ff${base01}, #ff${base05}, #ff${base01}, #ff${base0C}, #8f${base08}
-    '';
-    "qt5ct/qss/fixes.qss".text = ''
-      QTabBar::tab:selected {
-          color: palette(bright-text);
-      }
-      QScrollBar {
-          background: palette(dark);
-      }
-      QScrollBar::handle {
-          background: palette(highlight);
-          border-radius: 4px;
-      }
-      QScrollBar::add-line, QScrollBar::sub-line {
-          background: palette(window);
-      }
-    '';
-    "qt5ct/qt5ct.conf".text = ''
-      [Appearance]
-      color_scheme_path=${config.home.homeDirectory}/.config/qt5ct/colors/nix-colors-${config.colorScheme.slug}.conf
-      custom_palette=true 
-      icon_theme=Papirus-Dark
-      style=Breeze
-
-      [Interface]
-      stylesheets=${config.home.homeDirectory}/.config/qt5ct/qss/fixes.qss
-    '';
-
-    #qt6ct config (custom color palette included)
-    "qt6ct/colors/nix-colors-${config.colorScheme.slug}.conf".text = with config.colorScheme.colors; ''
-      [ColorScheme]
-      active_colors=#ff${base05}, #ff${base01}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base0D}, #ff${base05}, #ff${base09}, #ff${base0B}, #ff${base01}, #ff${base05}, #ff${base01}, #ff${base0C}, #8f${base08}
-      disabled_colors=#ff${base0F}, #ff${base01}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base0F}, #ff${base06}, #ff${base0F}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base0F}, #ff${base09}, #ff${base0B}, #ff${base01}, #ff${base05}, #ff${base01}, #ff${base0C}, #8f${base0F}
-      inactive_colors=#ff${base05}, #ff${base01}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base0D}, #ff${base05}, #ff${base09}, #ff${base0B}, #ff${base01}, #ff${base05}, #ff${base01}, #ff${base0C}, #8f${base08}
-    '';
-    "qt6ct/qt6ct.conf".text = ''
-      [Appearance]
-      color_scheme_path=${config.home.homeDirectory}/.config/qt5ct/colors/nix-colors-${config.colorScheme.slug}.conf
-      custom_palette=true 
-      icon_theme=Papirus-Dark
-
-      [Interface]
-      stylesheets=${pkgs.qt6Packages.qt6ct}/share/qt6ct/qss/fusion-fixes.qss
-    '';
-
-    #some additional fixes and settings in kdeglobals (not all theming related)
-    "kdeglobals".text = with config.colorScheme.colors; ''
-      [General]
-      TerminalApplication=alacritty
-
-      [Colors:View]
-      BackgroundNormal=#${base00}
-
-      [KFileDialog Settings]
-      Automatically select filename extension=true
-      Show Bookmarks=true
-      Show Full Path=true
-      Show hidden files=true
-      Sort by=name
-      Sort directories first=false
-      View Style=DetailTree
-    '';
+  qt = {
+    enable = true;
+    platformTheme = "kde";
   };
+
+  xdg.configFile."kdeglobals".text = with config.colorScheme.colors; with nix-colors.lib.conversions; ''
+    [ColorEffects:Disabled]
+    ChangeSelectionColor=
+    Color=56,56,56
+    ColorAmount=1
+    ColorEffect=0
+    ContrastAmount=0.5
+    ContrastEffect=1
+    Enable=
+    IntensityAmount=0
+    IntensityEffect=2
+
+    [ColorEffects:Inactive]
+    ChangeSelectionColor=true
+    Color=112,111,110
+    ColorAmount=-0.9500000000000001
+    ColorEffect=0
+    ContrastAmount=0.6000000000000001
+    ContrastEffect=0
+    Enable=false
+    IntensityAmount=0
+    IntensityEffect=0
+
+    [Colors:Button]
+    BackgroundAlternate=${hexToRGBString "," base01}
+    BackgroundNormal=${hexToRGBString "," base00}
+    DecorationFocus=${hexToRGBString "," base08}
+    DecorationHover=${hexToRGBString "," base08}
+    ForegroundActive=${hexToRGBString "," base0B}
+    ForegroundInactive=${hexToRGBString "," base05}
+    ForegroundLink=${hexToRGBString "," base0D}
+    ForegroundNegative=${hexToRGBString "," base0F}
+    ForegroundNeutral=${hexToRGBString "," base04}
+    ForegroundNormal=${hexToRGBString "," base05}
+    ForegroundPositive=${hexToRGBString "," base0C}
+    ForegroundVisited=${hexToRGBString "," base0E}
+
+    [Colors:Selection]
+    BackgroundAlternate=${hexToRGBString "," base08}
+    BackgroundNormal=${hexToRGBString "," base08}
+    DecorationFocus=${hexToRGBString "," base08}
+    DecorationHover=${hexToRGBString "," base08}
+    ForegroundActive=${hexToRGBString "," base0B}
+    ForegroundInactive=${hexToRGBString "," base02}
+    ForegroundLink=${hexToRGBString "," base0D}
+    ForegroundNegative=${hexToRGBString "," base0F}
+    ForegroundNeutral=${hexToRGBString "," base04}
+    ForegroundNormal=${hexToRGBString "," base02}
+    ForegroundPositive=${hexToRGBString "," base0C}
+    ForegroundVisited=${hexToRGBString "," base0E}
+
+    [Colors:Tooltip]
+    BackgroundAlternate=${hexToRGBString "," base02}
+    BackgroundNormal=${hexToRGBString "," base01}
+    DecorationFocus=${hexToRGBString "," base08}
+    DecorationHover=${hexToRGBString "," base08}
+    ForegroundActive=${hexToRGBString "," base0B}
+    ForegroundInactive=${hexToRGBString "," base05}
+    ForegroundLink=${hexToRGBString "," base0D}
+    ForegroundNegative=${hexToRGBString "," base0F}
+    ForegroundNeutral=${hexToRGBString "," base04}
+    ForegroundNormal=${hexToRGBString "," base05}
+    ForegroundPositive=${hexToRGBString "," base0C}
+    ForegroundVisited=${hexToRGBString "," base0E}
+
+    [Colors:View]
+    BackgroundAlternate=${hexToRGBString "," base02}
+    BackgroundNormal=${hexToRGBString "," base01}
+    DecorationFocus=${hexToRGBString "," base08}
+    DecorationHover=${hexToRGBString "," base08}
+    ForegroundActive=${hexToRGBString "," base0B}
+    ForegroundInactive=${hexToRGBString "," base05}
+    ForegroundLink=${hexToRGBString "," base0D}
+    ForegroundNegative=${hexToRGBString "," base0F}
+    ForegroundNeutral=${hexToRGBString "," base04}
+    ForegroundNormal=${hexToRGBString "," base05}
+    ForegroundPositive=${hexToRGBString "," base0C}
+    ForegroundVisited=${hexToRGBString "," base0E}
+
+    [Colors:Window]
+    BackgroundAlternate=${hexToRGBString "," base01}
+    BackgroundNormal=${hexToRGBString "," base00}
+    DecorationFocus=${hexToRGBString "," base08}
+    DecorationHover=${hexToRGBString "," base08}
+    ForegroundActive=${hexToRGBString "," base0B}
+    ForegroundInactive=${hexToRGBString "," base05}
+    ForegroundLink=${hexToRGBString "," base0D}
+    ForegroundNegative=${hexToRGBString "," base0F}
+    ForegroundNeutral=${hexToRGBString "," base04}
+    ForegroundNormal=${hexToRGBString "," base05}
+    ForegroundPositive=${hexToRGBString "," base0C}
+    ForegroundVisited=${hexToRGBString "," base0E}
+
+    [General]
+    TerminalApplication=alacritty
+
+    [Icons]
+    Theme=Papirus-Dark
+
+    [KDE]
+    LookAndFeelPackage=org.kde.breezedark.desktop
+
+    [KFileDialog Settings]
+    Allow Expansion=false
+    Automatically select filename extension=true
+    Breadcrumb Navigation=true
+    Decoration position=2
+    LocationCombo Completionmode=5
+    PathCombo Completionmode=5
+    Show Bookmarks=true
+    Show Full Path=true
+    Show Inline Previews=true
+    Show Speedbar=true
+    Show hidden files=true
+    Sort by=Name
+    Sort directories first=false
+    Sort hidden files last=false
+    Sort reversed=false
+    Speedbar Width=236
+    View Style=DetailTree
+
+    [WM]
+    activeBackground=${hexToRGBString "," base00}
+    activeBlend=${hexToRGBString "," base00}
+    activeForeground=${hexToRGBString "," base05}
+    inactiveBackground=${hexToRGBString "," base00}
+    inactiveBlend=${hexToRGBString "," base00}
+    inactiveForeground=${hexToRGBString "," base04}
+  '';
 
   #gtk theming
   gtk = {
