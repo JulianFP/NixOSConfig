@@ -14,6 +14,13 @@ in
       ./neovim.nix
     ];
 
+
+
+  #define global color scheme here. This gets applied to everything automatically
+  colorScheme = nix-colors.colorSchemes.gruvbox-material-dark-medium;
+  
+
+
   # lf
   programs.lf = {
     enable = true;
@@ -130,35 +137,66 @@ in
   programs.alacritty = {
     enable = true;
     settings = {
-      # Colors (Gruvbox Material Medium Dark)
-      colors = {
+      #base16 template: https://github.com/aarowill/base16-alacritty
+      colors = with config.colorScheme.colors; {
         # Default colors
         primary = {
-          background = "#282828";
-          foreground = "#d4be98";
+          background = "0x${base00}";
+          foreground = "0x${base05}";
+        };
+        # colors the cursor will use if 'custom_cursor_colors' is true
+        cursor = {
+          text = "0x${base00}";
+          cursor = "0x${base05}";
         };
         # Normal colors
         normal = {
-          black = "#3c3836";
-          red = "#ea6962";
-          green = "#a9b665";
-          yellow = "#d8a657";
-          blue = "#7daea3";
-          magenta = "#d3869b";
-          cyan = "#89b482";
-          white = "#d4be98";
+          black = "0x${base00}";
+          red = "0x${base08}";
+          green = "0x${base0B}";
+          yellow = "0x${base0A}";
+          blue = "0x${base0D}";
+          magenta = "0x${base0E}";
+          cyan = "0x${base0C}";
+          white = "0x${base05}";
         };
-        # Bright colors (same as normal colors)
+        # Bright colors
         bright = {
-          black = "#3c3836";
-          red = "#ea6962";
-          green = "#a9b665";
-          yellow = "#d8a657";
-          blue = "#7daea3";
-          magenta = "#d3869b";
-          cyan = "#89b482";
-          white = "#d4be98";
+          black = "0x${base03}";
+          red = "0x${base08}";
+          green = "0x${base0B}";
+          yellow = "0x${base0A}";
+          blue = "0x${base0D}";
+          magenta = "0x${base0E}";
+          cyan = "0x${base0C}";
+          white = "0x${base07}";
         };
+        indexed_colors = [
+          {
+            index = 16;
+            color = "0x${base09}";
+          }
+          {
+            index = 17;
+            color = "0x${base0F}";
+          }
+          {
+            index = 18;
+            color = "0x${base01}";
+          }
+          {
+            index = 19;
+            color = "0x${base02}";
+          }
+          {
+            index = 20;
+            color = "0x${base04}";
+          }
+          {
+            index = 21;
+            color = "0x${base06}";
+          }
+        ];
       };
       font = {
         normal = {
@@ -185,17 +223,15 @@ in
     };
   };
 
-  /* -- theming -- */
-  #define global color scheme here. This gets applied to everything automatically
-  colorScheme = nix-colors.colorSchemes.dracula;
-  
+  /* -- gui theming -- */
   xdg.configFile = {
     #qt5ct config (custom color palette included)
+    #inspiration from following base16 template: https://github.com/mnussbaum/base16-qt5ct
     "qt5ct/colors/nix-colors-${config.colorScheme.slug}.conf".text = with config.colorScheme.colors; ''
       [ColorScheme]
-      active_colors=#ff${base0C}, #ff${base01}, #ff${base01}, #ff${base05}, #ff${base03}, #ff${base04}, #ff${base0E}, #ff${base06}, #ff${base05}, #ff${base01}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base0E}, #ff${base09}, #ff${base08}, #ff${base02}, #ff${base05}, #ff${base01}, #ff${base0E}, #8f${base0E}
-      disabled_colors=#ff${base0F}, #ff${base01}, #ff${base01}, #ff${base05}, #ff${base03}, #ff${base04}, #ff${base0F}, #ff${base0F}, #ff${base0F}, #ff${base01}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base0E}, #ff${base09}, #ff${base08}, #ff${base02}, #ff${base05}, #ff${base01}, #ff${base0F}, #8f${base0F}
-      inactive_colors=#ff${base0C}, #ff${base01}, #ff${base01}, #ff${base05}, #ff${base03}, #ff${base04}, #ff${base0E}, #ff${base06}, #ff${base05}, #ff${base01}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base0E}, #ff${base09}, #ff${base08}, #ff${base02}, #ff${base05}, #ff${base01}, #ff${base0E}, #8f${base0E}
+      active_colors=#ff${base05}, #ff${base01}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base0D}, #ff${base05}, #ff${base09}, #ff${base0B}, #ff${base01}, #ff${base05}, #ff${base01}, #ff${base0C}, #8f${base08}
+      disabled_colors=#ff${base0F}, #ff${base01}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base0F}, #ff${base06}, #ff${base0F}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base0F}, #ff${base09}, #ff${base0B}, #ff${base01}, #ff${base05}, #ff${base01}, #ff${base0C}, #8f${base0F}
+      inactive_colors=#ff${base05}, #ff${base01}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base0D}, #ff${base05}, #ff${base09}, #ff${base0B}, #ff${base01}, #ff${base05}, #ff${base01}, #ff${base0C}, #8f${base08}
     '';
     "qt5ct/qss/fixes.qss".text = ''
       QTabBar::tab:selected {
@@ -226,15 +262,15 @@ in
     #qt6ct config (custom color palette included)
     "qt6ct/colors/nix-colors-${config.colorScheme.slug}.conf".text = with config.colorScheme.colors; ''
       [ColorScheme]
-      active_colors=#ff${base0C}, #ff${base01}, #ff${base01}, #ff${base05}, #ff${base03}, #ff${base04}, #ff${base0E}, #ff${base06}, #ff${base05}, #ff${base01}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base0E}, #ff${base09}, #ff${base08}, #ff${base02}, #ff${base05}, #ff${base01}, #ff${base0E}, #8f${base0E}
-      disabled_colors=#ff${base0F}, #ff${base01}, #ff${base01}, #ff${base05}, #ff${base03}, #ff${base04}, #ff${base0F}, #ff${base0F}, #ff${base0F}, #ff${base01}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base0E}, #ff${base09}, #ff${base08}, #ff${base02}, #ff${base05}, #ff${base01}, #ff${base0F}, #8f${base0F}
-      inactive_colors=#ff${base0C}, #ff${base01}, #ff${base01}, #ff${base05}, #ff${base03}, #ff${base04}, #ff${base0E}, #ff${base06}, #ff${base05}, #ff${base01}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base0E}, #ff${base09}, #ff${base08}, #ff${base02}, #ff${base05}, #ff${base01}, #ff${base0E}, #8f${base0E}
+      active_colors=#ff${base05}, #ff${base01}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base0D}, #ff${base05}, #ff${base09}, #ff${base0B}, #ff${base01}, #ff${base05}, #ff${base01}, #ff${base0C}, #8f${base08}
+      disabled_colors=#ff${base0F}, #ff${base01}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base0F}, #ff${base06}, #ff${base0F}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base0F}, #ff${base09}, #ff${base0B}, #ff${base01}, #ff${base05}, #ff${base01}, #ff${base0C}, #8f${base0F}
+      inactive_colors=#ff${base05}, #ff${base01}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base0D}, #ff${base05}, #ff${base09}, #ff${base0B}, #ff${base01}, #ff${base05}, #ff${base01}, #ff${base0C}, #8f${base08}
     '';
     "qt6ct/qt6ct.conf".text = ''
       [Appearance]
-      icon_theme=Papirus-Dark
+      color_scheme_path=${config.home.homeDirectory}/.config/qt5ct/colors/nix-colors-${config.colorScheme.slug}.conf
       custom_palette=true 
-      color_scheme_path=~/.config/qt6ct/colors/nix-colors-${config.colorScheme.slug}.conf
+      icon_theme=Papirus-Dark
 
       [Interface]
       stylesheets=${pkgs.qt6Packages.qt6ct}/share/qt6ct/qss/fusion-fixes.qss
