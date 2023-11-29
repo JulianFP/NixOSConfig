@@ -1,5 +1,6 @@
 keys:
   - &yubikey 5B82BEF3C1A6617707A448FDEB6F11283183E111
+  - &Valheim age1a0uy4e6rglv5v8hwg8sjrzanl2c54nfccfsw0pa3zle4ur93ldxsx8dmmf
   - &Jellyfin age1md83lczu3lykmlam62hqg44zu23y655mvat97jfc583kzzjyn4kq48hjn5
   - &Nextcloud-Testing age1qdfuc92s2hlzm9sxgf5kp2ln8anx07z0zlka3n5l973x8nwzgfksts33jc
   - &LocalProxy age1tna8ry2maexe9dld035kk6gy2p6xnfm9lv2ngftamszfqdn2n43s2w3vas
@@ -43,6 +44,12 @@ creation_rules:
       - *yubikey
       age:
       - *Jellyfin
+  - path_regex: ^secrets/Valheim/.*$
+    key_groups:
+    - pgp:
+      - *yubikey
+      age:
+      - *Valheim
   - path_regex: ^secrets/[^/]*$
     key_groups:
     - pgp:
@@ -54,6 +61,7 @@ creation_rules:
       - *LocalProxy
       - *Nextcloud-Testing
       - *Jellyfin
+      - *Valheim
   - key_groups:
     - pgp:
       - *yubikey
