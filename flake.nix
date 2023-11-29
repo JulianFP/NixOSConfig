@@ -237,6 +237,9 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs-stable {
         inherit system;
+        config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+          "steamcmd"
+        ];
       };
       modules = [
         ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
