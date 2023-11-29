@@ -49,7 +49,7 @@ monitor=HDMI-A-1, 1920x1080@60, 2560x0, 1
 monitor=desc:Eizo Nanao Corporation EV2460 51274091, 1920x1080@60, 0x0, 1
 monitor=desc:Eizo Nanao Corporation EV2460 51278091, 1920x1080@60, 1920x0, 1
 # fallback rule for random monitors
-monitor=,preferred,auto,1
+monitor=,preferred,auto,auto
 
 # See https://wiki.hyprland.org/Configuring/Keywords/ for more
 # Set lockscreen background
