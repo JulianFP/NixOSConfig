@@ -241,7 +241,6 @@
       modules = [
         ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
-        ./generic/proxy.nix #requires edge!
         ./Valheim/configuration.nix
       ];
       specialArgs = { 
