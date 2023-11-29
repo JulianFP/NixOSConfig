@@ -69,7 +69,10 @@
       nvim-autopairs.enable = true;
 
       #status bar at bottom
-      lualine.enable = true;
+      lualine = {
+        enable = true;
+        theme = "gruvbox";
+      };
 
       #nix and bash lsp 
       lsp = {

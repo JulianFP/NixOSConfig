@@ -22,6 +22,9 @@ in
     pulseaudio
     pavucontrol
     networkmanagerapplet
+    qt5.qtwayland
+    qt6.qtwayland
+    libsForQt5.breeze-qt5
     libsForQt5.polkit-kde-agent
     libsForQt5.kwalletmanager
     libsForQt5.kwallet
@@ -29,6 +32,7 @@ in
     sway-contrib.grimshot
     gnome.adwaita-icon-theme
     nur.repos.mikilio.xwaylandvideobridge-hypr
+
 
     # CLI Applications
     file #needed for open command of lf
