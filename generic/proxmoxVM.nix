@@ -4,6 +4,7 @@
   imports =
     [ # Include the results of the hardware scan.
       inputs.disko.nixosModules.disko
+      ./commonHM.nix
       ./server.nix
     ];
 

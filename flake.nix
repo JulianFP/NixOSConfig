@@ -11,6 +11,10 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixvim-stable = {
+      url = "github:nix-community/nixvim/nixos-23.05";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -19,6 +23,7 @@
       url = "github:nix-community/home-manager/release-23.05";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
+    nix-colors.url = "github:misterio77/nix-colors";
     nur.url = "github:nix-community/NUR";
     disko = {
       url = "github:nix-community/disko";
@@ -60,29 +65,27 @@
       modules = [
         #./genericNixOS/systemd-boot.nix
         ./generic/lanzaboote.nix #(imports lanzaboote module)
+        ./generic/commonHM.nix #imports common settings (including home manager)
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./JuliansFramework/configuration.nix
         nixos-hardware.nixosModules.framework-12th-gen-intel
         #nixos-hardware.nixosModules.common-gpu-amd
-        home-manager.nixosModules.home-manager
-        {
-          home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = true;
-            extraSpecialArgs = {
-              #pass nixneovim as additional Arg to home-manager config
-              inherit nixvim;  
-              inherit inputs;
-            };
-            users = {
-              julian = import ./JuliansFramework/home-manager/julian/home.nix;
-              root = import ./JuliansFramework/home-manager/root/home.nix;
-            };
-          };
-        }
       ];
       specialArgs = {
+        homeManagerModules = {
+          julian = [ 
+            ./genericHM/terminal.nix
+            ./genericHM/yubikey.nix
+            ./JuliansFramework/home-manager/julian/home.nix  
+          ];
+          root = [ 
+            ./genericHM/terminal.nix
+            ./genericHM/yubikey.nix
+            ./JuliansFramework/home-manager/root/home.nix
+          ];
+        };
         hostName = "JuliansFramework"; 
+        stable = false;
         inherit inputs;
       };
     };
@@ -107,12 +110,18 @@
         inherit system;
       };
       modules = [
-        ./generic/proxmoxVM.nix #requires vmID!
+        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./NixOSTesting/configuration.nix
       ];
       specialArgs = { 
+        homeManagerModules = {
+          root = [ 
+            ./genericHM/terminal.nix
+          ];
+        };
         hostName = "NixOSTesting"; 
+        stable = true;
         vmID = "120";
         inherit inputs;
       };
@@ -123,12 +132,18 @@
         inherit system;
       };
       modules = [
-        ./generic/proxmoxVM.nix #requires vmID!
+        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./Nextcloud/configuration.nix
       ];
       specialArgs = { 
+        homeManagerModules = {
+          root = [ 
+            ./genericHM/terminal.nix
+          ];
+        };
         hostName = "Nextcloud"; 
+        stable = true;
         vmID = "131";
         inherit inputs;
       };
@@ -139,12 +154,18 @@
         inherit system;
       };
       modules = [
-        ./generic/proxmoxVM.nix #requires vmID!
+        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./Nextcloud/configuration.nix
       ];
       specialArgs = { 
+        homeManagerModules = {
+          root = [ 
+            ./genericHM/terminal.nix
+          ];
+        };
         hostName = "Nextcloud-Testing"; 
+        stable = true;
         vmID = "150";
         inherit inputs;
       };
@@ -155,12 +176,18 @@
         inherit system;
       };
       modules = [
-        ./generic/proxmoxVM.nix #requires vmID!
+        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./Jellyfin/configuration.nix
       ];
       specialArgs = { 
+        homeManagerModules = {
+          root = [ 
+            ./genericHM/terminal.nix
+          ];
+        };
         hostName = "Jellyfin"; 
+        stable = true;
         vmID = "132";
         inherit inputs;
       };
@@ -188,13 +215,19 @@
         inherit system;
       };
       modules = [
-        ./generic/proxmoxVM.nix
+        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./generic/proxy.nix #requires edge!
         ./LocalProxy/configuration.nix
       ];
       specialArgs = { 
+        homeManagerModules = {
+          root = [ 
+            ./genericHM/terminal.nix
+          ];
+        };
         hostName = "LocalProxy"; 
+        stable = true;
         vmID = "130";
         edge = false;
         inherit inputs;

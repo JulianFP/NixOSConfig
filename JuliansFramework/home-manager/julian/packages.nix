@@ -2,9 +2,11 @@
 
 let
   my-python-packages = ps: with ps; [
-    torchWithRocm 
     numpy
     flask
+    openai-whisper 
+    httpx
+    cookiecutter
   ];
 in 
 {
@@ -20,6 +22,9 @@ in
     pulseaudio
     pavucontrol
     networkmanagerapplet
+    qt5.qtwayland
+    qt6.qtwayland
+    libsForQt5.breeze-qt5
     libsForQt5.polkit-kde-agent
     libsForQt5.kwalletmanager
     libsForQt5.kwallet
@@ -28,7 +33,9 @@ in
     gnome.adwaita-icon-theme
     nur.repos.mikilio.xwaylandvideobridge-hypr
 
+
     # CLI Applications
+    file #needed for open command of lf
     tree
     unzip
     htop-vim

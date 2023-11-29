@@ -1,72 +1,25 @@
-{ config, pkgs, nixvim, ... }:
+{ config, pkgs, inputs, ... }:
 
+let 
+  nix-colors = inputs.nix-colors;
+  nix-colors-lib = nix-colors.lib.contrib { inherit pkgs; };
+in
 {
   imports = 
     [
-      nixvim.homeManagerModules.nixvim #import nixvim module
+      nix-colors.homeManagerModules.default
       ./packages.nix #Packages and Fonts installed for this user
-      ./hyprland.nix #Hyprland stuff
-      ./terminal.nix #Terminal stuff (Alacritty, zsh, ...) 
-      ./neovim.nix #Neovim stuff
+      ./hyprland.nix #Hyprland stu
       ./mangohud.nix #mangohud config
+      ./neovim.nix
     ];
 
-  home.username = "julian";
-  home.homeDirectory = "/home/julian";
 
-  # ssh (with yubikey support) stuff and agent forwarding (ssh and gpg)
-  programs.ssh = {
-    enable = true;
-    matchBlocks = {
-      "Ionos" = {
-        hostname = "82.165.49.241";
-	      user = "root";
-      };
-    };
-    forwardAgent = true;
-    extraConfig = ''
-      Match host * exec "gpg-connect-agent UPDATESTARTUPTTY /bye"
-    '';
-  };
-  home.file.".ssh/id_rsa.pub" = {
-    source = ../../../publicKeys/id_rsa.pub;
-  };
-  services.gpg-agent = {
-    enable = true;
-    enableSshSupport = true;
-    defaultCacheTtl = 300;
-    defaultCacheTtlSsh = 300;
-    maxCacheTtl = 3600;
-    maxCacheTtlSsh = 3600;
-    pinentryFlavor = "qt";
-    extraConfig = ''
-      ttyname $GPG_TTY
-    '';
-  };
-  programs.gpg = {
-    enable = true;
-    scdaemonSettings = {
-      disable-ccid = true;
-      reader-port = "Yubico Yubi";
-    };
-    publicKeys = [{
-      source = ../../../publicKeys/gpg_yubikey.asc;
-      trust = 5;
-    }];
-  };
-  systemd.user.sessionVariables = {
-    SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/gnupg/S.gpg-agent.ssh";
-  };
 
-  # git
-  programs.git = {
-    enable = true;
-    userName = "JulianFP";
-    userEmail = "julian@partanengroup.de";
-    extraConfig = {
-      init.defaultBranch = "main";
-    };
-  };
+  #define global color scheme here. This gets applied to everything automatically
+  colorScheme = nix-colors.colorSchemes.gruvbox-material-dark-medium;
+  
+
 
   # lf
   programs.lf = {
@@ -85,7 +38,7 @@
       gc = "cd ~/.config";
       gu = "cd ~/Nextcloud/Dokumente/Studium";
 
-      # execute current file 
+      # execute current file
       x = "\$\$f";
       X = "!\$f";
     };
@@ -126,7 +79,7 @@
     };
   };
 
-  # Mako
+  # Mako (notification daemon)
   services.mako = {
     enable = true;
     backgroundColor = "#2B303B9A";
@@ -136,17 +89,17 @@
     height = 300;
     extraConfig = ''
     [urgency=low]
-    border-color=#CCCCCCFF
+    border-color=#CCCCCC
     
     [urgency=normal]
-    border-color=#D08770FF
+    border-color=#D08770
 
     [urgency=high]
-    border-color=#BF616AFF
+    border-color=#BF616A
     '';
   };
 
-  # Rofi
+  # Rofi (application starter and more)
   programs.rofi = {
     enable = true;
     package = pkgs.rofi-wayland;
@@ -180,7 +133,89 @@
     ];
   };
 
-  # virt-manager stuff. See NixOS Wiki for more
+  # Alacritty
+  programs.alacritty = {
+    enable = true;
+    settings = {
+      #base16 template: https://github.com/aarowill/base16-alacritty
+      colors = with config.colorScheme.colors; {
+        # Default colors
+        primary = {
+          background = "0x${base00}";
+          foreground = "0x${base05}";
+        };
+        # colors the cursor will use if 'custom_cursor_colors' is true
+        cursor = {
+          text = "0x${base00}";
+          cursor = "0x${base05}";
+        };
+        # Normal colors
+        normal = {
+          black = "0x${base00}";
+          red = "0x${base08}";
+          green = "0x${base0B}";
+          yellow = "0x${base0A}";
+          blue = "0x${base0D}";
+          magenta = "0x${base0E}";
+          cyan = "0x${base0C}";
+          white = "0x${base05}";
+        };
+        # Bright colors
+        bright = {
+          black = "0x${base03}";
+          red = "0x${base08}";
+          green = "0x${base0B}";
+          yellow = "0x${base0A}";
+          blue = "0x${base0D}";
+          magenta = "0x${base0E}";
+          cyan = "0x${base0C}";
+          white = "0x${base07}";
+        };
+        indexed_colors = [
+          {
+            index = 16;
+            color = "0x${base09}";
+          }
+          {
+            index = 17;
+            color = "0x${base0F}";
+          }
+          {
+            index = 18;
+            color = "0x${base01}";
+          }
+          {
+            index = 19;
+            color = "0x${base02}";
+          }
+          {
+            index = 20;
+            color = "0x${base04}";
+          }
+          {
+            index = 21;
+            color = "0x${base06}";
+          }
+        ];
+      };
+      font = {
+        normal = {
+          family = "AnonymicePro Nerd Font";
+          style = "Regular";
+        };
+        size = 12;
+      };
+      key_bindings = [
+        {
+          key = "Return";
+          mods = "Super|Shift";
+          action = "SpawnNewInstance";
+        }
+      ];
+    };
+  };
+
+  # virt-manager stu. See NixOS Wiki for more
   dconf.settings = {
     "org/virt-manager/virt-manager/connections" = {
       autoconnect = ["qemu:///system"];
@@ -188,71 +223,155 @@
     };
   };
 
-  # Theming
-  xdg.configFile = {
-    "Kvantum/kvantum.kvconfig".text = ''
-      [General]
-      theme=MateriaDark
-    '';
-    "Kvantum/MateriaDark" = {
-      source = "${pkgs.materia-kde-theme}/share/Kvantum/MateriaDark";
-      recursive = true;
-    };
-    "qt5ct/qss/fixes.qss".text = ''
-      QTabBar::tab:selected {
-          color: palette(bright-text);
-      }
-      QScrollBar {
-          background: palette(dark);
-      }
-      QScrollBar::handle {
-          background: palette(highlight);
-          border-radius: 4px;
-      }
-      QScrollBar::add-line, QScrollBar::sub-line {
-          background: palette(window);
-      }
-    '';
-    "qt5ct/qt5ct.conf".text = ''
-      [Appearance]
-      icon_theme=Papirus-Dark
-      style=kvantum-dark
-
-      [Interface]
-      stylesheets=${config.home.homeDirectory}/.config/qt5ct/qss/fixes.qss
-    '';
-    "qt6ct/qt6ct.conf".text = ''
-      [Appearance]
-      icon_theme=Papirus-Dark
-      style=kvantum-dark
-
-      [Interface]
-      stylesheets=${pkgs.qt6Packages.qt6ct}/share/qt6ct/qss/fusion-fixes.qss
-    '';
-    "kdeglobals".text = ''
-      [General]
-      TerminalApplication=alacritty
-
-      [Colors:View]
-      BackgroundNormal=#272727
-
-      [KFileDialog Settings]
-      Automatically select filename extension=true
-      Show Bookmarks=true
-      Show Full Path=true
-      Show hidden files=true
-      Sort by=name
-      Sort directories first=false
-      View Style=DetailTree
-    '';
+  /* -- gui theming -- */
+  qt = {
+    enable = true;
+    platformTheme = "kde";
   };
+
+  #inspired by https://github.com/Base24/base16-kdeplasma
+  xdg.configFile."kdeglobals".text = with config.colorScheme.colors; with nix-colors.lib.conversions; ''
+    [ColorEffects:Disabled]
+    ChangeSelectionColor=
+    Color=56,56,56
+    ColorAmount=1
+    ColorEffect=0
+    ContrastAmount=0.5
+    ContrastEffect=1
+    Enable=
+    IntensityAmount=0
+    IntensityEffect=2
+
+    [ColorEffects:Inactive]
+    ChangeSelectionColor=true
+    Color=112,111,110
+    ColorAmount=-0.9500000000000001
+    ColorEffect=0
+    ContrastAmount=0.6000000000000001
+    ContrastEffect=0
+    Enable=false
+    IntensityAmount=0
+    IntensityEffect=0
+
+    [Colors:Button]
+    BackgroundAlternate=${hexToRGBString "," base01}
+    BackgroundNormal=${hexToRGBString "," base00}
+    DecorationFocus=${hexToRGBString "," base08}
+    DecorationHover=${hexToRGBString "," base08}
+    ForegroundActive=${hexToRGBString "," base0B}
+    ForegroundInactive=${hexToRGBString "," base05}
+    ForegroundLink=${hexToRGBString "," base0D}
+    ForegroundNegative=${hexToRGBString "," base0F}
+    ForegroundNeutral=${hexToRGBString "," base04}
+    ForegroundNormal=${hexToRGBString "," base05}
+    ForegroundPositive=${hexToRGBString "," base0C}
+    ForegroundVisited=${hexToRGBString "," base0E}
+
+    [Colors:Selection]
+    BackgroundAlternate=${hexToRGBString "," base08}
+    BackgroundNormal=${hexToRGBString "," base08}
+    DecorationFocus=${hexToRGBString "," base08}
+    DecorationHover=${hexToRGBString "," base08}
+    ForegroundActive=${hexToRGBString "," base0B}
+    ForegroundInactive=${hexToRGBString "," base02}
+    ForegroundLink=${hexToRGBString "," base0D}
+    ForegroundNegative=${hexToRGBString "," base0F}
+    ForegroundNeutral=${hexToRGBString "," base04}
+    ForegroundNormal=${hexToRGBString "," base02}
+    ForegroundPositive=${hexToRGBString "," base0C}
+    ForegroundVisited=${hexToRGBString "," base0E}
+
+    [Colors:Tooltip]
+    BackgroundAlternate=${hexToRGBString "," base02}
+    BackgroundNormal=${hexToRGBString "," base01}
+    DecorationFocus=${hexToRGBString "," base08}
+    DecorationHover=${hexToRGBString "," base08}
+    ForegroundActive=${hexToRGBString "," base0B}
+    ForegroundInactive=${hexToRGBString "," base05}
+    ForegroundLink=${hexToRGBString "," base0D}
+    ForegroundNegative=${hexToRGBString "," base0F}
+    ForegroundNeutral=${hexToRGBString "," base04}
+    ForegroundNormal=${hexToRGBString "," base05}
+    ForegroundPositive=${hexToRGBString "," base0C}
+    ForegroundVisited=${hexToRGBString "," base0E}
+
+    [Colors:View]
+    BackgroundAlternate=${hexToRGBString "," base02}
+    BackgroundNormal=${hexToRGBString "," base01}
+    DecorationFocus=${hexToRGBString "," base08}
+    DecorationHover=${hexToRGBString "," base08}
+    ForegroundActive=${hexToRGBString "," base0B}
+    ForegroundInactive=${hexToRGBString "," base05}
+    ForegroundLink=${hexToRGBString "," base0D}
+    ForegroundNegative=${hexToRGBString "," base0F}
+    ForegroundNeutral=${hexToRGBString "," base04}
+    ForegroundNormal=${hexToRGBString "," base05}
+    ForegroundPositive=${hexToRGBString "," base0C}
+    ForegroundVisited=${hexToRGBString "," base0E}
+
+    [Colors:Window]
+    BackgroundAlternate=${hexToRGBString "," base01}
+    BackgroundNormal=${hexToRGBString "," base00}
+    DecorationFocus=${hexToRGBString "," base08}
+    DecorationHover=${hexToRGBString "," base08}
+    ForegroundActive=${hexToRGBString "," base0B}
+    ForegroundInactive=${hexToRGBString "," base05}
+    ForegroundLink=${hexToRGBString "," base0D}
+    ForegroundNegative=${hexToRGBString "," base0F}
+    ForegroundNeutral=${hexToRGBString "," base04}
+    ForegroundNormal=${hexToRGBString "," base05}
+    ForegroundPositive=${hexToRGBString "," base0C}
+    ForegroundVisited=${hexToRGBString "," base0E}
+
+    [General]
+    TerminalApplication=alacritty
+
+    [Icons]
+    Theme=Papirus-Dark
+
+    [KDE]
+    LookAndFeelPackage=org.kde.breezedark.desktop
+
+    [KFileDialog Settings]
+    Allow Expansion=false
+    Automatically select filename extension=true
+    Breadcrumb Navigation=true
+    Decoration position=2
+    LocationCombo Completionmode=5
+    PathCombo Completionmode=5
+    Show Bookmarks=true
+    Show Full Path=true
+    Show Inline Previews=true
+    Show Speedbar=true
+    Show hidden files=true
+    Sort by=Name
+    Sort directories first=false
+    Sort hidden files last=false
+    Sort reversed=false
+    Speedbar Width=236
+    View Style=DetailTree
+
+    [WM]
+    activeBackground=${hexToRGBString "," base00}
+    activeBlend=${hexToRGBString "," base00}
+    activeForeground=${hexToRGBString "," base05}
+    inactiveBackground=${hexToRGBString "," base00}
+    inactiveBlend=${hexToRGBString "," base00}
+    inactiveForeground=${hexToRGBString "," base04}
+  '';
+
+  #gtk theming
   gtk = {
     enable = true;
-    theme.package = pkgs.materia-theme;
-    theme.name = "Materia-dark-compact";
+    theme.package = nix-colors-lib.gtkThemeFromScheme {
+      scheme = config.colorScheme;      
+    };
+    theme.name = config.colorScheme.slug;
     iconTheme.package = pkgs.papirus-icon-theme;
     iconTheme.name = "Papirus-Dark";
   };
+
+  #cursor style
   home.pointerCursor = {
     gtk.enable = true;
     package = pkgs.capitaine-cursors;
@@ -260,6 +379,9 @@
     size = 24;
   };
 
+
+
+  /* -- misc -- */
   # Signal start in tray fix
   home.file.".local/share/applications/signal-desktop.desktop".text = ''
 [Desktop Entry]
@@ -273,7 +395,4 @@ Comment=Private messaging from your desktop
 MimeType=x-scheme-handler/sgnl;x-scheme-handler/signalcaptcha;
 Categories=Network;InstantMessaging;Chat;
   '';
-
-  home.stateVersion = "23.11";
-  programs.home-manager.enable = true;
 }
