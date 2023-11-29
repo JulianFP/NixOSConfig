@@ -233,5 +233,28 @@
         inherit inputs;
       };
     };
+    nixosConfigurations.Valheim = nixpkgs-stable.lib.nixosSystem rec {
+      system = "x86_64-linux";
+      pkgs = import nixpkgs-stable {
+        inherit system;
+      };
+      modules = [
+        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
+        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
+        ./generic/proxy.nix #requires edge!
+        ./Valheim/configuration.nix
+      ];
+      specialArgs = { 
+        homeManagerModules = {
+          root = [ 
+            ./genericHM/terminal.nix
+          ];
+        };
+        hostName = "Valheim"; 
+        stable = true;
+        vmID = "135";
+        inherit inputs;
+      };
+    };
   };
 }
