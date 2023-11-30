@@ -34,7 +34,7 @@ in
       "-password" "${config.sops.placeholder.serverPassword}"
       "-savedir" "/var/lib/valheim/save"
       "-public" "1"
-      # "-logFile" "/var/lib/valheim/log" # if enabled then log will not appear in journal
+      "-logFile" "/var/lib/valheim/log" # if enabled then log will not appear in journal
       "-saveinterval" "600" #saves every 10 minutes automatically
       "-backups" "0" # I take my own backups, if you don't you can remove this to use the built-in basic rotation system.
       # "-crossplay" # This is broken because it looks for "party" shared library in the wrong path.
