@@ -10,11 +10,6 @@ in
 		./steam.nix
 	];
 
-  sops.secrets."serverPassword" = {
-    owner = "valheim";
-    sopsFile = ../secrets/${hostName}/valheim.yaml;
-  };
-
 	users.users.valheim = {
 		isSystemUser = true;
 		# Valheim puts save data in the home directory.
@@ -23,8 +18,30 @@ in
 		homeMode = "750";
 		group = "valheim";
 	};
-
 	users.groups.valheim = {};
+
+  #define valheim server startup script and config options here
+  #refer to step 3 under section "Running the Dedicated Server" of the "Valheim Dedicated Server Manual.pdf" under /var/lib/steam-app-896660/
+  sops.secrets."serverPassword".sopsFile = ../secrets/${hostName}/valheim.yaml;
+  sops.templates."start_server.sh" = {
+    content = lib.escapeShellArgs [
+      "/var/lib/steam-app-${steam-app}/valheim_server.x86_64"
+      "-nographics" #not documented, does it do something?
+      "-batchmode" #not documented, does it do something?
+      "-name" "Fulcrum"
+      "-port" "2456"
+      "-world" "Dedicated"
+      "-password" "${config.sops.placeholder.serverPassword}"
+      "-savedir" "/var/lib/valheim/save"
+      "-public" "1"
+      "-logFile" "/var/lib/valheim/log"
+      "-saveinterval" "600" #saves every 10 minutes automatically
+      "-backups" "0" # I take my own backups, if you don't you can remove this to use the built-in basic rotation system.
+      # "-crossplay" # This is broken because it looks for "party" shared library in the wrong path.
+    ];
+    owner = "valheim";
+    mode = "0550";
+  };
 
 	systemd.services.valheim = {
 		wantedBy = [ "multi-user.target" ];
@@ -35,17 +52,8 @@ in
 
 		serviceConfig = {
 			ExecStart = lib.escapeShellArgs [
-				"/var/lib/steam-app-${steam-app}/valheim_server.x86_64"
-				"-nographics"
-				"-batchmode"
-				# "-crossplay" # This is broken because it looks for "party" shared library in the wrong path.
-				"-savedir" "/var/lib/valheim/save"
-				"-name" "Fulcrum"
-				"-port" "2456"
-				"-world" "Dedicated"
-				"-password" "$(cat ${config.sops.secrets."serverPassword".path})"
-				"-public" "1"
-				"-backups" "0" # I take my own backups, if you don't you can remove this to use the built-in basic rotation system.
+        "${pkgs.bash}/bin/bash"
+        "${config.sops.templates."start_server.sh".path}"
 			];
 			Nice = "-5";
 			PrivateTmp = true;
