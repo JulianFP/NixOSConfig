@@ -55,7 +55,7 @@ in
 		};
 		environment = {
 			# linux64 directory is required by Valheim.
-			LD_LIBRARY_PATH = "/var/lib/steam-app-${steam-app}/linux64:${pkgs.glibc}/lib";
+      LD_LIBRARY_PATH = "/var/lib/steam-app-${steam-app}/linux64:${pkgs.zlib}/lib:${pkgs.glibc}/lib";
 			SteamAppId = "892970";
 		};
 	};
