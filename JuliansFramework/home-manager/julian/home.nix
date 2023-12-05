@@ -25,7 +25,20 @@ in
   programs.lf = {
     enable = true;
     commands = {
-      get-mime-type = "%xdg-mime query filetype \"$f\"";
+      #if mimetype is set to nvim: opens file inside current terminal, else: opens file in designated application (new window, asynchronous)
+      open = ''
+        &{{
+          mimetype=$(file --brief --dereference --mime-type $f)
+          defapp=$(xdg-mime query default $mimetype)
+          case "$defapp" in 
+          nvim.desktop)
+          lf -remote "send $id \$nvim $f"
+            ;;
+          *)
+            xdg-open $f
+          esac
+        }}
+      '';
     };
     extraConfig = ''
       set shell zsh
