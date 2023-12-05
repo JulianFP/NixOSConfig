@@ -5,7 +5,7 @@
     height = 30;
     spacing = 4;
     modules-left = [ "hyprland/workspaces" "hyprland/submap" "hyprland/window" ]; 
-    modules-right = [ "tray" "gamemode" "pulseaudio" "network" "bluetooth" "cpu" "memory" "temperature" "backlight" "battery" "clock" ];
+    modules-right = [ "tray" "gamemode" "custom/mako" "pulseaudio" "network" "bluetooth" "cpu" "memory" "temperature" "backlight" "battery" "clock" ];
 
     "hyprland/workspaces" = {
       sort-by-number = true;
@@ -139,6 +139,13 @@
       icon-size = 20;
       tooltip = true;
       tooltip-format = "Games running: {count}";
+    };
+
+    "custom/mako" = {
+      exec = "~/.config/waybar/scripts/mako.sh";
+      on-click = "if makoctl mode | grep -q doNotDisturb; then makoctl mode -r doNotDisturb; else makoctl mode -a doNotDisturb; fi";
+      interval = "once";
+      exec-on-event = true;
     };
   };
 }

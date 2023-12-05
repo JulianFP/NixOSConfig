@@ -109,6 +109,9 @@ in
 
     [urgency=high]
     border-color=#BF616A
+
+    [mode=doNotDisturb]
+    invisible=1
     '';
   };
 
@@ -126,6 +129,11 @@ in
     enable = true;
     settings = import ./waybar/config.nix;
     style = ./waybar/style.css;
+  };
+  xdg.configFile."mako.sh" = {
+    target = "waybar/scripts/mako.sh";
+    source = ./systemScripts/makoWaybar.sh;
+    executable = true;
   };
 
   programs.mpv = {

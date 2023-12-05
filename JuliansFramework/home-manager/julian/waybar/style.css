@@ -82,6 +82,7 @@ button:hover {
 
 #clock,
 #battery,
+#custom-mako,
 #cpu,
 #memory,
 #disk,
@@ -121,7 +122,8 @@ button:hover {
     background-color: #64727D;
 }
 
-#battery {
+#battery,
+#custom-mako {
     background-color: #ffffff;
 }
 
