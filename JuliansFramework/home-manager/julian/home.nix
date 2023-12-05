@@ -351,6 +351,7 @@ in
     Theme=Papirus-Dark
 
     [KDE]
+    SingleClick=false
     LookAndFeelPackage=org.kde.breezedark.desktop
 
     [KFileDialog Settings]
