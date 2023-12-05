@@ -220,7 +220,8 @@ structure:
   # power usage optimization
   powerManagement = {
     enable = true;
-    powertop.enable = true;
+    #disable powertop for now since it messes up my usb devices
+    #powertop.enable = true;
   };
 
   # Set hardware clock behavior
