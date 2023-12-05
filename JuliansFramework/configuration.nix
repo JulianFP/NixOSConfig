@@ -39,8 +39,7 @@ structure:
   /* -- boot -- */
   # config for bootloader and secure boot (refer to nixos.wiki/wiki/Secure_Boot)
   boot = {
-    #use newest stable kernel instead of LTS (6.6 currently doesn't boot on my system)
-    kernelPackages = pkgs.linuxPackages_6_5;
+    kernelPackages = pkgs.linuxPackages_latest;
 
     #egpu set to PCIe 3.0 speed
     extraModprobeConfig = "options amdgpu pcie_gen_cap=0x40000";
