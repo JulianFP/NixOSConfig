@@ -36,4 +36,11 @@
     };
 
   };
+  #automatic garbage collect to avoid storage depletion by autoUpgrade
+  nix.gc = {
+    automatic = true;
+    dates = "04:00";
+    randomizedDelaySec = "60min";
+    options = "--delete-older-than 7d";
+  };
 }
