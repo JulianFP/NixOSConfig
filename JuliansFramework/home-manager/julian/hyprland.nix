@@ -3,7 +3,8 @@
 {
   #import hyprland module from hyprland flake (uses hyprland git package)
   imports = [
-    inputs.hyprland.homeManagerModules.default
+    #comment the following out to use the git version of hyprland and hyprlands home manager module
+    #inputs.hyprland.homeManagerModules.default
   ];
 
   # set scripts for extended Hyprland behavior (suspend, lock, etc.)
