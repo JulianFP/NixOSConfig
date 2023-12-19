@@ -41,6 +41,6 @@
     automatic = true;
     dates = "04:00";
     randomizedDelaySec = "60min";
-    options = "--delete-older-than 7d";
+    options = "--delete-older-than 30d";
   };
 }
