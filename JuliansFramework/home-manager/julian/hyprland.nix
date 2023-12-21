@@ -66,6 +66,7 @@ exec-once = ${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authenticatio
 exec-once=[workspace 1 silent] kwalletd5
 exec-once=[workspace 1 silent] thunderbird
 exec-once=[workspace 1 silent] sleep 1 && keepassxc
+exec-once=[workspace 1 silent] sleep 1 && element-desktop
 exec-once=[workspace 1 silent] sleep 1 && signal-desktop --no-sandbox --start-in-tray
 exec-once=[workspace 1 silent] sleep 1 && nextcloud
 exec-once=[silent] sleep 1 && webcord -m --safe-mode

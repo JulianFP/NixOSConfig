@@ -54,6 +54,7 @@ in
     keepassxc
     nextcloud-client
     signal-desktop
+    element-desktop
     webcord
     discord
     libsForQt5.ark
