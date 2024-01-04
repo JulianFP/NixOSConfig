@@ -2,7 +2,6 @@
 main configuration file of JuliansFramework
 structure:
 - imports (networking and basic hardware stuff gets imported here)
-- nix
 - boot 
 - hardware
 - services 
@@ -22,17 +21,6 @@ structure:
       ./hardware-configuration.nix # Include the results of the hardware scan.
       ./networking.nix # import networking settings
     ];
-
-
-
-  /* -- nix -- */
-  # enable flakes and nix-command
-  nix = {
-    settings = {
-      substituters = ["https://hyprland.cachix.org"];
-      trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
-    };
-  };
 
 
 
@@ -118,10 +106,7 @@ structure:
   programs = {
     adb.enable = true; #android adb setup. See users user permission (adbusers group)
     virt-manager.enable = true; #to run qemu/kvm VMs. See virtualisation for more
-    hyprland = {
-      enable = true;
-      package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-    };
+    hyprland.enable = true;
     partition-manager.enable = true; #enable kde partitionmanager (can't be done in HM, requires services)
     steam = {
       enable = true;

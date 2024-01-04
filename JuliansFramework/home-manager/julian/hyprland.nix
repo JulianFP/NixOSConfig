@@ -1,12 +1,6 @@
-{ config, pkgs, inputs, ... }:
+{ pkgs, ... }:
 
 {
-  #import hyprland module from hyprland flake (uses hyprland git package)
-  imports = [
-    #comment the following out to use the git version of hyprland and hyprlands home manager module
-    #inputs.hyprland.homeManagerModules.default
-  ];
-
   # set scripts for extended Hyprland behavior (suspend, lock, etc.)
   home.file = {
     "clamshell_mode_hypr.sh" = {
