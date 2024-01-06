@@ -97,5 +97,7 @@ in
     roboto-mono
     font-awesome
     nerdfonts
+    corefonts
+    vistafonts
   ];
 }
