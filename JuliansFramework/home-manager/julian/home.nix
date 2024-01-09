@@ -226,7 +226,7 @@ in
         };
         size = 12;
       };
-      key_bindings = [
+      keyboard.bindings = [
         {
           key = "Return";
           mods = "Super|Shift";
