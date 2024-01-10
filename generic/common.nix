@@ -1,4 +1,4 @@
-{ pkgs, hostName, ...}:
+{ self, pkgs, hostName, ...}:
 
 {
   #define hostname 
@@ -20,6 +20,9 @@
     package = pkgs.nixFlakes;
     settings.experimental-features = [ "nix-command" "flakes" ];
   };
+
+  # get git revision of system with command 'nixos-version --configuration-revision'
+  system.configurationRevision = self.shortRev or self.dirtyShortRev;
 
   #internationalisation properties and timezone
   time.timeZone = "Europe/Berlin"; #set timezone

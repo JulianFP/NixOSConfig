@@ -85,6 +85,7 @@
         hostName = "JuliansFramework"; 
         stable = false;
         inherit inputs;
+        inherit self;
       };
     };
     nixosConfigurations.blankISO = nixpkgs-stable.lib.nixosSystem rec {
@@ -100,6 +101,7 @@
       specialArgs = {
         hostName = "blankISO"; 
         inherit inputs;
+        inherit self;
       };
     };
     nixosConfigurations.NixOSTesting = nixpkgs-stable.lib.nixosSystem rec {
@@ -122,6 +124,7 @@
         stable = true;
         vmID = "120";
         inherit inputs;
+        inherit self;
       };
     };
     nixosConfigurations.Nextcloud = nixpkgs-stable.lib.nixosSystem rec {
@@ -144,6 +147,7 @@
         stable = true;
         vmID = "131";
         inherit inputs;
+        inherit self;
       };
     };
     nixosConfigurations.Nextcloud-Testing = nixpkgs-stable.lib.nixosSystem rec {
@@ -166,6 +170,7 @@
         stable = true;
         vmID = "150";
         inherit inputs;
+        inherit self;
       };
     };
     nixosConfigurations.Jellyfin = nixpkgs-stable.lib.nixosSystem rec {
@@ -188,6 +193,7 @@
         stable = true;
         vmID = "132";
         inherit inputs;
+        inherit self;
       };
     };
     nixosConfigurations.IonosVPS = nixpkgs-stable.lib.nixosSystem rec {
@@ -205,6 +211,7 @@
         hostName = "IonosVPS"; 
         edge = true;
         inherit inputs;
+        inherit self;
       };
     };
     nixosConfigurations.LocalProxy = nixpkgs-stable.lib.nixosSystem rec {
@@ -229,6 +236,7 @@
         vmID = "130";
         edge = false;
         inherit inputs;
+        inherit self;
       };
     };
     nixosConfigurations.Valheim = nixpkgs-stable.lib.nixosSystem rec {
@@ -252,6 +260,7 @@
         stable = true;
         vmID = "135";
         inherit inputs;
+        inherit self;
       };
     };
   };
