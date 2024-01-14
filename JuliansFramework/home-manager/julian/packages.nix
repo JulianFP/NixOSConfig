@@ -46,6 +46,7 @@ in
     firefox
     thunderbird
     libreoffice-qt
+    pdfarranger
     hunspell
     hunspellDicts.en_US
     hunspellDicts.de_DE
