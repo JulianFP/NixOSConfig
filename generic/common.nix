@@ -14,15 +14,22 @@
     git
   ];
 
+  #system settings
+  system = {
+    # get git revision of system with command 'nixos-version --configuration-revision'
+    configurationRevision = self.shortRev or self.dirtyShortRev;
+    extraSystemBuilderCmds = ''
+      ln -s ${pkgs.path} $out/nixpkgs
+    '';
+  };
+
   # nix settings
   nix = {
     #enable flakes and nix-command
     package = pkgs.nixFlakes;
     settings.experimental-features = [ "nix-command" "flakes" ];
+    nixPath = [ "nixpkgs=/run/current-system/nixpkgs" ];
   };
-
-  # get git revision of system with command 'nixos-version --configuration-revision'
-  system.configurationRevision = self.shortRev or self.dirtyShortRev;
 
   #internationalisation properties and timezone
   time.timeZone = "Europe/Berlin"; #set timezone
