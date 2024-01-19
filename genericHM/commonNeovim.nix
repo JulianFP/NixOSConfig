@@ -48,7 +48,7 @@
           "BufEnter"
           "BufWinEnter"
         ];
-        pattern = "*.nix";	#set tabstop of 2 for nix files
+        pattern = [ "*.nix" "*.svelte" "*.ts" "*.html" ];	#set tabstop of 2 for nix files
         # Or use `vimCallback` with a vimscript function name
         # Or use `command` if you want to run a normal vimscript command
         command = "setlocal tabstop=2";

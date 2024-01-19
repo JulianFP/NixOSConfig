@@ -149,6 +149,9 @@ structure:
       #rocm stuff
       rocmPackages.rocminfo
       rocmPackages.rocm-smi
+
+      #for virtualisation virt-manager
+      virtiofsd
     ];
   };
 
