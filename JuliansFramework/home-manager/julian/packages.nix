@@ -83,6 +83,7 @@ in
     heroic
     protonup-qt
     superTuxKart
+    prismlauncher-qt5
 
     # Development
     texlive.combined.scheme-full

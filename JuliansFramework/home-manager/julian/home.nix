@@ -248,6 +248,7 @@ in
   /* -- gui theming -- */
   qt = {
     enable = true;
+    style.name = "breeze";
     platformTheme = "kde";
   };
 
