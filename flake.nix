@@ -72,16 +72,17 @@
       specialArgs = {
         homeManagerModules = {
           julian = [ 
-            ./genericHM/terminal.nix
+            ./genericHM/shell.nix
             ./genericHM/yubikey.nix
             ./JuliansFramework/home-manager/julian/home.nix  
           ];
           root = [ 
-            ./genericHM/terminal.nix
+            ./genericHM/shell.nix
             ./genericHM/yubikey.nix
             ./JuliansFramework/home-manager/root/home.nix
           ];
         };
+        homeManagerExtraSpecialArgs = { inherit nix-colors; };
         hostName = "JuliansFramework"; 
         stable = false;
         inherit inputs;
@@ -117,7 +118,7 @@
       specialArgs = { 
         homeManagerModules = {
           root = [ 
-            ./genericHM/terminal.nix
+            ./genericHM/shell.nix
           ];
         };
         hostName = "NixOSTesting"; 
@@ -140,7 +141,7 @@
       specialArgs = { 
         homeManagerModules = {
           root = [ 
-            ./genericHM/terminal.nix
+            ./genericHM/shell.nix
           ];
         };
         hostName = "Nextcloud"; 
@@ -163,7 +164,7 @@
       specialArgs = { 
         homeManagerModules = {
           root = [ 
-            ./genericHM/terminal.nix
+            ./genericHM/shell.nix
           ];
         };
         hostName = "Nextcloud-Testing"; 
@@ -186,7 +187,7 @@
       specialArgs = { 
         homeManagerModules = {
           root = [ 
-            ./genericHM/terminal.nix
+            ./genericHM/shell.nix
           ];
         };
         hostName = "Jellyfin"; 
@@ -228,7 +229,7 @@
       specialArgs = { 
         homeManagerModules = {
           root = [ 
-            ./genericHM/terminal.nix
+            ./genericHM/shell.nix
           ];
         };
         hostName = "LocalProxy"; 
@@ -253,7 +254,7 @@
       specialArgs = { 
         homeManagerModules = {
           root = [ 
-            ./genericHM/terminal.nix
+            ./genericHM/shell.nix
           ];
         };
         hostName = "Valheim"; 
