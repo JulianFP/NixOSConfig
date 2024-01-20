@@ -4,7 +4,6 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
-    nixpkgs-logseq.url = "github:NixOS/nixpkgs/5363991a6fbb672549b6c379cdc1e423e5bf2d06";
     lanzaboote.url = "github:nix-community/lanzaboote";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nixvim = {
@@ -43,21 +42,10 @@
           allowUnfree = true; #allow Unfree packages
           permittedInsecurePackages = [
             "electron-22.3.27" #needed for freetube until it upgrades its electron package
-            "electron-24.8.6" #needed for logseq
           ];
         };
         overlays = [
           nur.overlay
-          #use older logseq version (0.9.19) since logseq uses electron 25 since 0.9.20 which crashes on my system
-          (self: super: {
-            logseq = (import inputs.nixpkgs-logseq {
-              inherit system;
-              config = {
-                allowUnfree = true;
-                permittedInsecurePackages = [ "electron-24.8.6" ];
-              };
-            }).logseq;
-          })
         ];
       };
       modules = [
