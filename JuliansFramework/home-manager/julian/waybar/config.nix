@@ -56,12 +56,12 @@
     "cpu" = {
       format = "{usage}% ";
       tooltip = false;
-      on-click = "alacritty -e htop";
+      on-click = "alacritty -e htop --sort-key=PERCENT_CPU";
     };
 
     "memory" = {
       format = "{}% ";
-      on-click = "alacritty -e htop";
+      on-click = "alacritty -e htop --sort-key=PERCENT_MEM";
     };
 
     "temperature" = {
