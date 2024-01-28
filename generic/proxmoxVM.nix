@@ -45,6 +45,10 @@
       fsType = "vfat";
     };
   };
+  swapDevices = [{
+    device = "/swap/swapfile";
+    size = 4*1024;
+  }];
 
 #networking config (systemd.network preferred over networking)
   networking = {
