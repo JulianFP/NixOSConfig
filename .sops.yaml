@@ -5,7 +5,7 @@ keys:
   - &Nextcloud-Testing age1qdfuc92s2hlzm9sxgf5kp2ln8anx07z0zlka3n5l973x8nwzgfksts33jc
   - &LocalProxy age1tna8ry2maexe9dld035kk6gy2p6xnfm9lv2ngftamszfqdn2n43s2w3vas
   - &IonosVPS age1mfk3dc4sekgxccv4dyuypavzelv0tvtlerf3s5qwtfzu9rnjevts9qlxme
-  - &NixOSTesting age1st5jr7qvluvr5tj9n4uftawp29tu8l7vmtjptzu2d0lpyf2v53cqnmmvkk
+  - &NixOSTesting age1ejn2h52jy83csynpn802w65nwprnhan0vxdmuteeshh4ucz5de3qkv99pp
   - &JuliansFramework age176a79l7kw5gnecqjw366gps4aft69lvfq0t548lxw39fczf0w3ksz9xxjq
 creation_rules:
   - path_regex: ^secrets/JuliansFramework/.*$
