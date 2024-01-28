@@ -57,7 +57,7 @@
         nixos-hardware.nixosModules.framework-12th-gen-intel
         #nixos-hardware.nixosModules.common-gpu-amd
       ];
-      specialArgs = {
+      specialArgs = rec {
         homeManagerModules = {
           julian = [ 
             ./genericHM/shell.nix
@@ -70,8 +70,11 @@
             ./JuliansFramework/home-manager/root/home.nix
           ];
         };
-        homeManagerExtraSpecialArgs = { inherit nix-colors; };
         hostName = "JuliansFramework"; 
+        homeManagerExtraSpecialArgs = { 
+          inherit nix-colors; 
+          inherit hostName;
+        };
         stable = false;
         inherit inputs;
         inherit self;
@@ -87,9 +90,11 @@
         #don't use ./proxmoxVM.nix because ISO does not support disco and doesn't have vmID
         ./blankISO/configuration.nix 
       ];
-      specialArgs = {
-        homeManagerExtraSpecialArgs = { };
+      specialArgs = rec {
         hostName = "blankISO"; 
+        homeManagerExtraSpecialArgs = { 
+          inherit hostName;
+        };
         inherit inputs;
         inherit self;
       };
@@ -104,14 +109,16 @@
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./NixOSTesting/configuration.nix
       ];
-      specialArgs = { 
+      specialArgs = rec { 
         homeManagerModules = {
           root = [ 
             ./genericHM/shell.nix
           ];
         };
-        homeManagerExtraSpecialArgs = { };
         hostName = "NixOSTesting"; 
+        homeManagerExtraSpecialArgs = { 
+          inherit hostName;
+        };
         stable = true;
         vmID = "120";
         inherit inputs;
@@ -128,14 +135,16 @@
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./Nextcloud/configuration.nix
       ];
-      specialArgs = { 
+      specialArgs = rec { 
         homeManagerModules = {
           root = [ 
             ./genericHM/shell.nix
           ];
         };
-        homeManagerExtraSpecialArgs = { };
         hostName = "Nextcloud"; 
+        homeManagerExtraSpecialArgs = { 
+          inherit hostName;
+        };
         stable = true;
         vmID = "131";
         inherit inputs;
@@ -152,14 +161,16 @@
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./Nextcloud/configuration.nix
       ];
-      specialArgs = { 
+      specialArgs = rec { 
         homeManagerModules = {
           root = [ 
             ./genericHM/shell.nix
           ];
         };
-        homeManagerExtraSpecialArgs = { };
         hostName = "Nextcloud-Testing"; 
+        homeManagerExtraSpecialArgs = { 
+          inherit hostName;
+        };
         stable = true;
         vmID = "150";
         inherit inputs;
@@ -176,14 +187,16 @@
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./Jellyfin/configuration.nix
       ];
-      specialArgs = { 
+      specialArgs = rec { 
         homeManagerModules = {
           root = [ 
             ./genericHM/shell.nix
           ];
         };
-        homeManagerExtraSpecialArgs = { };
         hostName = "Jellyfin"; 
+        homeManagerExtraSpecialArgs = { 
+          inherit hostName;
+        };
         stable = true;
         vmID = "132";
         inherit inputs;
@@ -197,13 +210,22 @@
       };
       modules = [
         ./generic/server.nix
+        ./generic/commonHM.nix
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./generic/proxy.nix #requires edge!
         ./IonosVPS/configuration.nix
       ];
-      specialArgs = { 
-        homeManagerExtraSpecialArgs = { };
+      specialArgs = rec { 
+        homeManagerModules = {
+          root = [ 
+            ./genericHM/ssh.nix
+          ];
+        };
         hostName = "IonosVPS"; 
+        homeManagerExtraSpecialArgs = { 
+          inherit hostName;
+        };
+        stable = true;
         edge = true;
         inherit inputs;
         inherit self;
@@ -220,14 +242,17 @@
         ./generic/proxy.nix #requires edge!
         ./LocalProxy/configuration.nix
       ];
-      specialArgs = { 
+      specialArgs = rec { 
         homeManagerModules = {
           root = [ 
             ./genericHM/shell.nix
+            ./genericHM/ssh.nix
           ];
         };
-        homeManagerExtraSpecialArgs = { };
         hostName = "LocalProxy"; 
+        homeManagerExtraSpecialArgs = { 
+          inherit hostName;
+        };
         stable = true;
         vmID = "130";
         edge = false;
@@ -246,14 +271,16 @@
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./Valheim/configuration.nix
       ];
-      specialArgs = { 
+      specialArgs = rec { 
         homeManagerModules = {
           root = [ 
             ./genericHM/shell.nix
           ];
         };
-        homeManagerExtraSpecialArgs = { };
         hostName = "Valheim"; 
+        homeManagerExtraSpecialArgs = { 
+          inherit hostName;
+        };
         stable = true;
         vmID = "135";
         inherit inputs;

@@ -28,6 +28,15 @@ security.acme = lib.mkIf edge {
     recommendedProxySettings = true;
     recommendedTlsSettings = true;
 
+    #LocalProxy can also pull certs from IonosVPS if they are missing (e.g. after reinstall)
+    preStart = lib.mkIf (!edge) ''
+      if ! ls /var/lib/sslCerts/* | grep -q; then
+          mkdir -p /var/lib/sslCerts
+          ${pkgs.openssh}/bin/scp -r IonosVPS:/var/lib/acme/* /var/lib/sslCerts/
+          chown -R nginx:nginx /var/lib/sslCerts/*
+      fi
+    '';
+
     #hardened security settings
     # Only allow PFS-enabled ciphers with AES256
     sslCiphers = "AES256+EECDH:AES256+EDH:!aNULL";
