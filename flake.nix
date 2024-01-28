@@ -88,6 +88,7 @@
         ./blankISO/configuration.nix 
       ];
       specialArgs = {
+        homeManagerExtraSpecialArgs = { };
         hostName = "blankISO"; 
         inherit inputs;
         inherit self;
@@ -109,6 +110,7 @@
             ./genericHM/shell.nix
           ];
         };
+        homeManagerExtraSpecialArgs = { };
         hostName = "NixOSTesting"; 
         stable = true;
         vmID = "120";
@@ -132,6 +134,7 @@
             ./genericHM/shell.nix
           ];
         };
+        homeManagerExtraSpecialArgs = { };
         hostName = "Nextcloud"; 
         stable = true;
         vmID = "131";
@@ -155,6 +158,7 @@
             ./genericHM/shell.nix
           ];
         };
+        homeManagerExtraSpecialArgs = { };
         hostName = "Nextcloud-Testing"; 
         stable = true;
         vmID = "150";
@@ -178,6 +182,7 @@
             ./genericHM/shell.nix
           ];
         };
+        homeManagerExtraSpecialArgs = { };
         hostName = "Jellyfin"; 
         stable = true;
         vmID = "132";
@@ -197,6 +202,7 @@
         ./IonosVPS/configuration.nix
       ];
       specialArgs = { 
+        homeManagerExtraSpecialArgs = { };
         hostName = "IonosVPS"; 
         edge = true;
         inherit inputs;
@@ -220,6 +226,7 @@
             ./genericHM/shell.nix
           ];
         };
+        homeManagerExtraSpecialArgs = { };
         hostName = "LocalProxy"; 
         stable = true;
         vmID = "130";
@@ -245,6 +252,7 @@
             ./genericHM/shell.nix
           ];
         };
+        homeManagerExtraSpecialArgs = { };
         hostName = "Valheim"; 
         stable = true;
         vmID = "135";

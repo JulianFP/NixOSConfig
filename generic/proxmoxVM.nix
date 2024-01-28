@@ -19,7 +19,7 @@
   disko.devices = import ./proxmoxVM-disk-config.nix {
     inherit lib;
   };
-  fileSystem = {
+  fileSystems = {
     "/" = {
       device = "/dev/disk/by-partlabel/disk-_dev_sda-nixos";
       fsType = "btrfs";
