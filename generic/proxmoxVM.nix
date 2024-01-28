@@ -15,8 +15,35 @@
     efiInstallAsRemovable = true;
   };
 
+  #filesystem setup
   disko.devices = import ./proxmoxVM-disk-config.nix {
     inherit lib;
+  };
+  fileSystem = {
+    "/" = {
+      device = "/dev/disk/by-partlabel/disk-_dev_sda-nixos";
+      fsType = "btrfs";
+      options = [ "subvol=root" ];
+    };
+    "/home" = {
+      device = "/dev/disk/by-partlabel/disk-_dev_sda-nixos";
+      fsType = "btrfs";
+      options = [ "subvol=home" ];
+    };
+    "/nix" = {
+      device = "/dev/disk/by-partlabel/disk-_dev_sda-nixos";
+      fsType = "btrfs";
+      options = [ "subvol=nix" ];
+    };
+    "/swap" = {
+      device = "/dev/disk/by-partlabel/disk-_dev_sda-nixos";
+      fsType = "btrfs";
+      options = [ "subvol=swap" ];
+    };
+    "/boot" = {
+      device = "/dev/disk/by-partlabel/disk-_dev_sda-ESP";
+      fsType = "vfat";
+    };
   };
 
 #networking config (systemd.network preferred over networking)

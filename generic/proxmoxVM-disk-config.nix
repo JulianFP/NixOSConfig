@@ -21,39 +21,36 @@
             mountpoint = "/boot";
           };
         };
-        root = {
-          name = "root";
+        nixos = {
+          name = "nixos";
           size = "100%";
           content = {
-            type = "lvm_pv";
-            vg = "pool";
+            type = "btrfs";
+            extraArgs = [ "-f" ]; # Override existing partition
+            # Subvolumes must set a mountpoint in order to be mounted,
+            # unless their parent is mounted
+            subvolumes = {
+              # Subvolume name is different from mountpoint
+              "/root" = {
+                mountpoint = "/";
+              };
+              # Subvolume name is the same as the mountpoint
+              "/home" = {
+                mountpoint = "/home";
+              };
+              "/nix" = {
+                mountOptions = [ "noatime" ];
+                mountpoint = "/nix";
+              };
+              # Subvolume for the swapfile
+              "/swap" = {
+                mountpoint = "/.swapvol";
+                swap.swapfile.size = "4G";
+              };
+            };
           };
         };
       };
     };
   });
-  lvm_vg = {
-    pool = {
-      type = "lvm_vg";
-      lvs = {
-        swap = {
-          size = "4G";
-          content = {
-            type = "swap";
-          };
-        };
-        root = {
-          size = "100%FREE";
-          content = {
-            type = "filesystem";
-            format = "ext4";
-            mountpoint = "/";
-            mountOptions = [
-              "defaults"
-            ];
-          };
-        };
-      };
-    };
-  };
 }

@@ -1,4 +1,4 @@
-{ modulesPath, ... }:
+{ modulesPath, config, lib, ... }:
 
 {
   imports =
@@ -43,4 +43,7 @@
     randomizedDelaySec = "60min";
     options = "--delete-older-than 30d";
   };
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
