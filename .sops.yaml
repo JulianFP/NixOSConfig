@@ -1,7 +1,7 @@
 keys:
   - &yubikey 5B82BEF3C1A6617707A448FDEB6F11283183E111
   - &Valheim age1qq4e2nsgk96gl6zn605dpt4xwz3yuwxthcnkdhhvkn508503ky5spz9xur
-  - &Jellyfin age1md83lczu3lykmlam62hqg44zu23y655mvat97jfc583kzzjyn4kq48hjn5
+  - &Jellyfin age1d8nx4acd0wsrsk8rkfgvm04vqaal5dcygx5jeumdhsh5s77h234qjxjp0j
   - &Nextcloud-Testing age1tghfu2eje3ttekmzv6k4az2s8xs09wdwv4f03feck52yztty9vpq2czg2s
   - &LocalProxy age1jgxeprdxvxvgz0ya25tgcyfgq5uxe3w6z6cj22yemp2476avds4srumvlk
   - &IonosVPS age1mfk3dc4sekgxccv4dyuypavzelv0tvtlerf3s5qwtfzu9rnjevts9qlxme
