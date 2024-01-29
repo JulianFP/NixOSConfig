@@ -2,7 +2,7 @@
 
 # This is the setup for all my (reverse) proxies. Currently I have one in the cloud that is exposed to the internet (IonosVPS) and one locally that is not (LocalProxy)
 # for the first one edge is set, for the second not. The first one syncs ssl certs to the second one
-let 
+let
   subnet = if edge then "48.42.1." else "192.168.3.";
 in
 {
@@ -19,6 +19,23 @@ security.acme = lib.mkIf edge {
   '';
 };
 
+#LocalProxy can also pull certs from IonosVPS if they are missing (e.g. after reinstall)
+systemd.services."pre-nginx" = lib.mkIf (!edge) {
+  enable = true;
+  script = ''
+    mkdir -p /var/lib/sslCerts
+    if ! ls -R /var/lib/sslCerts | grep -q "cert.pem"; then
+        ${pkgs.openssh}/bin/scp -r IonosVPS:/var/lib/acme/* /var/lib/sslCerts/
+        chown -R nginx:nginx /var/lib/sslCerts/*
+    fi
+  '';
+  serviceConfig = {
+    Type = "oneshot";
+    User = "root";
+  };
+  wantedBy = [ "nginx.service" ];
+};
+
 #reverse proxy config
   services.nginx = {
     #boilerplate stuff
@@ -27,15 +44,6 @@ security.acme = lib.mkIf edge {
     recommendedOptimisation = true;
     recommendedProxySettings = true;
     recommendedTlsSettings = true;
-
-    #LocalProxy can also pull certs from IonosVPS if they are missing (e.g. after reinstall)
-    preStart = lib.mkIf (!edge) ''
-      if ! ls /var/lib/sslCerts/* | grep -q; then
-          mkdir -p /var/lib/sslCerts
-          ${pkgs.openssh}/bin/scp -r IonosVPS:/var/lib/acme/* /var/lib/sslCerts/
-          chown -R nginx:nginx /var/lib/sslCerts/*
-      fi
-    '';
 
     #hardened security settings
     # Only allow PFS-enabled ciphers with AES256
