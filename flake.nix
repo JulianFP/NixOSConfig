@@ -212,13 +212,14 @@
         ./generic/server.nix
         ./generic/commonHM.nix
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
+        ./generic/ssh.nix
         ./generic/proxy.nix #requires edge!
         ./IonosVPS/configuration.nix
       ];
       specialArgs = rec { 
         homeManagerModules = {
           root = [ 
-            ./genericHM/ssh.nix
+            ./genericHM/ssh.nix#requires ./generic/ssh.nix!
           ];
         };
         hostName = "IonosVPS"; 
@@ -239,6 +240,7 @@
       modules = [
         ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
+        ./generic/ssh.nix
         ./generic/proxy.nix #requires edge!
         ./LocalProxy/configuration.nix
       ];
@@ -246,7 +248,7 @@
         homeManagerModules = {
           root = [ 
             ./genericHM/shell.nix
-            ./genericHM/ssh.nix
+            ./genericHM/ssh.nix#requires ./generic/ssh.nix!
           ];
         };
         hostName = "LocalProxy"; 
