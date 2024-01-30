@@ -11,7 +11,7 @@ in
   };
 
   #inspired by https://github.com/Base24/base16-kdeplasma
-  xdg.configFile."kdeglobals".text = with config.colorScheme.colors; with nix-colors.lib.conversions; ''
+  xdg.configFile."kdeglobals".text = with config.colorScheme.palette; with nix-colors.lib.conversions; ''
     [ColorEffects:Disabled]
     ChangeSelectionColor=
     Color=56,56,56

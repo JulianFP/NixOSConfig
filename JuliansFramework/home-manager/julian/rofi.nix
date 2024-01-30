@@ -6,7 +6,7 @@
     package = pkgs.rofi-wayland;
 
     #converted from this template: https://github.com/tinted-theming/base16-rofi
-    theme = with config.colorScheme.colors; with nix-colors.lib.conversions;
+    theme = with config.colorScheme.palette; with nix-colors.lib.conversions;
     let
       inherit (config.lib.formats.rasi) mkLiteral;
     in {

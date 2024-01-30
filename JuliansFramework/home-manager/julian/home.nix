@@ -149,7 +149,7 @@
     enable = true;
     settings = {
       #base16 template: https://github.com/aarowill/base16-alacritty
-      colors = with config.colorScheme.colors; {
+      colors = with config.colorScheme.palette; {
         # Default colors
         primary = {
           background = "0x${base00}";
