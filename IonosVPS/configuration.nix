@@ -12,7 +12,7 @@
 
   networking.domain = "";
 
-  zramSwap.enable = true; #enable zram (instead of swap)
+  #zramSwap.enable = true; #enable zram (instead of swap)
 
   #nebula firewall
   services.nebula.networks."serverNetwork" = {
