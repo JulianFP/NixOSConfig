@@ -1,7 +1,21 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   programs.nixvim = {
+    #override colorscheme
+    colorschemes = {
+      onedark.enable = lib.mkForce false;
+      gruvbox = {
+        enable = true;
+        settings = {
+          contrast_dark = "soft";
+          improved_strings = true;
+          improved_warnings = true;
+          true_color = true;
+        };
+      };
+    };
+
     globals = {
       #for vimtex
       vimtex_view_general_viewer = "okular";
@@ -195,7 +209,7 @@
       };
 
       #theme for status bar at bottom
-      lualine.theme = "gruvbox";
+      lualine.theme = lib.mkForce "gruvbox";
 
       #snippet engine
       luasnip = {

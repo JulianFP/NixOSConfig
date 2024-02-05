@@ -7,14 +7,7 @@
   programs.nixvim = {
     enable = true;
 
-    #set colorscheme
-    colorschemes.gruvbox = {
-      enable = true;
-      contrastDark = "soft";
-      improvedStrings = true;
-      improvedWarnings = true;
-      trueColor = true;
-    };
+    colorschemes.onedark.enable = true;
 
     globals = {
       mapleader = ",";
@@ -71,7 +64,7 @@
       #status bar at bottom
       lualine = {
         enable = true;
-        theme = "gruvbox";
+        theme = "onedark";
       };
 
       #nix and bash lsp 
