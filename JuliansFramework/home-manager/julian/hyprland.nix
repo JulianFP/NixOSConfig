@@ -174,7 +174,6 @@ gestures {
 
 Misc {
     key_press_enables_dpms = true
-    force_hypr_chan = true
     # vrr = 2
 }
 
