@@ -58,12 +58,12 @@ exec-once = wl-paste -t text -w xclip -selection clipboard
 exec-once=dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
 exec-once = ${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1
 exec-once=[workspace 1 silent] kwalletd5
-exec-once=[workspace 1 silent] thunderbird
+exec-once=[workspace 10 silent] thunderbird
 exec-once=[workspace 1 silent] sleep 1 && keepassxc
-exec-once=[workspace 1 silent] sleep 1 && element-desktop --hidden
-exec-once=[workspace 1 silent] sleep 1 && signal-desktop --no-sandbox --start-in-tray
-exec-once=[workspace 1 silent] sleep 1 && nextcloud
-exec-once=[silent] sleep 1 && webcord -m --safe-mode
+exec-once=[silent] sleep 2 && element-desktop --hidden
+exec-once=[silent] sleep 2 && signal-desktop --no-sandbox --start-in-tray
+exec-once=[silent] sleep 2 && nextcloud
+exec-once=[silent] sleep 2 && webcord -m
 exec-once=[silent] xwaylandvideobridge
 
 # xwayland screen sharing
