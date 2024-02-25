@@ -36,18 +36,7 @@
     automatic = true;
     dates = [ "03:45" ];
   };
-  #automatic upgrade. Pulls newest commits from github daily. Relies on my updating the flake inputs (I want that to be manual and tracked by git)
-  system.autoUpgrade = {
-    enable = true;
-    flake = "github:JulianFP/NixOSConfig";
-    dates = "04:00";
-    randomizedDelaySec = "30min";
-    allowReboot = true;
-    rebootWindow = {
-      lower = "04:00";
-      upper = "05:00";
-    };
-  };
+  #automatic upgrade is configured in proxmoxVM.nix since some servers (e.g. IonosVPS) can't build their nixos config locally
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

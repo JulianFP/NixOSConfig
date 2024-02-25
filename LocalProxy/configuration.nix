@@ -1,6 +1,10 @@
 { config, pkgs, ... }:
 
 {
+  imports = [
+    ./buildIonosVPS.nix
+  ];
+
   services.nebula.networks."serverNetwork" = {
     firewall.inbound = [
       {
