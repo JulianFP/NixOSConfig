@@ -11,7 +11,10 @@
   #openssh config
   services.openssh = {
     enable = true;
-    settings.PasswordAuthentication = false;
+    settings = {
+      PasswordAuthentication = false;
+      KbdInteractiveAuthentication = false;
+    };
     extraConfig = ''
       StreamLocalBindUnlink yes
     '';

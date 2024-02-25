@@ -27,8 +27,7 @@
 
     #allowReboot is activated
     script = let
-      date     = "${pkgs.coreutils}/bin/date";
-      readlink = "${pkgs.coreutils}/bin/readlink";
+      date = "${pkgs.coreutils}/bin/date";
       ssh = command: lib.escapeShellArgs [
         "${pkgs.openssh}/bin/ssh"
         "IonosVPS"
