@@ -89,6 +89,20 @@ structure:
       alsa.support32Bit = true;
       pulse.enable = true;
       jack.enable = true;
+      wireplumber = {
+        enable = true;
+        #pipewire wireplumber bluetooth setup
+        configPackages = [
+          (pkgs.writeTextDir "share/wireplumber/bluetooth.lua.d/51-bluez-config.lua" ''
+            bluez_monitor.properties = {
+              ["bluez5.enable-sbc-xq"] = true,
+              ["bluez5.enable-msbc"] = true,
+              ["bluez5.enable-hw-volume"] = true,
+              ["bluez5.headset-roles"] = "[ hsp_hs hsp_ag hfp_hf hfp_ag ]"
+            }
+          '')
+        ];
+      };
     };
 
     # yubikey setup
@@ -118,16 +132,6 @@ structure:
 
   /* -- environment (e.g. systemPackages) -- */
   environment = {
-    #pipewire wireplumber bluetooth setup
-    etc."wireplumber/bluetooth.lua.d/51-bluez-config.lua".text = ''
-      bluez_monitor.properties = {
-        ["bluez5.enable-sbc-xq"] = true,
-        ["bluez5.enable-msbc"] = true,
-        ["bluez5.enable-hw-volume"] = true,
-        ["bluez5.headset-roles"] = "[ hsp_hs hsp_ag hfp_hf hfp_ag ]"
-      }
-    '';
-
     variables = {
       RADV_PERFTEST = "nosam"; #performance improvement for eGPUs
     };
