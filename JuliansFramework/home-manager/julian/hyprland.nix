@@ -172,7 +172,7 @@ gestures {
     workspace_swipe = true
 }
 
-Misc {
+misc {
     key_press_enables_dpms = true
     # vrr = 2
 }
