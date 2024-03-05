@@ -243,7 +243,7 @@ bind = $mainMod, Scroll_Lock, exec, grimblast --notify --freeze copysave area "$
 bind = $mainMod, XF86AudioMedia, exec, grimblast --notify --freeze copysave area "$screenshotDir/$(date +"%Y%m%d_%T")-Screenshot-area.png"
 
 #hyprpicker 
-bind = ALT, Print, exec, hyprpicker -a
+bind = ALT, Print, exec, hyprpicker -a -r
 
 # hyprctl kill 
 bind = $mainMod, X, exec, hyprctl kill
