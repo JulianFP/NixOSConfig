@@ -157,13 +157,10 @@ $mainMod = SUPER
 
 #essential application shortcuts
 bind = $mainMod, RETURN, exec, alacritty
-bind = $mainMod, Q, exec, dolphin
+bind = $mainMod, A, exec, dolphin
 bind = $mainMod, D, exec, rofi -show drun
 bind = $mainMod, C, exec, cliphist list | rofi -dmenu | cliphist decode | wl-copy
 bind = $mainMod SHIFT, C, exec, cliphist wipe
-# screenshot
-bind = , Print, exec, grimshot copy area
-bind = $mainMod, Print, exec, grimshot save area
 
 #basic stuff
 bind = $mainMod SHIFT, Q, killactive,
@@ -236,10 +233,22 @@ bind = $mainMod SHIFT, 8, movetoworkspacesilent, 8
 bind = $mainMod SHIFT, 9, movetoworkspacesilent, 9
 bind = $mainMod SHIFT, 0, movetoworkspacesilent, 10
 
+# screenshot (print: active window, framework key/scroll lock (laptop/docked): area. With mainmod: copysave, Without: copy)
+$screenshotDir = /home/julian/Pictures/Screenshots
+bind = , Print, exec, grimblast --notify copy active 
+bind = $mainMod, Print, exec, grimblast --notify copysave active "$screenshotDir/$(date +"%Y%m%d_%T")-Screenshot-active.png"
+bind = , Scroll_Lock, exec, grimblast --notify --freeze copy area
+bind = , XF86AudioMedia, exec, grimblast --notify --freeze copy area
+bind = $mainMod, Scroll_Lock, exec, grimblast --notify --freeze copysave area "$screenshotDir/$(date +"%Y%m%d_%T")-Screenshot-area.png"
+bind = $mainMod, XF86AudioMedia, exec, grimblast --notify --freeze copysave area "$screenshotDir/$(date +"%Y%m%d_%T")-Screenshot-area.png"
+
+#hyprpicker 
+bind = ALT, Print, exec, hyprpicker -a
+
 # hyprctl kill 
 bind = $mainMod, X, exec, hyprctl kill
 
-# shortcut to mute mic
+# shortcut to mute mic (only used when docked since laptop doesn't have pause button)
 bindl = , Pause, exec, pactl set-source-mute @DEFAULT_SOURCE@ toggle
 
 #lid suspend & lock screen & dpms (Lid Switch)

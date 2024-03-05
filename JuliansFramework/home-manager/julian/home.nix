@@ -44,14 +44,17 @@
     '';
     keybindings = {
       # Movement
-      gd = "cd ~/Documents";
-      gD = "cd ~/Downloads";
-      gc = "cd ~/.config";
-      gu = "cd ~/Nextcloud/Dokumente/Studium";
+      "gd" = "cd ~/Documents";
+      "gD" = "cd ~/Downloads";
+      "gc" = "cd ~/.config";
+      "gu" = "cd ~/Nextcloud/Dokumente/Studium";
 
       # execute current file
-      x = "\$\$f";
-      X = "!\$f";
+      "x" = "\$\$f";
+      "X" = "!\$f";
+
+      #open current dir in dolphin
+      "<c-a>" = "&{{dolphin --new-window --select \$ &; disown}}";
     };
   };
   xdg.configFile."lf/icons".source = ./lf-icons;
@@ -219,7 +222,7 @@
       keyboard.bindings = [
         {
           key = "Return";
-          mods = "Super|Shift";
+          mods = "Control";
           action = "SpawnNewInstance";
         }
       ];

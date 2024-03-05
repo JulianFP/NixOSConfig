@@ -29,7 +29,8 @@ in
     libsForQt5.kwalletmanager
     libsForQt5.kwallet
     swaylock
-    sway-contrib.grimshot
+    hyprpicker
+    grimblast
     gnome.adwaita-icon-theme
     nur.repos.mikilio.xwaylandvideobridge-hypr
 
