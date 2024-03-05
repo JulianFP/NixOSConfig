@@ -8,11 +8,6 @@
       source = ./systemScripts/clamshell_mode_hypr.sh;
       executable = true;
     };
-    "gamingMode_hypr.sh" = {
-      target = ".systemScripts/gamingMode_hypr.sh";
-      source = ./systemScripts/gamingMode_hypr.sh;
-      executable = true;
-    };
     "lockAndSuspend.sh" = {
       target = ".systemScripts/lockAndSuspend.sh";
       source = ./systemScripts/lockAndSuspend.sh;
@@ -24,16 +19,7 @@
   wayland.windowManager.hyprland = {
     enable = true;
     extraConfig = ''
-# This is an example Hyprland config file.
-#
-# Refer to the wiki for more information.
-
-#
-# Please note not all available settings / options are set here.
-# For a full list, see the wiki
-#
-
-# See https://wiki.hyprland.org/Configuring/Monitors/
+# ----- Monitor config ---------------------------------------------------------
 # internal monitor (fractional scaling)
 monitor=eDP-1, 2256x1504, 0x0, 1.566667
 # Samsung C27HG7x
@@ -46,10 +32,11 @@ monitor=desc:Eizo Nanao Corporation EV2460 51278091, 1920x1080@60, 1920x0, 1
 # fallback rule for random monitors
 monitor=,preferred,auto,auto
 
-# See https://wiki.hyprland.org/Configuring/Keywords/ for more
 # Set lockscreen background
 $lock_bg = /home/julian/Pictures/ufp_ac.jpg
 
+
+# ----- Initialisation ---------------------------------------------------------
 # Execute your favorite apps at launch
 exec-once = waybar #status bar
 exec-once = wl-paste --type text --watch cliphist store #clipboard manager: Stores only text data
@@ -66,16 +53,7 @@ exec-once=[silent] sleep 2 && nextcloud
 exec-once=[silent] sleep 2 && webcord -m
 exec-once=[silent] xwaylandvideobridge
 
-# xwayland screen sharing
-windowrulev2 = opacity 0.0 override 0.0 override,class:^(xwaylandvideobridge)$
-windowrulev2 = noanim,class:^(xwaylandvideobridge)$
-windowrulev2 = nofocus,class:^(xwaylandvideobridge)$
-windowrulev2 = noinitialfocus,class:^(xwaylandvideobridge)$
-
-# Source a file (multi-file configs)
-# source = ~/.config/hypr/myColors.conf
-
-# Some default env vars.
+# Env vars that get set at startup
 env = XDG_CURRENT_DESKTOP,Hyprland
 env = XDG_SESSION_TYPE,wayland
 env = XDG_SESSION_DESKTOP,Hyprland
@@ -85,30 +63,21 @@ env = QT_WAYLAND_DISABLE_WINDOWDECORATION,1
 env = GDK_BACKEND,wayland,x11
 env = CLUTTER_BACKEND,wayland
 env = NIXOS_OZONE_WL,1
-
 #tearing
 #env = WLR_DRM_NO_ATOMIC,1
 #windowrulev2 = immediate, class:^(cs2)$
 
-# For all categories, see https://wiki.hyprland.org/Configuring/Variables/
-input {
-    kb_layout = de
-    kb_variant =
-    kb_model =
-    kb_options =
-    kb_rules =
 
-    follow_mouse = 1
+# ----- Window Rules -----------------------------------------------------------
+# xwayland screen sharing
+windowrulev2 = opacity 0.0 override 0.0 override,class:^(xwaylandvideobridge)$
+windowrulev2 = noanim,class:^(xwaylandvideobridge)$
+windowrulev2 = nofocus,class:^(xwaylandvideobridge)$
+windowrulev2 = noinitialfocus,class:^(xwaylandvideobridge)$
 
-    touchpad {
-        natural_scroll = true
-    }
-    sensitivity = 0 # -1.0 - 1.0, 0 means no modification.
-}
 
+# ----- Look & Feel ------------------------------------------------------------
 general {
-    # See https://wiki.hyprland.org/Configuring/Variables/ for more
-
     gaps_in = 3
     gaps_out = 0
     border_size = 2
@@ -119,21 +88,20 @@ general {
     #allow_tearing = true
 }
 
-xwayland {
-    force_zero_scaling = true
+dwindle {
+    pseudotile = true # master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
+    preserve_split = true #without this the wm will rearrange windows when resizing a window
+    force_split = 2 # always split to right/bottom
 }
 
 decoration {
-    # See https://wiki.hyprland.org/Configuring/Variables/ for more
     blur {
         enabled = true
         size = 3
         passes = 1
         new_optimizations = true
     }
-
     rounding = 5
-
     drop_shadow = true
     shadow_range = 4
     shadow_render_power = 3
@@ -143,10 +111,8 @@ decoration {
 animations {
     enabled = true
 
-    # Some default animations, see https://wiki.hyprland.org/Configuring/Animations/ for more
-
+    #default animations
     bezier = myBezier, 0.05, 0.9, 0.1, 1.05
-
     animation = windows, 1, 5, myBezier
     animation = windowsOut, 1, 5, default, popin 80%
     animation = border, 1, 7, default
@@ -155,21 +121,8 @@ animations {
     animation = workspaces, 1, 5, default
 }
 
-dwindle {
-    # See https://wiki.hyprland.org/Configuring/Dwindle-Layout/ for more
-    pseudotile = true # master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
-    preserve_split = true # you probably want this
-    force_split = 2 # always split to right/bottom
-}
-
-master {
-    # See https://wiki.hyprland.org/Configuring/Master-Layout/ for more
-    new_is_master = true
-}
-
-gestures {
-    # See https://wiki.hyprland.org/Configuring/Variables/ for more
-    workspace_swipe = true
+xwayland {
+    force_zero_scaling = true
 }
 
 misc {
@@ -177,40 +130,50 @@ misc {
     # vrr = 2
 }
 
-# Example per-device config
-# See https://wiki.hyprland.org/Configuring/Keywords/#per-device-input-configs for more
-# device:epic-mouse-v1 {
-#     sensitivity = -0.5
-# }
 
-# Example windowrule v1
-# windowrule = float, ^(kitty)$
-# Example windowrule v2
-# windowrulev2 = float,class:^(kitty)$,title:^(kitty)$
-# See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
+# ----- Input & Bindings -------------------------------------------------------
+input {
+    kb_layout = de
+    kb_variant =
+    kb_model =
+    kb_options =
+    kb_rules =
+    follow_mouse = 1
+    touchpad {
+        natural_scroll = true
+    }
+    sensitivity = 0 # -1.0 - 1.0, 0 means no modification.
+}
 
-
-# See https://wiki.hyprland.org/Configuring/Keywords/ for more
-$mainMod = SUPER
+gestures {
+    workspace_swipe = true
+}
 
 binds {
     allow_workspace_cycles = true #previous now cycles between last two used workspaces (alt+tab behaviour)
 }
 
-# Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
+$mainMod = SUPER
+
+#essential application shortcuts
 bind = $mainMod, RETURN, exec, alacritty
-bind = $mainMod SHIFT, Q, killactive,
-bind = $mainMod SHIFT, E, exit,
 bind = $mainMod, Q, exec, dolphin
-bind = $mainMod SHIFT, SPACE, togglefloating,
 bind = $mainMod, D, exec, rofi -show drun
 bind = $mainMod, C, exec, cliphist list | rofi -dmenu | cliphist decode | wl-copy
 bind = $mainMod SHIFT, C, exec, cliphist wipe
+# screenshot
+bind = , Print, exec, grimshot copy area
+bind = $mainMod, Print, exec, grimshot save area
+
+#basic stuff
+bind = $mainMod SHIFT, Q, killactive,
+bind = $mainMod SHIFT, E, exit,
+bind = $mainMod SHIFT, SPACE, togglefloating,
 bind = $mainMod, P, pseudo, # dwindle
 bind = $mainMod, V, togglesplit, # dwindle
 bind = $mainMod, F, fullscreen 
 
-# Move focus with mainMod + arrow keys + vim keys
+# Move focus (with mainMod + arrow keys + vim keys)
 bind = $mainMod, left, movefocus, l
 bind = $mainMod, right, movefocus, r
 bind = $mainMod, up, movefocus, u
@@ -220,7 +183,7 @@ bind = $mainMod, L, movefocus, r
 bind = $mainMod, K, movefocus, u
 bind = $mainMod, J, movefocus, d
 
-# Switch workspaces with mainMod + [0-9]
+# Switch workspaces (with mainMod + [0-9])
 bind = $mainMod, 1, workspace, 1
 bind = $mainMod, 2, workspace, 2
 bind = $mainMod, 3, workspace, 3
@@ -232,12 +195,16 @@ bind = $mainMod, 8, workspace, 8
 bind = $mainMod, 9, workspace, 9
 bind = $mainMod, 0, workspace, 10
 
-# Switch workspaces with ALT
+# Switch workspaces (with TAB)
 bind = ALT, TAB, workspace, previous
 bind = $mainMod, TAB, workspace, e+1
 bind = $mainMod SHIFT, TAB, workspace, e-1
 
-# Move active window in give direction
+# Switch workspaces (with mainMod + Scroll (mouse))
+bind = $mainMod, mouse_down, workspace, e+1
+bind = $mainMod, mouse_up, workspace, e-1
+
+# Move active window (with mainMod + SHIFT + vim keys)
 bind = $mainMod SHIFT, left, movewindow, l
 bind = $mainMod SHIFT, right, movewindow, r
 bind = $mainMod SHIFT, up, movewindow, u
@@ -247,13 +214,17 @@ bind = $mainMod SHIFT, L, movewindow, r
 bind = $mainMod SHIFT, K, movewindow, u
 bind = $mainMod SHIFT, J, movewindow, d
 
-# Move workspace in given direction (multi monitor)
+# Move/resize active window (with mainMod + LMB/RMB and dragging)
+bindm = $mainMod, mouse:272, movewindow
+bindm = $mainMod, mouse:273, resizewindow
+
+# Move workspace (multi monitor)
 bind = $mainMod ALT, left, movecurrentworkspacetomonitor, -1
 bind = $mainMod ALT, right, movecurrentworkspacetomonitor, +1
 bind = $mainMod ALT, H, movecurrentworkspacetomonitor, -1
 bind = $mainMod ALT, L, movecurrentworkspacetomonitor, +1
 
-# Move active window to a workspace with mainMod + SHIFT + [0-9]
+# Move active window to a workspace (with mainMod + SHIFT + [0-9])
 bind = $mainMod SHIFT, 1, movetoworkspacesilent, 1
 bind = $mainMod SHIFT, 2, movetoworkspacesilent, 2
 bind = $mainMod SHIFT, 3, movetoworkspacesilent, 3
@@ -265,28 +236,16 @@ bind = $mainMod SHIFT, 8, movetoworkspacesilent, 8
 bind = $mainMod SHIFT, 9, movetoworkspacesilent, 9
 bind = $mainMod SHIFT, 0, movetoworkspacesilent, 10
 
-# Scroll through existing workspaces with mainMod + scroll
-bind = $mainMod, mouse_down, workspace, e+1
-bind = $mainMod, mouse_up, workspace, e-1
-
-# Move/resize windows with mainMod + LMB/RMB and dragging
-bindm = $mainMod, mouse:272, movewindow
-bindm = $mainMod, mouse:273, resizewindow
-
-# screenshot
-bind = , Print, exec, grimshot copy area
-bind = $mainMod, Print, exec, grimshot save area
-
-#lid suspend & lock screen & dpms
-bindl = , switch:Lid Switch, exec, /home/julian/.systemScripts/clamshell_mode_hypr.sh $lock_bg
-bind = $mainMod, Y, exec, swaylock -f -c 000000 -i $lock_bg
-bindl = $mainMod SHIFT, Y, exec, sleep 1 && hyprctl dispatch dpms off
-
 # hyprctl kill 
 bind = $mainMod, X, exec, hyprctl kill
 
-# mute button 
+# shortcut to mute mic
 bindl = , Pause, exec, pactl set-source-mute @DEFAULT_SOURCE@ toggle
+
+#lid suspend & lock screen & dpms (Lid Switch)
+bindl = , switch:Lid Switch, exec, /home/julian/.systemScripts/clamshell_mode_hypr.sh $lock_bg
+bind = $mainMod, Y, exec, swaylock -f -c 000000 -i $lock_bg
+bindl = $mainMod SHIFT, Y, exec, sleep 1 && hyprctl dispatch dpms off
 
 # special keys
 bindle = , XF86AudioRaiseVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ +5%
@@ -299,20 +258,6 @@ bindl = , XF86AudioPlay, exec, playerctl play-pause
 bindl = , XF86AudioNext, exec, playerctl next
 bindl = , XF86AudioPrev, exec, playerctl previous
 bindl = , XF86PowerOff, exec, /home/julian/.systemScripts/lockAndSuspend.sh $lock_bg 1
-
-# script execution
-bind = $mainMod SHIFT, G, exec, /home/julian/.systemScripts/gamingMode_hypr.sh 
-
-# groups
-bind = $mainMod, W, togglegroup
-
-# virt-manager pass shortcuts to guest 
-# by entering 
-bind = CTRL, ALT_L, submap, vm 
-submap = vm 
-bind = , escape, submap, reset 
-bind = CTRL, ALT_L, submap, reset
-submap = reset
     '';
   };
 }
