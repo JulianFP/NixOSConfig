@@ -1,4 +1,4 @@
-{ ... }:
+{ stable, ... }:
 
 # this is a neovim configuration for (pretty much) all my devices & users.
 # basic stuff only 
@@ -75,7 +75,7 @@
           nil_ls.enable = true; #lsp server for Nix
         };
       };
-      nvim-cmp = {
+      nvim-cmp = if stable then { #for 23.11 devices
         enable = true;
         mapping = {
           "<CR>" = "cmp.mapping.confirm({select = true})";
@@ -97,6 +97,27 @@
           { name = "path"; }
           { name = "buffer"; }
         ];
+      } else {}; #has moved to cmp since 24.05
+      cmp = if stable then {} else {
+        enable = true;
+        settings = {
+          mapping = {
+            "<CR>" = "cmp.mapping.confirm({select = true})";
+            "<Tab>" = ''cmp.mapping(function(fallback)
+                if cmp.visible() then
+                  cmp.select_next_item()
+                else
+                  fallback()
+                end
+              end
+              ,{"i","s"})'';
+          };
+          sources = [
+            { name = "nvim_lsp"; }
+            { name = "path"; }
+            { name = "buffer"; }
+          ];
+        };
       };
     };
   };

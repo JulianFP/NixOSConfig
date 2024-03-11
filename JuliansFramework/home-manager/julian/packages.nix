@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 let
   my-python-packages = ps: with ps; [
@@ -58,7 +58,6 @@ in
     signal-desktop
     element-desktop
     webcord
-    discord
     libsForQt5.ark
     libsForQt5.dolphin
     libsForQt5.filelight
@@ -92,7 +91,6 @@ in
     cmake
     gnumake
     valgrind
-    android-studio
     jetbrains.idea-ultimate
     (python3.withPackages my-python-packages)
 

@@ -74,6 +74,7 @@
         homeManagerExtraSpecialArgs = { 
           inherit nix-colors; 
           inherit hostName;
+          inherit stable;
         };
         stable = false;
         inherit inputs;
@@ -94,6 +95,7 @@
         hostName = "blankISO"; 
         homeManagerExtraSpecialArgs = { 
           inherit hostName;
+          inherit stable;
         };
         inherit inputs;
         inherit self;
@@ -118,6 +120,7 @@
         hostName = "NixOSTesting"; 
         homeManagerExtraSpecialArgs = { 
           inherit hostName;
+          inherit stable;
         };
         stable = true;
         vmID = "120";
@@ -144,6 +147,7 @@
         hostName = "Nextcloud"; 
         homeManagerExtraSpecialArgs = { 
           inherit hostName;
+          inherit stable;
         };
         stable = true;
         vmID = "131";
@@ -170,6 +174,7 @@
         hostName = "Nextcloud-Testing"; 
         homeManagerExtraSpecialArgs = { 
           inherit hostName;
+          inherit stable;
         };
         stable = true;
         vmID = "150";
@@ -196,6 +201,7 @@
         hostName = "Jellyfin"; 
         homeManagerExtraSpecialArgs = { 
           inherit hostName;
+          inherit stable;
         };
         stable = true;
         vmID = "132";
@@ -225,6 +231,7 @@
         hostName = "IonosVPS"; 
         homeManagerExtraSpecialArgs = { 
           inherit hostName;
+          inherit stable;
         };
         stable = true;
         edge = true;
@@ -254,6 +261,7 @@
         hostName = "LocalProxy"; 
         homeManagerExtraSpecialArgs = { 
           inherit hostName;
+          inherit stable;
         };
         stable = true;
         vmID = "130";
@@ -282,6 +290,7 @@
         hostName = "Valheim"; 
         homeManagerExtraSpecialArgs = { 
           inherit hostName;
+          inherit stable;
         };
         stable = true;
         vmID = "135";

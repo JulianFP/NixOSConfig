@@ -241,7 +241,7 @@
           svelte.enable = true; #lsp server for Svelte (Javascript Framework)
         };
       };
-      nvim-cmp = {
+      cmp.settings = {
         snippet.expand = "luasnip";
         sources = [
           { name = "nvim_lsp"; }
