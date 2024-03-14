@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ./dnat.nix #for dnat config
+    #./dnat.nix #for dnat config (currently not in use, conflicts with wireguard setup)
   ];
 
   boot.loader.grub.device = "/dev/vda";
@@ -32,6 +32,13 @@
       route = "192.168.3.0/24";
       via = "48.42.0.2";
     }];
+  };
+
+  #use options of generic/wireguard.nix module 
+  myModules.servers.wireguard = {
+    enable = true;
+    externalInterface = "ens6";
+    publicKeys = [ "byifao8fmvsS7Dc/k8NnYwqbuFzSPtiRf/ZcKyK0hgw=" ];
   };
 
   # This value determines the NixOS release from which the default

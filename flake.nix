@@ -220,6 +220,7 @@
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./generic/ssh.nix
         ./generic/proxy.nix #requires edge!
+        ./generic/wireguard.nix #includes option declaration
         ./IonosVPS/configuration.nix
       ];
       specialArgs = rec { 
