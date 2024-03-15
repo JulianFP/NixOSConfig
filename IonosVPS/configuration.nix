@@ -38,7 +38,10 @@
   myModules.servers.wireguard = {
     enable = true;
     externalInterface = "ens6";
-    publicKeys = [ "byifao8fmvsS7Dc/k8NnYwqbuFzSPtiRf/ZcKyK0hgw=" ];
+    publicKeys = [ 
+      "byifao8fmvsS7Dc/k8NnYwqbuFzSPtiRf/ZcKyK0hgw=" #JuliansFramework
+      "12I+6LyvdoagWTctUOg40YoitODSFDrnFF2gfo2ILTU=" #Marias Laptop
+    ];
   };
 
   # This value determines the NixOS release from which the default
