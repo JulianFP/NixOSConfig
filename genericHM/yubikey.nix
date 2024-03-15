@@ -1,4 +1,4 @@
-{ config, ... }:
+{ pkgs, config, ... }:
 
 {
   #get general public key in place
@@ -33,7 +33,7 @@
     defaultCacheTtlSsh = 300;
     maxCacheTtl = 3600;
     maxCacheTtlSsh = 3600;
-    pinentryFlavor = if config.home.username == "root" then "tty" else "qt";
+    pinentryPackage = if config.home.username == "root" then pkgs.pinentry-tty else pkgs.pinentry-qt;
     extraConfig = ''
       ttyname $GPG_TTY
     '';

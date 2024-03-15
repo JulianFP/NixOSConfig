@@ -27,7 +27,8 @@ structure:
   /* -- boot -- */
   # config for bootloader and secure boot (refer to nixos.wiki/wiki/Secure_Boot)
   boot = {
-    kernelPackages = pkgs.linuxPackages_latest;
+    #kernelPackages = pkgs.linuxPackages_latest; (6.8 currently doesn't build with the xone driver)
+    kernelPackages = pkgs.linuxPackages_6_7;
 
     #egpu set to PCIe 3.0 speed
     extraModprobeConfig = "options amdgpu pcie_gen_cap=0x40000";
