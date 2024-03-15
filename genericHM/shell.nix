@@ -1,5 +1,6 @@
 { config, ... }:
 
+# config for some shell stuff shared by julian and root user of JuliansFramework
 {
   imports = [ ./commonNeovim.nix ];
 
@@ -23,6 +24,17 @@
     #environmental variables for zsh session
     sessionVariables = {
       EDITOR = "nvim"; #set neovim as default editor
+    };
+  };
+
+  #ssh
+  programs.ssh = {
+    enable = true;
+    matchBlocks = {
+      "Ionos" = {
+        hostname = "82.165.49.241";
+        user = "root";
+      };
     };
   };
 

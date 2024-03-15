@@ -1,5 +1,6 @@
 { pkgs, config, ... }:
 
+# yubikey config shared by julian and root user of JuliansFramework
 {
   #get general public key in place
   home.file.".ssh/id_rsa.pub" = {
@@ -9,34 +10,28 @@
   #ssh support
   programs.ssh = {
     enable = true;
-    matchBlocks = {
-      "Ionos" = {
-        hostname = "82.165.49.241";
-	      user = "root";
-      };
-    };
     forwardAgent = true;
+    #needed for terminal based pinentry to always appear in current terminal window
     extraConfig = ''
       Match host * exec "gpg-connect-agent UPDATESTARTUPTTY /bye"
     '';
   };
-  systemd.user.sessionVariables = {
-    SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/gnupg/S.gpg-agent.ssh";
-  };
-  programs.zsh.sessionVariables.GPG_TTY = "$(tty)";
 
   #gpg setup
   services.gpg-agent = {
     enable = true;
     enableSshSupport = true;
+    #integration sets GPG_TTY and executes UPDATESTARTUPTTY at init
+    enableBashIntegration = true;
+    enableZshIntegration = true;
+    #cache is valid for 5min (countdown resets when using cache)
     defaultCacheTtl = 300;
     defaultCacheTtlSsh = 300;
+    #cache is at most valid for 1h (this countdown doesn't reset when using cache)
     maxCacheTtl = 3600;
     maxCacheTtlSsh = 3600;
+
     pinentryPackage = if config.home.username == "root" then pkgs.pinentry-tty else pkgs.pinentry-qt;
-    extraConfig = ''
-      ttyname $GPG_TTY
-    '';
   };
   programs.gpg = {
     enable = true;
