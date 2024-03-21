@@ -299,5 +299,32 @@
         inherit self;
       };
     };
+    nixosConfigurations.Project-W = nixpkgs-stable.lib.nixosSystem rec {
+      system = "x86_64-linux";
+      pkgs = import nixpkgs-stable {
+        inherit system;
+      };
+      modules = [
+        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
+        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
+        ./Project-W/configuration.nix
+      ];
+      specialArgs = rec { 
+        homeManagerModules = {
+          root = [ 
+            ./genericHM/shell.nix
+          ];
+        };
+        hostName = "Project-W"; 
+        homeManagerExtraSpecialArgs = { 
+          inherit hostName;
+          inherit stable;
+        };
+        stable = true;
+        vmID = "136";
+        inherit inputs;
+        inherit self;
+      };
+    };
   };
 }
