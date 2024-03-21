@@ -23,10 +23,12 @@ help() {
     printf "   also used as device name for the nebula certificate\n"
     printf "   for example: NixOSTesting\n\n"
     printf "nebula ip:\n"
-    printf "   ip of device in nebula network (with prefix length)\n\n"
+    printf "   ip of device in nebula network in CIDR notation (with prefix length)\n"
+    printf "   for example: 48.42.1.130/16\n\n"
     printf "nebula groups:\n"
     printf "   groups of device in nebula network\n"
     printf "   mandatory. pass an empty string if you don't want the target to be in any group\n"
+    printf "   for example: \"server,edge\"\n"
 }
 
 privileges() {
@@ -38,9 +40,12 @@ privileges() {
     fi
 }
 
+#store if we need to umount before exit
+mounted=false
+
 addDevice() {
     #check if enough parameters are provided
-    if [[ $# < 3 ]]; then
+    if [[ $# -lt 3 ]]; then
         echoerr "Missing parameters. use --help to find out how to use this script"
         exit 1
     fi
@@ -51,6 +56,7 @@ addDevice() {
         read -p "plug in usb device with nebula cert and then press enter"
     done
     #unlock and mount usb stick
+    mounted=true
     cryptsetup open $luksUSBDevice luksUSBDeviceNebula
     mount /dev/mapper/luksUSBDeviceNebula /mnt 
 
@@ -74,7 +80,7 @@ addDevice() {
     #clone github repo and decrypt sops file
     git clone -b "$githubBranch" "git@github.com:$githubRepo.git" "/tmp/$gitname"
     #check if files are already there and handle these cases
-    if [[ !(-e "/tmp/$gitname/secrets/$1") ]]; then
+    if [[ ! (-e "/tmp/$gitname/secrets/$1") ]]; then
         mkdir "/tmp/$gitname/secrets/$1"
     fi
     if [[ -e "/tmp/$gitname/secrets/$1/nebula.yaml" ]]; then
@@ -98,15 +104,24 @@ addDevice() {
     rm /mnt/$luksUSBNebulaPath/$nebname.key 
 
     #umount and lock usb stick (try again if still busy)
-    until umount /mnt; do
-        sleep 1 
-    done
-    until cryptsetup close /dev/mapper/luksUSBDeviceNebula; do
-        sleep 1 
-    done
+    unmounting
 }
 
-set -e #exit on any kind of error
+#exit handling
+set -eE #exit on any kind of error
+trap unmounting ERR
+
+function unmounting(){
+    if $mounted; then
+        echo "Unmounting usb device...."
+        until umount /mnt; do
+            sleep 1 
+        done
+        until cryptsetup close /dev/mapper/luksUSBDeviceNebula; do
+            sleep 1 
+        done
+    fi
+}
 
 case $1 in
     "-h"|"--help"|"help"|"")

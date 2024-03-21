@@ -38,17 +38,19 @@ help() {
     printf "   for example: NixOSTesting\n\n"
     printf "currentTargetIP:\n"
     printf "   ip address that the target currently has\n"
-    printf "   the ssh server on the target has to accessible over this ip\n\n"
+    printf "   the ssh server on the target has to accessible over this ip\n"
+    printf "   for example: 192.168.3.200\n\n"
     printf "futureTargetIP:\n"
     printf "   ip address that the target will have when configuration is applied\n"
     printf "   useful if configuration specifies ip different from current ip\n"
     printf "   will be the same than currentTargetIP in most cases\n"
+    printf "   for example: 192.168.3.130\n"
 }
 
 #$1: flakehostname, $2: currentTargetIP, $3: futureTargetIP
 deploy() {
     #check if enough parameters are provided
-    if [[ $# < 3 ]]; then
+    if [[ $# -lt 3 ]]; then
         echoerr "Missing parameters. use help option to find out how to use this script"
         exit 1
     fi
@@ -150,7 +152,7 @@ sopsConfig() {
 #$1 flakehostname
 iso() {
     #check if enough parameters are provided
-    if [[ $# < 1 ]]; then
+    if [[ $# -lt 1 ]]; then
         echoerr "Missing parameters. use help option to find out how to use this script"
         exit 1
     fi
@@ -174,7 +176,7 @@ iso() {
 #$1 flakehostname
 lxc() {
     #check if enough parameters are provided
-    if [[ $# < 1 ]]; then
+    if [[ $# -lt 1 ]]; then
         echoerr "Missing parameters. use help option to find out how to use this script"
         exit 1
     fi
