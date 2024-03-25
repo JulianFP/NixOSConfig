@@ -161,6 +161,30 @@ systemd.services."pre-nginx" = lib.mkIf (!edge) {
       http2 = true;
       globalRedirect = "atm.partanengroup.de";
     };
+
+    #setup atm proxy config (restart minecraft server, using nebula unsafe_routes)
+    virtualHosts."project-w.partanengroup.de" = {
+      enableACME = lib.mkIf edge true;
+      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/project-w.partanengroup.de/fullchain.pem";
+      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/project-w.partanengroup.de/key.pem";
+      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/project-w.partanengroup.de/chain.pem";
+      forceSSL = true;
+      http2 = true;
+      locations."/" = {
+        proxyPass = "http://192.168.3.136:80";
+        proxyWebsockets = true;
+      };
+    };
+    #www redirect
+    virtualHosts."www.project-w.partanengroup.de" = {
+      enableACME = lib.mkIf edge true;
+      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.project-w.partanengroup.de/fullchain.pem";
+      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/www.project-w.partanengroup.de/key.pem";
+      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.project-w.partanengroup.de/chain.pem";
+      forceSSL = true;
+      http2 = true;
+      globalRedirect = "project-w.partanengroup.de";
+    };
   };
 
   #setup firewall
