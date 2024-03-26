@@ -33,18 +33,29 @@
       ttyfast = true;		#Speed up scrolling in Vim
       ve = "onemore";		#allow cursor to be at first empty space after line
       encoding = "utf8";
+      spelllang = "en_us";
+      spell = true;
+      spelloptions = "camel";
     };
 
     autoCmd = [
-      {	#change indentation for .nix files
+      {	#set indentation of some file types to 2
         event = [
           "BufEnter"
           "BufWinEnter"
         ];
-        pattern = [ "*.nix" "*.svelte" "*.ts" "*.html" ];	#set tabstop of 2 for nix files
+        pattern = [ "*.nix" "*.svelte" "*.ts" "*.html" ];
         # Or use `vimCallback` with a vimscript function name
         # Or use `command` if you want to run a normal vimscript command
-        command = "setlocal tabstop=2";
+        command = "setlocal tabstop=2";	#set tabstop of 2
+      }
+      {	#set indentation of reStructuredText files to 3 (because rst is weird)
+        event = [
+          "BufEnter"
+          "BufWinEnter"
+        ];
+        pattern = [ "*.rst" ];
+        command = "setlocal tabstop=3";	#set tabstop of 3
       }
     ];
 
@@ -74,6 +85,10 @@
           bashls.enable = true; #lsp server for bash 
           nil_ls.enable = true; #lsp server for Nix
         };
+      };
+      lsp-lines = {
+        enable = true; #show lsp in virtual line
+        currentLine = true;
       };
     }
     // lib.optionalAttrs (stable) {
@@ -106,7 +121,7 @@
         enable = true;
         settings = {
           mapping = {
-            "<CR>" = "cmp.mapping.confirm({select = true})";
+            "<CR>" = "cmp.mapping.confirm({select = false})";
             "<Tab>" = ''cmp.mapping(function(fallback)
                 if cmp.visible() then
                   cmp.select_next_item()

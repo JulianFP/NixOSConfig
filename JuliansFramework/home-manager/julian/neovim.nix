@@ -183,7 +183,29 @@
         key = "<LocalLeader>t";
         action = ":Telescope file_browser<CR>";
       }
+
+      #lsp features
+      { #jump to definition
+        mode = "n";
+        key = "<LocalLeader>d";
+        action = "<cmd>lua vim.lsp.buf.declaration()<CR>";
+      }
+      { #show information on hover
+        mode = "n";
+        key = "<LocalLeader>i";
+        action = "<cmd>lua vim.lsp.buf.hover()<CR>";
+      }
     ];
+
+    #change lsp icons from default "E,W,H,I" to custom nerdfont icons
+    #not in commonNeovim since this requires the nerdfont font to be used in terminal
+    extraConfigLua = ''
+      local signs = { Error = "", Warn = "", Hint = "", Info = "" }
+      for type, icon in pairs(signs) do
+        local hl = "DiagnosticSign" .. type
+        vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+      end
+    '';
 
     plugins = {
       #LaTeX support
@@ -248,8 +270,10 @@
           { name = "luasnip"; } #For luasnip users.
           { name = "path"; }
           { name = "buffer"; }
+          { name = "nvim_lsp_signature_help"; }
         ];
       };
+      cmp-nvim-lsp-signature-help.enable = true; #shows signature of functions etc. while typing
 
       #debugging 
       dap = {
