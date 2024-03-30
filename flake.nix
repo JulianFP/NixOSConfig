@@ -326,5 +326,32 @@
         inherit self;
       };
     };
+    nixosConfigurations.Authentik = nixpkgs-stable.lib.nixosSystem rec {
+      system = "x86_64-linux";
+      pkgs = import nixpkgs-stable {
+        inherit system;
+      };
+      modules = [
+        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
+        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
+        ./Authentik/configuration.nix
+      ];
+      specialArgs = rec { 
+        homeManagerModules = {
+          root = [ 
+            ./genericHM/shell.nix
+          ];
+        };
+        hostName = "Authentik"; 
+        homeManagerExtraSpecialArgs = { 
+          inherit hostName;
+          inherit stable;
+        };
+        stable = true;
+        vmID = "140";
+        inherit inputs;
+        inherit self;
+      };
+    };
   };
 }
