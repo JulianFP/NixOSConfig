@@ -1,5 +1,6 @@
 keys:
   - &yubikey 5B82BEF3C1A6617707A448FDEB6F11283183E111
+  - &Authentik age14p4qgmvfw844m0ly2gdhxqxdcktf2wjk4fmhwvt3ujfdlt5jhassqxyu4c
   - &Project-W age15cejms4hvlpka7h5gl2zl3zfp3ahr2g59lc9chdk0svxrpcargmshjcsn7
   - &Valheim age1qq4e2nsgk96gl6zn605dpt4xwz3yuwxthcnkdhhvkn508503ky5spz9xur
   - &Jellyfin age1d8nx4acd0wsrsk8rkfgvm04vqaal5dcygx5jeumdhsh5s77h234qjxjp0j
@@ -57,6 +58,12 @@ creation_rules:
       - *yubikey
       age:
       - *Project-W
+  - path_regex: ^secrets/Authentik/.*$
+    key_groups:
+    - pgp:
+      - *yubikey
+      age:
+      - *Authentik
   - path_regex: ^secrets/[^/]*$
     key_groups:
     - pgp:
@@ -70,6 +77,7 @@ creation_rules:
       - *Jellyfin
       - *Valheim
       - *Project-W
+      - *Authentik
   - key_groups:
     - pgp:
       - *yubikey
