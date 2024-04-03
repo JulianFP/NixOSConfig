@@ -16,7 +16,16 @@
     ];
   };
 
-  networking.firewall.allowedTCPPorts = [ 9000 9443 80 443 ];
+  networking.firewall = {
+    allowedTCPPorts = [ 9000 9443 80 443 ];
+    allowedUDPPorts = [ 1812 1813 ];
+  };
+
+  services.freeradius = {
+    enable = true;
+  };
+  users.users.radius.group = "radius";
+  users.groups.radius = {};
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

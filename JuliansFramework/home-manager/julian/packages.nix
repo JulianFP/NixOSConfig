@@ -57,6 +57,7 @@ in
     nextcloud-client
     signal-desktop
     element-desktop
+    slack
     webcord
     libsForQt5.ark
     libsForQt5.dolphin
