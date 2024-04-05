@@ -29,6 +29,14 @@
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
     sops-nix.url = "github:Mic92/sops-nix";
+    project-W = {
+      url = "github:JulianFP/project-W/documentation";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    project-W-frontend = {
+      url = "github:JulianFP/project-W-frontend";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
 
@@ -305,6 +313,8 @@
         inherit system;
       };
       modules = [
+        inputs.project-W.nixosModules.default
+        inputs.project-W-frontend.nixosModules.default
         ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./Project-W/configuration.nix

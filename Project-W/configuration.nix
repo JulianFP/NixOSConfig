@@ -1,9 +1,28 @@
-{ ... }:
+{ config, hostName, ... }:
 
 {
-  virtualisation.docker = {
+  sops.secrets."project-W/env-file" = {
+    sopsFile = ../secrets/${hostName}/project-W.yaml;
+  };
+
+  services.project-W-backend = {
     enable = true;
-    storageDriver = "btrfs";
+    hostName = "project-w.partanengroup.de";
+    settings = {
+      clientURL = "https://project-w.partanengroup.de/#";
+      smtpServer = {
+        domain = "mail.partanengroup.de";
+        port = 587;
+        secure = "starttls";
+        senderEmail = "admin@partanengroup.de";
+        username = config.services.project-W-backend.settings.smtpServer.senderEmail;
+      };
+    };
+    envFile = config.sops.secrets."project-w/env-file".path;
+  };
+  services.project-W-frontend = {
+    enable = true;
+    hostName = config.services.project-W-backend.hostName;
   };
 
   services.nebula.networks."serverNetwork" = {
@@ -21,7 +40,7 @@
     ];
   };
 
-  networking.firewall.allowedTCPPorts = [ 80 443 ];
+  networking.firewall.allowedTCPPorts = [ 80 ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
