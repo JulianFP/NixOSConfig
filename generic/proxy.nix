@@ -60,6 +60,9 @@ systemd.services."pre-nginx" = lib.mkIf (!edge) {
       proxy_cookie_path / "/; secure; HttpOnly; SameSite=strict";
     '';
 
+    #allow uploads with file sizes up to 10G
+    clientMaxBodySize = "10G";
+
     #setup nextcloud proxy host
     virtualHosts."test.partanengroup.de" = {
       enableACME = lib.mkIf edge true;
