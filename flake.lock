@@ -855,11 +855,11 @@
         "systems": "systems_6"
       },
       "locked": {
-        "lastModified": 1712248302,
-        "narHash": "sha256-3VyBISoF86ovFnD2sZ9jXVNoLeGXlUXVw/tseKq9OPc=",
+        "lastModified": 1712424631,
+        "narHash": "sha256-Zf6Gc0DN7Qarhymo8wRT+K/49RSA2LOcK2AraFMo+AE=",
         "owner": "JulianFP",
         "repo": "project-W",
-        "rev": "462ea7827151e0e310a17bce385f4908a263f269",
+        "rev": "f3403d695e5e21f34946ffa641824bce173f4917",
         "type": "github"
       },
       "original": {

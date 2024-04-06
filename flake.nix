@@ -311,6 +311,9 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs-stable {
         inherit system;
+        overlays = [
+          inputs.project-W.overlays.default
+        ];
       };
       modules = [
         inputs.project-W.nixosModules.default

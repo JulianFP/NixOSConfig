@@ -18,7 +18,7 @@
         username = config.services.project-W-backend.settings.smtpServer.senderEmail;
       };
     };
-    envFile = config.sops.secrets."project-w/env-file".path;
+    envFile = config.sops.secrets."project-W/env-file".path;
   };
   services.project-W-frontend = {
     enable = true;
