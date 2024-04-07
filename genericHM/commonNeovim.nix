@@ -3,6 +3,31 @@
 # this is a neovim configuration for (pretty much) all my devices & users.
 # basic stuff only 
 # some devices/users may expand uppon this
+let
+  myOptions = {
+    compatible = false; 	#disable compatibility to old-time vi
+    showmatch = true; 	#show matching
+    ignorecase = true; 	#case insensitive
+    mouse = "a"; 		#enable mouse for all modes
+    hlsearch = true; 		#highlight search
+    incsearch = true; 	#incremental search
+    tabstop = 4; 		#how wide tab character should be displayed
+    softtabstop = 0; 		#how wide pressing tab should span (replicate tabstop)
+    shiftwidth = 0; 		#how wide shift commands should be (replicate tabstop)
+    expandtab = true; 	#converts tabs to white space
+    shiftround = true;        #round indentation to multiples shiftwidth
+    autoindent = true; 	#indent a new line the same amount as the line just typed
+    smartindent = true;	#make smart indentation (after { and so on)
+    number = true; 		#add line numbers
+    cursorline = true;	#highlight current cursorline
+    ttyfast = true;		#Speed up scrolling in Vim
+    ve = "onemore";		#allow cursor to be at first empty space after line
+    encoding = "utf8";
+    spelllang = "en_us";
+    spell = true;
+    spelloptions = "camel";
+  };
+in
 {
   programs.nixvim = {
     enable = true;
@@ -12,30 +37,6 @@
     globals = {
       mapleader = ",";
       maplocalleader = " ";
-    };
-
-    options = {
-      compatible = false; 	#disable compatibility to old-time vi
-      showmatch = true; 	#show matching
-      ignorecase = true; 	#case insensitive
-      mouse = "a"; 		#enable mouse for all modes
-      hlsearch = true; 		#highlight search
-      incsearch = true; 	#incremental search
-      tabstop = 4; 		#how wide tab character should be displayed
-      softtabstop = 0; 		#how wide pressing tab should span (replicate tabstop)
-      shiftwidth = 0; 		#how wide shift commands should be (replicate tabstop)
-      expandtab = true; 	#converts tabs to white space
-      shiftround = true;        #round indentation to multiples shiftwidth
-      autoindent = true; 	#indent a new line the same amount as the line just typed
-      smartindent = true;	#make smart indentation (after { and so on)
-      number = true; 		#add line numbers
-      cursorline = true;	#highlight current cursorline
-      ttyfast = true;		#Speed up scrolling in Vim
-      ve = "onemore";		#allow cursor to be at first empty space after line
-      encoding = "utf8";
-      spelllang = "en_us";
-      spell = true;
-      spelloptions = "camel";
     };
 
     autoCmd = [
@@ -139,5 +140,7 @@
         };
       };
     };
-  };
+  }
+  // lib.optionalAttrs (!stable) {opts = myOptions;}
+  // lib.optionalAttrs (stable) {options = myOptions;};
 }
