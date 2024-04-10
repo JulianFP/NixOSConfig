@@ -855,11 +855,11 @@
         "systems": "systems_6"
       },
       "locked": {
-        "lastModified": 1712517406,
-        "narHash": "sha256-l31VU/4mHFu9OSQ599ok1E0o/V1dFJLAYLCmO3JTCQc=",
+        "lastModified": 1712621669,
+        "narHash": "sha256-hwenRA/pL3lE+fiWlH/2M7u77u7MlwkLLrt/fzfuBU8=",
         "owner": "JulianFP",
         "repo": "project-W",
-        "rev": "da8fef4914bb35883ce827a1e81ffcee07347e78",
+        "rev": "a77bb2872fb339809ac4f3ec83517b0c164ccb0b",
         "type": "github"
       },
       "original": {
@@ -878,11 +878,11 @@
         "systems": "systems_8"
       },
       "locked": {
-        "lastModified": 1712586903,
-        "narHash": "sha256-vPFVHUxUhUICOVTCWukSW2CVOyYBeTS4Zyr0eoV1Duw=",
+        "lastModified": 1712784191,
+        "narHash": "sha256-jHmukXR7bZVpvvq+KjW2o7jE90Hz4KRUhXqDn5aaScw=",
         "owner": "JulianFP",
         "repo": "project-W-frontend",
-        "rev": "78d1e7f5eb4f309ce75cc76855d6ff6d263456cf",
+        "rev": "f592bea57ea224c60391f0e51c3d1d0c5fd9b693",
         "type": "github"
       },
       "original": {
