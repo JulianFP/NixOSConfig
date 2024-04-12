@@ -214,18 +214,16 @@
       #file browser/switcher
       telescope = {
         enable = true;
-        defaults = {
+        settings.defaults = {
           initial_mode = "normal";
           mappings.n = {
             "l" = "select_default";
           };
         };
-        extensions.file_browser = {
+        extensions.file-browser = {
           enable = true;
-          mappings = {
-            "n" = {
-              "h" = "goto_parent_dir";
-            };
+          settings.mappings."n" = {
+            "h" = "require('telescope._extensions.file_browser.actions').goto_parent_dir";
           };
         };
       };
