@@ -94,22 +94,26 @@
   };
 
   # Mako (notification daemon)
-  services.mako = {
+  services.mako = with config.colorScheme.palette; {
     enable = true;
-    backgroundColor = "#2B303B9A";
+    backgroundColor = "#${base01}";
     borderRadius = 4;
     borderSize = 2;
     font = "'Roboto Mono Medium' 12";
     height = 300;
-    extraConfig = ''
+    extraConfig = with pkgs; ''
+    on-notify=exec kill -35 $(pidof waybar)
+    on-button-left=exec ${mako}/bin/makoctl invoke -n "$id" && ${mako}/bin/makoctl dismiss -n "$id" && kill -35 $(pidof waybar)
+    on-button-right=exec ${mako}/bin/makoctl dismiss -n "$id" && kill -35 $(pidof waybar)
+
     [urgency=low]
-    border-color=#CCCCCC
+    border-color=#${base05}
     
     [urgency=normal]
-    border-color=#D08770
+    border-color=#${base0C}
 
     [urgency=high]
-    border-color=#BF616A
+    border-color=#${base08}
 
     [mode=doNotDisturb]
     invisible=1
@@ -120,7 +124,7 @@
   programs.waybar  = {
     enable = true;
     settings = import ./waybar/config.nix;
-    style = ./waybar/style.css;
+    style = (import ./waybar/style.nix) { config=config; nix-colors=nix-colors; };
   };
   xdg.configFile."mako.sh" = {
     target = "waybar/scripts/mako.sh";

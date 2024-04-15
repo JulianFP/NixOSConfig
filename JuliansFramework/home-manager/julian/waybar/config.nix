@@ -143,8 +143,12 @@
 
     "custom/mako" = {
       exec = "~/.config/waybar/scripts/mako.sh";
-      on-click = "if makoctl mode | grep -q doNotDisturb; then makoctl mode -r doNotDisturb; else makoctl mode -a doNotDisturb; fi";
+      return-type = "json";
+      #only on-click command sets makoctl mode and sends SIGRTMIN+1
+      on-click = "if makoctl mode | grep -q doNotDisturb; then makoctl mode -r doNotDisturb; else makoctl mode -a doNotDisturb; fi; kill -35 $(pidof waybar)";
+      tooltip = true;
       interval = "once";
+      signal = 1;
       exec-on-event = true;
     };
   };
