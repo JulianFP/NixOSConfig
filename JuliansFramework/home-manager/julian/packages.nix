@@ -25,7 +25,6 @@ in
     qt5.qtwayland
     qt6.qtwayland
     kdePackages.qtsvg #qt6 needs this to load icons
-    kdePackages.polkit-kde-agent-1
     kdePackages.kwalletmanager
     kdePackages.kwallet
     kdePackages.baloo
