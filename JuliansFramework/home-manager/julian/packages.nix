@@ -24,10 +24,11 @@ in
     networkmanagerapplet
     qt5.qtwayland
     qt6.qtwayland
-    libsForQt5.breeze-qt5
-    libsForQt5.polkit-kde-agent
-    libsForQt5.kwalletmanager
-    libsForQt5.kwallet
+    kdePackages.qtsvg #qt6 needs this to load icons
+    kdePackages.polkit-kde-agent-1
+    kdePackages.kwalletmanager
+    kdePackages.kwallet
+    kdePackages.baloo
     swaylock
     hyprpicker
     grimblast
@@ -59,17 +60,17 @@ in
     element-desktop
     slack
     webcord
-    libsForQt5.ark
-    libsForQt5.dolphin
-    libsForQt5.filelight
-    libsForQt5.okular
+    kdePackages.ark
+    kdePackages.dolphin
+    kdePackages.filelight
+    kdePackages.okular
     yubioath-flutter
     yubikey-manager-qt
 
     # Multimedia
-    libsForQt5.gwenview
-    libsForQt5.kimageformats
-    libsForQt5.qt5.qtimageformats
+    kdePackages.gwenview
+    kdePackages.kimageformats
+    kdePackages.qtimageformats
     vlc
     freetube
     gst_all_1.gstreamer
@@ -84,7 +85,7 @@ in
     heroic
     protonup-qt
     superTuxKart
-    prismlauncher-qt5
+    prismlauncher
 
     # Development
     texlive.combined.scheme-full

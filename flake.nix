@@ -54,6 +54,7 @@
         };
         overlays = [
           nur.overlay
+          (import ./generic/overlays/qt5ct_with_breeze.nix {pkgs=pkgs;})
         ];
       };
       modules = [
