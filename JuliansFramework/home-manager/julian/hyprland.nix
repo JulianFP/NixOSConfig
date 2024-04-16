@@ -21,7 +21,7 @@
     extraConfig = ''
 # ----- Monitor config ---------------------------------------------------------
 # internal monitor (fractional scaling)
-monitor=eDP-1, 2256x1504, -1504x0, 1.566667
+monitor=eDP-1, 2256x1504, -1440x0, 1.566667
 # Samsung C27HG7x
 monitor=desc:Samsung Electric Company C27HG7x HTHK300334, 2560x1440@144, 0x0, 1
 # Iiyama PL2280H
