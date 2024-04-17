@@ -25,8 +25,8 @@ This is the NixOS config for my Framework 12th Gen Laptop (home-manager config i
 - [x] Additional applications and set default applications
 - [x] yubikey fully working including for gpg and ssh
 - [x] laptop power tuning
+- [x] direnv enabled
 - [ ] easy monitor switching when connecting to random external monitors (e.g. for presentation) with Hyprland -> custom bash script with rofi?
-- [ ] direnv enabled
 - [ ] Firefox/thunderbird config?
 
 ## Installation guide (from NixOS ISO:)
