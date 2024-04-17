@@ -2,14 +2,31 @@
 This is the NixOS config for my Framework 12th Gen Laptop (home-manager config included).
 
 ## Todo
-- [x] Fix Qt6 Theming
-- [ ] Add vimspector plugin to neovim (write nixvim module for it first?)
-- [x] ~~Add all-ways-egpu program to NixOS (write Nix package or flake for it)~~ write bash scripts for gpu switching
+- [ ] coherent nixified theming across the following programs (using nix-colors):
+    - [x] Alacritty
+    - [x] GTK
+    - [x] Qt5
+    - [x] Qt6
+    - [ ] all aspects of KDE applications from plasma-integration (KColorScheme: [how platform integrations work](https://nicolasfella.de/posts/how-platform-integration-works/). Waiting for [this pull request](https://github.com/trialuser02/qt6ct/pull/43) to get merged and reach nixpkgs. Some KDE programs currently have broken theming because of that, e.g.: kde's plasma 6 polkit agent (plasma 5 version works fine), plasma system monitor, plasma system settings. Standard Qt5/Qt6 applications (like dolphin, partition manager, filelight, wireshark, prismlauncher, ...) work fine though.
+    - [x] waybar
+    - [x] mako
+    - [x] rofi
+    - [x] Hyprland (accent colors)
+    - [ ] neovim (vimThemeFromScheme function from contrib doesn't look good, have to write one myself)
+    - [ ] mangohud
+    - [ ] wallpaper?
+- [x] complete neovim config using nixvim for full development environment/IDE (including bash script for creating C++ cmake environment and launching compiled program)
+- [x] waybar config with custom mako module that works through RT signal communication
+- [x] Hyprland config with some custom bash scripts for clamshell mode, lock and suspend, etc.
+- [x] bash script for gpu switching
 - [x] Add VPNs to networking (nebula, wireguard, ipsec) (done mostly manually in networkmanager)
 - [x] Mangohud config
 - [x] lf config
 - [x] Additional applications and set default applications
-- [ ] Change qt theme to something else that looks a bit better across all kinds of apps?
+- [x] yubikey fully working including for gpg and ssh
+- [x] laptop power tuning
+- [ ] easy monitor switching when connecting to random external monitors (e.g. for presentation) with Hyprland -> custom bash script with rofi?
+- [ ] direnv enabled
 - [ ] Firefox/thunderbird config?
 
 ## Installation guide (from NixOS ISO:)

@@ -97,20 +97,21 @@
   services.mako = with config.colorScheme.palette; {
     enable = true;
     backgroundColor = "#${base01}";
+    borderColor = "#${base0D}";
+    textColor = "#${base05}";
+    progressColor = "#${base0D}";
     borderRadius = 4;
     borderSize = 2;
     font = "'Roboto Mono Medium' 12";
     height = 300;
     extraConfig = with pkgs; ''
+    text-color=#${base05}
     on-notify=exec kill -35 $(pidof waybar)
     on-button-left=exec ${mako}/bin/makoctl invoke -n "$id" && ${mako}/bin/makoctl dismiss -n "$id" && kill -35 $(pidof waybar)
     on-button-right=exec ${mako}/bin/makoctl dismiss -n "$id" && kill -35 $(pidof waybar)
-
-    [urgency=low]
-    border-color=#${base05}
     
     [urgency=normal]
-    border-color=#${base0C}
+    border-color=#${base0B}
 
     [urgency=high]
     border-color=#${base08}

@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
   # set scripts for extended Hyprland behavior (suspend, lock, etc.)
@@ -18,7 +18,7 @@
   # Hyprland config
   wayland.windowManager.hyprland = {
     enable = true;
-    extraConfig = ''
+    extraConfig = with config.colorScheme.palette; ''
 # ----- Monitor config ---------------------------------------------------------
 # internal monitor (fractional scaling)
 monitor=eDP-1, 2256x1504, -1440x0, 1.566667
@@ -78,8 +78,10 @@ general {
     gaps_in = 3
     gaps_out = 0
     border_size = 2
-    col.active_border = rgba(33ccffee) rgba(00ff99ee) 45deg
-    col.inactive_border = rgba(595959aa)
+    col.active_border = rgb(${base0B}) rgb(${base0D}) 45deg
+    col.inactive_border = rgb(${base02})
+    col.nogroup_border = rgb(${base02})
+    col.nogroup_border_active = rgb(${base08}) rgb(${base0E}) 45deg
 
     layout = dwindle
     #allow_tearing = true
@@ -89,6 +91,20 @@ dwindle {
     pseudotile = true # master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
     preserve_split = true #without this the wm will rearrange windows when resizing a window
     force_split = 2 # always split to right/bottom
+}
+
+group {
+    col.border_active = rgb(${base0B}) rgb(${base0D}) 45deg
+    col.border_inactive = rgb(${base02})
+    col.border_locked_active = rgb(${base0C}) rgb(${base0E}) 45deg
+    col.border_locked_inactive = rgb(${base02})
+    groupbar {
+        text_color = rgb(${base05})
+        col.active = rgb(${base0B}) rgb(${base0D}) 45deg
+        col.inactive = rgb(${base02})
+        col.locked_active = rgb(${base0C}) rgb(${base0E}) 45deg
+        col.locked_inactive = rgb(${base02})
+    }
 }
 
 decoration {
@@ -102,7 +118,7 @@ decoration {
     drop_shadow = true
     shadow_range = 4
     shadow_render_power = 3
-    col.shadow = rgba(1a1a1aee)
+    col.shadow = rgb(${base00})
 }
 
 animations {
@@ -124,6 +140,8 @@ xwayland {
 
 misc {
     key_press_enables_dpms = true
+    col.splash = rgb(${base05})
+    background_color = rgb(${base00})
     # vrr = 2
 }
 
