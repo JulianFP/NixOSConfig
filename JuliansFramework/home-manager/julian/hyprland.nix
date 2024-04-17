@@ -45,6 +45,7 @@ exec-once=[workspace 1 silent] kwalletd6
 exec-once=[workspace 10 silent] thunderbird
 exec-once=[workspace 1 silent] sleep 1 && keepassxc
 exec-once=[silent] sleep 2 && element-desktop --hidden
+exec-once=[silent] sleep 2 && slack -s -u
 exec-once=[silent] sleep 2 && signal-desktop --no-sandbox --start-in-tray
 exec-once=[silent] sleep 2 && nextcloud
 exec-once=[silent] sleep 2 && webcord -m
