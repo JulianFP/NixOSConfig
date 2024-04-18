@@ -27,6 +27,18 @@
     nix-direnv.enable = true;
   };
 
+  # additions to git (other stuff defined in genericHM/shell.nix)
+  programs.git = {
+    signing = {
+      key = "Julian Partanen (Yubikey) <julian@partanengroup.de>";
+      signByDefault = true;
+    };
+    ignores = [ #add direnv stuff to global gitignore
+      "*.direnv"
+      "*.envrc"
+    ];
+  };
+
   # lf
   programs.lf = {
     enable = true;
