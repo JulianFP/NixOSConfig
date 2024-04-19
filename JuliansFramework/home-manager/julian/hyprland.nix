@@ -13,11 +13,17 @@
       source = ./systemScripts/lockAndSuspend.sh;
       executable = true;
     };
+    "hyprland_output_options.py" = {
+      target = ".systemScripts/hyprland_output_options.py";
+      source = ./systemScripts/hyprland_output_options.py;
+      executable = true;
+    };
   };
 
   # Hyprland config
   wayland.windowManager.hyprland = {
     enable = true;
+    systemd.enable = true;
     extraConfig = with config.colorScheme.palette; ''
 # ----- Monitor config ---------------------------------------------------------
 # internal monitor (fractional scaling)
@@ -34,8 +40,7 @@ $lock_bg = /home/julian/Pictures/ufp_ac.jpg
 
 
 # ----- Initialisation ---------------------------------------------------------
-# Execute your favorite apps at launch
-exec-once = waybar #status bar
+# Execute your favorite apps at launch (waybar gets started automatically through systemd)
 exec-once = wl-paste --type text --watch cliphist store #clipboard manager: Stores only text data
 exec-once = wl-paste --type image --watch cliphist store #clipboard manager: Stores only image data
 exec-once = wl-paste -t text -w xclip -selection clipboard
@@ -140,7 +145,6 @@ xwayland {
 }
 
 misc {
-    key_press_enables_dpms = true
     col.splash = rgb(${base05})
     background_color = rgb(${base00})
     # vrr = 2
@@ -182,7 +186,7 @@ bind = $mainMod SHIFT, C, exec, cliphist wipe
 bind = $mainMod SHIFT, Q, killactive,
 bind = $mainMod SHIFT, E, exit,
 bind = $mainMod SHIFT, SPACE, togglefloating,
-bind = $mainMod, P, pseudo, # dwindle
+bind = $mainMod, T, pseudo, # dwindle
 bind = $mainMod, V, togglesplit, # dwindle
 bind = $mainMod, F, fullscreen 
 
@@ -267,10 +271,9 @@ bind = $mainMod, X, exec, hyprctl kill
 # shortcut to mute mic (only used when docked since laptop doesn't have pause button)
 bindl = , Pause, exec, pactl set-source-mute @DEFAULT_SOURCE@ toggle
 
-#lid suspend & lock screen & dpms (Lid Switch)
+#lid uspend & lock screen & dpms (Lid Switch)
 bindl = , switch:Lid Switch, exec, /home/julian/.systemScripts/clamshell_mode_hypr.sh $lock_bg
 bind = $mainMod, Y, exec, swaylock -f -c 000000 -i $lock_bg
-bindl = $mainMod SHIFT, Y, exec, sleep 1 && hyprctl dispatch dpms off
 
 # special keys
 bindle = , XF86AudioRaiseVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ +5%
@@ -283,6 +286,27 @@ bindl = , XF86AudioPlay, exec, playerctl play-pause
 bindl = , XF86AudioNext, exec, playerctl next
 bindl = , XF86AudioPrev, exec, playerctl previous
 bindl = , XF86PowerOff, exec, /home/julian/.systemScripts/lockAndSuspend.sh $lock_bg 1
+#has to be SUPER + P since the multi-monitor key on the framework laptop triggers exactly that combination
+bind = SUPER, P, exec, rofi -show output -modes "output:~/.systemScripts/hyprland_output_options.py"
+
+# inhibitSuspend submap
+submap = inhibitSuspend
+bindl = , switch:Lid Switch, exec, /home/julian/.systemScripts/clamshell_mode_hypr.sh $lock_bg inhibitSuspend
+
+bindle = , XF86AudioRaiseVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindle = , XF86AudioLowerVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindl = , XF86AudioMute, exec, pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindl = , XF86AudioMicMute, exec, pactl set-source-mute @DEFAULT_SOURCE@ toggle
+bindle = , XF86MonBrightnessDown, exec, brightnessctl set 5%-
+bindle = , XF86MonBrightnessUp, exec, brightnessctl set 5%+
+bindl = , XF86AudioPlay, exec, playerctl play-pause
+bindl = , XF86AudioNext, exec, playerctl next
+bindl = , XF86AudioPrev, exec, playerctl previous
+bindl = , XF86PowerOff, exec, /home/julian/.systemScripts/lockAndSuspend.sh $lock_bg 1 inhibitSuspend
+
+bind = ,escape,submap,reset
+
+submap = reset
     '';
   };
 }

@@ -144,6 +144,10 @@
   # Waybar
   programs.waybar  = {
     enable = true;
+    systemd = {
+      enable = true;
+      target = "hyprland-session.target";
+    };
     settings = import ./waybar/config.nix;
     style = (import ./waybar/style.nix) { config=config; nix-colors=nix-colors; };
   };
