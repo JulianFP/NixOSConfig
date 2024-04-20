@@ -14,13 +14,24 @@ def send(msg: str) -> str:
 his = os.environ['HYPRLAND_INSTANCE_SIGNATURE']
 monitors = json.loads(send("-j/monitors"))
 
+usedMonitorDescriptions = [
+    "Samsung Electric Company C27HG7x HTHK300334"
+]
+
 options = {
     "Reset to Hyprland config": "reload",
     "Inhibit suspend": "dispatch submap inhibitSuspend"
 }
 
+#check if eDP-1 exists
+internalExists = False
 for monitor in monitors:
-    name = monitor['name']
+    if monitor['name'] == "eDP-1":
+        internalExists = True
+        break
+
+for monitor in monitors:
+    name = monitor['name'] if monitor['description'] not in usedMonitorDescriptions else "desc:" + monitor['description']
     size = str(monitor['width']) + "x" + str(monitor['height'])
     pos = str(monitor['x']) + "x" + str(monitor['y'])
 
@@ -29,7 +40,7 @@ for monitor in monitors:
     options["Scale " + name + " to " + scale] = "keyword monitor " + name + "," + size + "," + pos + "," + scale
 
     #add mirror options
-    if monitor['id'] != 0:
+    if internalExists and monitor['id'] != 0:
         options["Mirror eDP-1 to " + name] = "keyword monitor eDP-1,2256x1504,-1440x0,1,mirror," + name
 
 if len(sys.argv) > 1:

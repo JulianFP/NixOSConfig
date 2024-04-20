@@ -25,6 +25,7 @@ in
     qt5.qtwayland
     qt6.qtwayland
     kdePackages.qtsvg #qt6 needs this to load icons
+    libsForQt5.kservice #qt5 version needed by dolphin for some reason?
     kdePackages.kwalletmanager
     kdePackages.kwallet
     kdePackages.baloo
@@ -45,6 +46,7 @@ in
 
     # Applications
     firefox
+    chromium
     thunderbird
     libreoffice-qt
     pdfarranger
