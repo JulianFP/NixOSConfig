@@ -26,7 +26,9 @@ This is the NixOS config for my Framework 12th Gen Laptop (home-manager config i
 - [x] yubikey fully working including for gpg and ssh
 - [x] laptop power tuning
 - [x] direnv enabled
-- [ ] easy monitor switching when connecting to random external monitors (e.g. for presentation) with Hyprland -> custom bash script with rofi?
+- [x] easy monitor switching when connecting to random external monitors (e.g. for presentation) with Hyprland (python script for this)
+- [ ] bluefilter mode for hyprland?
+- [ ] (automatic) timezone switcher for when traveling?
 - [ ] Firefox/thunderbird config?
 
 ## Installation guide (from NixOS ISO:)
@@ -55,3 +57,12 @@ This is the NixOS config for my Framework 12th Gen Laptop (home-manager config i
 - set thunderbird and firefox profile in about:config (in Thunderbird: Go to Help->Troubleshooting Information->Scroll down to about:profiles)
 - Start kwalletd5 in Terminal, log in into Nextcloud (setup synchronisation) and Nextcloud will prompt for the creation of a new kwallet (perform it)
 - setup and log in various applications (like Signal, Discord, Lutris, Steam, etc.)
+
+## Maintenance of Yubikey Luks partition: Resizing
+Follow [this](https://wiki.nixos.org/wiki/Yubikey_based_Full_Disk_Encryption_(FDE)_on_NixOS#Maintenance) guide however make the following adjustments: Boot from a NixOS iso on a usb stick first, then mount the fat32 boot partition somewhere (e.g. /mnt). You need to make adjustments in the challenge and response command (change `/boot/crypt-storage/default` to `/mnt/crypt-storage/default` or to wherever you mounted the boot partition, change `-2` to `-1` if your yubikey uses a different slot for challenge response).
+
+Proceed to resize the partition:
+- resize the partition only (not filesystem): use `cfdisk` for that!
+- open cryptsetup device: `cryptsetup open /dev/nvme0n1p2 nixos --key-file luks.key`
+- resize luks to fit partition: `cryptsetup resize nixos --key-file luks.key`
+- finally resize the btrfs partition inside the luks device: For this you need to mount it first (e.g. to /mnt), or reboot into it first. Then run `btrfs filesystem resize max /mount-point`

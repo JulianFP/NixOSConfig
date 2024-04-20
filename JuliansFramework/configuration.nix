@@ -227,9 +227,6 @@ structure:
     #powertop.enable = true;
   };
 
-  # Set hardware clock behavior
-  time.hardwareClockInLocalTime = true;
-
   #enable xdg desktop integration (mainly for flatpaks)
   xdg.portal.enable = true; 
 
