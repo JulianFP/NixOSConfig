@@ -30,7 +30,7 @@
     };
     sops-nix.url = "github:Mic92/sops-nix";
     project-W = {
-      url = "github:JulianFP/project-W/documentation";
+      url = "github:JulianFP/project-W";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     project-W-frontend = {
