@@ -32,7 +32,7 @@ in
   qt = {
     enable = true;
     style.package = pkgs.kdePackages.breeze;
-    platformTheme = "qtct";
+    platformTheme.name = "qtct";
   };
 
   #qtct config
