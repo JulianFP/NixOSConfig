@@ -65,6 +65,7 @@ in
     kdePackages.dolphin
     kdePackages.filelight
     kdePackages.okular
+    kdePackages.kcalc
     yubioath-flutter
     yubikey-manager-qt
 
