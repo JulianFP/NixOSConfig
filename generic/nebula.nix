@@ -30,10 +30,13 @@ in
     key = config.sops.secrets."nebula/${hostName}.key".path;
     cert = config.sops.secrets."nebula/${hostName}.crt".path;
     listen.port = 51821;
-    lighthouses = [ "48.42.0.1" ];
+    lighthouses = [ "48.42.0.1" "48.42.0.5" ];
     staticHostMap = {
       "48.42.0.1" = [
         "82.165.49.241:51821"
+      ];
+      "48.42.0.5" = [
+        "85.215.33.173:51821"
       ];
     };
     settings = {

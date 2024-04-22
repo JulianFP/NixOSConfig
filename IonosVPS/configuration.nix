@@ -1,4 +1,4 @@
-{ ... }: 
+{ lib, ... }: 
 
 {
   imports = [
@@ -14,8 +14,10 @@
 
   #zramSwap.enable = true; #enable zram (instead of swap)
 
-  #nebula firewall
+  #nebula firewall + lighthouse settings
   services.nebula.networks."serverNetwork" = {
+    lighthouses = lib.mkForce [ ];
+    isLighthouse = true;
     firewall.inbound = [
       {
         port = "22";
