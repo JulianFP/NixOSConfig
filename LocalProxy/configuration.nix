@@ -33,11 +33,11 @@
   };
   systemd.timers."ddns" = {
     wantedBy = [ "timers.target" ];
-      timerConfig = {
-        OnBootSec = "1m";
-        OnUnitActiveSec = "1m";
-        Unit = "ddns.service";
-      };
+    timerConfig = {
+      OnBootSec = "1m";
+      OnUnitActiveSec = "1m";
+      Unit = "ddns.service";
+    };
   };
   systemd.services."ddns" = {
     script = ''
