@@ -27,14 +27,14 @@ structure:
   /* -- boot -- */
   # config for bootloader and secure boot (refer to nixos.wiki/wiki/Secure_Boot)
   boot = {
-    kernelPackages = pkgs.linuxPackages_latest;
+    kernelPackages = pkgs.linuxPackages_xanmod_latest;
 
     #egpu set to PCIe 3.0 speed
     extraModprobeConfig = "options amdgpu pcie_gen_cap=0x40000";
 
     # Star Citizen tweaks
     kernel.sysctl = {
-      "vm.max_map_count" = 16777216;
+      "vm.max_map_count" = lib.mkDefault 16777216; #also set by nix-gaming
       "fs.file-max" = 524288;
     };
   };
@@ -114,6 +114,8 @@ structure:
           '')
         ];
       };
+      #nix-gaming pipewire low latency
+      lowLatency.enable = true;
     };
 
     # yubikey setup
@@ -136,6 +138,8 @@ structure:
     steam = {
       enable = true;
       remotePlay.openFirewall = true;
+      #nix-gaming steam platform optimizations
+      platformOptimizations.enable = true;
     };
   };
 
@@ -229,6 +233,12 @@ structure:
 
   #enable xdg desktop integration (mainly for flatpaks)
   xdg.portal.enable = true; 
+
+  #enable cachix for nix-gaming
+  nix.settings = {
+    substituters = ["https://nix-gaming.cachix.org"];
+    trusted-public-keys = ["nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="];
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

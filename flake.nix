@@ -37,6 +37,11 @@
       url = "github:JulianFP/project-W-frontend";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-gaming.url = "github:fufexan/nix-gaming";
+    nix-citizen = {
+      url = "github:LovingMelody/nix-citizen";
+      inputs.nix-gaming.follows = "nix-gaming";
+    };
   };
 
 
@@ -64,6 +69,9 @@
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
         ./JuliansFramework/configuration.nix
         nixos-hardware.nixosModules.framework-12th-gen-intel
+        #nix-gaming modules
+        nix-gaming.nixosModules.pipewireLowLatency
+        nix-gaming.nixosModules.platformOptimizations
         #nixos-hardware.nixosModules.common-gpu-amd
       ];
       specialArgs = rec {
@@ -84,6 +92,7 @@
           inherit nix-colors; 
           inherit hostName;
           inherit stable;
+          inherit nix-citizen;
         };
         stable = false;
         inherit inputs;

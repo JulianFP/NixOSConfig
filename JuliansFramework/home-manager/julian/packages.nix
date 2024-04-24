@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, nix-citizen, ... }:
 
 let
   my-python-packages = ps: with ps; [
@@ -88,6 +88,7 @@ in
     protonup-qt
     superTuxKart
     prismlauncher
+    nix-citizen.packages.${pkgs.system}.lug-helper
 
     # Development
     texlive.combined.scheme-full
