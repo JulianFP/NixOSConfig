@@ -83,7 +83,7 @@
     
     #install nextcloud apps
     extraApps = with config.services.nextcloud.package.packages.apps; {
-      inherit bookmarks calendar contacts groupfolders keeweb news notes polls registration spreed tasks twofactor_webauthn;
+      inherit bookmarks calendar contacts groupfolders news notes polls registration spreed tasks twofactor_webauthn;
     };
     extraAppsEnable = true;
   };
