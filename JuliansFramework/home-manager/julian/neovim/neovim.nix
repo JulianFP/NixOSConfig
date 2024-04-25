@@ -36,7 +36,7 @@
     # custom build and run commands (they depend on alacritty and a custom bash script)
     userCommands = {
       "CreateCMakeFile" = {
-        command = "execute '!bash ~/.systemScripts/createCMakeFile.sh ' . g:folder . ' ' . g:file";
+        command = "execute '!bash ~/.config/nvim/createCMakeFile.sh ' . g:folder . ' ' . g:file";
         bang = true;
         desc = "create CMakeFile and vimspector file for current project";
       };
@@ -51,12 +51,12 @@
         desc = "builds the current project in release mode (CreateCMakeFile has to run first)";
       };
       "RunDebug" = {
-        command = "execute ':silent !alacritty --hold -e ~/.systemScripts/launch.sh ' . g:dir . '/buildDebug/' . g:folder";
+        command = "execute ':silent !alacritty --hold -e ~/.config/nvim/launch.sh ' . g:dir . '/buildDebug/' . g:folder";
         bang = true;
         desc = "runs debug binary of the current project (BuildDebug has to run first)";
       };
       "RunRelease" = {
-        command = "execute ':silent !alacritty --hold -e ~/.systemScripts/launch.sh ' . g:dir . '/buildRelease/' . g:folder";
+        command = "execute ':silent !alacritty --hold -e ~/.config/nvim/launch.sh ' . g:dir . '/buildRelease/' . g:folder";
         bang = true;
         desc = "runs release binary of the current project (BuildRelease has to run first)";
       };
@@ -209,7 +209,10 @@
 
     plugins = {
       #LaTeX support
-      vimtex.enable = true;
+      vimtex = {
+        enable = true;
+        texlivePackage = pkgs.texlive.combined.scheme-full;
+      };
 
       #file browser/switcher
       telescope = {
@@ -248,8 +251,13 @@
               "svelte"
             ];
           }
+          {
+            paths = ./customSnippets;
+          }
 	      ];
       };
+      #collection of default snippets
+      friendly-snippets.enable = true;
 
       #error highlighting and autocomplete (different language servers + luasnip config)
       lsp = {
@@ -323,22 +331,15 @@
         dapui.close()
       end
     '';
-
-    #collection of default snippets
-    extraPlugins = with pkgs.vimPlugins; [
-      friendly-snippets
-    ];
   };
 
-  home.file = {
-    "launch.sh" = {
-      target = ".systemScripts/launch.sh";
-      source = ./systemScripts/launch.sh;
+  xdg.configFile = {
+    "nvim/launch.sh" = {
+      source = ./scripts/launch.sh;
       executable = true;
     };
-    "createCMakeFile.sh" = {
-      target = ".systemScripts/createCMakeFile.sh";
-      source = ./systemScripts/createCMakeFile.sh;
+    "nvim/createCMakeFile.sh" = {
+      source = ./scripts/createCMakeFile.sh;
       executable = true;
     };
   };

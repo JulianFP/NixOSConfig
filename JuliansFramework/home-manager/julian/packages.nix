@@ -91,7 +91,7 @@ in
     nix-citizen.packages.${pkgs.system}.lug-helper
 
     # Development
-    texlive.combined.scheme-full
+    #note: texlive (latex) is installed in neovim config
     gcc
     cmake
     gnumake

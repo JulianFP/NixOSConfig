@@ -9,7 +9,7 @@
       ./mangohud.nix #mangohud config
       ./qt_gtk.nix #qt + gtk settings (mainly theming)
       ./rofi.nix
-      ./neovim.nix
+      ./neovim/neovim.nix
     ];
 
 
