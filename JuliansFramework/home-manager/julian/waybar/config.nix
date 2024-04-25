@@ -141,11 +141,15 @@
       tooltip-format = "Games running: {count}";
     };
 
-    "custom/mako" = {
+    "custom/mako" = rec {
       exec = "~/.config/waybar/scripts/mako.sh";
       return-type = "json";
       #only on-click command sets makoctl mode and sends SIGRTMIN+1
+      #SIGRTMIN+1 will then always trigger script execution! This prevents loop where sending the signal triggers sending a signal and so on
       on-click = "if makoctl mode | grep -q doNotDisturb; then makoctl mode -r doNotDisturb; else makoctl mode -a doNotDisturb; fi; kill -35 $(pidof waybar)";
+      #right and middle click will only send SIGRTMIN+1
+      on-click-right = "kill -35 $(pidof waybar)";
+      on-click-middle = on-click-right;
       tooltip = true;
       interval = "once";
       signal = 1;

@@ -135,6 +135,8 @@
     borderSize = 2;
     font = "'Roboto Mono Medium' 12";
     height = 300;
+    groupBy = "app-name";
+    ignoreTimeout = true;
     extraConfig = with pkgs; ''
     text-color=#${base05}
     on-notify=exec kill -35 $(pidof waybar)
@@ -149,6 +151,12 @@
 
     [mode=doNotDisturb]
     invisible=1
+
+    [app-name=grimblast]
+    ignore-timeout=0
+    on-notify=none
+    on-button-left=invoke-default-action
+    on-button-right=dismiss
     '';
   };
 
