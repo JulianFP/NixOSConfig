@@ -6,6 +6,10 @@
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
     lanzaboote.url = "github:nix-community/lanzaboote";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    nixos-generators = {
+      url = "github:nix-community/nixos-generators";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
     nixvim = {
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -52,6 +56,29 @@
 
   outputs = { self, ... } @ inputs: 
   with inputs; {
+    packages.x86_64-linux = {
+      blankISO = nixos-generators.nixosGenerate rec {
+        format = "iso";
+        system = "x86_64-linux";
+        pkgs = import nixpkgs-stable {
+          inherit system;
+        };
+        modules = [
+          ./generic/server.nix
+          #don't use ./proxmoxVM.nix because ISO does not support disco and doesn't have vmID
+          ./blankISO/configuration.nix 
+        ];
+        specialArgs = rec {
+          hostName = "blankISO"; 
+          homeManagerExtraSpecialArgs = { 
+            inherit hostName;
+            inherit stable;
+          };
+          inherit inputs;
+          inherit self;
+        };
+      };
+    };
     nixosConfigurations.JuliansFramework = nixpkgs.lib.nixosSystem rec {
       system = "x86_64-linux";
       pkgs = import nixpkgs {
@@ -101,26 +128,6 @@
           inherit hyprland;
         };
         stable = false;
-        inherit inputs;
-        inherit self;
-      };
-    };
-    nixosConfigurations.blankISO = nixpkgs-stable.lib.nixosSystem rec {
-      system = "x86_64-linux";
-      pkgs = import nixpkgs-stable {
-        inherit system;
-      };
-      modules = [
-        ./generic/server.nix
-        #don't use ./proxmoxVM.nix because ISO does not support disco and doesn't have vmID
-        ./blankISO/configuration.nix 
-      ];
-      specialArgs = rec {
-        hostName = "blankISO"; 
-        homeManagerExtraSpecialArgs = { 
-          inherit hostName;
-          inherit stable;
-        };
         inherit inputs;
         inherit self;
       };
