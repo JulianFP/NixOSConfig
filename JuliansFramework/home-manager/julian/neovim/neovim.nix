@@ -51,12 +51,12 @@
         desc = "builds the current project in release mode (CreateCMakeFile has to run first)";
       };
       "RunDebug" = {
-        command = "execute ':silent !alacritty --hold -e ~/.config/nvim/launch.sh ' . g:dir . '/buildDebug/' . g:folder";
+        command = "execute ':silent !alacritty --hold -e ~/.systemScripts/launch.sh ' . g:dir . '/buildDebug/' . g:folder";
         bang = true;
         desc = "runs debug binary of the current project (BuildDebug has to run first)";
       };
       "RunRelease" = {
-        command = "execute ':silent !alacritty --hold -e ~/.config/nvim/launch.sh ' . g:dir . '/buildRelease/' . g:folder";
+        command = "execute ':silent !alacritty --hold -e ~/.systemScripts/launch.sh ' . g:dir . '/buildRelease/' . g:folder";
         bang = true;
         desc = "runs release binary of the current project (BuildRelease has to run first)";
       };
@@ -334,10 +334,6 @@
   };
 
   xdg.configFile = {
-    "nvim/launch.sh" = {
-      source = ./scripts/launch.sh;
-      executable = true;
-    };
     "nvim/createCMakeFile.sh" = {
       source = ./scripts/createCMakeFile.sh;
       executable = true;

@@ -175,6 +175,13 @@
     source = ./systemScripts/makoWaybar.sh;
     executable = true;
   };
+  home.file = {
+    "launch.sh" = {
+      target = ".systemScripts/launch.sh";
+      source = ./systemScripts/launch.sh;
+      executable = true;
+    };
+  };
 
   programs.mpv = {
     enable = true;
