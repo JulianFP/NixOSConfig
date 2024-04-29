@@ -291,7 +291,7 @@
   home.file.".local/share/applications/signal-desktop.desktop".text = ''
 [Desktop Entry]
 Name=Signal
-Exec=${pkgs.signal-desktop}/bin/signal-desktop --no-sandbox --start-in-tray %U
+Exec=env LANGUAGE="en-US:de-DE" ${pkgs.signal-desktop}/bin/signal-desktop --no-sandbox --start-in-tray %U
 Terminal=false
 Type=Application
 Icon=signal-desktop

@@ -42,6 +42,11 @@
       url = "github:LovingMelody/nix-citizen";
       inputs.nix-gaming.follows = "nix-gaming";
     };
+    hyprland = {
+      #lock at this commit until https://github.com/Alexays/Waybar/pull/3180 is merged and reaches nixpkgs
+      url = "github:hyprwm/Hyprland//d20ee312108d0e7879011cfffa3a83d06e48d29e";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
 
@@ -93,6 +98,7 @@
           inherit hostName;
           inherit stable;
           inherit nix-citizen;
+          inherit hyprland;
         };
         stable = false;
         inherit inputs;

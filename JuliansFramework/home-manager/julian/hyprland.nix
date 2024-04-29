@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, hyprland, ... }:
 
 {
   # set scripts for extended Hyprland behavior (suspend, lock, etc.)
@@ -24,6 +24,7 @@
   wayland.windowManager.hyprland = {
     enable = true;
     systemd.enable = true;
+    package = hyprland.packages.${pkgs.system}.hyprland;
     extraConfig = with config.colorScheme.palette; ''
 # ----- Monitor config ---------------------------------------------------------
 # internal monitor (fractional scaling)
@@ -51,7 +52,7 @@ exec-once=[workspace 10 silent] thunderbird
 exec-once=[workspace 1 silent] sleep 1 && keepassxc
 exec-once=[silent] sleep 2 && element-desktop --hidden
 exec-once=[silent] sleep 2 && slack -s -u
-exec-once=[silent] sleep 2 && signal-desktop --no-sandbox --start-in-tray
+exec-once=[silent] sleep 2 && env LANGUAGE="en-US:de-DE" signal-desktop --no-sandbox --start-in-tray
 exec-once=[silent] sleep 2 && nextcloud
 exec-once=[silent] sleep 2 && webcord -m
 exec-once=[silent] xwaylandvideobridge
