@@ -18,7 +18,7 @@
     #boilerplate stuff
     enable = true;
     hostName = if hostName == "Nextcloud" then "partanengroup.de" else "test.partanengroup.de";
-    package = pkgs.nextcloud27;
+    package = pkgs.nextcloud28;
     secretFile = config.sops.secrets."nextcloud/secrets.json".path;
     config.defaultPhoneRegion = "DE";
     config.adminuser = "admin";
@@ -83,7 +83,7 @@
     
     #install nextcloud apps
     extraApps = with config.services.nextcloud.package.packages.apps; {
-      inherit bookmarks calendar contacts groupfolders news notes polls registration spreed tasks twofactor_webauthn;
+      inherit bookmarks calendar contacts groupfolders notes polls registration spreed tasks twofactor_webauthn;
     };
     extraAppsEnable = true;
   };
