@@ -18,6 +18,7 @@
       "IonosVPS"
     ];
   in if config.system.autoUpgrade.allowReboot then ''
+    echo "Running nixos-rebuild boot for IonosVPS now"
     ${nixos-rebuild "boot"}
     booted="$(${ssh "readlink /run/booted-system/{initrd,kernel,kernel-modules}"})"
     built="$(${ssh "readlink /nix/var/nix/profiles/system/{initrd,kernel,kernel-modules}"})"
@@ -48,15 +49,18 @@
     ''}
 
     if [ "''${booted}" = "''${built}" ]; then
+      echo "No need to reboot, running nixos-rebuild switch for IonosVPS now"
       ${nixos-rebuild config.system.autoUpgrade.operation}
     ${lib.optionalString (config.system.autoUpgrade.rebootWindow != null) ''
       elif [ "''${do_reboot}" != true ]; then
-        echo "Outside of configured reboot window, skipping."
+        echo "Outside of configured reboot window, skipping for IonosVPS."
     ''}
     else
+      echo "Restarting IonosVPS now"
       ${ssh "shutdown -r +1"}
     fi
   '' else ''
+    echo "Running nixos-rebuild switch for IonosVPS now"
     ${nixos-rebuild config.system.autoUpgrade.operation}
   '';
 }
