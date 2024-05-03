@@ -27,7 +27,7 @@ structure:
   /* -- boot -- */
   # config for bootloader and secure boot (refer to nixos.wiki/wiki/Secure_Boot)
   boot = {
-    kernelPackages = pkgs.linuxPackages_xanmod_latest;
+    kernelPackages = pkgs.linuxPackages_latest;
 
     #egpu set to PCIe 3.0 speed
     extraModprobeConfig = "options amdgpu pcie_gen_cap=0x40000";
