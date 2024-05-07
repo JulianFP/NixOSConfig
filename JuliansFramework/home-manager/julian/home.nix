@@ -151,12 +151,6 @@
 
     [mode=doNotDisturb]
     invisible=1
-
-    [app-name=grimblast]
-    ignore-timeout=0
-    on-notify=none
-    on-button-left=invoke-default-action
-    on-button-right=dismiss
     '';
   };
 

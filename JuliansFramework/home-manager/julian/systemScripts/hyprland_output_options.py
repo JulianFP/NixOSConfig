@@ -2,16 +2,17 @@
 
 import socket, os, sys, json
 
+runtimeDir = os.environ['XDG_RUNTIME_DIR']
+his = os.environ['HYPRLAND_INSTANCE_SIGNATURE']
+
 def send(msg: str) -> str:
     client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    client.connect("/tmp/hypr/" + his + "/.socket.sock")
+    client.connect(runtimeDir + "/hypr/" + his + "/.socket.sock")
     client.send(msg.encode())
     returnVal = client.recv(4096)
     client.close()
     return returnVal.decode()
 
-
-his = os.environ['HYPRLAND_INSTANCE_SIGNATURE']
 monitors = json.loads(send("-j/monitors"))
 
 usedMonitorDescriptions = [

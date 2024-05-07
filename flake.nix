@@ -46,11 +46,7 @@
       url = "github:LovingMelody/nix-citizen";
       inputs.nix-gaming.follows = "nix-gaming";
     };
-    hyprland = {
-      #lock at this commit until https://github.com/Alexays/Waybar/pull/3180 is merged and reaches nixpkgs
-      url = "github:hyprwm/Hyprland//d20ee312108d0e7879011cfffa3a83d06e48d29e";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    hyprland.url = "github:hyprwm/Hyprland//v0.40.0";
   };
 
 
@@ -92,6 +88,7 @@
         overlays = [
           nur.overlay
           (import ./generic/overlays/qt5ct_with_breeze.nix {pkgs=pkgs;})
+          (import ./generic/overlays/waybar_hyprland.nix)
         ];
       };
       modules = [

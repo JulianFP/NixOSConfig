@@ -14,6 +14,9 @@ structure:
 
 { lib, pkgs, inputs, ... }:
 
+let
+  hyprland-pkgs = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+in
 {
   /* -- imports -- */
   imports =
@@ -48,6 +51,8 @@ structure:
       enable = true;
       driSupport = true;
       driSupport32Bit = true;
+      package = hyprland-pkgs.mesa.drivers;
+      package32 = hyprland-pkgs.pkgsi686Linux.mesa.drivers;
 
       # enable rocm support
       extraPackages = with pkgs.rocmPackages; [
@@ -133,7 +138,10 @@ structure:
   programs = {
     adb.enable = true; #android adb setup. See users user permission (adbusers group)
     virt-manager.enable = true; #to run qemu/kvm VMs. See virtualisation for more
-    hyprland.enable = true;
+    hyprland = {
+      enable = true;
+      package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+    };
     partition-manager.enable = true; #enable kde partitionmanager (can't be done in HM, requires services)
     steam = {
       enable = true;
