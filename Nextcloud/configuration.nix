@@ -18,7 +18,7 @@
     #boilerplate stuff
     enable = true;
     hostName = if hostName == "Nextcloud" then "partanengroup.de" else "test.partanengroup.de";
-    package = pkgs.nextcloud28;
+    package = pkgs.nextcloud29;
     secretFile = config.sops.secrets."nextcloud/secrets.json".path;
     config.defaultPhoneRegion = "DE";
     config.adminuser = "admin";

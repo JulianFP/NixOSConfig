@@ -46,7 +46,7 @@
       url = "github:LovingMelody/nix-citizen";
       inputs.nix-gaming.follows = "nix-gaming";
     };
-    hyprland.url = "github:hyprwm/Hyprland//v0.40.0";
+    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
   };
 
 
@@ -88,7 +88,6 @@
         overlays = [
           nur.overlay
           (import ./generic/overlays/qt5ct_with_breeze.nix {pkgs=pkgs;})
-          (import ./generic/overlays/waybar_hyprland.nix)
         ];
       };
       modules = [
