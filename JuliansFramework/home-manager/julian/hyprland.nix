@@ -257,7 +257,7 @@
             # Switch workspaces (with mainMod + [0-9])
             "$mainMod, ${ws}, workspace, ${toString (x + 1)}"
             # Move active window to a workspace (with mainMod + SHIFT + [0-9])
-            "$mainMod SHIFT, ${ws}, movetoworkspace, ${toString (x + 1)}"
+            "$mainMod SHIFT, ${ws}, movetoworkspacesilent, ${toString (x + 1)}"
           ]
         )
         10)
