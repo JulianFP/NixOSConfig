@@ -149,6 +149,7 @@ in
       #nix-gaming steam platform optimizations
       platformOptimizations.enable = true;
     };
+    gamemode.enable = true;
   };
 
 

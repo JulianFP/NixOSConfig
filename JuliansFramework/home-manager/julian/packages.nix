@@ -82,7 +82,6 @@ in
     wineWowPackages.stagingFull
     winetricks
     gamescope
-    gamemode
     lutris
     heroic
     protonup-qt
