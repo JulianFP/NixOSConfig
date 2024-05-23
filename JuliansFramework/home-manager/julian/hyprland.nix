@@ -221,10 +221,10 @@
         "$mainMod SHIFT, J, movewindow, d"
 
         # Move workspace (multi monitor)
-        "$mainMod ALT, left, movecurrentworkspacetomonitor, -1"
-        "$mainMod ALT, right, movecurrentworkspacetomonitor, +1"
-        "$mainMod ALT, H, movecurrentworkspacetomonitor, -1"
-        "$mainMod ALT, L, movecurrentworkspacetomonitor, +1"
+        "$mainMod ALT, left, movecurrentworkspacetomonitor, l"
+        "$mainMod ALT, right, movecurrentworkspacetomonitor, r"
+        "$mainMod ALT, H, movecurrentworkspacetomonitor, l"
+        "$mainMod ALT, L, movecurrentworkspacetomonitor, r"
 
         # screenshot (print: active window, framework key/scroll lock (laptop/docked): area. With mainmod: copysave, Without: copy)
         ", Print, exec, grimblast --notify copy active "
