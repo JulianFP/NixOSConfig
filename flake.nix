@@ -95,6 +95,7 @@
         ./generic/lanzaboote.nix #(imports lanzaboote module)
         ./generic/commonHM.nix #imports common settings (including home manager)
         ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
+        ./generic/postgres-playground.nix #postgres installation for database lecture
         ./JuliansFramework/configuration.nix
         nixos-hardware.nixosModules.framework-12th-gen-intel
         #nix-gaming modules
