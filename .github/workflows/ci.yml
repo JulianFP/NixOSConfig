@@ -15,7 +15,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Install nix
-        uses: DeterminateSystems/nix-installer-action@v10
+        uses: DeterminateSystems/nix-installer-action@v11
       - name: Install magic nix cache
         uses: DeterminateSystems/magic-nix-cache-action@v6
       - name: Run check
