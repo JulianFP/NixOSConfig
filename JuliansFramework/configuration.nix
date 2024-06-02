@@ -62,7 +62,6 @@ in
     };
 
     bluetooth.enable = true;
-    opentabletdriver.enable = true; #setup driver for wacom tablet
     xone.enable = true; #enable xone driver for Xbox One Controller Adapter
   };
 

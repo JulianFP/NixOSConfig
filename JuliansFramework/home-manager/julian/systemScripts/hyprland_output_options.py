@@ -40,9 +40,13 @@ for monitor in monitors:
     scale = "2" if monitor['scale'] == 1 else "1"
     options["Scale " + name + " to " + scale] = "keyword monitor " + name + "," + size + "," + pos + "," + scale
 
-    #add mirror options
-    if internalExists and monitor['id'] != 0:
-        options["Mirror eDP-1 to " + name] = "keyword monitor eDP-1,2256x1504,-1440x0,1,mirror," + name
+    if monitor['name'] != "eDP-1":
+        #add mirror options
+        if internalExists:
+            options["Mirror eDP-1 to " + name] = "keyword monitor eDP-1,2256x1504,-1440x0,1,mirror," + name
+
+        #add tablet binding options
+        options["Bind tablets to " + name] = "keyword input:tablet:output " + name
 
 if len(sys.argv) > 1:
     option = sys.argv[1]
