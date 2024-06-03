@@ -51,6 +51,8 @@ for monitor in monitors:
 if len(sys.argv) > 1:
     option = sys.argv[1]
     command = options[option]
+    if "Mirror" in option:
+        send("keyword cursor:no_hardware_cursors true")
     send(command)
 else:
     print("\0no-custom\x1ftrue") #set no-custom option of rofi
