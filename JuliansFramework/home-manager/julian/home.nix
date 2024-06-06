@@ -176,6 +176,7 @@
       executable = true;
     };
   };
+  services.xembed-sni-proxy.enable = true; #to support legacy xembed tray icons in waybar as well
 
   programs.mpv = {
     enable = true;

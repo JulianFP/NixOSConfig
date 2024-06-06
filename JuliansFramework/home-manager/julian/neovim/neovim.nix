@@ -265,7 +265,7 @@
           bashls.enable = true;	#lsp server for Bash
           clangd.enable = true; #lsp server for C/C++
           pyright.enable = true;#lsp server for Python
-          nil_ls.enable = true;	#lsp server for Nix
+          nil-ls.enable = true;	#lsp server for Nix
           texlab.enable = true; #lsp Server for LaTeX
           java-language-server.enable = true; #lsp Server for Java
           tsserver.enable = true; #lsp server for Typescript

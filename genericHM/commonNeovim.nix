@@ -84,7 +84,6 @@ in
         enable = true;
         servers = {
           bashls.enable = true; #lsp server for bash 
-          nil_ls.enable = true; #lsp server for Nix
         };
       };
       lsp-lines = {
@@ -93,6 +92,7 @@ in
       };
     }
     // lib.optionalAttrs (stable) {
+      lsp.servers.nil_ls.enable = true; #lsp server for Nix
       nvim-cmp = lib.mkIf stable { #for 23.11 devices
         enable = true;
         mapping = {
@@ -118,6 +118,7 @@ in
       }; 
     }#has moved to cmp since 24.05
     // lib.optionalAttrs (!stable) {
+      lsp.servers.nil-ls.enable = true; #lsp server for Nix
       cmp = lib.mkIf (!(stable)) {
         enable = true;
         settings = {
