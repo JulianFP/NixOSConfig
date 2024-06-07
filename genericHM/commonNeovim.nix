@@ -84,16 +84,17 @@ in
         enable = true;
         servers = {
           bashls.enable = true; #lsp server for bash 
-        };
+        }
+        // lib.optionalAttrs (stable) { nil_ls.enable = true; }
+        // lib.optionalAttrs (!stable) { nil-ls.enable = true; };
       };
       lsp-lines = {
         enable = true; #show lsp in virtual line
         currentLine = true;
       };
     }
-    // lib.optionalAttrs (stable) {
-      lsp.servers.nil_ls.enable = true; #lsp server for Nix
-      nvim-cmp = lib.mkIf stable { #for 23.11 devices
+    // lib.optionalAttrs (stable) { #for 23.11 devices
+      nvim-cmp = { 
         enable = true;
         mapping = {
           "<CR>" = "cmp.mapping.confirm({select = true})";
@@ -116,10 +117,9 @@ in
           { name = "buffer"; }
         ];
       }; 
-    }#has moved to cmp since 24.05
-    // lib.optionalAttrs (!stable) {
-      lsp.servers.nil-ls.enable = true; #lsp server for Nix
-      cmp = lib.mkIf (!(stable)) {
+    }
+    // lib.optionalAttrs (!stable) { #has moved to cmp since 24.05
+      cmp = {
         enable = true;
         settings = {
           mapping = {
