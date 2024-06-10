@@ -77,6 +77,7 @@ in
     freetube
     gst_all_1.gstreamer
     gst_all_1.gst-vaapi
+    qpwgraph
 
     # Gaming
     wineWowPackages.stagingFull

@@ -129,6 +129,8 @@ in
     fwupd.enable = true; #for Firmware updates
     flatpak.enable = true; #enable flatpak
     hardware.bolt.enable = true; #enable Thunderbolt Device management
+    
+    nixseparatedebuginfod.enable = true;
   };
 
 
@@ -149,6 +151,7 @@ in
       platformOptimizations.enable = true;
     };
     gamemode.enable = true;
+    noisetorch.enable = true;
   };
 
 

@@ -88,6 +88,7 @@
         overlays = [
           nur.overlay
           (import ./generic/overlays/qt5ct_with_breeze.nix {pkgs=pkgs;})
+          (import ./generic/overlays/lyx.nix {pkgs=pkgs;})
         ];
       };
       modules = [
