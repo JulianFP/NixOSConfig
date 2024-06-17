@@ -199,8 +199,9 @@ in
         networkmanager: network settings access 
         adbusers: adb/fastboot for android devices stuff 
         video, render: rocm support
+        dialout: serial device access for arduino-ide
       */
-      extraGroups = [ "wheel" "networkmanager" "adbusers" "video" "render" ];
+      extraGroups = [ "wheel" "networkmanager" "adbusers" "video" "render" "dialout" ];
 
       packages = with pkgs; [
         rofi-wayland

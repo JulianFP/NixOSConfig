@@ -68,6 +68,7 @@ in
     kdePackages.kcalc
     yubioath-flutter
     yubikey-manager-qt
+    seafile-client
 
     # Multimedia
     kdePackages.gwenview
@@ -99,6 +100,7 @@ in
     gnumake
     valgrind
     jetbrains.idea-ultimate
+    arduino-ide
     (python3.withPackages my-python-packages)
 
     # Fonts
