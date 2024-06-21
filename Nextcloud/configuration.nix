@@ -20,7 +20,7 @@
     hostName = if hostName == "Nextcloud" then "partanengroup.de" else "test.partanengroup.de";
     package = pkgs.nextcloud29;
     secretFile = config.sops.secrets."nextcloud/secrets.json".path;
-    config.defaultPhoneRegion = "DE";
+    settings.default_phone_region = "DE";
     config.adminuser = "admin";
     config.adminpassFile = config.sops.secrets."nextcloud/adminPass".path;
 
@@ -34,7 +34,7 @@
     #setup caching
     caching.redis = true;
     configureRedis = true;
-    extraOptions.filelocking.enabled = true;
+    settings.filelocking.enabled = true;
 
     #setup php
     maxUploadSize = "32G";
@@ -58,17 +58,15 @@
       "pm.max_spare_servers" = "32";
     };
 
-    #setup reverse proxy config
-    config = {
-      trustedProxies = [
+    settings = {
+      #setup reverse proxy config
+      trusted_proxies = [
         "192.168.3.130"
         "48.42.0.5"
       ];
-      overwriteProtocol = "https";
-    };
+      overwriteprotocol = "https";
 
-    #mail delivery
-    extraOptions = {
+      #mail delivery
       mail_smtpmode = "smtp";
       mail_sendmailmode = "smtp";
       mail_from_address = "admin";
