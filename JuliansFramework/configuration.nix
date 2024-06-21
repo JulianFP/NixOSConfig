@@ -46,11 +46,9 @@ in
 
   /* -- hardware -- */
   hardware = {
-    opengl = {
+    graphics = {
       # enable Vulkan (32- and 64-bit), Hardware Video encoding/decoding is done in nixos-hardware
       enable = true;
-      driSupport = true;
-      driSupport32Bit = true;
       package = hyprland-pkgs.mesa.drivers;
       package32 = hyprland-pkgs.pkgsi686Linux.mesa.drivers;
 

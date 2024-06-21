@@ -83,12 +83,13 @@
           allowUnfree = true; #allow Unfree packages
           permittedInsecurePackages = [
             "electron-27.3.11" #needed for logseq until it upgrades its electron package
+            "electron-28.3.3"
           ];
         };
         overlays = [
           nur.overlay
           (import ./generic/overlays/qt5ct_with_breeze.nix {pkgs=pkgs;})
-          (import ./generic/overlays/lyx.nix {pkgs=pkgs;})
+          #(import ./generic/overlays/lyx.nix {pkgs=pkgs;})
         ];
       };
       modules = [
