@@ -8,6 +8,10 @@
             {
                 "language": ["plaintex", "tex"],
                 "path": "./latex.json"
+            },
+            {
+                "language": ["nix"],
+                "path": "./nix.json"
             }
         ]
     }

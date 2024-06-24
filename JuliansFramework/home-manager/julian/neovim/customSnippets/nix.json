@@ -1,0 +1,29 @@
+{
+    "shell": {
+        "prefix": [ "shell", "Shell", "environment" ],
+        "body": [
+            "{ pkgs ? import <nixpkgs> { } }:",
+            "pkgs.mkShell {",
+            "  buildInputs = with pkgs; [",
+            "    ${1:packages}",
+            "  ];",
+            "}"
+        ],
+        "description": "Template for a standard shell.nix file."
+    },
+    "fhs-shell": {
+        "prefix": [ "FHS", "fhs", "shellFHS" ],
+        "body": [
+            "{ pkgs ? import <nixpkgs> { } }:",
+            "let",
+            "  fhs = pkgs.buildFHSUserEnv {",
+            "    name = \"${1:shell name}\";",
+            "    targetPkgs = _: with pkgs; [",
+            "      ${2:packages}",
+            "    ];",
+            "  };",
+            "in fhs.env"
+        ],
+        "description": "Template for a FHS environment shell file."
+    }
+}
