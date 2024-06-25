@@ -25,5 +25,145 @@
             "in fhs.env"
         ],
         "description": "Template for a FHS environment shell file."
+    },
+    "overlay": {
+        "prefix": [ "overlay", "overwriteAttrs" ],
+        "body": [
+            "(final: prev: {",
+            "  ${1:packageName} = prev.${1:packageName}.overrideAttrs(old: {",
+            "    ${2:content}",
+            "  });",
+            "})"
+        ],
+        "description": "Template for a nix overlay file."
+    },
+    "overlay-python": {
+        "prefix": [ "overlay-python", "python-overlay" ],
+        "body": [
+            "(final: prev: {",
+            "  python3 = prev.python3.override {",
+            "    packageOverrides = pyfinal: pyprev: {",
+            "      ${1:packageName} = pyprev.${1:packageName}.overrideAttrs(old: {",
+            "        ${2:content}",
+            "      });",
+            "    };",
+            "  };",
+            "  python3Packages = final.python3.pkgs;",
+            "})"
+        ],
+        "description": "Template for nix overlay file that overwrites a python package."
+    },
+    "flake-packaging": {
+        "prefix": [ "flake-packaging" ],
+        "body": [
+            "{",
+            "  description = \"${1:description}\";",
+            "",
+            "  inputs = {",
+            "    nixpkgs.url = \"github:NixOS/nixpkgs/nixos-unstable\";",
+            "    systems.url = \"github:nix-systems/default\";",
+            "  };",
+            "",
+            "  outputs = inputs@{ nixpkgs, systems, ... }:",
+            "  let",
+            "    eachSystem = nixpkgs.lib.genAttrs (import systems);",
+            "    myOverlay = import ./nix/overlay.nix;",
+            "    pkgsFor = eachSystem (system:",
+            "      import nixpkgs {",
+            "        inherit system;",
+            "        overlays = [ myOverlay ];",
+            "      }",
+            "    );",
+            "  in {",
+            "    packages = eachSystem (system: rec {",
+            "      default = ${2:packageName};",
+            "      ${2:packageName} = pkgsFor.\\${system\\}.${2:packageName};",
+            "    });",
+            "    devShells = eachSystem (system: {",
+            "      default = import ./nix/shell.nix { pkgs=pkgsFor.\\${system\\}; };",
+            "    });",
+            "    nixosModules.default = import ./nix/module.nix inputs;",
+            "    overlays.default = myOverlay;",
+            "  };",
+            "}"
+        ],
+        "description": "Template for a nix flake file for a self packaged program."
+    },
+    "derivation-standard": {
+        "prefix": [ "derivation-standard", "standard-derivation" ],
+        "body": [
+            "{",
+            "  lib,",
+            "  stdenv,",
+            "  ${1:dependenciesFromNixpkgs}",
+            "}:",
+            "",
+            "stdenv.mkDerivation {",
+            "  pname = \"${2:packageName}\";",
+            "  version = \"${3:packageVersion}\";",
+            "",
+            "  src = ${4:packageSource};",
+            "",
+            "  nativeBuildInputs = [",
+            "    ${5:compileTimeDependencies}",
+            "  ];",
+            "",
+            "  buildInputs = [",
+            "    ${6:runtimeTimeDependencies}",
+            "  ];",
+            "",
+            "  meta = with lib; {",
+            "    homepage = \"${7:projectHomepage}\";",
+            "    description = \"${8:projectDescription}\";",
+            "    license = licenses.${9:projectLicense};",
+            "    #mainProgram = pname;",
+            "  };",
+            "}"
+        ],
+        "description": "Template for a standard nix derivation."
+    },
+    "derivation-python": {
+        "prefix": [ "derivation-python", "python-derivation" ],
+        "body": [
+            "{",
+            "  lib,",
+            "  python3Packages",
+            "}:",
+            "",
+            "python3Packages.buildPythonPackage rec {",
+            "  pname = \"${1:packageName}\";",
+            "  version = \"${2:packageVersion}\";",
+            "  #format = \"setuptools\";",
+            "",
+            "  src = ${3:packageSource};",
+            "",
+            "  nativeBuildInputs = with python3Packages; [",
+            "    ${5:compileTimeDependencies}",
+            "  ];",
+            "",
+            "  propagatedBuildInputs = with python3Packages; [",
+            "    ${6:runtimeTimeDependencies}",
+            "  ];",
+            "",
+            "  meta = with lib; {",
+            "    homepage = \"${7:projectHomepage}\";",
+            "    description = \"${8:projectDescription}\";",
+            "    license = licenses.${9:projectLicense};",
+            "    #mainProgram = pname;",
+            "  };",
+            "}"
+        ],
+        "description": "Template for a python nix derivation."
+    },
+    "fetchPypi": {
+        "prefix": [ "fetchPypi" ],
+        "body": [
+            "fetchPypi {",
+            "  pname = \"${1:packageName}\";",
+            "  version = \"${2:packageVersion}\";",
+            "  sha256 = \"${3:packageHash}\";",
+            "};"
+        ],
+        "description": "fetchPypi function template to fetch python packages from Pypi."
     }
 }
