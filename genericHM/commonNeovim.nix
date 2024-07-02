@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, stable, ... }:
 
 # this is a neovim configuration for (pretty much) all my devices & users.
 # basic stuff only 
@@ -88,6 +88,7 @@
       };
       lsp-lines = {
         enable = true; #show lsp in virtual line
+      } // lib.optionalAttrs (stable) { #for 24.04 devices, moved to diagnostics for 24.11
         currentLine = true;
       };
       cmp = {
@@ -112,5 +113,7 @@
         };
       };
     };
+  } // lib.optionalAttrs (!stable) { #for 24.11 devices
+    diagnostics.only_current_line = true;
   };
 }
