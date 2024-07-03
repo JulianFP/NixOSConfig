@@ -10,7 +10,7 @@ hextorb() {
 
 : '
 This is a script that installs the system automatically for Yubikey based Full Disk Encryption
-It basically automates the process described here: https://nixos.wiki/wiki/Yubikey_based_Full_Disk_Encryption_(FDE)_on_NixOS
+It basically automates the process described here: https://wiki.nixos.org/wiki/Yubikey_based_Full_Disk_Encryption_(FDE)_on_NixOS
 Requirements:
 - Booted into NixOS ISO on target system
 - logged in as root
