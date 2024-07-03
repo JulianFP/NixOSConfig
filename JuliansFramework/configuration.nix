@@ -28,7 +28,7 @@ in
 
 
   /* -- boot -- */
-  # config for bootloader and secure boot (refer to nixos.wiki/wiki/Secure_Boot)
+  # config for bootloader and secure boot (refer to wiki.nixos.org/wiki/Secure_Boot)
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
 
