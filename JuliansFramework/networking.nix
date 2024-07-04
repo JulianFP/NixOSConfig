@@ -8,7 +8,7 @@
       enableStrongSwan = true; # For l2tp vpn
     };
 
-    # rpfilter allow Wireguard traffic (see https://nixos.wiki/wiki/WireGuard#Setting_up_WireGuard_with_NetworkManager)
+    # rpfilter allow Wireguard traffic (see https://wiki.nixos.org/wiki/WireGuard#Setting_up_WireGuard_with_NetworkManager)
     firewall = { 
       # if packets are still dropped, they will show up in dmesg
       logReversePathDrops = true;

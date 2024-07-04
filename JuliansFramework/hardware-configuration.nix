@@ -20,7 +20,7 @@
       options = [ "subvol=root" ];
     };
 
-# setup luks device with yubikey as second factor (refer to nixos.wiki/wiki/Yubikey_based_Full_Disk_Encryption_(FDE)_on_NixOS)
+# setup luks device with yubikey as second factor (refer to https://wiki.nixos.org/wiki/Yubikey_based_Full_Disk_Encryption_(FDE)_on_NixOS)
   boot.initrd.luks = {
     yubikeySupport = true;
     devices."nixosLuks" = {
