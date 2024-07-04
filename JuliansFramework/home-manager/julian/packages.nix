@@ -32,7 +32,7 @@ in
     swaylock
     hyprpicker
     grimblast
-    gnome.adwaita-icon-theme
+    adwaita-icon-theme
     nur.repos.mikilio.xwaylandvideobridge-hypr
 
 
