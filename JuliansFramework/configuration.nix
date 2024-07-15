@@ -150,6 +150,10 @@ in
     };
     gamemode.enable = true;
     noisetorch.enable = true;
+    wireshark = {
+      enable = true;
+      package = pkgs.wireshark;
+    };
   };
 
 
@@ -199,7 +203,7 @@ in
         video, render: rocm support
         dialout: serial device access for arduino-ide
       */
-      extraGroups = [ "wheel" "networkmanager" "adbusers" "video" "render" "dialout" ];
+      extraGroups = [ "wheel" "networkmanager" "adbusers" "video" "render" "dialout" "wireshark" ];
 
       packages = with pkgs; [
         rofi-wayland
