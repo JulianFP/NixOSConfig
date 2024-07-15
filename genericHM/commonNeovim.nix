@@ -63,7 +63,10 @@
       #improved highlighting
       treesitter = {
         enable = true;
+      } // lib.optionalAttrs (stable) { #for 24.04 devices, moved to settings.highlight.disable for 24.11
         disabledLanguages = [ "latex" ];
+      } // lib.optionalAttrs (!stable) { #for 24.11 devices
+        settings.highlight.disable = [ "latex" ];
       };
 
       #shows indentation levels and variable scopes (treesitter)
