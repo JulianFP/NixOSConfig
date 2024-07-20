@@ -307,6 +307,7 @@ Categories=Network;InstantMessaging;Chat;
   home.file."shutdownReminder.sh" = {
     target = ".systemScripts/shutdownReminder.sh";
     text = ''
+      #!/usr/bin/env bash
       date >> /home/julian/shutdownFailures.log 
       notify-send -u critical "Shutdown Reminder" "The system will shut down in 15 minutes"
     '';
@@ -321,7 +322,6 @@ Categories=Network;InstantMessaging;Chat;
       Service = {
         ExecStart = "/home/julian/.systemScripts/shutdownReminder.sh";
         Type = "oneshot";
-        User = "root";
       };
     };
   };

@@ -256,7 +256,11 @@ in
     };
     services."shutdown" = {
       script = ''
-        sed -i '$ d' /home/julian/shutdownFailures.log
+        if [ -f /home/julian/shutdownFailures.log ]; then
+            sed -i '$ d' /home/julian/shutdownFailures.log
+        else
+            echo "latest log entry missing, shutdown-reminder didn't execute?" >> /home/julian/shutdownFailures.log
+        fi
         shutdown now
       '';
       serviceConfig = {
