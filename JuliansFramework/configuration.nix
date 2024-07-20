@@ -260,6 +260,7 @@ in
             sed -i '$ d' /home/julian/shutdownFailures.log
         else
             echo "latest log entry missing, shutdown-reminder didn't execute?" >> /home/julian/shutdownFailures.log
+            chown julian:users /home/julian/shutdownFailures.log
         fi
         shutdown now
       '';
