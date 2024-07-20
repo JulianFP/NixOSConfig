@@ -248,6 +248,24 @@ in
   #enable xdg desktop integration (mainly for flatpaks)
   xdg.portal.enable = true; 
 
+  #shutdown timer and service
+  systemd = {
+    timers."shutdown" = {
+      wantedBy = [ "timers.target" ];
+      timerConfig.OnCalendar = "*-*-* 00:15:00";
+    };
+    services."shutdown" = {
+      script = ''
+        sed -i '$ d' /home/julian/shutdownFailures.log
+        shutdown now
+      '';
+      serviceConfig = {
+        Type = "oneshot";
+        User = "root";
+      };
+    };
+  };
+
   #enable cachix for nix-gaming
   nix.settings = {
     substituters = ["https://nix-gaming.cachix.org" "https://hyprland.cachix.org"];

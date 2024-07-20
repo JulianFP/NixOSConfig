@@ -302,4 +302,27 @@ Comment=Private messaging from your desktop
 MimeType=x-scheme-handler/sgnl;x-scheme-handler/signalcaptcha;
 Categories=Network;InstantMessaging;Chat;
   '';
+
+  #shutdown reminder timer and service
+  home.file."shutdownReminder.sh" = {
+    target = ".systemScripts/shutdownReminder.sh";
+    text = ''
+      date >> /home/julian/shutdownFailures.log 
+      notify-send -u critical "Shutdown Reminder" "The system will shut down in 15 minutes"
+    '';
+    executable = true;
+  };
+  systemd.user = {
+    timers."shutdown-reminder" = {
+      Install.WantedBy = [ "timers.target" ];
+      Timer.OnCalendar = "*-*-* 00:00:00";
+    };
+    services."shutdown-reminder" = {
+      Service = {
+        ExecStart = "/home/julian/.systemScripts/shutdownReminder.sh";
+        Type = "oneshot";
+        User = "root";
+      };
+    };
+  };
 }
