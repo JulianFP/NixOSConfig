@@ -67,9 +67,9 @@
     "temperature" = {
       hwmon-path-abs = "/sys/devices/platform/coretemp.0/hwmon";
       input-filename = "temp1_input";
-      critical-threshold = 80;
+      critical-threshold = 95;
       format = "{temperatureC}°C {icon}";
-      format-icons = ["" "" ""];
+      format-icons = ["" "" "" "" "" ];
     };
 
     "backlight" = {
@@ -83,18 +83,19 @@
 	critical = 15;
       };
       format = "{capacity}% {icon}";
-      format-charging = "{capacity}% ";
+      format-charging = "{capacity}% ";
       format-plugged = "{capacity}% ";
       format-alt = "{time} {icon}";
       format-icons = ["" "" "" "" ""];
     };
 
     "network" = {
-      format-wifi = "{essid} ({signalStrength}%) ";
-      format-ethernet = "{ipaddr}/{cidr} ";
-      tooltip-format = "{ifname} via {gwaddr} ";
-      format-linked = "{ifname} (No IP) ";
-      format-disconnected = "Disconnected ⚠";
+      format-wifi = "{essid} ({signalStrength}%) {icon}";
+      format-icons = [ "󰤯" "󰤟" "󰤢" "󰤥" "󰤨" ];
+      format-ethernet = "{ipaddr}/{cidr} ";
+      tooltip-format = "{ifname} via {gwaddr} ";
+      format-linked = "{ifname} (No IP) ";
+      format-disconnected = "Disconnected ";
       format-alt = "{ifname}: {ipaddr}/{cidr}";
       on-click-right = "alacritty -e ~/.systemScripts/launch.sh nmtui"; #nmtui renders weirdly without using launch.sh
       on-click-middle = "nm-connection-editor";
@@ -109,8 +110,8 @@
       format-source-muted = "";
       format-icons = {
         headphones = "";
-	hands-free = "";
-        headset = "";
+	hands-free = "";
+        headset = "";
 	phone = "";
 	portable = "";
 	car = "";

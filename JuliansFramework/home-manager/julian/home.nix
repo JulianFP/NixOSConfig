@@ -1,23 +1,15 @@
-{ config, pkgs, nix-colors, ... }:
+{ config, pkgs, ... }:
 
 {
   imports = 
     [
-      nix-colors.homeManagerModules.default
       ./packages.nix #Packages and Fonts installed for this user
       ./hyprland.nix #Hyprland stu
       ./mangohud.nix #mangohud config
-      ./qt_gtk.nix #qt + gtk settings (mainly theming)
+      ./qt_gtk.nix #qt settings (mainly theming, not handled by stylix yet)
       ./rofi.nix
       ./neovim/neovim.nix
     ];
-
-
-
-  #define global color scheme here. This gets applied to everything automatically
-  colorScheme = nix-colors.colorSchemes.gruvbox-material-dark-medium;
-  
-
 
   # direnv
   programs.direnv = {
@@ -125,29 +117,17 @@
   };
 
   # Mako (notification daemon)
-  services.mako = with config.colorScheme.palette; {
+  services.mako =  {
     enable = true;
-    backgroundColor = "#${base01}";
-    borderColor = "#${base0D}";
-    textColor = "#${base05}";
-    progressColor = "#${base0D}";
     borderRadius = 4;
     borderSize = 2;
-    font = "'Roboto Mono Medium' 12";
     height = 300;
     groupBy = "app-name";
     ignoreTimeout = true;
     extraConfig = with pkgs; ''
-    text-color=#${base05}
     on-notify=exec kill -35 $(pidof waybar)
     on-button-left=exec ${mako}/bin/makoctl invoke -n "$id" && ${mako}/bin/makoctl dismiss -n "$id" && kill -35 $(pidof waybar)
     on-button-right=exec ${mako}/bin/makoctl dismiss -n "$id" && kill -35 $(pidof waybar)
-    
-    [urgency=normal]
-    border-color=#${base0B}
-
-    [urgency=high]
-    border-color=#${base08}
 
     [mode=doNotDisturb]
     invisible=1
@@ -155,6 +135,7 @@
   };
 
   # Waybar
+  stylix.targets.waybar.enable = false; #my styling is better...
   programs.waybar  = {
     enable = true;
     systemd = {
@@ -162,7 +143,7 @@
       target = "hyprland-session.target";
     };
     settings = import ./waybar/config.nix;
-    style = (import ./waybar/style.nix) { config=config; nix-colors=nix-colors; };
+    style = (import ./waybar/style.nix) { config=config; };
   };
   xdg.configFile."mako.sh" = {
     target = "waybar/scripts/mako.sh";
@@ -200,83 +181,13 @@
   # Alacritty
   programs.alacritty = {
     enable = true;
-    settings = {
-      #base16 template: https://github.com/aarowill/base16-alacritty
-      colors = with config.colorScheme.palette; {
-        # Default colors
-        primary = {
-          background = "0x${base00}";
-          foreground = "0x${base05}";
-        };
-        # colors the cursor will use if 'custom_cursor_colors' is true
-        cursor = {
-          text = "0x${base00}";
-          cursor = "0x${base05}";
-        };
-        # Normal colors
-        normal = {
-          black = "0x${base00}";
-          red = "0x${base08}";
-          green = "0x${base0B}";
-          yellow = "0x${base0A}";
-          blue = "0x${base0D}";
-          magenta = "0x${base0E}";
-          cyan = "0x${base0C}";
-          white = "0x${base05}";
-        };
-        # Bright colors
-        bright = {
-          black = "0x${base03}";
-          red = "0x${base08}";
-          green = "0x${base0B}";
-          yellow = "0x${base0A}";
-          blue = "0x${base0D}";
-          magenta = "0x${base0E}";
-          cyan = "0x${base0C}";
-          white = "0x${base07}";
-        };
-        indexed_colors = [
-          {
-            index = 16;
-            color = "0x${base09}";
-          }
-          {
-            index = 17;
-            color = "0x${base0F}";
-          }
-          {
-            index = 18;
-            color = "0x${base01}";
-          }
-          {
-            index = 19;
-            color = "0x${base02}";
-          }
-          {
-            index = 20;
-            color = "0x${base04}";
-          }
-          {
-            index = 21;
-            color = "0x${base06}";
-          }
-        ];
-      };
-      font = {
-        normal = {
-          family = "AnonymicePro Nerd Font";
-          style = "Regular";
-        };
-        size = 12;
-      };
-      keyboard.bindings = [
-        {
-          key = "Return";
-          mods = "Control";
-          action = "SpawnNewInstance";
-        }
-      ];
-    };
+    settings.keyboard.bindings = [
+      {
+        key = "Return";
+        mods = "Control";
+        action = "SpawnNewInstance";
+      }
+    ];
   };
 
   # virt-manager stu. See NixOS Wiki for more

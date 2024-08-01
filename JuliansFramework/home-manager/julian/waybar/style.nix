@@ -1,19 +1,17 @@
-{ config, nix-colors }:
+{ config }:
 
-with config.colorScheme.palette;
-with nix-colors.lib.conversions;
+with config.lib.stylix.colors;
 ''
 * {
     border: none;
     border-radius: 4px;
-    /* `otf-font-awesome` is required to be installed for icons */
-    font-family: "Roboto Mono Medium", "FontAwesome 6 Free";
-    font-size: 14px;
+    font-family: "${config.stylix.fonts.serif.name}";
+    font-size: ${builtins.toString config.stylix.fonts.sizes.desktop}pt;
     min-height: 0;
 }
 
 window#waybar {
-    background-color: rgba(${hexToRGBString "," base00}, 0.6);
+    background-color: rgba(${base00-rgb-r},${base00-rgb-g},${base00-rgb-b}, 0.6);
     color: #${base05};
     transition-property: background-color;
     transition-duration: .5s;
@@ -29,12 +27,6 @@ button {
     box-shadow: inset 0 -3px transparent;
     /* Avoid rounded borders under each button name */
     border: none;
-}
-
-/* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
-button:hover {
-    background: inherit;
-    box-shadow: inset 0 -3px #${base05};
 }
 
 /* Gets applied to the following modules only: workpaces, submap, window, tray */
@@ -53,7 +45,7 @@ box.module {
 }
 
 #workspaces button:hover {
-    background: rgba(${hexToRGBString "," base03}, 0.2);
+    background: rgba(${base03-rgb-r},${base03-rgb-g},${base03-rgb-b}, 0.2);
 }
 
 #workspaces button.focused {
@@ -90,6 +82,19 @@ box.module {
     background-color: #${base01};
     margin: 2px 0 2px 4px;
     padding: 0 6px 0 6px;
+}
+
+#clock {
+    font-family: "${config.stylix.fonts.monospace.name}";
+}
+
+#network,
+#cpu,
+#memory,
+#backlight,
+#battery,
+#custom-mako {
+  padding-right: 12px
 }
 
 #network,

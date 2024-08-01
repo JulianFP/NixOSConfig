@@ -2,7 +2,7 @@
 This is the NixOS config for my Framework 12th Gen Laptop (home-manager config included).
 
 ## Todo
-- [ ] coherent nixified theming across the following programs (using nix-colors):
+- [ ] coherent nixified theming across the following programs (moved form nix-colors to stylix):
     - [x] Alacritty
     - [x] GTK
     - [x] Qt5
@@ -12,9 +12,9 @@ This is the NixOS config for my Framework 12th Gen Laptop (home-manager config i
     - [x] mako
     - [x] rofi
     - [x] Hyprland (accent colors)
-    - [ ] neovim (vimThemeFromScheme function from contrib doesn't look good, have to write one myself)
-    - [ ] mangohud
-    - [ ] wallpaper?
+    - [x] neovim 
+    - [x] mangohud
+    - [ ] wallpaper? (not integrated in theme yet)
 - [x] complete neovim config using nixvim for full development environment/IDE (including bash script for creating C++ cmake environment and launching compiled program)
 - [x] waybar config with custom mako module that works through RT signal communication
 - [x] Hyprland config with some custom bash scripts for clamshell mode, lock and suspend, etc.

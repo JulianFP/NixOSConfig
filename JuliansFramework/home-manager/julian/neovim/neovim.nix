@@ -3,18 +3,7 @@
 {
   programs.nixvim = {
     #override colorscheme
-    colorschemes = {
-      onedark.enable = lib.mkForce false;
-      gruvbox = {
-        enable = true;
-        settings = {
-          contrast_dark = "soft";
-          improved_strings = true;
-          improved_warnings = true;
-          true_color = true;
-        };
-      };
-    };
+    colorschemes.onedark.enable = lib.mkForce false;
 
     globals = {
       #for vimtex
@@ -232,7 +221,7 @@
       };
 
       #theme for status bar at bottom
-      lualine.theme = lib.mkForce "gruvbox";
+      lualine.theme = lib.mkForce "auto";
 
       #snippet engine
       luasnip = {

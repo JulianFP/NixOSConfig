@@ -12,7 +12,7 @@ structure:
 - misc 
 */
 
-{ lib, pkgs, inputs, ... }:
+{ lib, config, pkgs, inputs, ... }:
 
 let
   hyprland-pkgs = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
@@ -275,6 +275,38 @@ in
   nix.settings = {
     substituters = ["https://nix-gaming.cachix.org" "https://hyprland.cachix.org"];
     trusted-public-keys = ["nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4=" "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
+  };
+
+  #stylix define system wide theme (can be overwritten on a per-user level in home-manager)
+  stylix = {
+    enable = true;
+    image = pkgs.fetchurl {
+      url = "https://wallpapercave.com/wp/wp5982189.jpg";
+      hash = "sha256-SWcmge21w9ijZrWNN1mrWItB0+HSE6YLxADAZXtSC2c=";
+      curlOptsList = ["-HUser-Agent: Wget/1.21.4"];
+    };
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-material-dark-medium.yaml";
+    fonts = {
+      sansSerif = {
+        package = pkgs.nerdfonts;
+        name = "AnonymicePro Nerd Font";
+      };
+      serif = config.stylix.fonts.sansSerif;
+      monospace = {
+        package = pkgs.nerdfonts;
+        name = "AnonymicePro Nerd Font Mono";
+      };
+      sizes = {
+        applications = 13;
+        desktop = 12;
+        popups = 14;
+      };
+    };
+    cursor = {
+      package = pkgs.capitaine-cursors;
+      name = "capitaine-cursors";
+      size = 24;
+    };
   };
 
   # This value determines the NixOS release from which the default

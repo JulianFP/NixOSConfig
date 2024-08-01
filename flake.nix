@@ -26,7 +26,7 @@
       url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
-    nix-colors.url = "github:misterio77/nix-colors";
+    stylix.url = "github:danth/stylix";
     nur.url = "github:nix-community/NUR";
     disko = {
       url = "github:nix-community/disko";
@@ -100,6 +100,7 @@
         ./generic/postgres-playground.nix #postgres installation for database lecture
         ./JuliansFramework/configuration.nix
         nixos-hardware.nixosModules.framework-12th-gen-intel
+        stylix.nixosModules.stylix
         #nix-gaming modules
         nix-gaming.nixosModules.pipewireLowLatency
         nix-gaming.nixosModules.platformOptimizations
@@ -120,7 +121,6 @@
         };
         hostName = "JuliansFramework"; 
         homeManagerExtraSpecialArgs = { 
-          inherit nix-colors; 
           inherit hostName;
           inherit stable;
           inherit nix-citizen;
