@@ -4,6 +4,39 @@
 # for the first one edge is set, for the second not. The first one syncs ssl certs to the second one
 let
   subnet = if edge then "48.42.1." else "192.168.3.";
+  makeProxyFor = listOfProxies: lib.attrsets.mergeAttrsList (builtins.map (x: 
+  let
+    baseURL = "http://" + "${x.destIP}:${builtins.toString x.destPort}";
+  in {
+    "${x.domain}" = {
+      enableACME = lib.mkIf edge true;
+      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/test.partanengroup.de/fullchain.pem";
+      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/test.partanengroup.de/key.pem";
+      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/test.partanengroup.de/chain.pem";
+      forceSSL = true;
+      http2 = true;
+      locations = {
+        "/" = {
+          proxyPass = "${baseURL}";
+          proxyWebsockets = true;
+        };
+      } // lib.optionalAttrs (builtins.hasAttr "locations" x) (lib.attrsets.mergeAttrsList (builtins.map (y: {
+        "${y.sourcePath}" = {
+          proxyPass = "${baseURL}${y.destPath}";
+          proxyWebsockets = true;
+        };}) x.locations));
+    };
+    #www redirect
+    "www.${x.domain}" = {
+      enableACME = lib.mkIf edge true;
+      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.test.partanengroup.de/fullchain.pem";
+      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/www.test.partanengroup.de/key.pem";
+      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.test.partanengroup.de/chain.pem";
+      forceSSL = true;
+      http2 = true;
+      globalRedirect = "${x.domain}";
+    };
+  }) listOfProxies);
 in
 {
 #setup acme for let's encrypt validation if this is on edge
@@ -63,156 +96,48 @@ systemd.services."pre-nginx" = lib.mkIf (!edge) {
     #allow uploads with file sizes up to 10G
     clientMaxBodySize = "10G";
 
-    #setup nextcloud proxy host
-    virtualHosts."test.partanengroup.de" = {
-      enableACME = lib.mkIf edge true;
-      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/test.partanengroup.de/fullchain.pem";
-      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/test.partanengroup.de/key.pem";
-      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/test.partanengroup.de/chain.pem";
-      forceSSL = true;
-      http2 = true;
-      locations."/" = {
-        proxyPass = "http://" + subnet + "150:80";
-        proxyWebsockets = true;
-      };
-      locations."/.well-known/carddav" = {
-        proxyPass = "http://" + subnet + "150:80/remote.php/dav";
-        proxyWebsockets = true;
-      };
-      locations."/.well-known/caldav" = {
-        proxyPass = "http://" + subnet + "150:80/remote.php/dav";
-        proxyWebsockets = true;
-      };
-    };
-    #www redirect
-    virtualHosts."www.test.partanengroup.de" = {
-      enableACME = lib.mkIf edge true;
-      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.test.partanengroup.de/fullchain.pem";
-      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/www.test.partanengroup.de/key.pem";
-      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.test.partanengroup.de/chain.pem";
-      forceSSL = true;
-      http2 = true;
-      globalRedirect = "test.partanengroup.de";
-    };
-
-    #setup jellyfin proxy host
-    virtualHosts."media.partanengroup.de" = {
-      enableACME = lib.mkIf edge true;
-      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/media.partanengroup.de/fullchain.pem";
-      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/media.partanengroup.de/key.pem";
-      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/media.partanengroup.de/chain.pem";
-      forceSSL = true;
-      http2 = true;
-      locations."/" = {
-        proxyPass = "http://" + subnet + "132:8096";
-        proxyWebsockets = true;
-      };
-    };
-    #www redirect
-    virtualHosts."www.media.partanengroup.de" = {
-      enableACME = lib.mkIf edge true;
-      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.media.partanengroup.de/fullchain.pem";
-      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/www.media.partanengroup.de/key.pem";
-      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.media.partanengroup.de/chain.pem";
-      forceSSL = true;
-      http2 = true;
-      globalRedirect = "media.partanengroup.de";
-    };
-    virtualHosts."request.media.partanengroup.de" = {
-      enableACME = lib.mkIf edge true;
-      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/request.media.partanengroup.de/fullchain.pem";
-      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/request.media.partanengroup.de/key.pem";
-      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/request.media.partanengroup.de/chain.pem";
-      forceSSL = true;
-      http2 = true;
-      locations."/" = {
-        proxyPass = "http://" + subnet + "132:5055";
-        proxyWebsockets = true;
-      };
-    };
-    #www redirect
-    virtualHosts."www.request.media.partanengroup.de" = {
-      enableACME = lib.mkIf edge true;
-      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.request.media.partanengroup.de/fullchain.pem";
-      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/www.request.media.partanengroup.de/key.pem";
-      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.request.media.partanengroup.de/chain.pem";
-      forceSSL = true;
-      http2 = true;
-      globalRedirect = "request.media.partanengroup.de";
-    };
-
-    #setup atm proxy config (restart minecraft server, using nebula unsafe_routes)
-    virtualHosts."atm.partanengroup.de" = {
-      enableACME = lib.mkIf edge true;
-      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/atm.partanengroup.de/fullchain.pem";
-      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/atm.partanengroup.de/key.pem";
-      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/atm.partanengroup.de/chain.pem";
-      forceSSL = true;
-      http2 = true;
-      locations."/" = {
-        proxyPass = "http://192.168.3.107:80";
-        proxyWebsockets = true;
-      };
-    };
-    #www redirect
-    virtualHosts."www.atm.partanengroup.de" = {
-      enableACME = lib.mkIf edge true;
-      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.atm.partanengroup.de/fullchain.pem";
-      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/www.atm.partanengroup.de/key.pem";
-      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.atm.partanengroup.de/chain.pem";
-      forceSSL = true;
-      http2 = true;
-      globalRedirect = "atm.partanengroup.de";
-    };
-
-    #project-w
-    virtualHosts."project-w.partanengroup.de" = {
-      enableACME = lib.mkIf edge true;
-      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/project-w.partanengroup.de/fullchain.pem";
-      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/project-w.partanengroup.de/key.pem";
-      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/project-w.partanengroup.de/chain.pem";
-      forceSSL = true;
-      http2 = true;
-      locations."/" = {
-        proxyPass = "http://192.168.3.136:80";
-        proxyWebsockets = true;
-      };
-    };
-    #www redirect
-    virtualHosts."www.project-w.partanengroup.de" = {
-      enableACME = lib.mkIf edge true;
-      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.project-w.partanengroup.de/fullchain.pem";
-      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/www.project-w.partanengroup.de/key.pem";
-      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.project-w.partanengroup.de/chain.pem";
-      forceSSL = true;
-      http2 = true;
-      globalRedirect = "project-w.partanengroup.de";
-    };
-
-    #setup atm proxy config (restart minecraft server, using nebula unsafe_routes)
-    virtualHosts."admin.finn.partanengroup.de" = {
-      enableACME = lib.mkIf edge true;
-      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/atm.partanengroup.de/fullchain.pem";
-      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/atm.partanengroup.de/key.pem";
-      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/atm.partanengroup.de/chain.pem";
-      forceSSL = true;
-      http2 = true;
-      locations."/" = {
-        proxyPass = "http://192.168.3.115:80";
-        proxyWebsockets = true;
-      };
-    };
-    #www redirect
-    virtualHosts."www.admin.finn.partanengroup.de" = {
-      enableACME = lib.mkIf edge true;
-      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.atm.partanengroup.de/fullchain.pem";
-      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/www.atm.partanengroup.de/key.pem";
-      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.atm.partanengroup.de/chain.pem";
-      forceSSL = true;
-      http2 = true;
-      globalRedirect = "admin.finn.partanengroup.de";
-    };
-
+    virtualHosts = makeProxyFor [
+      { #nextcloud test
+        domain = "test.partanengroup.de";
+        destIP = subnet + "150";
+        destPort = 80;
+        locations = [
+          {
+            sourcePath = "/.well-known/carddav";
+            destPath = "/remote.php/dav";
+          }
+          {
+            sourcePath = "/.well-known/caldav";
+            destPath = "/remote.php/dav";
+          }
+        ];
+      }
+      { #jellyfin
+        domain = "media.partanengroup.de";
+        destIP = subnet + "132";
+        destPort = 8096;
+      }
+      { #jellyseerr
+        domain = "request.media.partanengroup.de";
+        destIP = subnet + "132";
+        destPort = 5055;
+      }
+      { #atm minecraft
+        domain = "atm.partanengroup.de";
+        destIP = "192.168.3.107";
+        destPort = 80;
+      }
+      { #Project-W
+        domain = "project-w.partanengroup.de";
+        destIP = subnet + "136";
+        destPort = 80;
+      }
+      { #Finn minecraft
+        domain = "admin.finn.partanengroup.de";
+        destIP = "192.168.3.115";
+        destPort = 80;
+      }
+    ];
   };
 
   #setup firewall
