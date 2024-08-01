@@ -97,6 +97,21 @@ systemd.services."pre-nginx" = lib.mkIf (!edge) {
     clientMaxBodySize = "10G";
 
     virtualHosts = makeProxyFor [
+      { #nextcloud production
+        domain = "partanengroup.de";
+        destIP = "192.168.3.101";
+        destPort = 80;
+        locations = [
+          {
+            sourcePath = "/.well-known/carddav";
+            destPath = "/remote.php/dav";
+          }
+          {
+            sourcePath = "/.well-known/caldav";
+            destPath = "/remote.php/dav";
+          }
+        ];
+      }
       { #nextcloud test
         domain = "test.partanengroup.de";
         destIP = subnet + "150";
