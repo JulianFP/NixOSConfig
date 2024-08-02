@@ -5,13 +5,13 @@ with config.lib.stylix.colors;
 * {
     border: none;
     border-radius: 4px;
-    font-family: "${config.stylix.fonts.serif.name}";
+    font-family: "${config.stylix.fonts.serif.name}", "Symbols Nerd Font";
     font-size: ${builtins.toString config.stylix.fonts.sizes.desktop}pt;
     min-height: 0;
 }
 
-window#waybar {
-    background-color: rgba(${base00-rgb-r},${base00-rgb-g},${base00-rgb-b}, 0.6);
+window#waybar, tooltip {
+    background-color: rgba(${base00-rgb-r},${base00-rgb-g},${base00-rgb-b},${builtins.toString config.stylix.opacity.desktop});
     color: #${base05};
     transition-property: background-color;
     transition-duration: .5s;
@@ -86,15 +86,6 @@ box.module {
 
 #clock {
     font-family: "${config.stylix.fonts.monospace.name}";
-}
-
-#network,
-#cpu,
-#memory,
-#backlight,
-#battery,
-#custom-mako {
-  padding-right: 12px
 }
 
 #network,

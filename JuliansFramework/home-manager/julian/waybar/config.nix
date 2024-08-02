@@ -30,7 +30,7 @@
       format = "{name} {icon}";
       format-icons = {
         locked = "";
-	unlocked = "";
+	      unlocked = "";
       };
     };
 
@@ -80,7 +80,7 @@
     "battery" = {
       states = {
         warning = 30;
-	critical = 15;
+	      critical = 15;
       };
       format = "{capacity}% {icon}";
       format-charging = "{capacity}% ";
@@ -104,18 +104,18 @@
     "pulseaudio" = {
       format = "{volume}% {icon} {format_source}";
       format-bluetooth = "{volume}% {icon} {format_source}";
-      format-bluetooth-muted = " {icon} {format_source}";
-      format-muted = " {format_source}";
+      format-bluetooth-muted = "󰝟 {icon} {format_source}";
+      format-muted = "󰝟 {format_source}";
       format-source = "{volume}% ";
       format-source-muted = "";
       format-icons = {
         headphones = "";
-	hands-free = "";
+	      hands-free = "";
         headset = "";
-	phone = "";
-	portable = "";
-	car = "";
-	default = ["" "" ""];
+        phone = "";
+        portable = "";
+        car = "";
+        default = ["" "" ""];
       };
       on-click = "pavucontrol";
     };
@@ -134,7 +134,7 @@
     "gamemode" = {
       format = "{glyph}";
       format-alt = "{glyph} {count}";
-      glyph = "";
+      glyph = "󰖺";
       hide-not-running = true;
       use-icon = true;
       icon-name = "input-gaming-symbolic";

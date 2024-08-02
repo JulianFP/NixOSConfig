@@ -14,9 +14,6 @@ structure:
 
 { lib, config, pkgs, inputs, ... }:
 
-let
-  hyprland-pkgs = inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
-in
 {
   /* -- imports -- */
   imports =
@@ -49,8 +46,6 @@ in
     graphics = {
       # enable Vulkan (32- and 64-bit), Hardware Video encoding/decoding is done in nixos-hardware
       enable = true;
-      package = hyprland-pkgs.mesa.drivers;
-      package32 = hyprland-pkgs.pkgsi686Linux.mesa.drivers;
 
       # enable rocm support
       extraPackages = with pkgs.rocmPackages; [
@@ -137,10 +132,7 @@ in
   programs = {
     adb.enable = true; #android adb setup. See users user permission (adbusers group)
     virt-manager.enable = true; #to run qemu/kvm VMs. See virtualisation for more
-    hyprland = {
-      enable = true;
-      package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-    };
+    hyprland.enable = true;
     partition-manager.enable = true; #enable kde partitionmanager (can't be done in HM, requires services)
     steam = {
       enable = true;
@@ -273,34 +265,39 @@ in
 
   #enable cachix for nix-gaming
   nix.settings = {
-    substituters = ["https://nix-gaming.cachix.org" "https://hyprland.cachix.org"];
-    trusted-public-keys = ["nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4=" "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
+    substituters = ["https://nix-gaming.cachix.org" ];
+    trusted-public-keys = ["nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4=" ];
   };
 
   #stylix define system wide theme (can be overwritten on a per-user level in home-manager)
   stylix = {
     enable = true;
     image = pkgs.fetchurl {
-      url = "https://wallpapercave.com/wp/wp5982189.jpg";
-      hash = "sha256-SWcmge21w9ijZrWNN1mrWItB0+HSE6YLxADAZXtSC2c=";
-      curlOptsList = ["-HUser-Agent: Wget/1.21.4"];
+      url = "https://w.wallhaven.cc/full/4d/wallhaven-4dmxg4.jpg";
+      hash = "sha256-TjbV20mckBX4QcvKgzxLaXAZgn0qQvFVtl34csEsm+U=";
+      curlOptsList = ["-HUser-Agent: Wget/1.21.4"]; #some sides want a valid user agent
     };
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-material-dark-medium.yaml";
+    polarity = "dark";
+    override = { #swap 'cause better. Comments should not be blue
+      base03 = config.stylix.base16Scheme.base0D;
+      base0D = config.stylix.base16Scheme.base03;
+    };
+    #base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-soft.yaml";
     fonts = {
-      sansSerif = {
-        package = pkgs.nerdfonts;
-        name = "AnonymicePro Nerd Font";
-      };
       serif = config.stylix.fonts.sansSerif;
       monospace = {
         package = pkgs.nerdfonts;
-        name = "AnonymicePro Nerd Font Mono";
+        name = "DejaVuSansM Nerd Font Mono";
       };
       sizes = {
         applications = 13;
         desktop = 12;
         popups = 14;
       };
+    };
+    opacity = {
+      desktop = 0.6;
+      popups = 0.6;
     };
     cursor = {
       package = pkgs.capitaine-cursors;

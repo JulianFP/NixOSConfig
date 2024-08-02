@@ -1,4 +1,4 @@
-{ pkgs, hyprland, ... }:
+{ pkgs, ... }:
 
 {
   # set scripts for extended Hyprland behavior (suspend, lock, etc.)
@@ -27,7 +27,6 @@
       enable = true;
       variables = [ "--all" ];
     };
-    package = hyprland.packages.${pkgs.system}.hyprland;
 
     settings = {
       /* -- Monitor config -- */

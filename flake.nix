@@ -46,7 +46,6 @@
       url = "github:LovingMelody/nix-citizen";
       inputs.nix-gaming.follows = "nix-gaming";
     };
-    hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
   };
 
 
@@ -124,7 +123,6 @@
           inherit hostName;
           inherit stable;
           inherit nix-citizen;
-          inherit hyprland;
         };
         stable = false;
         inherit inputs;
