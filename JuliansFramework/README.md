@@ -40,6 +40,7 @@ This is the NixOS config for my Framework 12th Gen Laptop (home-manager config i
 - `./LaptopNixOSConfig/installation-script.sh 1 /dev/nvme0n1p1 /dev/nvme0n1p2` run the installation script (change parameters accordingly!)
 - `mv -f LaptopNixOSConfig/{.,}* /mnt/etc/nixos/` move local repo to /etc/nixos folder of target machine
 - edit `/mnt/etc/nixos/JuliansFramework/hardware-configuration.nix` and change the uuids of all partitions to the values of your system (get them with the command `blkid`)
+- In this file also change the `resume_offset` in `boot.kernelParams` to the output of this command: `sudo btrfs inspect-internal map-swapfile -r /swap/swapfile`
 - edit `flake.nix` and in imports of JuliansFramework do the following: choose systemd-boot instead of lanzaboote. This will be reverted later, but is necessary for the initial installation
 - `nixos-install --flake /mnt/etc/nixos/flake.nix#JuliansFramework` install system
 

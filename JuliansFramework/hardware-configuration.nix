@@ -53,8 +53,16 @@
 
   swapDevices = [ {
     device = "/swap/swapfile";
-    size = 8*1024;
+    size = 24*1024;
   } ];
+
+  #hibernation setup (resume_offset will be different on each install!)
+  boot.resumeDevice = "/dev/disk/by-uuid/bfb60ba4-5f30-4af6-b754-4e720ebbde8e";
+  boot.kernelParams = [ "resume_offset=143355341" ];
+  #define how long system should suspend before waking up and hibernating (hibernation always happens on low battery, whatever happens first)
+  systemd.sleep.extraConfig = ''
+    HibernateDelaySec=1h30min
+  '';
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's

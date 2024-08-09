@@ -16,5 +16,5 @@ if [ $3 == "inhibitSuspend" ]; then
         hyprctl dispatch dpms off
     fi
 else
-    systemctl suspend -i
+    systemctl suspend-then-hibernate -i
 fi
