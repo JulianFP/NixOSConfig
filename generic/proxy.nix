@@ -20,11 +20,7 @@ let
           proxyPass = "${baseURL}";
           proxyWebsockets = true;
         };
-      } // lib.optionalAttrs (builtins.hasAttr "locations" x) (lib.attrsets.mergeAttrsList (builtins.map (y: {
-        "${y.sourcePath}" = {
-          proxyPass = "${baseURL}${y.destPath}";
-          proxyWebsockets = true;
-        };}) x.locations));
+      } // lib.optionalAttrs (builtins.hasAttr "additionalLocations" x) x.additionalLocations;
     };
     #www redirect
     "www.${x.domain}" = {
@@ -101,31 +97,19 @@ systemd.services."pre-nginx" = lib.mkIf (!edge) {
         domain = "partanengroup.de";
         destIP = "192.168.3.101";
         destPort = 80;
-        locations = [
-          {
-            sourcePath = "/.well-known/carddav";
-            destPath = "/remote.php/dav";
-          }
-          {
-            sourcePath = "/.well-known/caldav";
-            destPath = "/remote.php/dav";
-          }
-        ];
+        additionalLocations = {
+          "/.well-known/carddav".return = "301 $scheme://$host/remote.php/dav";
+          "/.well-known/caldav".return = "301 $scheme://$host/remote.php/dav";
+        };
       }
       { #nextcloud test
         domain = "test.partanengroup.de";
         destIP = subnet + "150";
         destPort = 80;
-        locations = [
-          {
-            sourcePath = "/.well-known/carddav";
-            destPath = "/remote.php/dav";
-          }
-          {
-            sourcePath = "/.well-known/caldav";
-            destPath = "/remote.php/dav";
-          }
-        ];
+        additionalLocations = {
+          "/.well-known/carddav".return = "301 $scheme://$host/remote.php/dav";
+          "/.well-known/caldav".return = "301 $scheme://$host/remote.php/dav";
+        };
       }
       { #jellyfin
         domain = "media.partanengroup.de";
