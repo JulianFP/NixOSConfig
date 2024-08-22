@@ -10,9 +10,9 @@ let
   in {
     "${x.domain}" = {
       enableACME = lib.mkIf edge true;
-      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/test.partanengroup.de/fullchain.pem";
-      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/test.partanengroup.de/key.pem";
-      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/test.partanengroup.de/chain.pem";
+      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/${x.domain}/fullchain.pem";
+      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/${x.domain}/key.pem";
+      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/${x.domain}/chain.pem";
       forceSSL = true;
       http2 = true;
       locations = {
@@ -29,9 +29,9 @@ let
     #www redirect
     "www.${x.domain}" = {
       enableACME = lib.mkIf edge true;
-      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.test.partanengroup.de/fullchain.pem";
-      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/www.test.partanengroup.de/key.pem";
-      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.test.partanengroup.de/chain.pem";
+      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.${x.domain}/fullchain.pem";
+      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/www.${x.domain}/key.pem";
+      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.${x.domain}/chain.pem";
       forceSSL = true;
       http2 = true;
       globalRedirect = "${x.domain}";
