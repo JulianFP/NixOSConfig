@@ -1,5 +1,8 @@
 { config, pkgs, hostName, ... }:
 
+let
+  cfg = config.services.nextcloud;
+in 
 {
   #setup sops secrets for nextcloud 
   sops.secrets."nextcloud/adminPass" = {
@@ -65,6 +68,11 @@
         "48.42.0.5"
       ];
       overwriteprotocol = "https";
+      overwritehost = cfg.hostName;
+      overwrite.cli.url = "${cfg.settings.overwriteprotocol}://${cfg.settings.overwritehost}";
+
+      #set timeframe in which heavy operations should be done. This value as in hour of the day (1 -> 01:00) + 4 hour time window
+      maintenance_window_start = 1;
 
       #mail delivery
       mail_smtpmode = "smtp";
@@ -80,8 +88,8 @@
     };
     
     #install nextcloud apps
-    extraApps = with config.services.nextcloud.package.packages.apps; {
-      inherit bookmarks calendar contacts groupfolders notes polls registration spreed tasks twofactor_webauthn;
+    extraApps = {
+      inherit (cfg.package.packages.apps) bookmarks calendar contacts groupfolders notes polls registration spreed tasks twofactor_webauthn;
     };
     extraAppsEnable = true;
   };
