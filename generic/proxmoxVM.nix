@@ -4,7 +4,6 @@
   imports =
     [ # Include the results of the hardware scan.
       inputs.disko.nixosModules.disko
-      ./commonHM.nix
       ./server.nix
     ];
 
@@ -58,7 +57,7 @@
       DHCP = "no";
       networkConfig.IPv6AcceptRA = false;
       address = [
-        "192.168.3.${vmID}/24"
+        "192.168.3.${builtins.toString vmID}/24"
       ];
       gateway = [
         "192.168.3.1"

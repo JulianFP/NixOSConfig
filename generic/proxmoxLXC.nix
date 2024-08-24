@@ -22,7 +22,7 @@
     interfaces = {
       "eth0" = {
         ipv4.addresses = [{
-          address = "192.168.3.${vmID}";
+          address = "192.168.3.${builtins.toString vmID}";
           prefixLength = 24;
         }];
         useDHCP = false;

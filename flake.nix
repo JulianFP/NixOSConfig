@@ -1,5 +1,5 @@
 {
-  description = "NixOS config of my laptop";
+  description = "NixOS config of my laptop as well as most of my server infrastructure";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -48,9 +48,45 @@
     };
   };
 
-
   outputs = { self, ... } @ inputs: 
-  with inputs; {
+  with inputs;
+  let
+    lib = nixpkgs-stable.lib;
+    getPkgs = stable: if stable then nixpkgs-stable else nixpkgs;
+    makeSystem = { hostName, system ? "x86_64-linux", stable ? true, server ? false, proxmoxVmID ? null, nebula ? true, boot ? 0, hasOwnModule ? true, homeManager ? true, systemModules ? [], homeManagerModules ? {}, permittedUnfreePackages ? [], permittedInsecurePackages ? [], overlays ? [], args ? {} }: (getPkgs stable).lib.nixosSystem rec {
+      inherit system;
+      pkgs = import (getPkgs stable) {
+        inherit system;
+        inherit overlays;
+        config = {
+          inherit permittedInsecurePackages;
+          allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) permittedUnfreePackages;
+        };
+      };
+      modules = (if (proxmoxVmID != null) then [ ./generic/proxmoxVM.nix ]
+        else if server then [ ./generic/server.nix ]
+        else [ ./generic/common.nix ])
+        ++ lib.lists.optional (boot != 0) (if (boot == 2) then ./generic/lanzaboote.nix else ./generic/systemd-boot.nix)
+        ++ lib.lists.optional nebula ./generic/nebula.nix
+        ++ lib.lists.optional homeManager ./generic/commonHM.nix
+        ++ lib.lists.optional hasOwnModule ./${hostName}/configuration.nix
+        ++ systemModules;
+      specialArgs = {
+        inherit hostName inputs self stable;
+      } // lib.optionalAttrs (proxmoxVmID != null) {
+        vmID = proxmoxVmID;
+      } // lib.optionalAttrs homeManager {
+        homeManagerModules = builtins.mapAttrs (name: value:
+          if (name == "root") then value ++ [./genericHM/shell.nix] else value) homeManagerModules;
+        homeManagerExtraSpecialArgs = {
+          inherit hostName stable;
+        }
+        // (builtins.removeAttrs inputs [ "nixpkgs" "nixpkgs-stable" "home-manager" "home-manager-stable" ])
+        // args;
+      } // args;
+    };
+    makeSystems = systems: builtins.mapAttrs (name: value: (makeSystem ({ hostName = name; } // value))) systems;
+  in {
     packages.x86_64-linux = {
       blankISO = nixos-generators.nixosGenerate rec {
         format = "iso";
@@ -74,316 +110,128 @@
         };
       };
     };
-    nixosConfigurations.JuliansFramework = nixpkgs.lib.nixosSystem rec {
-      system = "x86_64-linux";
-      pkgs = import nixpkgs {
-        inherit system;
-        config = {
-          allowUnfree = true; #allow Unfree packages
-          permittedInsecurePackages = [
-            "electron-27.3.11" #needed for logseq until it upgrades its electron package
-            "electron-28.3.3"
-          ];
-        };
-        overlays = [
-          nur.overlay
-          (import ./generic/overlays/qt5ct_with_breeze.nix {pkgs=pkgs;})
-          #(import ./generic/overlays/lyx.nix {pkgs=pkgs;})
-        ];
-      };
-      modules = [
-        #./genericNixOS/systemd-boot.nix
-        ./generic/lanzaboote.nix #(imports lanzaboote module)
-        ./generic/commonHM.nix #imports common settings (including home manager)
-        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
-        ./generic/postgres-playground.nix #postgres installation for database lecture
-        ./JuliansFramework/configuration.nix
+
+    /*
+    --- documentation makeSystems function ---
+    accepts attribute set with name/value pairs where name is hostName and value is another attribute set with the following options:
+    - system (string): platform/architecture. Default: "x86_64-linux"
+    - stable (bool): whether to use nixpkgs-stable or not (in which case it uses nixpkgs-unstable). Default: true
+    - server (bool): whether this is a server and the ./generic/server.nix module should be applied (which then in turn applies the ./generic/common.nix module). Default: false (in which case only the ./generic/common.nix module gets applied. This module is always used) 
+    - proxmoxVmID (uint between 2 and 254 or null): If null: this is not a proxmox VM. If not null: ./generic/proxmoxVM.nix is being included and vmID is set to this value (which is mainly used to set the host ID of the local IP-address (/24) of this VM). Default: null
+    - nebula (bool): Whether ./generic/nebula.nix should be included. Default: true
+    - boot (0,1 or 2): Whether grub (0), systemd-boot (1) or lanzaboote for secureboot (2) should be used. Default: 0
+    - hasOwnModule (bool): Whether a module ./<hostName>/configuration.nix exists and should be included. Default: true
+    - homeManager (bool): Whether homeManager should be activated (by including ./generic/commonHM.nix). This also includes the HM-module ./genericHM/shell.nix for the root user. Default: true
+    - systemModules (list of paths): List of system modules that should be included in addition to what gets included automatically. Default: []
+    - homeManagerModules (attribute set of lists of paths): home manager modules that should be included in addition to what gets included automatically. Each list in this attribute set is for one user (where the names/keys are the user names). Default: {}
+    - permittedUnfreePackages (list of strings): List of package names of packages with an unfree license that should be allowed on that system. Default: []
+    - permittedInsecurePackages (list of strings): List of package names of packages that are marked as insecure (e.g. because they are EOL) that should be allowed on that system. Default: []
+    - overlays (list of overlay definitions): List of overlays that should be activated for that system. Default: []
+    - args (attribute set of anything): Variables that should be included as specialArgs for both system modules as well as HM-modules in addition to what gets added automatically (i.e. in addition to self, hostName, stable, vmID, inputs/contents of the inputs)
+    */
+    nixosConfigurations = makeSystems {
+      "JuliansFramework" = {
+        stable = false;
+        boot = 2;
+        systemModules = [
+          ./generic/postgres-playground.nix #postgres installation for database lecture
         nixos-hardware.nixosModules.framework-12th-gen-intel
         stylix.nixosModules.stylix
         #nix-gaming modules
         nix-gaming.nixosModules.pipewireLowLatency
         nix-gaming.nixosModules.platformOptimizations
         #nixos-hardware.nixosModules.common-gpu-amd
-      ];
-      specialArgs = rec {
+        ];
         homeManagerModules = {
-          julian = [ 
+          julian = [
             ./genericHM/shell.nix
             ./genericHM/yubikey.nix
-            ./JuliansFramework/home-manager/julian/home.nix  
+            ./JuliansFramework/home-manager/julian/home.nix
           ];
-          root = [ 
-            ./genericHM/shell.nix
+          root = [
             ./genericHM/yubikey.nix
             ./JuliansFramework/home-manager/root/home.nix
           ];
         };
-        hostName = "JuliansFramework"; 
-        homeManagerExtraSpecialArgs = { 
-          inherit hostName;
-          inherit stable;
-          inherit nix-citizen;
-        };
-        stable = false;
-        inherit inputs;
-        inherit self;
+        permittedInsecurePackages = [
+            "electron-27.3.11" #needed for logseq until it upgrades its electron package
+        ];
+        permittedUnfreePackages = [
+          "steam"
+          "steam-original"
+          "steam-run"
+          "corefonts"
+          "vista-fonts"
+          "xow_dongle-firmware"
+          "idea-ultimate"
+          "slack"
+        ];
+        overlays = [
+          nur.overlay
+          (import ./generic/overlays/qt5ct_with_breeze.nix)
+          #(import ./generic/overlays/lyx.nix)
+        ];
       };
-    };
-    nixosConfigurations.NixOSTesting = nixpkgs-stable.lib.nixosSystem rec {
-      system = "x86_64-linux";
-      pkgs = import nixpkgs-stable {
-        inherit system;
+      "NixOSTesting" = {
+        proxmoxVmID = 120;
       };
-      modules = [
-        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
-        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
-        ./NixOSTesting/configuration.nix
-      ];
-      specialArgs = rec { 
-        homeManagerModules = {
-          root = [ 
-            ./genericHM/shell.nix
-          ];
-        };
-        hostName = "NixOSTesting"; 
-        homeManagerExtraSpecialArgs = { 
-          inherit hostName;
-          inherit stable;
-        };
-        stable = true;
-        vmID = "120";
-        inherit inputs;
-        inherit self;
+      "Nextcloud" = {
+        proxmoxVmID = 131;
       };
-    };
-    nixosConfigurations.Nextcloud = nixpkgs-stable.lib.nixosSystem rec {
-      system = "x86_64-linux";
-      pkgs = import nixpkgs-stable {
-        inherit system;
+      "Nextcloud-Testing" = {
+        proxmoxVmID = 150;
+        #doesn't have own config but shares config with Nextcloud
+        hasOwnModule = false;
+        systemModules = [
+          ./Nextcloud/configuration.nix
+        ];
       };
-      modules = [
-        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
-        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
-        ./Nextcloud/configuration.nix
-      ];
-      specialArgs = rec { 
-        homeManagerModules = {
-          root = [ 
-            ./genericHM/shell.nix
-          ];
-        };
-        hostName = "Nextcloud"; 
-        homeManagerExtraSpecialArgs = { 
-          inherit hostName;
-          inherit stable;
-        };
-        stable = true;
-        vmID = "131";
-        inherit inputs;
-        inherit self;
+      "Jellyfin" = {
+        proxmoxVmID = 132;
       };
-    };
-    nixosConfigurations.Nextcloud-Testing = nixpkgs-stable.lib.nixosSystem rec {
-      system = "x86_64-linux";
-      pkgs = import nixpkgs-stable {
-        inherit system;
+      "IonosVPS" = {
+        server = true;
+        args.edge = true;
+        systemModules = [
+          ./generic/ssh.nix
+          ./generic/proxy.nix
+          ./generic/wireguard.nix
+        ];
+        homeManagerModules.root = [
+          ./genericHM/ssh.nix
+        ];
       };
-      modules = [
-        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
-        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
-        ./Nextcloud/configuration.nix
-      ];
-      specialArgs = rec { 
-        homeManagerModules = {
-          root = [ 
-            ./genericHM/shell.nix
-          ];
-        };
-        hostName = "Nextcloud-Testing"; 
-        homeManagerExtraSpecialArgs = { 
-          inherit hostName;
-          inherit stable;
-        };
-        stable = true;
-        vmID = "150";
-        inherit inputs;
-        inherit self;
+      "LocalProxy" = {
+        proxmoxVmID = 130;
+        args.edge = false;
+        systemModules = [
+          ./generic/ssh.nix
+          ./generic/proxy.nix
+        ];
+        homeManagerModules.root = [
+          ./genericHM/ssh.nix
+        ];
       };
-    };
-    nixosConfigurations.Jellyfin = nixpkgs-stable.lib.nixosSystem rec {
-      system = "x86_64-linux";
-      pkgs = import nixpkgs-stable {
-        inherit system;
+      "Valheim" = {
+        proxmoxVmID = 135;
+        permittedUnfreePackages = [
+          "steamcmd"
+          "steam-run"
+          "steam-original"
+        ];
       };
-      modules = [
-        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
-        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
-        ./Jellyfin/configuration.nix
-      ];
-      specialArgs = rec { 
-        homeManagerModules = {
-          root = [ 
-            ./genericHM/shell.nix
-          ];
-        };
-        hostName = "Jellyfin"; 
-        homeManagerExtraSpecialArgs = { 
-          inherit hostName;
-          inherit stable;
-        };
-        stable = true;
-        vmID = "132";
-        inherit inputs;
-        inherit self;
-      };
-    };
-    nixosConfigurations.IonosVPS = nixpkgs-stable.lib.nixosSystem rec {
-      system = "x86_64-linux";
-      pkgs = import nixpkgs-stable {
-        inherit system;
-      };
-      modules = [
-        ./generic/server.nix
-        ./generic/commonHM.nix
-        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
-        ./generic/ssh.nix
-        ./generic/proxy.nix #requires edge!
-        ./generic/wireguard.nix #includes option declaration
-        ./IonosVPS/configuration.nix
-      ];
-      specialArgs = rec { 
-        homeManagerModules = {
-          root = [ 
-            ./genericHM/ssh.nix#requires ./generic/ssh.nix!
-          ];
-        };
-        hostName = "IonosVPS"; 
-        homeManagerExtraSpecialArgs = { 
-          inherit hostName;
-          inherit stable;
-        };
-        stable = true;
-        edge = true;
-        inherit inputs;
-        inherit self;
-      };
-    };
-    nixosConfigurations.LocalProxy = nixpkgs-stable.lib.nixosSystem rec {
-      system = "x86_64-linux";
-      pkgs = import nixpkgs-stable {
-        inherit system;
-      };
-      modules = [
-        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
-        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
-        ./generic/ssh.nix
-        ./generic/proxy.nix #requires edge!
-        ./LocalProxy/configuration.nix
-      ];
-      specialArgs = rec { 
-        homeManagerModules = {
-          root = [ 
-            ./genericHM/shell.nix
-            ./genericHM/ssh.nix#requires ./generic/ssh.nix!
-          ];
-        };
-        hostName = "LocalProxy"; 
-        homeManagerExtraSpecialArgs = { 
-          inherit hostName;
-          inherit stable;
-        };
-        stable = true;
-        vmID = "130";
-        edge = false;
-        inherit inputs;
-        inherit self;
-      };
-    };
-    nixosConfigurations.Valheim = nixpkgs-stable.lib.nixosSystem rec {
-      system = "x86_64-linux";
-      pkgs = import nixpkgs-stable {
-        inherit system;
-        config.allowUnfree = true;
-      };
-      modules = [
-        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
-        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
-        ./Valheim/configuration.nix
-      ];
-      specialArgs = rec { 
-        homeManagerModules = {
-          root = [ 
-            ./genericHM/shell.nix
-          ];
-        };
-        hostName = "Valheim"; 
-        homeManagerExtraSpecialArgs = { 
-          inherit hostName;
-          inherit stable;
-        };
-        stable = true;
-        vmID = "135";
-        inherit inputs;
-        inherit self;
-      };
-    };
-    nixosConfigurations.Project-W = nixpkgs-stable.lib.nixosSystem rec {
-      system = "x86_64-linux";
-      pkgs = import nixpkgs-stable {
-        inherit system;
+      "Project-W" = {
+        proxmoxVmID = 136;
         overlays = [
           inputs.project-W.overlays.default
         ];
+        systemModules = [
+          inputs.project-W.nixosModules.default
+          inputs.project-W-frontend.nixosModules.default
+        ];
       };
-      modules = [
-        inputs.project-W.nixosModules.default
-        inputs.project-W-frontend.nixosModules.default
-        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
-        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
-        ./Project-W/configuration.nix
-      ];
-      specialArgs = rec { 
-        homeManagerModules = {
-          root = [ 
-            ./genericHM/shell.nix
-          ];
-        };
-        hostName = "Project-W"; 
-        homeManagerExtraSpecialArgs = { 
-          inherit hostName;
-          inherit stable;
-        };
-        stable = true;
-        vmID = "136";
-        inherit inputs;
-        inherit self;
-      };
-    };
-    nixosConfigurations.Authentik = nixpkgs-stable.lib.nixosSystem rec {
-      system = "x86_64-linux";
-      pkgs = import nixpkgs-stable {
-        inherit system;
-      };
-      modules = [
-        ./generic/proxmoxVM.nix #requires vmID, stable, homeManagerModules!
-        ./generic/nebula.nix#take care of .sops.yaml! (imports sops module)
-        ./Authentik/configuration.nix
-      ];
-      specialArgs = rec { 
-        homeManagerModules = {
-          root = [ 
-            ./genericHM/shell.nix
-          ];
-        };
-        hostName = "Authentik"; 
-        homeManagerExtraSpecialArgs = { 
-          inherit hostName;
-          inherit stable;
-        };
-        stable = true;
-        vmID = "140";
-        inherit inputs;
-        inherit self;
+      "Authentik" = {
+        proxmoxVmID = 140;
       };
     };
   };
