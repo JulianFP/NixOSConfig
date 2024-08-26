@@ -53,6 +53,9 @@
   let
     lib = nixpkgs-stable.lib;
     getPkgs = stable: if stable then nixpkgs-stable else nixpkgs;
+    defaultHomeManagerModules = {
+      root = [ ./genericHM/shell.nix ];
+    };
     makeSystem = { hostName, system ? "x86_64-linux", stable ? true, server ? false, proxmoxVmID ? null, nebula ? true, boot ? 0, hasOwnModule ? true, homeManager ? true, systemModules ? [], homeManagerModules ? {}, permittedUnfreePackages ? [], permittedInsecurePackages ? [], overlays ? [], args ? {} }: (getPkgs stable).lib.nixosSystem rec {
       inherit system;
       pkgs = import (getPkgs stable) {
@@ -76,8 +79,8 @@
       } // lib.optionalAttrs (proxmoxVmID != null) {
         vmID = proxmoxVmID;
       } // lib.optionalAttrs homeManager {
-        homeManagerModules = builtins.mapAttrs (name: value:
-          if (name == "root") then value ++ [./genericHM/shell.nix] else value) homeManagerModules;
+        homeManagerModules = homeManagerModules // (builtins.mapAttrs (name: value:
+          value ++ (lib.attrsets.attrByPath [name] [] homeManagerModules)) defaultHomeManagerModules);
         homeManagerExtraSpecialArgs = {
           inherit hostName stable;
         }
