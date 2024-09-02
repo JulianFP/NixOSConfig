@@ -8,7 +8,7 @@
 githubRepo="JulianFP/NixOSConfig" #github repo that contains flake config (syntax: '<Github user name>/<repo name>'). Always uses default branch
 githubBranch="main" #branch that contains flake config
 #the following option is only needed for the deploySops and sops option 
-ageKeyFile="/var/lib/sops-nix/key.txt" #path to ageKeyFile on target machine
+ageKeyFile="/persist/sops-nix/key.txt" #path to ageKeyFile on target machine
 
 
 #define function make error output easier
@@ -72,9 +72,6 @@ deploy() {
     until ssh -o "StrictHostKeyChecking no" root@$3 true >/dev/null 2>&1; do 
         sleep 1 
     done
-
-    #git clone nix configuration onto target to enable changing configuration directly on target machine
-    ssh root@$3 -o "StrictHostKeyChecking no" "nix shell nixpkgs#git -c git clone -b $githubBranch https://github.com/$githubRepo.git /etc/nixos"
 }
 
 #$1: flakehostname, $2: TargetIP
@@ -84,13 +81,6 @@ sopsConfig() {
         echo "couldn't connect to target machines root user over ssh."
         read -p "check ssh config and then press enter to try again"
     done
-
-    if ssh root@$2 -o "StrictHostKeyChecking no" "ls /etc/nixos" | grep -q "flake.nix"; then
-        echo "configuration already present in /etc/nixos - continuing"
-    else 
-        #git clone nix configuration onto target to enable changing configuration directly on target machine
-        ssh root@$2 -o "StrictHostKeyChecking no" "nix shell nixpkgs#git -c git clone -b $githubBranch https://github.com/$githubRepo.git /etc/nixos"
-    fi
 
     #find free filename for age public key in /tmp
     agename="ageKey.pub"
@@ -134,12 +124,11 @@ sopsConfig() {
     #add changes to git and push them
     git -C "/tmp/$gitname" add "/tmp/$gitname/*"
     git -C "/tmp/$gitname" add "/tmp/$gitname/.sops.yaml"
-    git -C "/tmp/$gitname" commit -m "changed age key of $1"
+    git -C "/tmp/$gitname" commit -m "$1: Changed age key"
     git -C "/tmp/$gitname" push origin "$githubBranch"
 
-    #pull changes on target and apply them
-    ssh root@$2 -o "StrictHostKeyChecking no" "nix shell nixpkgs#git -c git -C /etc/nixos pull origin $githubBranch"
-    ssh root@$2 -o "StrictHostKeyChecking no" "nixos-rebuild switch"
+    #build changes for target
+    nixos-rebuild switch --flake "/tmp/$gitname#$1" --target-host root@$2
 
     #reboot machine and wait until it becomes reachable again
     ssh root@$2 -o "StrictHostKeyChecking no" "reboot"
@@ -147,6 +136,9 @@ sopsConfig() {
     until ssh -o "StrictHostKeyChecking no" root@$2 true >/dev/null 2>&1; do 
         sleep 1 
     done
+
+    #remove temp git directory
+    rm -r "/tmp/$gitname"
 }
 
 #$1 flakehostname
