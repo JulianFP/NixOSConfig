@@ -46,6 +46,7 @@
       url = "github:LovingMelody/nix-citizen";
       inputs.nix-gaming.follows = "nix-gaming";
     };
+    impermanence.url = "github:nix-community/impermanence";
   };
 
   outputs = { self, ... } @ inputs: 
@@ -232,9 +233,6 @@
           inputs.project-W.nixosModules.default
           inputs.project-W-frontend.nixosModules.default
         ];
-      };
-      "Authentik" = {
-        proxmoxVmID = 140;
       };
     };
   };

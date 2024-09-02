@@ -20,6 +20,7 @@ in
   services.nextcloud = {
     #boilerplate stuff
     enable = true;
+    home = "/persist/backMeUp/nextcloud";
     hostName = if hostName == "Nextcloud" then "partanengroup.de" else "test.partanengroup.de";
     package = pkgs.nextcloud29;
     secretFile = config.sops.secrets."nextcloud/secrets.json".path;
@@ -93,6 +94,9 @@ in
     };
     extraAppsEnable = true;
   };
+
+  #also change dir of mysql
+  services.mysql.dataDir = "/persist/backMeUp/mysql";
 
   #set firewall rules (for both NixOS and nebula firewalls)
   networking.firewall.allowedTCPPorts = [ 80 ];

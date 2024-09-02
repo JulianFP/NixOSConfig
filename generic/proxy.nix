@@ -4,15 +4,16 @@
 # for the first one edge is set, for the second not. The first one syncs ssl certs to the second one
 let
   subnet = if edge then "48.42.1." else "192.168.3.";
+  localProxyCertDir = "/persist/sslCerts";
   makeProxyFor = listOfProxies: lib.attrsets.mergeAttrsList (builtins.map (x: 
   let
     baseURL = "http://" + "${x.destIP}:${builtins.toString x.destPort}";
   in {
     "${x.domain}" = {
       enableACME = lib.mkIf edge true;
-      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/${x.domain}/fullchain.pem";
-      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/${x.domain}/key.pem";
-      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/${x.domain}/chain.pem";
+      sslCertificate = lib.mkIf (!edge) "${localProxyCertDir}/${x.domain}/fullchain.pem";
+      sslCertificateKey = lib.mkIf (!edge) "${localProxyCertDir}/${x.domain}/key.pem";
+      sslTrustedCertificate = lib.mkIf (!edge) "${localProxyCertDir}/${x.domain}/chain.pem";
       forceSSL = true;
       http2 = true;
       locations = {
@@ -25,9 +26,9 @@ let
     #www redirect
     "www.${x.domain}" = {
       enableACME = lib.mkIf edge true;
-      sslCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.${x.domain}/fullchain.pem";
-      sslCertificateKey = lib.mkIf (!edge) "/var/lib/sslCerts/www.${x.domain}/key.pem";
-      sslTrustedCertificate = lib.mkIf (!edge) "/var/lib/sslCerts/www.${x.domain}/chain.pem";
+      sslCertificate = lib.mkIf (!edge) "${localProxyCertDir}/www.${x.domain}/fullchain.pem";
+      sslCertificateKey = lib.mkIf (!edge) "${localProxyCertDir}/www.${x.domain}/key.pem";
+      sslTrustedCertificate = lib.mkIf (!edge) "${localProxyCertDir}/www.${x.domain}/chain.pem";
       forceSSL = true;
       http2 = true;
       globalRedirect = "${x.domain}";
@@ -41,9 +42,9 @@ security.acme = lib.mkIf edge {
   defaults.email = "admin@partanengroup.de";
   #ssh matchBlock for LocalProxy has to be setup on edge server
   defaults.postRun = ''
-    ${pkgs.openssh}/bin/ssh LocalProxy "mkdir -p /var/lib/sslCerts"
-    ${pkgs.openssh}/bin/scp -r $(pwd) LocalProxy:/var/lib/sslCerts/
-    ${pkgs.openssh}/bin/ssh LocalProxy "chown -R nginx:nginx /var/lib/sslCerts/*"
+    ${pkgs.openssh}/bin/ssh LocalProxy "mkdir -p ${localProxyCertDir}"
+    ${pkgs.openssh}/bin/scp -r $(pwd) LocalProxy:${localProxyCertDir}/
+    ${pkgs.openssh}/bin/ssh LocalProxy "chown -R nginx:nginx ${localProxyCertDir}/*"
     ${pkgs.openssh}/bin/ssh LocalProxy "systemctl restart nginx.service"
   '';
 };
@@ -52,10 +53,10 @@ security.acme = lib.mkIf edge {
 systemd.services."pre-nginx" = lib.mkIf (!edge) {
   enable = true;
   script = ''
-    mkdir -p /var/lib/sslCerts
-    if ! ls -R /var/lib/sslCerts | grep -q "cert.pem"; then
-        ${pkgs.openssh}/bin/scp -r IonosVPS:/var/lib/acme/* /var/lib/sslCerts/
-        chown -R nginx:nginx /var/lib/sslCerts/*
+    mkdir -p ${localProxyCertDir}
+    if ! ls -R ${localProxyCertDir} | grep -q "cert.pem"; then
+        ${pkgs.openssh}/bin/scp -r IonosVPS:/var/lib/acme/* ${localProxyCertDir}/
+        chown -R nginx:nginx ${localProxyCertDir}/*
     fi
   '';
   serviceConfig = {

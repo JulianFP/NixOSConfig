@@ -4,6 +4,8 @@
 let
 	# Set to {id}-{branch}-{password} for betas.
 	steam-app = "896660";
+  backupDir = "/persist/backMeUp/valheim";
+  persistDir = "/persist/valheim";
 in
 {
   imports = [
@@ -21,20 +23,20 @@ in
 	users.groups.valheim = {};
 
   #define valheim server startup script and config options here
-  #refer to step 3 under section "Running the Dedicated Server" of the "Valheim Dedicated Server Manual.pdf" under /var/lib/steam-app-896660/
+  #refer to step 3 under section "Running the Dedicated Server" of the "Valheim Dedicated Server Manual.pdf" under ${persistDir}/steam-app-896660/
   sops.secrets."serverPassword".sopsFile = ../secrets/${hostName}/valheim.yaml;
   sops.templates."start_server.sh" = {
     content = lib.escapeShellArgs [
-      "/var/lib/steam-app-${steam-app}/valheim_server.x86_64"
+      "${persistDir}/steam-app-${steam-app}/valheim_server.x86_64"
       "-nographics" #not documented, does it do anything?
       "-batchmode" #not documented, does it do anything?
       "-name" "Fulcrum"
       "-port" "2456"
       "-world" "Dedicated"
       "-password" "${config.sops.placeholder.serverPassword}"
-      "-savedir" "/var/lib/valheim/save"
+      "-savedir" "${backupDir}/save"
       "-public" "1"
-      "-logFile" "/var/lib/valheim/log" # if enabled then log will not appear in journal
+      #"-logFile" "${persistDir}/log" # if enabled then log will not appear in journal
       "-saveinterval" "600" #saves every 10 minutes automatically
       "-backups" "0" # I take my own backups, if you don't you can remove this to use the built-in basic rotation system.
       # "-crossplay" # This is broken because it looks for "party" shared library in the wrong path.
@@ -63,7 +65,7 @@ in
 		};
 		environment = {
 			# linux64 directory is required by Valheim.
-      LD_LIBRARY_PATH = "/var/lib/steam-app-${steam-app}/linux64:${pkgs.zlib}/lib:${pkgs.glibc}/lib";
+      LD_LIBRARY_PATH = "${persistDir}/steam-app-${steam-app}/linux64:${pkgs.zlib}/lib:${pkgs.glibc}/lib";
 			SteamAppId = "892970";
 		};
 	};

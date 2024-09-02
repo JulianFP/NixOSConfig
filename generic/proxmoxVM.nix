@@ -1,11 +1,11 @@
-{ lib, vmID, inputs, ... }:
+{ vmID, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      inputs.disko.nixosModules.disko
-      ./server.nix
-    ];
+  imports = [ # Include the results of the hardware scan.
+    ./btrfs-impermanence-disk-config.nix #filesystem with disko and impermanence setup 
+    ./impermanence.nix
+    ./server.nix
+  ];
 
   boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "virtio_pci" "virtio_scsi" "sd_mod" "sr_mod" ];
   boot.initrd.kernelModules = [ "dm-snapshot" ];
@@ -14,38 +14,8 @@
     efiInstallAsRemovable = true;
   };
 
-  #filesystem setup
-  disko.devices = import ./proxmoxVM-disk-config.nix {
-    inherit lib;
-  };
-  fileSystems = {
-    "/" = {
-      device = "/dev/disk/by-partlabel/disk-_dev_sda-nixos";
-      fsType = "btrfs";
-      options = [ "subvol=root" ];
-    };
-    "/home" = {
-      device = "/dev/disk/by-partlabel/disk-_dev_sda-nixos";
-      fsType = "btrfs";
-      options = [ "subvol=home" ];
-    };
-    "/nix" = {
-      device = "/dev/disk/by-partlabel/disk-_dev_sda-nixos";
-      fsType = "btrfs";
-      options = [ "subvol=nix" ];
-    };
-    "/swap" = {
-      device = "/dev/disk/by-partlabel/disk-_dev_sda-nixos";
-      fsType = "btrfs";
-      options = [ "subvol=swap" ];
-    };
-    "/boot" = {
-      device = "/dev/disk/by-partlabel/disk-_dev_sda-ESP";
-      fsType = "vfat";
-    };
-  };
 
-#networking config (systemd.network preferred over networking)
+  #networking config (systemd.network preferred over networking)
   networking = {
     useDHCP = false;
     enableIPv6 = false;

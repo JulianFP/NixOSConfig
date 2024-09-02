@@ -2,6 +2,9 @@
 
 # this config is from: https://kevincox.ca/2022/12/09/valheim-server-nixos-v2/
 # thank you!
+let
+  persistDir = "/persist/valheim";
+in 
 {
 	users.users.steam = {
 		isSystemUser = true;
@@ -36,7 +39,7 @@
 				beta=''${args[2]:-}
 				betapass=''${args[3]:-}
 
-				dir=/var/lib/steam-app-$instance
+				dir=${persistDir}/steam-app-$instance
 
 				cmds=(
 					+force_install_dir $dir

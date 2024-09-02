@@ -9,6 +9,7 @@
     enable = true;
     hostName = "project-w.partanengroup.de";
     settings = {
+      databasePath = "/persist/backMeUp/project-w/database";
       clientURL = "https://project-w.partanengroup.de/#";
       smtpServer = {
         domain = "mail.partanengroup.de";
