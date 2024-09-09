@@ -138,13 +138,12 @@
         stable = false;
         boot = 2;
         systemModules = [
-          ./generic/postgres-playground.nix #postgres installation for database lecture
-        nixos-hardware.nixosModules.framework-12th-gen-intel
-        stylix.nixosModules.stylix
-        #nix-gaming modules
-        nix-gaming.nixosModules.pipewireLowLatency
-        nix-gaming.nixosModules.platformOptimizations
-        #nixos-hardware.nixosModules.common-gpu-amd
+          nixos-hardware.nixosModules.framework-12th-gen-intel
+          stylix.nixosModules.stylix
+          #nix-gaming modules
+          nix-gaming.nixosModules.pipewireLowLatency
+          nix-gaming.nixosModules.platformOptimizations
+          #nixos-hardware.nixosModules.common-gpu-amd
         ];
         homeManagerModules = {
           julian = [
@@ -158,7 +157,7 @@
           ];
         };
         permittedInsecurePackages = [
-            "electron-27.3.11" #needed for logseq until it upgrades its electron package
+          "electron-27.3.11" #needed for logseq until it upgrades its electron package
         ];
         permittedUnfreePackages = [
           "steam"

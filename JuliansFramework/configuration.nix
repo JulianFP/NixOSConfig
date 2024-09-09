@@ -146,6 +146,10 @@ structure:
       enable = true;
       package = pkgs.wireshark;
     };
+    ausweisapp = {
+      enable = true;
+      openFirewall = true;
+    };
   };
 
 
