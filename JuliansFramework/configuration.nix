@@ -12,12 +12,13 @@ structure:
 - misc 
 */
 
-{ lib, config, pkgs, inputs, ... }:
+{ lib, config, pkgs, inputs, hostName, ... }:
 
 {
   /* -- imports -- */
   imports =
     [ 
+      inputs.impermanence.nixosModules.impermanence
       ./hardware-configuration.nix # Include the results of the hardware scan.
       ./networking.nix # import networking settings
     ];
@@ -158,6 +159,7 @@ structure:
   environment = {
     variables = {
       RADV_PERFTEST = "nosam"; #performance improvement for eGPUs
+      ESP_PATH = "/boot"; #since with my setup the mount point in fstab is set to /root/boot this variable ensures that sbctl still finds efi partition
     };
 
     # List packages installed in system profile. To search, run:
@@ -180,16 +182,44 @@ structure:
 
       #for virtualisation virt-manager
       virtiofsd
+
+      #clevis for initrd decryption management
+      clevis
     ];
+
+    #impermanence setup
+    persistence."/persist" = {
+      hideMounts = true;
+      directories = [
+        "/var/log"
+        "/var/lib/bluetooth"
+        "/var/lib/nixos"
+        "/var/lib/systemd/coredump"
+        "/etc/NetworkManager/system-connections"
+        "/var/lib/boltd"
+        "/var/lib/fprint"
+        "/var/lib/waydroid"
+        "/etc/secureboot"
+      ];
+      files = [
+        "/etc/machine-id"
+      ];
+    };
   };
 
 
 
   /* -- users -- */
+  sops.secrets."users/julian" = {
+    neededForUsers = true;
+    sopsFile = ../secrets/${hostName}/users.yaml;
+  };
+
   users = {
     # Define julian account. Don't forget to set a password with ‘passwd’.
     users.julian = {
       isNormalUser = true;
+      hashedPasswordFile = config.sops.secrets."users/julian".path;
 
       /*
       user groups:
@@ -244,8 +274,14 @@ structure:
   #enable xdg desktop integration (mainly for flatpaks)
   xdg.portal.enable = true; 
 
-  #shutdown timer and service
-  systemd = {
+  systemd = let
+    shutdownServiceTimout = "DefaultTimeoutStopSec=5s";
+  in {
+    #this makes shutdowns and reboots quicker by not waiting nearly as long for services to stop (90s -> 5s)
+    extraConfig = shutdownServiceTimout;
+    user.extraConfig = shutdownServiceTimout;
+
+    #shutdown timer and service
     timers."shutdown" = {
       wantedBy = [ "timers.target" ];
       timerConfig.OnCalendar = "*-*-* 00:15:00";
@@ -316,5 +352,5 @@ structure:
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "23.11"; # Did you read the comment?
+  system.stateVersion = "24.11"; # Did you read the comment?
 }

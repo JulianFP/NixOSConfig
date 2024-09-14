@@ -1,8 +1,14 @@
 ## About
 This is the NixOS config for my Framework 12th Gen Laptop (home-manager config included).
 
+## bcachefs + impermanence
+Where do I even start. Well, I wanted to use bcachefs and a NixOS impermanence setup on my laptop. I had good experiences with impermanence on my servers and wanted it on my laptop too, except with bcachefs instead of btrfs because why not and its new and hot and native encryption and performance and stuff. On my servers I implemented impermanence with btrfs subvolumes since that way I can still keep old root volumes around just in case and it also doesn't eat up my memory like a tmpfs would. So I tried the same thing with bcachefs. I started by formatting my drive with bcachefs, and then creating subvolumes for root, nix, persist and home as usual. The only thing left was to mount the root subvolume under /, and then the others under that. And that is where I realized, that bcachefs doesn't allow mounting subvolumes! Bcachefs subvolumes are basically just fancy directories, one can only mount the filesystem as a whole. Keep in mind that at this point I had already evacuated and reformated my SSD and was working from a booted LIVE iso, so I was in for the ride! First I searched for a way to rollback snapshots (which bcachefs supports) to an older version. That way I could have made an empty snapshot of the filesystem and just rolled back to it during boot (similarly how impermanence is often done on zfs). But guess what: bcachefs [doesn't support rollbacks yet either](https://www.reddit.com/r/bcachefs/comments/18xd4gs/comment/kg4iktw). Also one cannot move subvolumes without also moving all their child subvolumes. This basically means that there is no way I can boot from the root of the filesystem and then empty it without touching my persist, home and nix subvolumes. So I started looking for workarounds:
+**Workaround 1**: Bind mounts! On Linux, you cannot just mount filesystems, but also directories of filesystems onto other directories. I tried a very cursed thing: Using the command `mount --bind /mnt/root /mnt -o x-gvfs-hide` I tried to mount the root subvolume onto the filesystem-root (I used the x-gvfs-hide mount option so that these mounts do not show up as a drive in my file manager). Surprisingley, bcachefs actually let me do this and it seemed to work....at first. Then I noticed that suddenly files that previously were in my persist subvolume are not visible anymore after this bind mount (files outside of subvolumes however were). Furthermore, if I created files in these subvolumes and then umounted the bind-mount the old files would reapear but the new files would disappear (only to reappear when repeating that bind-mount). So if you ever need to hide files from analysis tools (similarly as how you used to be able to on ntfs), then this is it, but unfortunetely because of this bug it doesn't solve my problem.
+**Workaround 2**: If you read the [man docs for the mount system call](https://www.reddit.com/r/bcachefs/comments/18xd4gs/comment/kg4iktw) you will find the `X-mount.subdir` mount option. This basically allows us to mount a subdir of a filesystem instead of its root! Imagine how stoked I was to find out about this [in this reddit thread](https://www.reddit.com/r/bcachefs/comments/1b3uv59) after trying all that bind-mount bullshit, only to find out its flaw in the very same reddit thread: Apparentely there is a bug in bcachefs or in util-linux or somewhere that prevents this from working ([here is the Github issue for it](https://github.com/util-linux/util-linux/issues/2834)). When typing `mount /dev/<device> /mnt -o X-mount.subdir=root` it would run without error but wouldn't actually mount the damn filesystem. Apparentely it works if the `LIBMOUNT_FORCE_MOUNT2` environmental variable is set, but setting it inside initrd seems to be a little bit more tricky than one might think and it felt too much like a hack to rely my boot process on it. So on to Workaround 3! 
+**Workaround 3**: This goes a bit deep into the Linux boot process, I recommend these reads to understand this: [rootfs vs. initrd vs. initramfs and switch_root system call](https://www.marcusfolkesson.se/blog/changing-the-root-of-your-linux-filesystem/) as well as [its execution using systemd in initramfs (yes that is a thing)](https://www.man7.org/linux/man-pages/man7/bootup.7.html). So the idea is to basically overwrite systemd's initrd-switch-root.service that is part of the initrd image so the we can give it our own adjusted switch_root command that does not switch to /sysroot (where the bcachefs filesystem would be mounted in initrd) but instead to /sysroot/root. Nice, right? Just wouldn't have thought that I would learn about some weird mount options and about intrigate details of the Linux boot process by just wanting to format my drive in bcachefs.....
+
 ## Todo
-- [ ] coherent nixified theming across the following programs (moved form nix-colors to stylix):
+- [x] coherent nixified theming across the following programs (moved from nix-colors to stylix):
     - [x] Alacritty
     - [x] GTK
     - [x] Qt5
@@ -14,7 +20,7 @@ This is the NixOS config for my Framework 12th Gen Laptop (home-manager config i
     - [x] Hyprland (accent colors)
     - [x] neovim 
     - [x] mangohud
-    - [ ] wallpaper? (not integrated in theme yet)
+    - [x] wallpaper
 - [x] complete neovim config using nixvim for full development environment/IDE (including bash script for creating C++ cmake environment and launching compiled program)
 - [x] waybar config with custom mako module that works through RT signal communication
 - [x] Hyprland config with some custom bash scripts for clamshell mode, lock and suspend, etc.
@@ -31,6 +37,22 @@ This is the NixOS config for my Framework 12th Gen Laptop (home-manager config i
 - [ ] (automatic) timezone switcher for when traveling?
 - [ ] Firefox/thunderbird config?
 
+## new Install guide for bcachefs and impermanence
+- `fdisk /dev/nvme0n1`, create partition table with efi system +500M, linux filesystem -24G, linux swap up to largest sector
+- `mkfs.vfat -F 32 -n UEFI /dev/nvme0n1p1`
+- `bcachefs format --fs_label JuliansNixOS --encrypted --discard /dev/nvme0n1p2`
+- `bcachefs mount /dev/nvme0n1p2 /mnt && cd /mnt`
+- `bcachefs subvolume create root && bcachefs subvolume create home && bcachefs subvolume create nix && bcachefs subvolume create persist`
+- `mkdir /mnt/root/nix && mkdir /mnt/root/persist && mkdir /mnt/root/home && mkdir /mnt/root/boot`
+- `mount -B /mnt/nix /mnt/root/nix && mount -B /mnt/persist /mnt/root/persist && mount -B /mnt/home /mnt/root/home`
+- `mount -o umask=077 /dev/nvme0n1p1 /mnt/root/boot`
+- `dd bs=512 count=8 if=/dev/random iflag=fullblock | install -m 0600 /dev/stdin /mnt/persist/swapPart.key`
+- `cryptsetup luksFormat /dev/nvme0n1p3 /mnt/persist/swapPart.key --label=JuliansEncryptedSwap`
+- `cryptsetup open /dev/disk/by-label/JuliansEncryptedSwap swap --key-file /mnt/persist/swapPart.key`
+- `mkswap --label JuliansSwap /dev/mapper/swap`
+- write passphrase of bcachefs partition into file called plaintext and execute `clevis encrypt sss "$(<clevisConfig.json)" < plaintext > fs-decrypt-secret.jwe` in prepared nix-shell environment and put the file fs-decrypt-secret.jwe into the Nix config in the JuliansFramework directory (don't forget to git add)
+- `nixos-install --root /mnt/root/ --flake .#JuliansFramework`
+
 ## Installation guide (from NixOS ISO:)
 - `sudo -i` login as root
 - `loadkeys de-latin1` optional: switch to your preferred keyboard layout (important for entering passwords later on)
@@ -45,7 +67,6 @@ This is the NixOS config for my Framework 12th Gen Laptop (home-manager config i
 - `nixos-install --flake /mnt/etc/nixos/flake.nix#JuliansFramework` install system
 
 ## After initial installation (logged in as root)
-- `passwd julian` set password for users
 - `nix run nixpkgs#sbctl create-keys` generate secure boot keys
 - use the deployment script with the sops option to modify the sops configuration to use your new age key (not modified&tested for localhost yet, read the script and use/modify the command in a sensible way manually for now!)
 - edit `flake.nix` and switch from systemd-boot to lanzaboote
