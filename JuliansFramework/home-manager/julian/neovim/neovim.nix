@@ -221,7 +221,7 @@
       };
 
       #theme for status bar at bottom
-      lualine.theme = lib.mkForce "auto";
+      lualine.settings.options.theme = lib.mkForce "auto";
 
       #snippet engine
       luasnip = {

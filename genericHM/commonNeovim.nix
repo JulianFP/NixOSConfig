@@ -78,7 +78,10 @@
       #status bar at bottom
       lualine = {
         enable = true;
+      } // lib.optionalAttrs (stable) { #for 24.04 devices, moved to settings.options.theme for 24.11
         theme = "onedark";
+      } // lib.optionalAttrs (!stable) {
+        settings.options.theme = "onedark";
       };
 
       #nix and bash lsp 
