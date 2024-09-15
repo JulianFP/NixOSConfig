@@ -8,6 +8,10 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nixos-generators = {
       url = "github:nix-community/nixos-generators";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixos-generators-stable = {
+      url = "github:nix-community/nixos-generators";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
     nixvim = {
@@ -54,10 +58,11 @@
   let
     lib = nixpkgs-stable.lib;
     getPkgs = stable: if stable then nixpkgs-stable else nixpkgs;
+    getGenerator = stable: if stable then nixos-generators-stable else nixos-generators;
     defaultHomeManagerModules = {
       root = [ ./genericHM/shell.nix ];
     };
-    makeSystem = { hostName, system ? "x86_64-linux", stable ? true, server ? false, proxmoxVmID ? null, nebula ? true, boot ? 0, hasOwnModule ? true, homeManager ? true, systemModules ? [], homeManagerModules ? {}, permittedUnfreePackages ? [], permittedInsecurePackages ? [], overlays ? [], args ? {} }: (getPkgs stable).lib.nixosSystem rec {
+    makeConfig = arguments@{ hostName, system ? "x86_64-linux", stable ? true, server ? false, proxmoxVmID ? null, nebula ? true, boot ? 0, hasOwnModule ? true, homeManager ? true, systemModules ? [], homeManagerModules ? {}, permittedUnfreePackages ? [], permittedInsecurePackages ? [], overlays ? [], args ? {}, ... }: rec {
       inherit system;
       pkgs = import (getPkgs stable) {
         inherit system;
@@ -89,34 +94,13 @@
         // args;
       } // args;
     };
-    makeSystems = systems: builtins.mapAttrs (name: value: (makeSystem ({ hostName = name; } // value))) systems;
+    makeSystem = attributes@{stable ? true, ...}: (getPkgs stable).lib.nixosSystem (makeConfig attributes);
+    makeSystems = systems: builtins.mapAttrs (name: value: makeSystem ({ hostName = name; } // value)) systems;
+    toGenSystems = AttrsOfLists: builtins.mapAttrs (name: value: builtins.listToAttrs (builtins.map (value: {name = value.specialArgs.hostName; value = (getGenerator value.specialArgs.stable).nixosGenerate value;}) value)) AttrsOfLists;
+    genSystems = systems: toGenSystems (builtins.groupBy (builtins.getAttr "system") (lib.attrsets.mapAttrsToList (name: value: (makeConfig ({ hostName = name; } // value)) // {format = value.format;}) systems));
   in {
-    packages.x86_64-linux = {
-      blankISO = nixos-generators.nixosGenerate rec {
-        format = "iso";
-        system = "x86_64-linux";
-        pkgs = import nixpkgs-stable {
-          inherit system;
-        };
-        modules = [
-          ./generic/server.nix
-          #don't use ./proxmoxVM.nix because ISO does not support disco and doesn't have vmID
-          ./blankISO/configuration.nix 
-        ];
-        specialArgs = rec {
-          hostName = "blankISO"; 
-          homeManagerExtraSpecialArgs = { 
-            inherit hostName;
-            inherit stable;
-          };
-          inherit inputs;
-          inherit self;
-        };
-      };
-    };
-
     /*
-    --- documentation makeSystems function ---
+    --- documentation makeSystems and genSystems functions ---
     accepts attribute set with name/value pairs where name is hostName and value is another attribute set with the following options:
     - system (string): platform/architecture. Default: "x86_64-linux"
     - stable (bool): whether to use nixpkgs-stable or not (in which case it uses nixpkgs-unstable). Default: true
@@ -132,7 +116,22 @@
     - permittedInsecurePackages (list of strings): List of package names of packages that are marked as insecure (e.g. because they are EOL) that should be allowed on that system. Default: []
     - overlays (list of overlay definitions): List of overlays that should be activated for that system. Default: []
     - args (attribute set of anything): Variables that should be included as specialArgs for both system modules as well as HM-modules in addition to what gets added automatically (i.e. in addition to self, hostName, stable, vmID, inputs/contents of the inputs)
+    - (genSystems only) format (string): output format, see nixos-generators github for all options. No default, always needs to be set
     */
+
+    packages = genSystems {
+      "blankISO" = {
+        format = "iso";
+        server = true;
+	nebula = false;
+      };
+      "installISO" = {
+        format = "install-iso";
+	stable = false;
+	nebula = false;
+      };
+    };
+
     nixosConfigurations = makeSystems {
       "JuliansFramework" = {
         stable = false;
@@ -175,6 +174,17 @@
           (import ./generic/overlays/qt5ct_with_breeze.nix)
           #(import ./generic/overlays/lyx.nix)
         ];
+      };
+      "rescueSystem" = {
+        stable = false;
+	      boot = 1;
+	      nebula = false;
+        homeManagerModules = {
+          julian = [
+            ./genericHM/shell.nix
+            ./genericHM/yubikey.nix
+          ];
+        };
       };
       "NixOSTesting" = {
         proxmoxVmID = 120;
