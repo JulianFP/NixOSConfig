@@ -183,6 +183,7 @@
           julian = [
             ./genericHM/shell.nix
             ./genericHM/yubikey.nix
+            ./genericHM/neovimDesktop.nix
           ];
         };
       };
@@ -198,6 +199,7 @@
         hasOwnModule = false;
         systemModules = [
           ./Nextcloud/configuration.nix
+          ./generic/thelounge.nix
         ];
       };
       "Jellyfin" = {

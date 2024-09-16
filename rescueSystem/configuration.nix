@@ -1,4 +1,4 @@
-{ pkgs, lib, modulesPath, ... }:
+{ config, pkgs, ... }:
 
 {
   imports = [
@@ -16,6 +16,9 @@
     supportedFilesystems = {
       bcachefs = true;
     };
+    extraModulePackages = [
+      (pkgs.callPackage ../generic/packages/bcachefs-kernel-module/package.nix {kernel = config.boot.kernelPackages.kernel;})
+    ];
   };
 
   services = {
@@ -39,13 +42,14 @@
 
   powerManagement.enable = true;
 
-  # Enable plymouth
-  boot.plymouth.enable = true;
-
   environment.defaultPackages = with pkgs; [
+    cryptsetup
     git
     firefox
     kdePackages.konversation
+    keepassxc
+    magic-wormhole
+    (import ../JuliansFramework/shellScriptBin/vlan.nix {inherit pkgs;} )
   ];
 
   users.users.julian = {
