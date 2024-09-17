@@ -19,7 +19,7 @@
     enable = true;
     openFirewall = true;
   };
-  environment.persistence."/persist/backMeUp/jellyseerr" = {
+  environment.persistence."/persist/backMeUp" = {
     hideMounts = true;
     directories = [
       {directory = "/var/lib/private/jellyseerr"; user = "jellyseerr"; group = "jellyseerr";}

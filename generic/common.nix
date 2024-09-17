@@ -1,6 +1,14 @@
-{ self, pkgs, hostName, ...}:
+{ self, config, pkgs, lib, hostName, ...}:
 
 {
+  #some global assertions to make sure to not repeat these mistakes
+  assertions = [{
+    assertion = if builtins.hasAttr "persistence" config.environment 
+      then (lib.attrsets.filterAttrs (name: value: name != "/persist" && name != "/persist/backMeUp") config.environment.persistence) == {}
+      else true;
+    message = "Custom assertion: Impermanence module cannot add parent directories on its own, only use /persist or /persist/backMeUp as a storage location because of that!";
+  }];
+
   #define hostname 
   networking.hostName = hostName;
 

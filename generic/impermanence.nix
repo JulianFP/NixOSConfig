@@ -18,7 +18,7 @@
       type = "ed25519";
     }
   ];
-  environment.persistence."/persist/systemFiles" = {
+  environment.persistence."/persist" = {
     hideMounts = true;
     directories = [
       "/var/log"
