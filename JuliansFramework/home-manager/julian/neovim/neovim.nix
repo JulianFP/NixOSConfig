@@ -257,7 +257,7 @@
           nil-ls.enable = true;	#lsp server for Nix
           texlab.enable = true; #lsp Server for LaTeX
           java-language-server.enable = true; #lsp Server for Java
-          tsserver.enable = true; #lsp server for Typescript
+          ts-ls.enable = true; #lsp server for Typescript
           svelte.enable = true; #lsp server for Svelte (Javascript Framework)
         };
       };
