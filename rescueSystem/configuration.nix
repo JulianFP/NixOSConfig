@@ -42,6 +42,11 @@
 
   powerManagement.enable = true;
 
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+  };
+
   environment.defaultPackages = with pkgs; [
     cryptsetup
     git
@@ -49,6 +54,8 @@
     kdePackages.konversation
     keepassxc
     magic-wormhole
+    rsync
+    age
     (import ../JuliansFramework/shellScriptBin/vlan.nix {inherit pkgs;} )
   ];
 
