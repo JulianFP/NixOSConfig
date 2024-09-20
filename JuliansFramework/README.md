@@ -38,10 +38,10 @@ Where do I even start. Well, I wanted to use bcachefs and a NixOS impermanence s
 - [ ] Firefox/thunderbird config?
 
 ## new Install guide for bcachefs and impermanence
-- `fdisk /dev/nvme0n1`, create partition table with efi system +500M, linux filesystem -24G, linux swap up to largest sector
+- `fdisk /dev/nvme0n1`, create partition table with efi system +1G, linux filesystem -24G, linux swap up to largest sector (don't forget to set partition types as well)
 - `mkfs.vfat -F 32 -n UEFI /dev/nvme0n1p1`
 - `bcachefs format --fs_label JuliansNixOS --encrypted --discard /dev/nvme0n1p2`
-- `bcachefs mount /dev/nvme0n1p2 /mnt && cd /mnt`
+- `mount -t bcachefs -o noatime /dev/nvme0n1p2 /mnt && cd /mnt`
 - `bcachefs subvolume create root && bcachefs subvolume create home && bcachefs subvolume create nix && bcachefs subvolume create persist`
 - `mkdir /mnt/root/nix && mkdir /mnt/root/persist && mkdir /mnt/root/home && mkdir /mnt/root/boot`
 - `mount -B /mnt/nix /mnt/root/nix && mount -B /mnt/persist /mnt/root/persist && mount -B /mnt/home /mnt/root/home`
@@ -50,10 +50,11 @@ Where do I even start. Well, I wanted to use bcachefs and a NixOS impermanence s
 - `cryptsetup luksFormat /dev/nvme0n1p3 /mnt/persist/swapPart.key --label=JuliansEncryptedSwap`
 - `cryptsetup open /dev/disk/by-label/JuliansEncryptedSwap swap --key-file /mnt/persist/swapPart.key`
 - `mkswap --label JuliansSwap /dev/mapper/swap`
-- write passphrase of bcachefs partition into file called plaintext and execute `clevis encrypt sss "$(<clevisConfig.json)" < plaintext > fs-decrypt-secret.jwe` in prepared nix-shell environment and put the file fs-decrypt-secret.jwe into the Nix config in the JuliansFramework directory (don't forget to git add)
-- `nixos-install --root /mnt/root/ --flake .#JuliansFramework`
+- use the deployment script with the sops option to modify the sops configuration to use your new age key (not modified&tested for localhost yet, read the script and use/modify the command in a sensible way manually for now!). Necessary before nixos-install and reboot because sops also unlocks the hash file that contains the user passwords!
+- cd into directory where NixOSConfig is and execute (as root or with sudo) `nixos-install --root /mnt/root/ --flake .#JuliansFramework`)
+- reboot and follow the after installation guides below (secureboot, clevis setup, ...)
 
-## Installation guide (from NixOS ISO:)
+## Old installation guide for btrfs (from NixOS ISO:)
 - `sudo -i` login as root
 - `loadkeys de-latin1` optional: switch to your preferred keyboard layout (important for entering passwords later on)
 - Create two partitions on target disc: One EFI partition and one system partition (use fdisk or parted). The EFI partition has to be of type "EFI System"
@@ -68,13 +69,13 @@ Where do I even start. Well, I wanted to use bcachefs and a NixOS impermanence s
 
 ## After initial installation (logged in as root)
 - `nix run nixpkgs#sbctl create-keys` generate secure boot keys
-- use the deployment script with the sops option to modify the sops configuration to use your new age key (not modified&tested for localhost yet, read the script and use/modify the command in a sensible way manually for now!)
 - edit `flake.nix` and switch from systemd-boot to lanzaboote
 - reboot and put laptop into Setup Mode (from firmware)
 - `nix run nixpkgs#sbctl enroll-keys -- --microsoft` enroll keys to firmware
 - `nixos-rebuild switch` to apply the config changes to did so far (you may also want to push them to github)
 - reboot again and enforce secure boot in firmware
-- `fprintd-enroll -f left-index-finger julian` enroll fingerprints (fingerprint sensor). Repeat for other fingers or users
+- write passphrase of bcachefs partition into file called plaintext and execute `clevis encrypt sss "$(<clevisConfig.json)" < plaintext > fs-decrypt-secret.jwe` in prepared nix-shell environment and put the file fs-decrypt-secret.jwe into the Nix config in the JuliansFramework directory (don't forget to git add)
+- `fprintd-enroll -f left-index-finger julian` enroll fingerprints (fingerprint sensor). Repeat for other fingers or users (run as root and not with sudo, maybe run fprint-delete command first)
 - restore home-folder data from backup (Documents, Pictures, Videos, .mozilla and .thunderbird directories, ...)
 - set thunderbird and firefox profile in about:config (in Thunderbird: Go to Help->Troubleshooting Information->Scroll down to about:profiles)
 - Start kwalletd5 in Terminal, log in into Nextcloud (setup synchronisation) and Nextcloud will prompt for the creation of a new kwallet (perform it)

@@ -105,6 +105,8 @@ in {
       initrd-switch-root.serviceConfig.ExecStart = lib.mkForce (builtins.map (x: builtins.replaceStrings ["/sysroot"] ["/sysroot/root"] x) oldSystemdInitrd.initrd-switch-root.serviceConfig.ExecStart);
       initrd-nixos-activation.script = lib.mkForce (builtins.replaceStrings ["/sysroot"] ["/sysroot/root"] oldSystemdInitrd.initrd-nixos-activation.script);
 
+      "unlock-bcachefs-${utils.escapeSystemdPath "/"}".serviceConfig.StandardOutput = "tty";
+
       #bcachefs doesn't support swap files yet, so I use a luks-encrypted swap partition instead.
       #It gets decrypted using a key file on the encrypted bcachefs filesystem, and to get hibernation the swap volume needs to be
       #decrypted before sysroot.mount because in hibernation the mounts are loaded from swap as well
@@ -117,10 +119,17 @@ in {
         serviceConfig = {
           Type = "oneshot";
           KeyringMode = "inherit"; #mount needs access to kernel keyring because bcachefs encryption key is stored there (unlock-bcachefs--.service unlocks partition and puts key into keyring)
+          StandardOutput = "tty";
+          TimeoutSec = "infinity";
         };
         script = ''
           mkdir /bcachefs_tmp
-          mount /dev/disk/by-label/${bcachefsLabel} /bcachefs_tmp
+          if mount -t bcachefs -o noatime /dev/disk/by-label/${bcachefsLabel} /bcachefs_tmp; then
+              echo "Initial mount of bcachefs root successful"
+          else
+              echo "Initial mount of bcachefs root failed, trying fsck,fix_errors now. This may take some time, please wait..."
+              mount -t bcachefs -o noatime,fsck,fix_errors UUID=$(bcachefs show-super /dev/disk/by-label/${bcachefsLabel} | grep Ext | awk '{ print $3 ;}') /bcachefs_tmp
+          fi
         '';
       };
 
@@ -147,19 +156,27 @@ in {
         after = [ "unlock-bcachefs-${utils.escapeSystemdPath "/"}.service" "temp-mount-bcachefs.service" "systemd-hibernate-resume.service" ];
         before = [ "sysroot.mount" ];
         unitConfig.DefaultDependencies = false;
-        serviceConfig.Type = "oneshot";
+        serviceConfig = {
+          Type = "oneshot";
+          StandardOutput = "tty";
+          TimeoutSec = "infinity";
+        };
         script = ''
           if [[ -e /bcachefs_tmp/root ]]; then
               mkdir -p /bcachefs_tmp/old_roots
               timestamp=$(date --date="@$(stat -c %Y /bcachefs_tmp/root)" "+%Y-%m-%-d_%H:%M:%S")
-              mv /bcachefs_tmp/root "/bcachefs_tmp/old_roots/$timestamp"
+              bcachefs subvolume snapshot -r /bcachefs_tmp/root "/bcachefs_tmp/old_roots/$timestamp"
+              bcachefs subvolume delete /bcachefs_tmp/root
+              echo "Successfully snapshoted and removed root subvolume"
           fi
 
           for i in $(find /bcachefs_tmp/old_roots/ -maxdepth 1 -mtime +30); do
               bcachefs subvolume delete "$i"
+              echo "Successfully garbage collected old snapshot $i"
           done
 
           bcachefs subvolume create /bcachefs_tmp/root
+          echo "Successfully create new root subvolume"
           umount /bcachefs_tmp
         '';
       };

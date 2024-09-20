@@ -62,7 +62,7 @@
     defaultHomeManagerModules = {
       root = [ ./genericHM/shell.nix ];
     };
-    makeConfig = arguments@{ hostName, system ? "x86_64-linux", stable ? true, server ? false, proxmoxVmID ? null, nebula ? true, boot ? 0, hasOwnModule ? true, homeManager ? true, systemModules ? [], homeManagerModules ? {}, permittedUnfreePackages ? [], permittedInsecurePackages ? [], overlays ? [], args ? {}, ... }: rec {
+    makeConfig = { hostName, system ? "x86_64-linux", stable ? true, server ? false, proxmoxVmID ? null, nebula ? true, boot ? 0, hasOwnModule ? true, homeManager ? true, systemModules ? [], homeManagerModules ? {}, permittedUnfreePackages ? [], permittedInsecurePackages ? [], overlays ? [], args ? {}, ... }: rec {
       inherit system;
       pkgs = import (getPkgs stable) {
         inherit system;
@@ -152,7 +152,6 @@
           ];
           root = [
             ./genericHM/yubikey.nix
-            ./JuliansFramework/home-manager/root/home.nix
           ];
         };
         permittedInsecurePackages = [
@@ -172,6 +171,7 @@
           nur.overlay
           (import ./generic/overlays/clevis_with_fido2.nix)
           (import ./generic/overlays/qt5ct_with_breeze.nix)
+          (import ./generic/overlays/xone.nix)
           #(import ./generic/overlays/lyx.nix)
         ];
       };

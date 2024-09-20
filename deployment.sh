@@ -138,7 +138,7 @@ sopsConfig() {
     done
 
     #remove temp git directory
-    rm -r "/tmp/$gitname"
+    rm -fr "/tmp/$gitname"
 }
 
 #$1 flakehostname
