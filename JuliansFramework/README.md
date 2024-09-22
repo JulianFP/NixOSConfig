@@ -33,9 +33,9 @@ Where do I even start. Well, I wanted to use bcachefs and a NixOS impermanence s
 - [x] laptop power tuning
 - [x] direnv enabled
 - [x] easy monitor switching when connecting to random external monitors (e.g. for presentation) with Hyprland (python script for this)
+- [x] Firefox & Thunderbird config
 - [ ] bluefilter mode for hyprland?
 - [ ] (automatic) timezone switcher for when traveling?
-- [ ] Firefox/thunderbird config?
 
 ## new Install guide for bcachefs and impermanence
 - `fdisk /dev/nvme0n1`, create partition table with efi system +1G, linux filesystem -24G, linux swap up to largest sector (don't forget to set partition types as well)

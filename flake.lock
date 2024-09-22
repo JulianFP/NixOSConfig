@@ -933,6 +933,22 @@
         "url": "https://github.com/NixOS/nixpkgs/archive/356624c12086a18f2ea2825fed34523d60ccc4e3.tar.gz"
       }
     },
+    "nixpkgs-nextcloud-client": {
+      "locked": {
+        "lastModified": 1726396940,
+        "narHash": "sha256-EpiSl9nSINTmIW6MG6CulGwNAa6sHrBt8gQdyHUXzR4=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "76d7694a3f681b0b750c01783df5d2177ef39fe7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "76d7694a3f681b0b750c01783df5d2177ef39fe7",
+        "type": "github"
+      }
+    },
     "nixpkgs-stable": {
       "locked": {
         "lastModified": 1720386169,
@@ -1259,6 +1275,7 @@
         "nixos-generators-stable": "nixos-generators-stable",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_4",
+        "nixpkgs-nextcloud-client": "nixpkgs-nextcloud-client",
         "nixpkgs-stable": "nixpkgs-stable_2",
         "nixvim": "nixvim",
         "nixvim-stable": "nixvim-stable",

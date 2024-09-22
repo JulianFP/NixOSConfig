@@ -282,19 +282,25 @@ structure:
     user.extraConfig = shutdownServiceTimout;
 
     #shutdown timer and service
-    timers."shutdown" = {
-      wantedBy = [ "timers.target" ];
-      timerConfig.OnCalendar = "*-*-* 00:15:00";
-    };
     services."shutdown" = {
+      startAt = "*-*-* 00:15:00"; #automatically configures timer for this service
+      #shutdown only happens if logFile exists, currentTime is between 00:10 and 00:20 and the logFile was last modified today
       script = ''
-        if [ -f /home/julian/shutdownFailures.log ]; then
-            sed -i '$ d' /home/julian/shutdownFailures.log
+        currentTime=$(date +%H:%M)
+        currentDay=$(date +%Y%m%d)
+        logFile="/home/julian/shutdownFailures.log"
+        if [ -f "$logFile" ]; then
+            logFileModifyDay=$(date +%Y%m%d -r "$logFile")
+            if [[ "$currentTime" > "00:10" ]] && [[ "$currentTime" < "00:20" ]] && [[ "$logFileModifyDay" == "$currentDay" ]]; then
+                sed -i '$ d' "$logFile"
+                shutdown now
+            else
+                echo "shutdown.service executed at incorrect time or shutdown-reminder didn't run today" >> "$logFile"
+            fi
         else
-            echo "latest log entry missing, shutdown-reminder didn't execute?" >> /home/julian/shutdownFailures.log
-            chown julian:users /home/julian/shutdownFailures.log
+            echo "$logFile missing, shutdown-reminder didn't run?" >> "$logFile"
+            chown julian:users "$logFile"
         fi
-        shutdown now
       '';
       serviceConfig = {
         Type = "oneshot";

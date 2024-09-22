@@ -130,6 +130,10 @@
     on-button-left=exec ${mako}/bin/makoctl invoke -n "$id" && ${mako}/bin/makoctl dismiss -n "$id" && kill -35 $(pidof waybar)
     on-button-right=exec ${mako}/bin/makoctl dismiss -n "$id" && kill -35 $(pidof waybar)
 
+    [app-name="shutdown-reminder"]
+    layer=overlay
+    on-notify=exec kill -35 $(pidof waybar) && ${mpv}/bin/mpv ${sound-theme-freedesktop}/share/sounds/freedesktop/stereo/dialog-warning.oga
+
     [mode=doNotDisturb]
     invisible=1
     '';
@@ -212,16 +216,16 @@
   /* -- misc -- */
   # Signal start in tray fix
   home.file.".local/share/applications/signal-desktop.desktop".text = ''
-[Desktop Entry]
-Name=Signal
-Exec=env LANGUAGE="en-US:de-DE" ${pkgs.signal-desktop}/bin/signal-desktop --no-sandbox --start-in-tray %U
-Terminal=false
-Type=Application
-Icon=signal-desktop
-StartupWMClass=Signal
-Comment=Private messaging from your desktop
-MimeType=x-scheme-handler/sgnl;x-scheme-handler/signalcaptcha;
-Categories=Network;InstantMessaging;Chat;
+    [Desktop Entry]
+    Name=Signal
+    Exec=env LANGUAGE="en-US:de-DE" ${pkgs.signal-desktop}/bin/signal-desktop --no-sandbox --start-in-tray %U
+    Terminal=false
+    Type=Application
+    Icon=signal-desktop
+    StartupWMClass=Signal
+    Comment=Private messaging from your desktop
+    MimeType=x-scheme-handler/sgnl;x-scheme-handler/signalcaptcha;
+    Categories=Network;InstantMessaging;Chat;
   '';
 
   #shutdown reminder timer and service
@@ -230,7 +234,7 @@ Categories=Network;InstantMessaging;Chat;
     text = ''
       #!/usr/bin/env bash
       date >> /home/julian/shutdownFailures.log 
-      notify-send -u critical "Shutdown Reminder" "The system will shut down in 15 minutes"
+      notify-send -u critical -a "shutdown-reminder" "  Shutdown Reminder " "The system will shut down in 15 minutes 󱈸󱈸󱈸"
     '';
     executable = true;
   };

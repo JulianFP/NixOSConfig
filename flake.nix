@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs-nextcloud-client.url = "github:NixOS/nixpkgs/76d7694a3f681b0b750c01783df5d2177ef39fe7";
     lanzaboote.url = "github:nix-community/lanzaboote";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nixos-generators = {
@@ -172,6 +173,7 @@
           (import ./generic/overlays/clevis_with_fido2.nix)
           (import ./generic/overlays/qt5ct_with_breeze.nix)
           (import ./generic/overlays/xone.nix)
+          (final: prev: {nextcloud-client = (import inputs.nixpkgs-nextcloud-client {system="x86_64-linux";}).nextcloud-client;})
           #(import ./generic/overlays/lyx.nix)
         ];
       };
