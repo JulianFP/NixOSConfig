@@ -9,6 +9,7 @@
       ./qt_gtk.nix #qt settings (mainly theming, not handled by stylix yet)
       ./rofi.nix
       ./neovim/neovim.nix
+      ./mozilla.nix
     ];
 
   # direnv
@@ -195,6 +196,15 @@
     "org/virt-manager/virt-manager/connections" = {
       autoconnect = ["qemu:///system"];
       uris = ["qemu:///system"];
+    };
+  };
+
+  #more programs
+  programs = {
+    chromium.enable = true;
+    htop = {
+      enable = true;
+      package = pkgs.htop-vim;
     };
   };
 

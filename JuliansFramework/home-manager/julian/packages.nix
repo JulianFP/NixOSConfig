@@ -41,14 +41,10 @@ in
     libnotify #needed for shutdown reminder
     tree
     unzip
-    htop-vim
     s-tui
     amdgpu_top
 
     # Applications
-    firefox
-    chromium
-    thunderbird
     libreoffice-qt
     pdfarranger
     hunspell
