@@ -253,6 +253,13 @@ structure:
       # the 'login' configuration file (see /etc/pam.d/login)
       auth include login
     '';
+
+    #enable basic tpm2 support for clevis
+    tpm2 = {
+      enable = true;
+      pkcs11.enable = true;
+      tctiEnvironment.enable = true;
+    };
   };
 
   virtualisation = {

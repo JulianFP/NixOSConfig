@@ -8,7 +8,7 @@ keys:
   - &LocalProxy age1jgxeprdxvxvgz0ya25tgcyfgq5uxe3w6z6cj22yemp2476avds4srumvlk
   - &IonosVPS age1mfk3dc4sekgxccv4dyuypavzelv0tvtlerf3s5qwtfzu9rnjevts9qlxme
   - &NixOSTesting age1qjptsdulm6keutjr2h3mgs0gshjfqrww922hg3870266hlce8cwsm7mfws
-  - &JuliansFramework age1tzr7vury8408qrfww9secqn353nndcr74832v6pdudejl9tpe5gs5qyuv3
+  - &JuliansFramework age18c4fpcl6mvedfudppdammfg4cmfcemxc98nq733l7h76apdgmsnq939yaz
 creation_rules:
   - path_regex: ^secrets/JuliansFramework/.*$
     key_groups:

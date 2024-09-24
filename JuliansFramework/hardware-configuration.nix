@@ -5,6 +5,8 @@ let
   uefiLabel = "UEFI";
   encryptedSwapLabel = "JuliansEncryptedSwap";
   unlockedSwapLabel = "JuliansSwap";
+  encryptedKeyPartitionLabel = "EncryptedKeyPartition";
+  unlockedKeyPartitionLabel = "KeyPartition";
   oldSystemdInitrd = ((import (modulesPath + "/system/boot/systemd/initrd.nix")) args).config.content.boot.initrd.systemd.services;
 in {
   imports = [ 
@@ -15,14 +17,21 @@ in {
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
-  boot.initrd.clevis = {
-    enable = true;
-    devices."/dev/disk/by-label/${bcachefsLabel}".secretFile = ./fs-decrypt-secret.jwe;
-  };
+  #KeyPartition is ext4 partition and is not part of fstab below since it's only needed in initrd
+  boot.supportedFilesystems.ext4 = true;
+  boot.initrd.supportedFilesystems.ext4 = true;
+
+  #decrypt keyPartition using clevis (enable this to get many required packages into initramfs)
+  #do not specify secretfile because it will be put into initramfs image, change its hash and thus change PCR 9 at next boot
+  #instead we will use clevises own unlocking mechanism that puts the jwe file into luks2 header 
+  boot.initrd.clevis.enable = true;
+
   #I applied an overlay for the clevis package that includes the fido2 pin for yubikey support. This copies that pin and its extra dependencies to the initrd as well
   boot.initrd.systemd = {
     extraBin = {
       grep = "${pkgs.gnugrep}/bin/grep";
+      sed = "${pkgs.gnused}/bin/sed";
+      cryptsetup = "${pkgs.cryptsetup}/bin/cryptsetup";
     };
     storePaths = [
       (pkgs.callPackage ../generic/packages/clevis-pin-fido2/package.nix {})
@@ -83,12 +92,16 @@ in {
       enable = true;
       blkDev = "/dev/disk/by-label/${encryptedSwapLabel}";
       label = unlockedSwapLabel;
-      keyFile = "/bcachefs_tmp/persist/swapPart.key";
+      keyFile = "/keyPartition/${encryptedSwapLabel}.key";
     };
   }];
-  boot.initrd.luks.devices."${unlockedSwapLabel}" = {
-    bypassWorkqueues = true;
-    allowDiscards = true;
+  boot.initrd.luks.devices = {
+    #do not add KeyPartition here because that will generate a systemd-cryptsetup service for unlocking it
+    #instead I want to define my own service (see below)
+    "${unlockedSwapLabel}" = {
+      bypassWorkqueues = true;
+      allowDiscards = true;
+    };
   };
 
   #define how long system should suspend before waking up and hibernating (hibernation always happens on low battery, whatever happens first)
@@ -105,41 +118,58 @@ in {
       initrd-switch-root.serviceConfig.ExecStart = lib.mkForce (builtins.map (x: builtins.replaceStrings ["/sysroot"] ["/sysroot/root"] x) oldSystemdInitrd.initrd-switch-root.serviceConfig.ExecStart);
       initrd-nixos-activation.script = lib.mkForce (builtins.replaceStrings ["/sysroot"] ["/sysroot/root"] oldSystemdInitrd.initrd-nixos-activation.script);
 
-      "unlock-bcachefs-${utils.escapeSystemdPath "/"}".serviceConfig.StandardOutput = "tty";
-
-      #bcachefs doesn't support swap files yet, so I use a luks-encrypted swap partition instead.
-      #It gets decrypted using a key file on the encrypted bcachefs filesystem, and to get hibernation the swap volume needs to be
-      #decrypted before sysroot.mount because in hibernation the mounts are loaded from swap as well
-      "temp-mount-bcachefs" = {
-        description = "Early mount bcachefs root";
-        wantedBy = [ "initrd.target" ];
-        after = [ "unlock-bcachefs-${utils.escapeSystemdPath "/"}.service" ];
-        before = [ "systemd-cryptsetup@${unlockedSwapLabel}.service" ];
+      #mount keyPartition that stores encryption keys for bcachefs and swap partition
+      "mount-keyPartition" = {
+        description = "Temporarily mount partition that holds encryption keys";
+        wantedBy = [ "unlock-bcachefs-${utils.escapeSystemdPath "/"}.service" "systemd-cryptsetup@${unlockedSwapLabel}.service" ];
+        before = [ "systemd-cryptsetup@${unlockedSwapLabel}.service" "unlock-bcachefs-${utils.escapeSystemdPath "/"}.service" ];
+        wants = [ "systemd-udev-settle.service" ];
+        after = [ "systemd-modules-load.service" "systemd-udev-settle.service" ];
         unitConfig.DefaultDependencies = false;
         serviceConfig = {
           Type = "oneshot";
-          KeyringMode = "inherit"; #mount needs access to kernel keyring because bcachefs encryption key is stored there (unlock-bcachefs--.service unlocks partition and puts key into keyring)
           StandardOutput = "tty";
           TimeoutSec = "infinity";
         };
         script = ''
-          mkdir /bcachefs_tmp
-          if mount -t bcachefs -o noatime /dev/disk/by-label/${bcachefsLabel} /bcachefs_tmp; then
-              echo "Initial mount of bcachefs root successful"
-          else
-              echo "Initial mount of bcachefs root failed, trying fsck,fix_errors now. This may take some time, please wait..."
-              mount -t bcachefs -o noatime,fsck,fix_errors UUID=$(bcachefs show-super /dev/disk/by-label/${bcachefsLabel} | grep Ext | awk '{ print $3 ;}') /bcachefs_tmp
+          echo "Trying to unlock ${encryptedKeyPartitionLabel} using clevis (tpm2 + fido2). Please press the button on your fido2 device"
+          if ! clevis luks unlock -d /dev/disk/by-label/${encryptedKeyPartitionLabel} -n ${unlockedKeyPartitionLabel}; then
+              echo "Automatic unlock not successful. TPM2 security policy might be violated, the laptop might be compromised! Please enter the Passphrase if you want to proceed anyway:"
+              until systemd-ask-password --id="cryptsetup:/dev/disk/by-label/${encryptedKeyPartitionLabel}" --keyname="cryptsetup" | cryptsetup open /dev/disk/by-label/${encryptedKeyPartitionLabel} ${unlockedKeyPartitionLabel}; do
+                  echo "Incorrect passphrase, please try again:"
+              done
           fi
+          echo "Unlock of keyPartition successful!"
+
+          mkdir /keyPartition
+          mount -t ext4 /dev/mapper/${unlockedKeyPartitionLabel} /keyPartition
+          echo "Mounting of keyPartition successful!"
         '';
       };
 
-      #I use this dummy service to define that the cryptsetup service that unlocks the swap partition needs to run before setting up swap
-      #this service on its own does nothing
-      dummyServices = {
-        description = "dummy service";
+      #use keyfile from keyPartition to unlock automatically (overwrite script of existing NixOS service)
+      "unlock-bcachefs-${utils.escapeSystemdPath "/"}" = {
+        serviceConfig.StandardOutput = "tty";
+        script = lib.mkForce ''
+          ${pkgs.bcachefs-tools}/bin/bcachefs unlock -f /keyPartition/${bcachefsLabel}.key /dev/disk/by-label/${bcachefsLabel}
+        '';
+      };
+
+      "unmount-keyPartition" = {
+        description = "Unmount temporarily mounted key partition";
         wantedBy = [ "initrd.target" ];
-        after = [ "systemd-cryptsetup@${unlockedSwapLabel}.service" ];
         before = [ "${utils.escapeSystemdPath config.boot.resumeDevice}.swap" ];
+        wants = [ "mount-keyPartition.service" ];
+        after = [ "systemd-cryptsetup@${unlockedSwapLabel}.service" "unlock-bcachefs-${utils.escapeSystemdPath "/"}.service" ];
+        serviceConfig = {
+          Type = "oneshot";
+          StandardOutput = "tty";
+          TimeoutSec = "infinity";
+        };
+        script = ''
+          umount /keyPartition
+          cryptsetup close ${unlockedKeyPartitionLabel}
+        '';
       };
 
       /*
@@ -153,15 +183,25 @@ in {
       "impermanence-wipe" = {
         description = "Copy current root partition away and create new one";
         wantedBy = [ "initrd.target" ];
-        after = [ "unlock-bcachefs-${utils.escapeSystemdPath "/"}.service" "temp-mount-bcachefs.service" "systemd-hibernate-resume.service" ];
         before = [ "sysroot.mount" ];
+        wants = [ "unlock-bcachefs-${utils.escapeSystemdPath "/"}.service" ];
+        after = [ "unlock-bcachefs-${utils.escapeSystemdPath "/"}.service" "systemd-hibernate-resume.service" ];
         unitConfig.DefaultDependencies = false;
         serviceConfig = {
           Type = "oneshot";
+          KeyringMode = "inherit"; #mount needs access to kernel keyring because bcachefs encryption key is stored there (unlock-bcachefs--.service unlocks partition and puts key into keyring)
           StandardOutput = "tty";
           TimeoutSec = "infinity";
         };
         script = ''
+          mkdir /bcachefs_tmp
+          if mount -t bcachefs -o noatime /dev/disk/by-label/${bcachefsLabel} /bcachefs_tmp; then
+              echo "Initial mount of bcachefs root successful"
+          else
+              echo "Initial mount of bcachefs root failed, trying fsck,fix_errors now. This may take some time, please wait..."
+              mount -t bcachefs -o noatime,fsck,fix_errors /dev/disk/by-label/${bcachefsLabel} /bcachefs_tmp
+          fi
+
           if [[ -e /bcachefs_tmp/root ]]; then
               mkdir -p /bcachefs_tmp/old_roots
               timestamp=$(date --date="@$(stat -c %Y /bcachefs_tmp/root)" "+%Y-%m-%-d_%H:%M:%S")

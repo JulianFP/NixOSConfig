@@ -2,7 +2,7 @@ final: prev: let
   clevis-pin-fido2 = (prev.callPackage ../packages/clevis-pin-fido2/package.nix {});
 in {
   clevis = prev.clevis.overrideAttrs(old: {
-    buildInputs = old.buildInputs ++ [ clevis-pin-fido2 ];
+    buildInputs = old.buildInputs ++ [ prev.jq clevis-pin-fido2 ];
     postInstall =
       let
         includeIntoPath = [
@@ -14,6 +14,7 @@ in {
           prev.libpwquality
           prev.luksmeta
           prev.tpm2-tools
+          prev.jq
           clevis-pin-fido2
         ];
       in
