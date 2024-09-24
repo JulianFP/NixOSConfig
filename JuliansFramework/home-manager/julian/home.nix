@@ -113,6 +113,14 @@
         "application/x-extension-xhtml" = [ "firefox.desktop" ];
         "application/x-extension-xht" = [ "firefox.desktop" ];
         "application/xhtml+xml" = [ "firefox.desktop" ];
+        #thunderbird
+        "x-scheme-handler/mailto" = [ "thunderbird.desktop" ];
+        "x-scheme-handler/mid" = [ "thunderbird.desktop" ];
+        "x-scheme-handler/webcal" = [ "thunderbird.desktop" ];
+        "x-scheme-handler/webcals" = [ "thunderbird.desktop" ];
+        "application/x-extension-ics" = [ "thunderbird.desktop" ];
+        "message/rfc822" = [ "thunderbird.desktop" ];
+        "text/calendar" = [ "thunderbird.desktop" ];
       };
     };
   };
