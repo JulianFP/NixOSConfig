@@ -172,7 +172,6 @@
           nur.overlay
           (import ./generic/overlays/clevis_with_fido2.nix)
           (import ./generic/overlays/qt5ct_with_breeze.nix)
-          (import ./generic/overlays/xone.nix)
           (final: prev: {nextcloud-client = (import inputs.nixpkgs-nextcloud-client {system="x86_64-linux";}).nextcloud-client;})
           #(import ./generic/overlays/lyx.nix)
         ];

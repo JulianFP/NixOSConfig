@@ -223,6 +223,8 @@
       #theme for status bar at bottom
       lualine.settings.options.theme = lib.mkForce "auto";
 
+      web-devicons.enable = true;
+
       #snippet engine
       luasnip = {
         enable = true;
