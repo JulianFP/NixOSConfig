@@ -60,6 +60,7 @@
         "[silent] sleep 2 && env LANGUAGE='en-US:de-DE' signal-desktop --no-sandbox --start-in-tray"
         "[silent] sleep 2 && nextcloud"
         "[silent] sleep 2 && webcord -m"
+        "[silent] sleep 2 && guilded"
         "[silent] xwaylandvideobridge"
       ];
 

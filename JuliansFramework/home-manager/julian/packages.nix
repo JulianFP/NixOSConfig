@@ -58,6 +58,7 @@ in
     element-desktop
     slack
     webcord
+    (callPackage ./../../../generic/packages/guilded/package.nix {})
     kdePackages.ark
     kdePackages.dolphin
     kdePackages.filelight

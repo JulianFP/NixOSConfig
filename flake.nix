@@ -167,6 +167,7 @@
           "xow_dongle-firmware"
           "idea-ultimate"
           "slack"
+          "guilded"
         ];
         overlays = [
           nur.overlay
