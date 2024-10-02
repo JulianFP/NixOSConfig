@@ -54,54 +54,12 @@
     impermanence.url = "github:nix-community/impermanence";
   };
 
-  outputs = { self, ... } @ inputs: 
-  with inputs;
-  let
-    lib = nixpkgs-stable.lib;
-    getPkgs = stable: if stable then nixpkgs-stable else nixpkgs;
-    getGenerator = stable: if stable then nixos-generators-stable else nixos-generators;
-    defaultHomeManagerModules = {
-      root = [ ./genericHM/shell.nix ];
-    };
-    makeConfig = { hostName, system ? "x86_64-linux", stable ? true, server ? false, proxmoxVmID ? null, nebula ? true, boot ? 0, hasOwnModule ? true, homeManager ? true, systemModules ? [], homeManagerModules ? {}, permittedUnfreePackages ? [], permittedInsecurePackages ? [], overlays ? [], args ? {}, ... }: rec {
-      inherit system;
-      pkgs = import (getPkgs stable) {
-        inherit system;
-        inherit overlays;
-        config = {
-          inherit permittedInsecurePackages;
-          allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) permittedUnfreePackages;
-        };
-      };
-      modules = (if (proxmoxVmID != null) then [ ./generic/proxmoxVM.nix ]
-        else if server then [ ./generic/server.nix ]
-        else [ ./generic/common.nix ])
-        ++ lib.lists.optional (boot != 0) (if (boot == 2) then ./generic/lanzaboote.nix else ./generic/systemd-boot.nix)
-        ++ lib.lists.optional nebula ./generic/nebula.nix
-        ++ lib.lists.optional homeManager ./generic/commonHM.nix
-        ++ lib.lists.optional hasOwnModule ./${hostName}/configuration.nix
-        ++ systemModules;
-      specialArgs = {
-        inherit hostName inputs self stable;
-      } // lib.optionalAttrs (proxmoxVmID != null) {
-        vmID = proxmoxVmID;
-      } // lib.optionalAttrs homeManager {
-        homeManagerModules = homeManagerModules // (builtins.mapAttrs (name: value:
-          value ++ (lib.attrsets.attrByPath [name] [] homeManagerModules)) defaultHomeManagerModules);
-        homeManagerExtraSpecialArgs = {
-          inherit hostName stable;
-        }
-        // (builtins.removeAttrs inputs [ "nixpkgs" "nixpkgs-stable" "home-manager" "home-manager-stable" ])
-        // args;
-      } // args;
-    };
-    makeSystem = attributes@{stable ? true, ...}: (getPkgs stable).lib.nixosSystem (makeConfig attributes);
-    makeSystems = systems: builtins.mapAttrs (name: value: makeSystem ({ hostName = name; } // value)) systems;
-    toGenSystems = AttrsOfLists: builtins.mapAttrs (name: value: builtins.listToAttrs (builtins.map (value: {name = value.specialArgs.hostName; value = (getGenerator value.specialArgs.stable).nixosGenerate value;}) value)) AttrsOfLists;
-    genSystems = systems: toGenSystems (builtins.groupBy (builtins.getAttr "system") (lib.attrsets.mapAttrsToList (name: value: (makeConfig ({ hostName = name; } // value)) // {format = value.format;}) systems));
-  in {
+  outputs = inputs: let
+    mkSystems = import ./generic/utils/mkSystems.nix inputs;
+    genSystems = import ./generic/utils/genSystems.nix inputs;
+  in with inputs; {
     /*
-    --- documentation makeSystems and genSystems functions ---
+    --- documentation mkSystems and genSystems functions ---
     accepts attribute set with name/value pairs where name is hostName and value is another attribute set with the following options:
     - system (string): platform/architecture. Default: "x86_64-linux"
     - stable (bool): whether to use nixpkgs-stable or not (in which case it uses nixpkgs-unstable). Default: true
@@ -124,16 +82,18 @@
       "blankISO" = {
         format = "iso";
         server = true;
-	nebula = false;
+	      nebula = false;
+        stateVersion = "24.05";
       };
       "installISO" = {
         format = "install-iso";
-	stable = false;
-	nebula = false;
+        stable = false;
+        nebula = false;
+        stateVersion = "24.11";
       };
     };
 
-    nixosConfigurations = makeSystems {
+    nixosConfigurations = mkSystems {
       "JuliansFramework" = {
         stable = false;
         boot = 2;
@@ -176,6 +136,7 @@
           (final: prev: {nextcloud-client = (import inputs.nixpkgs-nextcloud-client {system="x86_64-linux";}).nextcloud-client;})
           #(import ./generic/overlays/lyx.nix)
         ];
+        stateVersion = "24.11";
       };
       "rescueSystem" = {
         stable = false;
@@ -188,12 +149,16 @@
             ./genericHM/neovimDesktop.nix
           ];
         };
+        stateVersion = "24.11";
       };
       "NixOSTesting" = {
         proxmoxVmID = 120;
+        hasOwnModule = false;
+        stateVersion = "23.05";
       };
       "Nextcloud" = {
         proxmoxVmID = 131;
+        stateVersion = "23.11";
       };
       "Nextcloud-Testing" = {
         proxmoxVmID = 150;
@@ -203,9 +168,11 @@
           ./Nextcloud/configuration.nix
           ./generic/thelounge.nix
         ];
+        stateVersion = "23.11";
       };
       "Jellyfin" = {
         proxmoxVmID = 132;
+        stateVersion = "23.05";
       };
       "IonosVPS" = {
         server = true;
@@ -218,6 +185,7 @@
         homeManagerModules.root = [
           ./genericHM/ssh.nix
         ];
+        stateVersion = "23.05";
       };
       "LocalProxy" = {
         proxmoxVmID = 130;
@@ -229,6 +197,7 @@
         homeManagerModules.root = [
           ./genericHM/ssh.nix
         ];
+        stateVersion = "23.05";
       };
       "Valheim" = {
         proxmoxVmID = 135;
@@ -237,6 +206,7 @@
           "steam-run"
           "steam-original"
         ];
+        stateVersion = "23.05";
       };
       "Project-W" = {
         proxmoxVmID = 136;
@@ -247,6 +217,7 @@
           inputs.project-W.nixosModules.default
           inputs.project-W-frontend.nixosModules.default
         ];
+        stateVersion = "23.11";
       };
     };
   };
