@@ -56,6 +56,8 @@
         "[workspace 10 silent] thunderbird"
         "[workspace 1 silent] sleep 1 && keepassxc"
         "[silent] sleep 2 && element-desktop --hidden"
+        "[workspace 9 silent] sleep 2 && alacritty -e iamb -P private"
+        "[workspace 9 silent] sleep 2 && alacritty -e iamb -P uni"
         "[silent] sleep 2 && slack -s -u"
         "[silent] sleep 2 && env LANGUAGE='en-US:de-DE' signal-desktop --no-sandbox --start-in-tray"
         "[silent] sleep 2 && nextcloud"

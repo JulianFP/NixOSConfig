@@ -48,8 +48,10 @@
         OfflineApps = true;
         Locked = true;
       };
+      Handlers.mimeTypes."application/pdf".ask = true;
       #set firefox settings through policies so that they are grayed out in UI and I can see which settings are set using home-manager and which not
       Preferences = {
+        "browser.download.useDownloadDir" = { Value = false; Status = "locked"; };
         "browser.ctrlTab.sortByRecentlyUsed" = { Value = true; Status = "locked"; };
         "browser.tabs.inTitlebar" = { Value = 0; Status = "locked"; };
         "privacy.globalprivacycontrol.enabled" = { Value = true; Status = "locked"; };

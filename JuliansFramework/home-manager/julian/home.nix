@@ -79,6 +79,11 @@
       "/usr/share:/var/lib/flatpak/exports/share"
       "\$HOME/.local/share/flatpak/exports/share"
     ];
+    userDirs = {
+      enable = true;
+      createDirectories = true;
+      desktop = config.xdg.userDirs.documents;
+    };
     mime.enable = false; #set mime apps manually
     mimeApps = {
       enable = true;

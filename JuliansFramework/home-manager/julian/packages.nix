@@ -55,7 +55,7 @@ in
     keepassxc
     nextcloud-client
     signal-desktop
-    element-desktop
+    iamb
     slack
     webcord
     (callPackage ./../../../generic/packages/guilded/package.nix {})
