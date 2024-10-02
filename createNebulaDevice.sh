@@ -42,6 +42,7 @@ privileges() {
 
 #store if we need to umount before exit
 mounted=false
+unlocked=false
 
 addDevice() {
     #check if enough parameters are provided
@@ -56,9 +57,11 @@ addDevice() {
         read -p "plug in usb device with nebula cert and then press enter"
     done
     #unlock and mount usb stick
-    mounted=true
     cryptsetup open $luksUSBDevice luksUSBDeviceNebula
+    unlocked=true
+    mkdir -p /mnt
     mount /dev/mapper/luksUSBDeviceNebula /mnt 
+    mounted=true
 
 
     #find free filename for crt file on usb stick
@@ -117,6 +120,9 @@ function unmounting(){
         until umount /mnt; do
             sleep 1 
         done
+    fi
+    if $unlocked; then
+        echo "Closing luks device..."
         until cryptsetup close /dev/mapper/luksUSBDeviceNebula; do
             sleep 1 
         done
