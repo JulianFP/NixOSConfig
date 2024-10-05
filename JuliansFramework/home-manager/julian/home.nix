@@ -246,8 +246,18 @@
     target = ".systemScripts/shutdownReminder.sh";
     text = ''
       #!/usr/bin/env bash
-      date >> /home/julian/shutdownFailures.log 
-      notify-send -u critical -a "shutdown-reminder" "  Shutdown Reminder " "The system will shut down in 15 minutes 󱈸󱈸󱈸"
+      currentTime=$(date +%H:%M)
+      currentDay=$(date +%Y%m%d)
+      logFile="/home/julian/shutdownFailures.log"
+      logFileModifyDay=$(date +%Y%m%d -r "$logFile")
+      if [[ ! "$currentTime" < "00:00" ]] && [[ "$currentTime" < "00:15" ]]; then
+          if [[ "$logFileModifyDay" != "$currentDay" ]]; then
+              date >> "$logFile"
+          fi
+          currentMinute=$(date +%M)
+          minuteDiff=$((15-currentMinute))
+          notify-send -u critical -a "shutdown-reminder" "  Shutdown Reminder " "The system will shut down in ~$minuteDiff minutes 󱈸󱈸󱈸"
+      fi
     '';
     executable = true;
   };
@@ -261,6 +271,9 @@
         ExecStart = "/home/julian/.systemScripts/shutdownReminder.sh";
         Type = "oneshot";
       };
+      #this is specifically for when I dismiss the notification and stop the shutdown.timer, but then reboot within the 15 min timeframe and forget to do that again and my system just shuts down. Sounds unlikely, happened to my multiple times though.
+      Unit.After = [ "graphical-session.target" ];
+      Install.WantedBy = [ "graphical-session.target" ];
     };
   };
 }

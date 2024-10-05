@@ -301,8 +301,6 @@ structure:
             if [[ "$currentTime" > "00:10" ]] && [[ "$currentTime" < "00:20" ]] && [[ "$logFileModifyDay" == "$currentDay" ]]; then
                 sed -i '$ d' "$logFile"
                 shutdown now
-            else
-                echo "shutdown.service executed at incorrect time or shutdown-reminder didn't run today" >> "$logFile"
             fi
         else
             echo "$logFile missing, shutdown-reminder didn't run?" >> "$logFile"
