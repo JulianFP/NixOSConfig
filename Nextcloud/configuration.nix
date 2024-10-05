@@ -22,7 +22,7 @@ in
     enable = true;
     home = "/persist/backMeUp/nextcloud";
     hostName = if hostName == "Nextcloud" then "partanengroup.de" else "test.partanengroup.de";
-    package = pkgs.nextcloud29;
+    package = pkgs.nextcloud30;
     secretFile = config.sops.secrets."nextcloud/secrets.json".path;
     settings.default_phone_region = "DE";
     config.adminuser = "admin";
