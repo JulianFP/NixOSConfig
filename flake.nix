@@ -209,6 +209,7 @@
         stateVersion = "23.05";
       };
       "Project-W" = {
+        stable = false;
         proxmoxVmID = 136;
         overlays = [
           inputs.project-W.overlays.default
