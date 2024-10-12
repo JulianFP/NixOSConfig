@@ -1,5 +1,9 @@
-{ hostName, ... }:
+{ lib, pkgs, config, hostName, ... }:
 
+let
+  nebulaSystemdService = config.systemd.services."nebula@serverNetwork";
+  envFile = "/persist/nebulaOverwriter/envFile";
+in 
 {
   networking = {
     hostName = hostName; # Define your hostname.
@@ -31,23 +35,28 @@
     secrets = [ "ipsec.d/ipsec.nm-l2tp.secrets" ]; #ensure that it does not write secrets on read-only filesystem
   };
 
-  #setup nebula unsafe_routes
-  /*
-  services.nebula.networks."serverNetwork".settings.tun.unsafe_routes = [
-    {
-      route = "192.168.3.0/24";
-      via = "48.42.0.3";
-    }
-    {
-      route = "192.168.1.0/24";
-      via = "48.42.0.3";
-    }
-    {
-      route = "192.168.10.0/24";
-      via = "48.42.0.4";
-    }
-  ];
-  */
+  #make nebula config adjustable through toggleNebulaUnsafeRoutes bash package that can be found in ./shellScriptBin/nebulaRoutes.nix
+  #this is necessary to adjust unsafe_routes on the fly through a quick terminal command without having to change the NixOS and rebuilding all the time
+  systemd.services."nebula-custom_serverNetwork" = {
+    description = "Adjusted Nebula VPN service for serverNetwork that works together with the nebulaOverwriter python script";
+    after = [ "nebula@serverNetwork.service" "basic.target" "network.target" ];
+    wantedBy = [ "multi-user.target" "nebula@serverNetwork.service" ];
+    conflicts = [ "nebula@serverNetwork.service" ];
+    unitConfig = {
+      StartLimitIntervalSec = 0;
+      ConditionPathExists = envFile;
+    };
+    serviceConfig = lib.mkMerge [ nebulaSystemdService.serviceConfig {
+      EnvironmentFile = envFile;
+      ExecStart = lib.mkForce "${config.services.nebula.networks."serverNetwork".package}/bin/nebula -config \"$NEBULA_CONFIG_PATH\"";
+    }];
+  };
 
-  # vlan config is done with script in ./shellScriptBin/vlan.nix
+  environment.systemPackages = [
+    (import ./shellScriptBin/vlan.nix {inherit pkgs;})
+    (import ./shellScriptBin/nebulaRoutes.nix {
+      inherit pkgs envFile;
+      oldConfigFile = builtins.head (builtins.match "^.*(\/nix\/store\/.{32}-nebula-config.*)$" nebulaSystemdService.serviceConfig.ExecStart);
+    })
+  ];
 }

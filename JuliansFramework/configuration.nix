@@ -174,7 +174,6 @@ structure:
 
       (import ./shellScriptBin/egpu.nix {inherit pkgs;} )
       (import ./shellScriptBin/egpu2.nix {inherit pkgs;} )
-      (import ./shellScriptBin/vlan.nix {inherit pkgs;} )
 
       #rocm stuff
       rocmPackages.rocminfo
