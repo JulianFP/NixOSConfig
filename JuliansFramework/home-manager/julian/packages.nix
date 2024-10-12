@@ -1,14 +1,5 @@
 { pkgs, nix-citizen, ... }:
 
-let
-  my-python-packages = ps: with ps; [
-    numpy
-    flask
-    openai-whisper 
-    httpx
-    cookiecutter
-  ];
-in 
 {
   #Activates ability to install fonts through home-manager
   fonts.fontconfig.enable = true;
@@ -99,7 +90,7 @@ in
     valgrind
     jetbrains.idea-ultimate
     arduino-ide
-    (python3.withPackages my-python-packages)
+    python3
 
     # Fonts
     roboto-mono

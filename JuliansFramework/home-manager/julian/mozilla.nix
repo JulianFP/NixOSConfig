@@ -80,6 +80,11 @@
           icon = "cart";
           id = 4;
         };
+        meta = {
+          color = "yellow";
+          icon = "fingerprint";
+          id = 5;
+        };
       };
       containersForce = true;
 
