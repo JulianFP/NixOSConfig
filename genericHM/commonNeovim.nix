@@ -89,7 +89,10 @@
         enable = true;
         servers = {
           bashls.enable = true; #lsp server for bash 
+        } // lib.optionalAttrs (stable) {
           nil-ls.enable = true;
+        } // lib.optionalAttrs (!stable) {
+          nil_ls.enable = true;
         };
       };
       lsp-lines = {

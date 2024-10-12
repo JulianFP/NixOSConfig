@@ -256,10 +256,10 @@
           bashls.enable = true;	#lsp server for Bash
           clangd.enable = true; #lsp server for C/C++
           pyright.enable = true;#lsp server for Python
-          nil-ls.enable = true;	#lsp server for Nix
+          nil_ls.enable = true;	#lsp server for Nix
           texlab.enable = true; #lsp Server for LaTeX
-          java-language-server.enable = true; #lsp Server for Java
-          ts-ls.enable = true; #lsp server for Typescript
+          java_language_server.enable = true; #lsp Server for Java
+          ts_ls.enable = true; #lsp server for Typescript
           svelte.enable = true; #lsp server for Svelte (Javascript Framework)
         };
       };
