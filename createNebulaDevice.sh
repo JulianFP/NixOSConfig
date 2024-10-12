@@ -17,18 +17,25 @@ luksUSBNebulaPath="nebula" #path to directory in which nebula crt is stored rela
 echoerr() { echo "$@" 1>&2; }
 
 help() {
-    printf "general usage: ./createNebulaDevice.sh <flakeHostname> <nebula ip> <nebula groups>\n\n"
-    printf "flakeHostname:\n"
-    printf "   name of target machine used for flake url (the part after the '#' in flake url)\n"
-    printf "   also used as device name for the nebula certificate\n"
+    printf "general usage: ./createNebulaDevice.sh <flakeSecretHostName> <flakeInstallHostName> <nebula ip> <nebula groups> [dry-run]\n\n"
+    printf "flakeSecretHostName:\n"
+    printf "   name of machine that should have access to the key and crt (i.e. be able to decrypt it using sops-nix)\n"
     printf "   for example: NixOSTesting\n\n"
+    printf "flakeInstallHostName:\n"
+    printf "   name of machine that the interface will be created for (i.e. will be using that interface)\n"
+    printf "   if you are not creating this cert for a container then this will probably be the same as flakeSecretHostName\n"
+    printf "   also used as device name for the nebula certificate\n"
+    printf "   for example: mailServer-container\n\n"
     printf "nebula ip:\n"
     printf "   ip of device in nebula network in CIDR notation (with prefix length)\n"
     printf "   for example: 48.42.1.130/16\n\n"
     printf "nebula groups:\n"
     printf "   groups of device in nebula network\n"
     printf "   mandatory. pass an empty string if you don't want the target to be in any group\n"
-    printf "   for example: \"server,edge\"\n"
+    printf "   for example: \"server,edge\"\n\n"
+    printf "dry-run:\n"
+    printf "   optional, if added then this script won't add and commit changes automatically\n"
+    printf "   but instead just return the path to the tmp git repository for inspection\n"
 }
 
 privileges() {
@@ -54,7 +61,7 @@ addDevice() {
     #wait until usb stick with ca.key is present
     until [[ -e "$luksUSBDevice" ]]; do 
         echo "configured usb device not found"
-        read -p "plug in usb device with nebula cert and then press enter"
+        read -r -p "plug in usb device with nebula cert and then press enter"
     done
     #unlock and mount usb stick
     cryptsetup open $luksUSBDevice luksUSBDeviceNebula
@@ -65,10 +72,10 @@ addDevice() {
 
 
     #find free filename for crt file on usb stick
-    nebname="$1"
+    nebname="$2"
     fileNum=2
     while ls "/mnt/$luksUSBNebulaPath" | grep -q "$nebname"; do
-        nebname="$1-$fileNum"
+        nebname="$2-$fileNum"
         ((++fileNum))
     done
 
@@ -85,23 +92,31 @@ addDevice() {
     #check if files are already there and handle these cases
     if [[ ! (-e "/tmp/$gitname/secrets/$1") ]]; then
         mkdir "/tmp/$gitname/secrets/$1"
-    fi
-    if [[ -e "/tmp/$gitname/secrets/$1/nebula.yaml" ]]; then
-        echoerr "nebula key already exists for this device."
+        printf "nebula:\n" > "/tmp/$gitname/secrets/$1/nebula.yaml"
+    elif grep -q "$2" "/tmp/$gitname/secrets/$1/nebula.yaml"; then
+        echoerr "nebula key for hostName $2 already exists for this device ($1)."
         exit 1
+    else
+        sops --config "/tmp/$gitname/.sops.yaml" -d -i "/tmp/$gitname/secrets/$1/nebula.yaml"
+
     fi
 
     #generate nebula key and crt
-    nebula-cert sign -ca-crt "/mnt/$luksUSBNebulaPath/ca.crt" -ca-key "/mnt/$luksUSBNebulaPath/ca.key" -out-crt "/mnt/$luksUSBNebulaPath/$nebname.crt" -out-key "/mnt/$luksUSBNebulaPath/$nebname.key" -name $1 -ip $2 -groups $3
+    nebula-cert sign -ca-crt "/mnt/$luksUSBNebulaPath/ca.crt" -ca-key "/mnt/$luksUSBNebulaPath/ca.key" -out-crt "/mnt/$luksUSBNebulaPath/$nebname.crt" -out-key "/mnt/$luksUSBNebulaPath/$nebname.key" -name $2 -ip $3 -groups $4
 
     #generate yaml file to store secrets
-    printf "nebula:\n    $1.key: |\n        $(sed ':a;N;$!ba;s/\n/\n        /g' /mnt/$luksUSBNebulaPath/$nebname.key)\n    $1.crt: |\n        $(sed ':a;N;$!ba;s/\n/\n        /g' /mnt/$luksUSBNebulaPath/$nebname.crt)" > "/tmp/$gitname/secrets/$1/nebula.yaml"
+    printf "    $2.key: |\n        $(sed ':a;N;$!ba;s/\n/\n        /g' /mnt/$luksUSBNebulaPath/$nebname.key)\n    $2.crt: |\n        $(sed ':a;N;$!ba;s/\n/\n        /g' /mnt/$luksUSBNebulaPath/$nebname.crt)" >> "/tmp/$gitname/secrets/$1/nebula.yaml"
     sops --config "/tmp/$gitname/.sops.yaml" -e -i "/tmp/$gitname/secrets/$1/nebula.yaml"
 
     #add changes to git and push them
-    git -C "/tmp/$gitname" add "/tmp/$gitname/*"
-    git -C "/tmp/$gitname" commit -m "added nebula certificates to $1"
-    git -C "/tmp/$gitname" push origin "$githubBranch"
+    if [ "$5" != "dry-run" ]; then
+        git -C "/tmp/$gitname" add "/tmp/$gitname/*"
+        git -C "/tmp/$gitname" commit -m "added nebula certificates for $2 to $1"
+        git -C "/tmp/$gitname" push origin "$githubBranch"
+    else
+        echo "You can inspect and manually commit the changes in /tmp/$gitname/"
+
+    fi
 
     #remove private key from usb stick
     rm /mnt/$luksUSBNebulaPath/$nebname.key 

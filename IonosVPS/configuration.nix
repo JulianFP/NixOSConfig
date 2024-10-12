@@ -1,4 +1,4 @@
-{ lib, ... }: 
+{ ... }: 
 
 {
   imports = [
@@ -14,22 +14,12 @@
 
   #zramSwap.enable = true; #enable zram (instead of swap)
 
-  #nebula firewall + lighthouse settings
-  services.nebula.networks."serverNetwork" = {
-    lighthouses = lib.mkForce [ ];
-    isLighthouse = true;
-    firewall.inbound = [
-      {
-        port = "22";
-        proto = "tcp";
-        group = "server";
-      }
-    ];
-    settings.tun.unsafe_routes = [{
-      route = "192.168.3.0/24";
-      via = "48.42.0.2";
-    }];
-  };
+  #nebula lighthouse + unsafe_routes settings
+  myModules.nebula.interfaces."serverNetwork".isLighthouse = true;
+  services.nebula.networks."serverNetwork".settings.tun.unsafe_routes = [{
+    route = "192.168.3.0/24";
+    via = "48.42.0.2";
+  }];
 
   #use options of generic/wireguard.nix module 
   myModules.servers.wireguard = {

@@ -1,15 +1,11 @@
-{ config, lib, hostName, ...}:
+{ config, ... }:
 
-let
-  mkNebulaInterface = import ./utils/mkNebulaInterface.nix;
-  netName = "serverNetwork";
-in 
 {
-  imports = [
-    (mkNebulaInterface {
-      inherit lib hostName netName;
-      hostConfig = config;
-      clientConfig = config;
-    })
+  imports = [ 
+    ./nebulaModule.nix
   ];
+
+  myModules.nebula.interfaces."serverNetwork" = {
+    serverFirewallRules = config.services.openssh.enable;
+  };
 }
