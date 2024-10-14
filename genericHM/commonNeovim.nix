@@ -94,6 +94,20 @@
         } // lib.optionalAttrs (!stable) {
           nil_ls.enable = true;
         };
+        keymaps = {
+          diagnostic = {
+            "<LocalLeader>j" = "goto_next";
+            "<LocalLeader>k" = "goto_prev";
+          };
+          lspBuf = {
+            "<LocalLeader>h" = "hover";
+            "<LocalLeader>u" = "references";
+            "<LocalLeader>d" = "definition";
+            "<LocalLeader>i" = "implementation";
+            "<LocalLeader>D" = "type_definition";
+          };
+          silent = true;
+        };
       };
       lsp-lines = {
         enable = true; #show lsp in virtual line

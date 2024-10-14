@@ -1,5 +1,10 @@
 { pkgs, nix-citizen, ... }:
 
+let
+  python-packages = ps: with ps; [
+    dbus-python #e.g. eduroam-cat relies on that
+  ];
+in 
 {
   #Activates ability to install fonts through home-manager
   fonts.fontconfig.enable = true;
@@ -90,7 +95,7 @@
     valgrind
     jetbrains.idea-ultimate
     arduino-ide
-    python3
+    (python3.withPackages python-packages)
 
     # Fonts
     roboto-mono

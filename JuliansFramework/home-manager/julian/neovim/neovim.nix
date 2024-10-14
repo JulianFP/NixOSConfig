@@ -56,6 +56,8 @@
       #mode = "n": for normal mode
       #mode = "i": for insert mode
 
+      #lsp related keymaps are defined in commonNeovim.nix under plugins.lsp
+
       # set window navigation keys
       {
         mode = "";
@@ -171,18 +173,6 @@
         mode = "";
         key = "<LocalLeader>t";
         action = ":Telescope file_browser<CR>";
-      }
-
-      #lsp features
-      { #jump to definition
-        mode = "n";
-        key = "<LocalLeader>d";
-        action = "<cmd>lua vim.lsp.buf.declaration()<CR>";
-      }
-      { #show information on hover
-        mode = "n";
-        key = "<LocalLeader>i";
-        action = "<cmd>lua vim.lsp.buf.hover()<CR>";
       }
     ];
 
