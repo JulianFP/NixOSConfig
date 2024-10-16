@@ -26,6 +26,12 @@
     hostName = config.services.project-W-backend.hostName;
   };
 
+  #docker and open firewall on port 443 are for testing the docker setup on this machine
+  virtualisation.docker = {
+    enable = true;
+    storageDriver = "btrfs";
+  };
+
   services.nebula.networks."serverNetwork" = {
     firewall.inbound = [
       {
@@ -33,8 +39,18 @@
         proto = "tcp";
         group = "edge";
       }
+      {
+        port = "80";
+        proto = "tcp";
+        group = "julian";
+      }
+      {
+        port = "443";
+        proto = "tcp";
+        group = "julian";
+      }
     ];
   };
 
-  networking.firewall.allowedTCPPorts = [ 80 ];
+  networking.firewall.allowedTCPPorts = [ 80 443 ];
 }
