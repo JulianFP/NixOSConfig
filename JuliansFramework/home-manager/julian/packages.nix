@@ -1,9 +1,23 @@
-{ pkgs, nix-citizen, ... }:
+{ pkgs, lib, nix-gaming, ... }:
 
 let
   python-packages = ps: with ps; [
     dbus-python #e.g. eduroam-cat relies on that
   ];
+
+  #fixes gamemode when using omu-launcher. See https://github.com/FeralInteractive/gamemode/issues/254#issuecomment-643648779
+  gamemodeSharedObjects = lib.concatMapStringsSep ":" (v: "${lib.getLib pkgs.gamemode}/lib/${v}") [
+    "libgamemodeauto.so"
+    "libgamemode.so"
+  ];
+
+  star-citizen = nix-gaming.packages.${pkgs.system}.star-citizen.override (prev: {
+    useUmu = true;
+    preCommands = ''
+      export MANGO_HUD=1
+      export LD_PRELOAD="${gamemodeSharedObjects}"
+    '';
+  });
 in 
 {
   #Activates ability to install fonts through home-manager
@@ -81,9 +95,9 @@ in
     lutris
     heroic
     protonup-qt
+    star-citizen
     superTuxKart
     prismlauncher
-    nix-citizen.packages.${pkgs.system}.lug-helper
 
     # Development
     #note: texlive (latex) is also installed in neovim config
