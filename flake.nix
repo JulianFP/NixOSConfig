@@ -157,7 +157,7 @@
       };
       "Nextcloud" = {
         proxmoxVmID = 131;
-        stateVersion = "23.11";
+        stateVersion = "24.05";
       };
       "Nextcloud-Testing" = {
         proxmoxVmID = 150;
