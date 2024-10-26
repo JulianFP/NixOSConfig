@@ -9,8 +9,7 @@
   services.jellyfin = {
     enable = true;
     openFirewall = true;
-    dataDir = "/persist/backMeUp/jellyfin"; 
-    #configDir is set to "${cfg.dataDir}/config" by default
+    #/var/lib/jellyfin is linked to /persist/backMeUp below. Set these paths to not be backed up
     cacheDir = "/persist/jellyfin/cache";
     logDir = "/persist/jellyfin/log";
   };
@@ -23,6 +22,7 @@
     hideMounts = true;
     directories = [
       {directory = "/var/lib/private/jellyseerr"; user = "jellyseerr"; group = "jellyseerr";}
+      {directory = "/var/lib/jellyfin"; user = "jellyfin"; group = "jellyfin";}
     ];
   };
 
