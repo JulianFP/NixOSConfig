@@ -54,7 +54,7 @@
         "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1"
         "[workspace 1 silent] kwalletd6"
         "[workspace 10 silent] thunderbird"
-        "[workspace 1 silent] sleep 1 && keepassxc"
+        "[workspace 1 silent] sleep 2 && keepassxc"
         "[silent] sleep 2 && element-desktop --hidden"
         "[workspace 9 silent] sleep 2 && alacritty -e iamb -P private"
         "[workspace 9 silent] sleep 2 && alacritty -e iamb -P uni"
@@ -62,7 +62,7 @@
         "[silent] sleep 2 && env LANGUAGE='en-US:de-DE' signal-desktop --no-sandbox --start-in-tray"
         "[silent] sleep 2 && nextcloud"
         "[silent] sleep 2 && webcord -m"
-        "[silent] sleep 2 && guilded"
+        "[workspace 9 silent] sleep 2 && guilded"
         "[silent] xwaylandvideobridge"
       ];
 

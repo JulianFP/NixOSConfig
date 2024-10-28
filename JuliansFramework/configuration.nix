@@ -198,6 +198,7 @@ structure:
         "/var/lib/boltd"
         "/var/lib/fprint"
         "/var/lib/waydroid"
+        "/var/lib/libvirt"
         "/etc/secureboot"
       ];
       files = [

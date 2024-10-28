@@ -13,8 +13,18 @@ let
 
   star-citizen = nix-gaming.packages.${pkgs.system}.star-citizen.override (prev: {
     useUmu = true;
+    gameScopeEnable = true;
+    gameScopeArgs = [
+      "--fullscreen"
+      "--mangoapp"
+      "--force-grab-cursor"
+      "--grab"
+      "--nested-width=2560"
+      "--output-width=2560"
+      "--nested-height=1440"
+      "--output-height=1440"
+    ];
     preCommands = ''
-      export MANGO_HUD=1
       export LD_PRELOAD="${gamemodeSharedObjects}"
     '';
   });
