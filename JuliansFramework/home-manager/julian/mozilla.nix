@@ -85,6 +85,11 @@
           icon = "fingerprint";
           id = 5;
         };
+        ebay = {
+          color = "turquoise";
+          icon = "cart";
+          id = 6;
+        };
       };
       containersForce = true;
 
