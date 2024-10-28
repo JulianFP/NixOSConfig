@@ -96,7 +96,7 @@ systemd.services."pre-nginx" = lib.mkIf (!edge) {
     virtualHosts = makeProxyFor [
       { #nextcloud production
         domain = "partanengroup.de";
-        destIP = "192.168.3.101";
+        destIP = subnet + "131";
         destPort = 80;
         additionalLocations = {
           "/.well-known/carddav".return = "301 $scheme://$host/remote.php/dav";

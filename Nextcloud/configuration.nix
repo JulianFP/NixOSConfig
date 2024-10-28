@@ -1,9 +1,14 @@
-{ config, pkgs, hostName, ... }:
+{ config, lib, pkgs, hostName, ... }:
 
 let
   cfg = config.services.nextcloud;
 in 
 {
+  fileSystems."/mnt/cloudData" = lib.mkIf (hostName == "Nextcloud") {
+    fsType = "ext4";
+    device = "/dev/disk/by-uuid/48ac0fab-61a1-483f-a912-dd8d35bf1a0a";
+  };
+
   #setup sops secrets for nextcloud 
   sops.secrets."nextcloud/adminPass" = {
     mode = "0440";
@@ -21,6 +26,7 @@ in
     #boilerplate stuff
     enable = true;
     home = "/persist/backMeUp/nextcloud";
+    datadir = lib.mkIf (hostName == "Nextcloud") "/mnt/cloudData/nextcloud";
     hostName = if hostName == "Nextcloud" then "partanengroup.de" else "test.partanengroup.de";
     package = pkgs.nextcloud30;
     secretFile = config.sops.secrets."nextcloud/secrets.json".path;
@@ -95,8 +101,13 @@ in
     extraAppsEnable = true;
   };
 
-  #also change dir of mysql
+  #also change dir of mysql and ensure it exists
   services.mysql.dataDir = "/persist/backMeUp/mysql";
+  systemd.tmpfiles.settings."10-nextcloud"."/persist/backMeUp/mysql"."d" = {
+    user = "mysql";
+    group = "mysql";
+    mode = "0700";
+  };
 
   #set firewall rules (for both NixOS and nebula firewalls)
   networking.firewall.allowedTCPPorts = [ 80 ];
