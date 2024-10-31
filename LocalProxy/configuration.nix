@@ -5,16 +5,6 @@
     ./buildIonosVPS.nix
   ];
 
-  services.nebula.networks."serverNetwork" = {
-    firewall.inbound = [
-      {
-        port = "22";
-        proto = "tcp";
-        group = "edge";
-      }
-    ];
-  };
-
   #ddns update service (see https://www.ionos.de/hilfe/domains/ip-adresse-konfigurieren/dynamisches-dns-ddns-einrichten-bei-company-name/?source=helpandlearn#c170862)
   sops.secrets.ddns-1 = {
     sopsFile = ../secrets/LocalProxy/ddns.yaml;

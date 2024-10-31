@@ -36,37 +36,48 @@ let
   }) listOfProxies);
 in
 {
-#setup acme for let's encrypt validation if this is on edge
-security.acme = lib.mkIf edge {
-  acceptTerms = true;
-  defaults.email = "admin@partanengroup.de";
-  #ssh matchBlock for LocalProxy has to be setup on edge server
-  defaults.postRun = ''
-    ${pkgs.openssh}/bin/ssh LocalProxy "mkdir -p ${localProxyCertDir}"
-    ${pkgs.openssh}/bin/scp -r $(pwd) LocalProxy:${localProxyCertDir}/
-    ${pkgs.openssh}/bin/ssh LocalProxy "chown -R nginx:nginx ${localProxyCertDir}/*"
-    ${pkgs.openssh}/bin/ssh LocalProxy "systemctl restart nginx.service"
-  '';
-};
-
-#LocalProxy can also pull certs from IonosVPS if they are missing (e.g. after reinstall)
-systemd.services."pre-nginx" = lib.mkIf (!edge) {
-  enable = true;
-  script = ''
-    mkdir -p ${localProxyCertDir}
-    if ! ls -R ${localProxyCertDir} | grep -q "cert.pem"; then
-        ${pkgs.openssh}/bin/scp -r IonosVPS:/var/lib/acme/* ${localProxyCertDir}/
-        chown -R nginx:nginx ${localProxyCertDir}/*
-    fi
-  '';
-  serviceConfig = {
-    Type = "oneshot";
-    User = "root";
+  #open ssh port to each other
+  services.nebula.networks."serverNetwork" = {
+    firewall.inbound = [
+      {
+        port = "22";
+        proto = "tcp";
+        group = "edge";
+      }
+    ];
   };
-  wantedBy = [ "nginx.service" ];
-};
 
-#reverse proxy config
+  #setup acme for let's encrypt validation if this is on edge
+  security.acme = lib.mkIf edge {
+    acceptTerms = true;
+    defaults.email = "admin@partanengroup.de";
+    #ssh matchBlock for LocalProxy has to be setup on edge server
+    defaults.postRun = ''
+      ${pkgs.openssh}/bin/ssh LocalProxy "mkdir -p ${localProxyCertDir}"
+      ${pkgs.openssh}/bin/scp -r $(pwd) LocalProxy:${localProxyCertDir}/
+      ${pkgs.openssh}/bin/ssh LocalProxy "chown -R nginx:nginx ${localProxyCertDir}/*"
+      ${pkgs.openssh}/bin/ssh LocalProxy "systemctl restart nginx.service"
+    '';
+  };
+
+  #LocalProxy can also pull certs from IonosVPS if they are missing (e.g. after reinstall)
+  systemd.services."pre-nginx" = lib.mkIf (!edge) {
+    enable = true;
+    script = ''
+      mkdir -p ${localProxyCertDir}
+      if ! ls -R ${localProxyCertDir} | grep -q "cert.pem"; then
+          ${pkgs.openssh}/bin/scp -r IonosVPS:/var/lib/acme/* ${localProxyCertDir}/
+          chown -R nginx:nginx ${localProxyCertDir}/*
+      fi
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+      User = "root";
+    };
+    wantedBy = [ "nginx.service" ];
+  };
+
+  #reverse proxy config
   services.nginx = {
     #boilerplate stuff
     enable = true;

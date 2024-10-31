@@ -1,4 +1,4 @@
-{ config, hostName, ... }:
+{ config, lib, hostName, ... }:
 
 {
   #openssh client key config and add LocalProxy to known_hosts
@@ -12,7 +12,7 @@
     sopsFile = ../secrets/${hostName}/ssh.yaml;
   };
 
-  services.openssh.hostKeys = [
+  services.openssh.hostKeys = lib.mkForce [
     {
       path =  config.sops.secrets."openssh-host/${hostName}".path;
       type = "ed25519";
