@@ -34,7 +34,6 @@
   # nix settings
   nix = {
     #enable flakes and nix-command
-    package = pkgs.nixFlakes;
     settings = {
       experimental-features = [ "nix-command" "flakes" ];
       trusted-users = [ "root" "@wheel" ];

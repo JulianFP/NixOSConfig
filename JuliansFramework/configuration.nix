@@ -210,12 +210,19 @@ structure:
 
 
   /* -- users -- */
-  sops.secrets."users/julian" = {
-    neededForUsers = true;
-    sopsFile = ../secrets/${hostName}/users.yaml;
+  sops.secrets = {
+    "users/root" = {
+      neededForUsers = true;
+      sopsFile = ../secrets/${hostName}/users.yaml;
+    };
+    "users/julian" = {
+      neededForUsers = true;
+      sopsFile = ../secrets/${hostName}/users.yaml;
+    };
   };
 
   users = {
+    users.root.hashedPasswordFile = config.sops.secrets."users/root".path;
     # Define julian account. Don't forget to set a password with ‘passwd’.
     users.julian = {
       isNormalUser = true;
@@ -312,7 +319,13 @@ structure:
         User = "root";
       };
     };
+
+    #workaround until https://github.com/nix-community/impermanence/issues/229 is fixed
+    suppressedSystemUnits = ["systemd-machine-id-commit.service"];
   };
+
+  #workaround until https://github.com/nix-community/impermanence/issues/229 is fixed
+  boot.initrd.systemd.suppressedUnits = ["systemd-machine-id-commit.service"];
 
   #enable cachix for nix-gaming
   nix.settings = {

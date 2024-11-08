@@ -7,11 +7,17 @@ let
   unlockedSwapLabel = "JuliansSwap";
   encryptedKeyPartitionLabel = "EncryptedKeyPartition";
   unlockedKeyPartitionLabel = "KeyPartition";
-  oldSystemdInitrd = ((import (modulesPath + "/system/boot/systemd/initrd.nix")) args).config.content.boot.initrd.systemd.services;
+  oldSystemdInitrd = ((import (modulesPath + "/system/boot/systemd/initrd.nix")) args).config.content.boot.initrd.systemd;
+  oldSystemdTmpfiles = ((import (modulesPath + "/system/boot/systemd/tmpfiles.nix")) args).config.boot.initrd.systemd;
 in {
   imports = [ 
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
+
+  assertions = [{
+    assertion = ! config.system.etc.overlay.enable;
+    message = "Custom assertion: Because of custom initrd script and switchting into /sysroot/root instead of /sysroot the etc overlay can't work currently. Modify it to make it work first, then remove this warning";
+  }];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "thunderbolt" "nvme" "uas" "usbhid" "usb_storage" "sd_mod" ];
   boot.kernelModules = [ "kvm-intel" ];
@@ -112,11 +118,16 @@ in {
 
   boot.initrd.systemd = {
     enable = true;
+    mounts = lib.mkForce (builtins.map (x: x // {where = builtins.replaceStrings ["/sysroot"] ["/sysroot/root"] x.where;}) oldSystemdInitrd.mounts);
     services = {
 
       #bcachefs doesn't allow mounting subvolumes or rollback / (like btrfs or zfs does), so as a workaround I adjust switch-root here to execute the switch_root command on the /root subdir of the bcachefs filesystem instead
-      initrd-switch-root.serviceConfig.ExecStart = lib.mkForce (builtins.map (x: builtins.replaceStrings ["/sysroot"] ["/sysroot/root"] x) oldSystemdInitrd.initrd-switch-root.serviceConfig.ExecStart);
-      initrd-nixos-activation.script = lib.mkForce (builtins.replaceStrings ["/sysroot"] ["/sysroot/root"] oldSystemdInitrd.initrd-nixos-activation.script);
+      initrd-switch-root.serviceConfig.ExecStart = lib.mkForce (builtins.map (x: builtins.replaceStrings ["/sysroot"] ["/sysroot/root"] x) oldSystemdInitrd.services.initrd-switch-root.serviceConfig.ExecStart);
+      initrd-nixos-activation = {
+        script = lib.mkForce (builtins.replaceStrings ["/sysroot"] ["/sysroot/root"] oldSystemdInitrd.services.initrd-nixos-activation.script);
+        unitConfig.RequiresMountsFor = lib.mkForce (builtins.map (x: builtins.replaceStrings ["/sysroot"] ["/sysroot/root"] x) oldSystemdInitrd.services.initrd-nixos-activation.unitConfig.RequiresMountsFor);
+      };
+      systemd-tmpfiles-setup-sysroot.serviceConfig.ExecStart = lib.mkForce (builtins.replaceStrings ["/sysroot"] ["/sysroot/root"] oldSystemdTmpfiles.services.systemd-tmpfiles-setup-sysroot.serviceConfig.ExecStart);
 
       #mount keyPartition that stores encryption keys for bcachefs and swap partition
       "mount-keyPartition" = {
