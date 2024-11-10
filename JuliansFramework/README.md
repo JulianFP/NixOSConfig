@@ -18,7 +18,7 @@ Where do I even start. Well, I wanted to use bcachefs and a NixOS impermanence s
     - [x] GTK
     - [x] Qt5
     - [x] Qt6
-    - [ ] all aspects of KDE applications from plasma-integration (KColorScheme: [how platform integrations work](https://nicolasfella.de/posts/how-platform-integration-works/). Waiting for [this pull request](https://github.com/trialuser02/qt6ct/pull/43) to get merged and reach nixpkgs. Some KDE programs currently have broken theming because of that, e.g.: kde's plasma 6 polkit agent (plasma 5 version works fine), plasma system monitor, plasma system settings. Standard Qt5/Qt6 applications (like dolphin, partition manager, filelight, wireshark, prismlauncher, ...) work fine though.
+    - [x] all aspects of KDE applications from plasma-integration (KColorScheme: [how platform integrations work](https://nicolasfella.de/posts/how-platform-integration-works/). Waiting for [this pull request](https://github.com/trialuser02/qt6ct/pull/43) to get merged and reach nixpkgs. Some KDE programs currently have broken theming because of that, e.g.: kde's plasma 6 polkit agent (plasma 5 version works fine), plasma system monitor, plasma system settings. Standard Qt5/Qt6 applications (like dolphin, partition manager, filelight, wireshark, prismlauncher, ...) work fine though. EDIT: Used on overlay for now to apply that PR. See [this NUR repo for that](https://github.com/ilya-fedin/nur-repository).
     - [x] waybar
     - [x] mako
     - [x] rofi

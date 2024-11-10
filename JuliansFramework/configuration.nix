@@ -160,6 +160,10 @@ structure:
     variables = {
       RADV_PERFTEST = "nosam"; #performance improvement for eGPUs
       ESP_PATH = "/boot"; #since with my setup the mount point in fstab is set to /root/boot this variable ensures that sbctl still finds efi partition
+
+      #for kde theming support
+      QT_PLUGIN_PATH = [ "${pkgs.libsForQt5.qqc2-desktop-style}/${pkgs.libsForQt5.qtbase.qtPluginPrefix}" "${pkgs.kdePackages.qqc2-desktop-style}/${pkgs.qt6Packages.qtbase.qtPluginPrefix}" ];
+      QML2_IMPORT_PATH = [ "${pkgs.libsForQt5.qqc2-desktop-style}/${pkgs.libsForQt5.qtbase.qtQmlPrefix}" "${pkgs.kdePackages.qqc2-desktop-style}/${pkgs.kdePackages.qtbase.qtQmlPrefix}" ];
     };
 
     # List packages installed in system profile. To search, run:
