@@ -52,7 +52,6 @@
         "wl-paste --type image --watch cliphist store #clipboard manager: Stores only image data"
         "wl-paste -t text -w xclip -selection clipboard"
         "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1"
-        "[workspace 1 silent] kwalletd6"
         "[workspace 10 silent] thunderbird"
         "[workspace 1 silent] sleep 2 && keepassxc"
         "[silent] sleep 2 && element-desktop --hidden"
