@@ -107,15 +107,17 @@
 
       decoration = {
         blur = {
-            enabled = true;
-            size = 3;
-            passes = 1;
-            new_optimizations = true;
+          enabled = true;
+          size = 3;
+          passes = 1;
+          new_optimizations = true;
+        };
+        shadow = {
+          enabled = true;
+          range = 4;
+          render_power = 3;
         };
         rounding = 5;
-        drop_shadow = true;
-        shadow_range = 4;
-        shadow_render_power = 3;
       };
 
       animations = {
