@@ -11,7 +11,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-generators-stable = {
-      url = "github:nix-community/nixos-generators";
+      #lock to this commit to avoid compatibility issues with 24.04. TODO: Remove the hash when updating stable to 24.11!
+      #See https://github.com/nix-community/nixos-generators/issues/403
+      url = "github:nix-community/nixos-generators/7c60ba4bc8d6aa2ba3e5b0f6ceb9fc07bc261565";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
     nixvim = {
