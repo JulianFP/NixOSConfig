@@ -104,6 +104,7 @@
           nix-gaming.nixosModules.pipewireLowLatency
           nix-gaming.nixosModules.platformOptimizations
           #nixos-hardware.nixosModules.common-gpu-amd
+          ./generic/postgres-playground.nix
         ];
         homeManagerModules = {
           julian = [

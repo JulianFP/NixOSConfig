@@ -1,7 +1,20 @@
-{ config, pkgs, hostName, ... }:
+{ config, lib, pkgs, hostName, ... }:
 
 {
   sops.secrets."pgadmin".sopsFile = ../secrets/${hostName}/postgres.yaml;
+
+  #impermanence stuff for postgres
+  systemd.tmpfiles.settings."10-postgresql"."/persist/postgresql/${config.services.postgresql.package.psqlSchema}"."d" = {
+    user = "postgres";
+    group = "postgres";
+    mode = "0700";
+  };
+  environment.persistence."/persist".directories = [{
+    directory = "/var/lib/private/pgadmin";
+    user = "pgadmin";
+    group = "pgadmin";
+    mode = "0700";
+  }];
 
   services =  {
     pgadmin = {
@@ -11,6 +24,7 @@
     };
     postgresql = {
       enable = true;
+      dataDir = "/persist/postgresql/${config.services.postgresql.package.psqlSchema}";
       ensureDatabases = [ "postgres" ];
       ensureUsers = [{
         name = "postgres";
@@ -22,6 +36,13 @@
         #type database  DBuser  auth-method
         local all       all     trust
       '';
+      settings = {
+        log_statement = "all";
+        logging_collector = true;
+        log_destination = lib.mkForce "syslog";
+        log_connections = true;
+        log_disconnections = true;
+      };
     };
   };
 }
