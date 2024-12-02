@@ -1,6 +1,10 @@
 { pkgs, lib, ... }:
 
 {
+  imports = [
+    ./neovim-basic.nix
+  ];
+
   programs.nixvim = {
     #override colorscheme
     colorschemes.onedark.enable = lib.mkForce false;
@@ -14,12 +18,6 @@
       dir = "%:p:h";
       folder = "%:p:h:t";
       file = "%:t";
-    };
-
-    #clipboard support
-    clipboard = {
-      register = "unnamedplus";
-      providers.wl-copy.enable = true;
     };
 
     # custom build and run commands (they depend on alacritty and a custom bash script)

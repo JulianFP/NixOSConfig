@@ -1,8 +1,7 @@
-{ config, pkgs, ...} :
+{ ... }:
 
 {
   programs.mangohud = {
-    enable = true;
     settings = {
       legacy_layout = false;
       gpu_stats = true;

@@ -64,6 +64,7 @@
     - system (string): platform/architecture. Default: "x86_64-linux"
     - stable (bool): whether to use nixpkgs-stable or not (in which case it uses nixpkgs-unstable). Default: true
     - server (bool): whether this is a server and the ./generic/server.nix module should be applied (which then in turn applies the ./generic/common.nix module). Default: false (in which case only the ./generic/common.nix module gets applied. This module is always used) 
+    - desktop (bool): Whether this is a desktop system that should share all the common desktop setup
     - proxmoxVmID (uint between 2 and 254 or null): If null: this is not a proxmox VM. If not null: ./generic/proxmoxVM.nix is being included and vmID is set to this value (which is mainly used to set the host ID of the local IP-address (/24) of this VM). Default: null
     - nebula (bool): Whether ./generic/nebula.nix should be included. Default: true
     - boot (0,1 or 2): Whether grub (0), systemd-boot (1) or lanzaboote for secureboot (2) should be used. Default: 0
@@ -95,27 +96,15 @@
 
     nixosConfigurations = mkSystems {
       "JuliansFramework" = {
+        desktop = true;
         stable = false;
         boot = 2;
         systemModules = [
+          ./generic/desktop/crazy-bcachefs-hardware-config.nix
           nixos-hardware.nixosModules.framework-12th-gen-intel
-          stylix.nixosModules.stylix
-          #nix-gaming modules
-          nix-gaming.nixosModules.pipewireLowLatency
-          nix-gaming.nixosModules.platformOptimizations
           #nixos-hardware.nixosModules.common-gpu-amd
           ./generic/postgres-playground.nix
         ];
-        homeManagerModules = {
-          julian = [
-            ./genericHM/shell.nix
-            ./genericHM/yubikey.nix
-            ./JuliansFramework/home-manager/julian/home.nix
-          ];
-          root = [
-            ./genericHM/yubikey.nix
-          ];
-        };
         permittedInsecurePackages = [
           "electron-27.3.11" #needed for logseq until it upgrades its electron package
         ];
@@ -145,7 +134,7 @@
           julian = [
             ./genericHM/shell.nix
             ./genericHM/yubikey.nix
-            ./genericHM/neovimDesktop.nix
+            ./genericHM/desktop/neovim/neovim-basic.nix
           ];
         };
         stateVersion = "24.11";

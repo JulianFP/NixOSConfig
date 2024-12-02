@@ -35,7 +35,7 @@ in
     secrets = [ "ipsec.d/ipsec.nm-l2tp.secrets" ]; #ensure that it does not write secrets on read-only filesystem
   };
 
-  #make nebula config adjustable through toggleNebulaUnsafeRoutes bash package that can be found in ./shellScriptBin/nebulaRoutes.nix
+  #make nebula config adjustable through toggleNebulaUnsafeRoutes bash package that can be found in ../packages/shellScriptBin/nebulaRoutes.nix
   #this is necessary to adjust unsafe_routes on the fly through a quick terminal command without having to change the NixOS and rebuilding all the time
   systemd.services."nebula-custom_serverNetwork" = {
     description = "Adjusted Nebula VPN service for serverNetwork that works together with the nebulaOverwriter python script";
@@ -53,8 +53,9 @@ in
   };
 
   environment.systemPackages = [
-    (import ./shellScriptBin/vlan.nix {inherit pkgs;})
-    (import ./shellScriptBin/nebulaRoutes.nix {
+    pkgs.networkmanager-l2tp
+    (import ../packages/shellScriptBin/vlan.nix {inherit pkgs;})
+    (import ../packages/shellScriptBin/nebulaRoutes.nix {
       inherit pkgs envFile;
       oldConfigFile = builtins.head (builtins.match "^.*(\/nix\/store\/.{32}-nebula-config.*)$" nebulaSystemdService.serviceConfig.ExecStart);
     })

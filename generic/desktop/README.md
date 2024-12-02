@@ -1,5 +1,5 @@
 ## About
-This is the NixOS config for my Framework 12th Gen Laptop (home-manager config included).
+This is the NixOS config that is shared across my desktop devices (currently JuliansPC and JuliansFramework). 
 
 ## My custom boot process
 I boot of a normal FAT32 UEFI partition. I use lanzaboote (modified systemd-boot) as a bootloader to be able to enable (and enforce) secureboot. In initrd stage I use systemd to support my heavily modified process: First, a luks encrypted ext4 partition will be unlocked using the clevis framework. I set it up in a way that allows me to unlock that partition automatically using a combination of tpm2 and fido2. If and only if both the tpm2 chip and the fido2 device provide their part of the security key, clevis will be able to unlock its key and use it to decrypt the luks partition. This encrypted key is stored in the luks partitions header (this way it cannot affect the PCR stores values). If this doesn't work I have to type in the password manually and will now that something is up. I set up tpm2 to use measured boot: If any of the configured PCR stores have a different hash-value than at the time I set this up, the tpm2 will not release the secret. This way I will notice if somebody tempered with my firmware or BIOS even before unlocking my disk.
@@ -67,7 +67,7 @@ Where do I even start. Well, I wanted to use bcachefs and a NixOS impermanence s
 - cd into directory where NixOSConfig is and execute (as root or with sudo) `nixos-install --root /mnt/root/ --flake .#JuliansFramework`)
 - reboot and follow the after installation guides below (secureboot, clevis setup, ...)
 
-## Old installation guide for btrfs (from NixOS ISO:)
+## Old installation guide for btrfs (from NixOS ISO):
 - `sudo -i` login as root
 - `loadkeys de-latin1` optional: switch to your preferred keyboard layout (important for entering passwords later on)
 - Create two partitions on target disc: One EFI partition and one system partition (use fdisk or parted). The EFI partition has to be of type "EFI System"
