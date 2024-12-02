@@ -43,13 +43,13 @@ Where do I even start. Well, I wanted to use bcachefs and a NixOS impermanence s
 - [ ] (automatic) timezone switcher for when traveling?
 
 ## new Install guide for bcachefs and impermanence
-- `fdisk /dev/nvme0n1`, create partition table with efi system +1G, linux filesystem -24G, linux swap up to largest sector (don't forget to set partition types as well)
+- `fdisk /dev/nvme0n1`, create partition table with efi system +1G, linux filesystem +100M, linux filesystem -24G, linux swap up to largest sector (don't forget to set partition types as well)
 - `mkfs.vfat -F 32 -n UEFI /dev/nvme0n1p1`
 - pick one of the outputs of the following command as password for the KeyPartition: `pwgen -cnysB 16`
 - `cryptsetup luksFormat /dev/nvme0n1p2 --label=EncryptedKeyPartition`
 - `cryptsetup open /dev/disk/by-label/EncryptedKeyPartition KeyPartition`
 - `mkfs.ext4 -L KeyPartition /dev/mapper/KeyPartition`
-- `mkdir /mnt1`
+- `mkdir /mnt2`
 - `mount /dev/disk/by-label/KeyPartition /mnt2`
 - `dd bs=512 count=8 if=/dev/random iflag=fullblock | install -m 0600 /dev/stdin /mnt2/JuliansEncryptedSwap.key`
 - `pwgen -cnys 512 1 > /mnt2/JuliansNixOS.key`

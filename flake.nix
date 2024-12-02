@@ -126,6 +126,36 @@
         ];
         stateVersion = "24.11";
       };
+      "JuliansPC" = {
+        desktop = true;
+        stable = false;
+        boot = 2;
+        systemModules = [
+          ./generic/desktop/crazy-bcachefs-hardware-config.nix
+          nixos-hardware.nixosModules.common-gpu-amd
+          nixos-hardware.nixosModules.common-cpu-amd
+          ./generic/postgres-playground.nix
+        ];
+        permittedInsecurePackages = [
+          "electron-27.3.11" #needed for logseq until it upgrades its electron package
+        ];
+        permittedUnfreePackages = [
+          "steam"
+          "steam-unwrapped"
+          "corefonts"
+          "vista-fonts"
+          "xow_dongle-firmware"
+          "idea-ultimate"
+          "slack"
+          "guilded"
+        ];
+        overlays = [
+          nur.overlay
+          (import ./generic/overlays/clevis_with_fido2.nix)
+          (import ./generic/overlays/qtct.nix)
+        ];
+        stateVersion = "25.05";
+      };
       "rescueSystem" = {
         stable = false;
 	      boot = 1;
