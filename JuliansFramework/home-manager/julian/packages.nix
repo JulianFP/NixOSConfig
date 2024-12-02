@@ -116,6 +116,7 @@ in
     cmake
     gnumake
     valgrind
+    rustup
     jetbrains.idea-ultimate
     arduino-ide
     (python3.withPackages python-packages)

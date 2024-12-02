@@ -251,6 +251,11 @@
           java_language_server.enable = true; #lsp Server for Java
           ts_ls.enable = true; #lsp server for Typescript
           svelte.enable = true; #lsp server for Svelte (Javascript Framework)
+          rust_analyzer = { #lsp server for Rust
+            enable = true;
+            installRustc = true;
+            installCargo = true;
+          };
         };
       };
       cmp.settings = {
