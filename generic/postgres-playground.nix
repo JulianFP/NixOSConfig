@@ -1,7 +1,7 @@
-{ config, lib, pkgs, hostName, ... }:
+{ config, lib, pkgs, ... }:
 
 {
-  sops.secrets."pgadmin".sopsFile = ../secrets/${hostName}/postgres.yaml;
+  sops.secrets."pgadmin".sopsFile = ../secrets/postgres.yaml;
 
   #impermanence stuff for postgres
   systemd.tmpfiles.settings."10-postgresql"."/persist/postgresql/${config.services.postgresql.package.psqlSchema}"."d" = {
