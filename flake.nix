@@ -90,7 +90,7 @@
         format = "install-iso";
         stable = false;
         nebula = false;
-        stateVersion = "24.11";
+        stateVersion = "25.05";
       };
     };
 

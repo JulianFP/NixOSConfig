@@ -56,7 +56,7 @@
     magic-wormhole
     rsync
     age
-    (import ../JuliansFramework/shellScriptBin/vlan.nix {inherit pkgs;} )
+    (import ../generic/packages/shellScriptBin/vlan.nix {inherit pkgs;} )
   ];
 
   users.users.julian = {
