@@ -141,6 +141,7 @@ in {
           Type = "oneshot";
           StandardOutput = "tty";
           TimeoutSec = "infinity";
+          RemainAfterExit = true; #so that wants statements don't restart this service
         };
         script = ''
           echo "Trying to unlock ${encryptedKeyPartitionLabel} using clevis (tpm2 + fido2). Please press the button on your fido2 device"
@@ -176,6 +177,7 @@ in {
           Type = "oneshot";
           StandardOutput = "tty";
           TimeoutSec = "infinity";
+          RemainAfterExit = true;
         };
         script = ''
           umount /keyPartition
@@ -203,6 +205,7 @@ in {
           KeyringMode = "inherit"; #mount needs access to kernel keyring because bcachefs encryption key is stored there (unlock-bcachefs--.service unlocks partition and puts key into keyring)
           StandardOutput = "tty";
           TimeoutSec = "infinity";
+          RemainAfterExit = true;
         };
         script = ''
           mkdir /bcachefs_tmp
