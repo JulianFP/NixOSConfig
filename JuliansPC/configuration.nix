@@ -3,6 +3,7 @@
 {
   imports = [
     ./hardware-configuration.nix # Include the results of the hardware scan.
+    ../generic/ssh.nix
   ];
 
   # Star Citizen tweaks

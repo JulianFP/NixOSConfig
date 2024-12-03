@@ -1,6 +1,6 @@
 { lib, hostName, ... }:
 
-#warning: This currently only works together with the generic/ssh.nix config and only for the root user!
+#warning: This currently only works together with the generic/ssh-sops-key.nix config and only for the root user!
 {
   programs.ssh = {
     enable = true;

@@ -196,12 +196,12 @@
         server = true;
         args.edge = true;
         systemModules = [
-          ./generic/ssh.nix
+          ./generic/ssh-sops-key.nix
           ./generic/proxy.nix
           ./generic/wireguard.nix
         ];
         homeManagerModules.root = [
-          ./genericHM/ssh.nix
+          ./genericHM/ssh-sops-key.nix
         ];
         stateVersion = "23.05";
       };
@@ -209,11 +209,11 @@
         proxmoxVmID = 130;
         args.edge = false;
         systemModules = [
-          ./generic/ssh.nix
+          ./generic/ssh-sops-key.nix
           ./generic/proxy.nix
         ];
         homeManagerModules.root = [
-          ./genericHM/ssh.nix
+          ./genericHM/ssh-sops-key.nix
         ];
         stateVersion = "23.05";
       };
