@@ -117,8 +117,7 @@ sopsConfig() {
     fi
 
     #reencrypt secrets for new age key 
-    sops --config /tmp/$gitname/.sops.yaml updatekeys -y /tmp/$gitname/secrets/general.yaml
-    sops --config /tmp/$gitname/.sops.yaml updatekeys -y /tmp/$gitname/secrets/nebula.yaml
+    sops --config /tmp/$gitname/.sops.yaml updatekeys -y /tmp/$gitname/secrets/*.yaml
     ls -1 "/tmp/$gitname/secrets/$1" | sed -e "s/^/\/tmp\/$gitname\/secrets\/$1\//" | xargs -L1 sops --config /tmp/$gitname/.sops.yaml updatekeys -y
 
     #add changes to git and push them
