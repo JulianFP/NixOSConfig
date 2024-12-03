@@ -1,12 +1,12 @@
-args@{ config, lib, pkgs, utils, modulesPath, ...}:
+args@{ config, lib, pkgs, utils, modulesPath, hostName, ...}:
 
 let
-  bcachefsLabel = "JuliansNixOS";
-  uefiLabel = "UEFI";
-  encryptedSwapLabel = "JuliansEncryptedSwap";
-  unlockedSwapLabel = "JuliansSwap";
-  encryptedKeyPartitionLabel = "EncryptedKeyPartition";
-  unlockedKeyPartitionLabel = "KeyPartition";
+  bcachefsLabel = if hostName == "JuliansPC" then "JuliansNixOSPC" else "JuliansNixOS";
+  uefiLabel = if hostName == "JuliansPC" then "UEFIPC" else "UEFI";
+  encryptedSwapLabel = if hostName == "JuliansPC" then "JuliansEncryptedSwapPC" else "JuliansEncryptedSwap";
+  unlockedSwapLabel = if hostName == "JuliansPC" then "JuliansSwapPC" else "JuliansSwap";
+  encryptedKeyPartitionLabel = if hostName == "JuliansPC" then "EncryptedKeyPartitionPC" else "EncryptedKeyPartition";
+  unlockedKeyPartitionLabel = if hostName == "JuliansPC" then "KeyPartitionPC" else "KeyPartition";
   oldSystemdInitrd = ((import (modulesPath + "/system/boot/systemd/initrd.nix")) args).config.content.boot.initrd.systemd;
   oldSystemdTmpfiles = ((import (modulesPath + "/system/boot/systemd/tmpfiles.nix")) args).config.boot.initrd.systemd;
 in {
@@ -142,7 +142,7 @@ in {
         script = ''
           echo "Trying to unlock ${encryptedKeyPartitionLabel} using clevis (tpm2 + fido2). Please press the button on your fido2 device"
           if ! clevis luks unlock -d /dev/disk/by-label/${encryptedKeyPartitionLabel} -n ${unlockedKeyPartitionLabel}; then
-              echo "Automatic unlock not successful. TPM2 security policy might be violated, the laptop might be compromised! Please enter the Passphrase if you want to proceed anyway:"
+              echo "Automatic unlock not successful. TPM2 security policy might be violated, this computer might be compromised! Please enter the Passphrase if you want to proceed anyway:"
               until systemd-ask-password --id="cryptsetup:/dev/disk/by-label/${encryptedKeyPartitionLabel}" --keyname="cryptsetup" | cryptsetup open /dev/disk/by-label/${encryptedKeyPartitionLabel} ${unlockedKeyPartitionLabel}; do
                   echo "Incorrect passphrase, please try again:"
               done
