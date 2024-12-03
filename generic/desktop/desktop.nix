@@ -20,6 +20,7 @@ structure:
     ../common.nix
     ../impermanence.nix
     ./networking.nix
+    ./syncthing.nix
   ];
 
 
