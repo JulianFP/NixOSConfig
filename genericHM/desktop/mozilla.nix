@@ -90,6 +90,16 @@
           icon = "cart";
           id = 6;
         };
+        kleinanzeigen = {
+          color = "pink";
+          icon = "cart";
+          id = 7;
+        };
+        robertsspaceindustries = {
+          color = "purple";
+          icon = "chill";
+          id = 8;
+        };
       };
       containersForce = true;
 
