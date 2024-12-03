@@ -4,7 +4,7 @@
   #additional system script for laptop lid
   home.file = {
     "clamshell_mode_hypr.sh" = {
-      target = ".systeScripts/clamshell_mode_hypr.sh";
+      target = ".systemScripts/clamshell_mode_hypr.sh";
       source = ./systemScripts/clamshell_mode_hypr.sh;
       executable = true;
     };
