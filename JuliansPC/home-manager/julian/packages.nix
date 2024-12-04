@@ -12,14 +12,12 @@ let
     gameScopeEnable = true;
     gameScopeArgs = [
       "--fullscreen"
-      "--mangoapp"
       "--force-grab-cursor"
       "--nested-width=2560"
       "--output-width=2560"
       "--nested-height=1440"
       "--output-height=1440"
       "--force-windows-fullscreen"
-      "--rt"
     ];
     preCommands = ''
       export LD_PRELOAD="${gamemodeSharedObjects}"
