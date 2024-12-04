@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
     lanzaboote.url = "github:nix-community/lanzaboote";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nixos-generators = {
@@ -11,9 +11,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-generators-stable = {
-      #lock to this commit to avoid compatibility issues with 24.04. TODO: Remove the hash when updating stable to 24.11!
-      #See https://github.com/nix-community/nixos-generators/issues/403
-      url = "github:nix-community/nixos-generators/7c60ba4bc8d6aa2ba3e5b0f6ceb9fc07bc261565";
+      url = "github:nix-community/nixos-generators";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
     nixvim = {
@@ -21,7 +19,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixvim-stable = {
-      url = "github:nix-community/nixvim/nixos-24.05";
+      url = "github:nix-community/nixvim/nixos-24.11";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
     home-manager = {
@@ -29,7 +27,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager-stable = {
-      url = "github:nix-community/home-manager/release-24.05";
+      url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
     stylix.url = "github:danth/stylix";
@@ -84,7 +82,7 @@
         format = "iso";
         server = true;
 	      nebula = false;
-        stateVersion = "24.05";
+        stateVersion = "24.11";
       };
       "installISO" = {
         format = "install-iso";
