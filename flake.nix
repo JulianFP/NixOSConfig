@@ -39,11 +39,11 @@
     sops-nix.url = "github:Mic92/sops-nix";
     project-W = {
       url = "github:JulianFP/project-W";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
     };
     project-W-frontend = {
       url = "github:JulianFP/project-W-frontend";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
     };
     nix-gaming = {
       url = "github:fufexan/nix-gaming";
@@ -224,7 +224,6 @@
         stateVersion = "23.05";
       };
       "Project-W" = {
-        stable = false;
         proxmoxVmID = 136;
         overlays = [
           inputs.project-W.overlays.default

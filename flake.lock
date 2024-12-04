@@ -1304,7 +1304,7 @@
     "project-W": {
       "inputs": {
         "nixpkgs": [
-          "nixpkgs"
+          "nixpkgs-stable"
         ],
         "pre-commit-hooks": "pre-commit-hooks",
         "systems": "systems_3"
@@ -1326,7 +1326,7 @@
     "project-W-frontend": {
       "inputs": {
         "nixpkgs": [
-          "nixpkgs"
+          "nixpkgs-stable"
         ],
         "pnpm2nix-nzbr": "pnpm2nix-nzbr",
         "pre-commit-hooks": "pre-commit-hooks_2",
