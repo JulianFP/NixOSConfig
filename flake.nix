@@ -219,8 +219,7 @@
         proxmoxVmID = 135;
         permittedUnfreePackages = [
           "steamcmd"
-          "steam-run"
-          "steam-original"
+          "steam-unwrapped"
         ];
         stateVersion = "23.05";
       };

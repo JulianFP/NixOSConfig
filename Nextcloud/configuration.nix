@@ -36,10 +36,7 @@ in
 
     #setup database
     database.createLocally = true;
-    config = {
-      dbtype = "mysql";
-      dbtableprefix = "oc_";
-    };
+    config.dbtype = "mysql";
 
     #setup caching
     caching.redis = true;
