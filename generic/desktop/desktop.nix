@@ -12,7 +12,7 @@ structure:
 - security & virtualisation
 - misc 
 */
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   /* -- imports -- */
@@ -171,6 +171,8 @@ structure:
       packages = with pkgs; [
         rofi-wayland
       ];
+
+      openssh.authorizedKeys.keyFiles = lib.lists.optional config.services.openssh.enable ../../publicKeys/id_rsa.pub;
     };
   };
 
