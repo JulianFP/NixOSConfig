@@ -9,6 +9,10 @@ let
   unlockedKeyPartitionLabel = if hostName == "JuliansPC" then "KeyPartitionPC" else "KeyPartition";
   oldSystemdInitrd = ((import (modulesPath + "/system/boot/systemd/initrd.nix")) args).config.content.boot.initrd.systemd;
   oldSystemdTmpfiles = ((import (modulesPath + "/system/boot/systemd/tmpfiles.nix")) args).config.boot.initrd.systemd;
+
+  #to be able to boot without yubikey or when the tpm values temporarily don't fit anymore add a tang server in the local network as a fallback
+  #requires networking, so currently not enabled for JuliansFramework
+  withTangFallback = if hostName == "JuliansPC" then true else false; #make sure you added networking to initrd first!
 in {
   imports = [ 
     (modulesPath + "/installer/scan/not-detected.nix")
@@ -26,7 +30,10 @@ in {
   #decrypt keyPartition using clevis (enable this to get many required packages into initramfs)
   #do not specify secretfile because it will be put into initramfs image, change its hash and thus change PCR 9 at next boot
   #instead we will use clevises own unlocking mechanism that puts the jwe file into luks2 header 
-  boot.initrd.clevis.enable = true;
+  boot.initrd.clevis = {
+    enable = true;
+    useTang = withTangFallback;
+  };
 
   #I applied an overlay for the clevis package that includes the fido2 pin for yubikey support. This copies that pin and its extra dependencies to the initrd as well
   boot.initrd.systemd = {
@@ -34,6 +41,9 @@ in {
       grep = "${pkgs.gnugrep}/bin/grep";
       sed = "${pkgs.gnused}/bin/sed";
       cryptsetup = "${pkgs.cryptsetup}/bin/cryptsetup";
+    }
+    // lib.optionalAttrs withTangFallback {
+      swapon = "${pkgs.util-linux}/bin/swapon";
     };
     storePaths = [
       (pkgs.callPackage ../packages/clevis-pin-fido2/package.nix {})
@@ -88,27 +98,23 @@ in {
     };
   };
 
-  swapDevices = [{
-    device = "/dev/mapper/${unlockedSwapLabel}";
-    encrypted = {
-      enable = true;
-      blkDev = "/dev/disk/by-label/${encryptedSwapLabel}";
-      label = unlockedSwapLabel;
-      keyFile = "/keyPartition/${encryptedSwapLabel}.key";
-    };
-  }];
+  #for some reason systemd tries to load swap before decrypting it when using tang. Enable swap manually in stage 2 instead
+  swapDevices = lib.lists.optional (!withTangFallback) {
+    device = "/dev/disk/by-label/${unlockedSwapLabel}";
+  };
   boot.initrd.luks.devices = {
     #do not add KeyPartition here because that will generate a systemd-cryptsetup service for unlocking it
     #instead I want to define my own service (see below)
     "${unlockedSwapLabel}" = {
+      device = "/dev/disk/by-label/${encryptedSwapLabel}";
+      keyFile = "/keyPartition/${encryptedSwapLabel}.key";
       bypassWorkqueues = true;
       allowDiscards = true;
     };
   };
-
   #define how long system should suspend before waking up and hibernating (hibernation always happens on low battery, whatever happens first)
-  boot.resumeDevice = "/dev/mapper/${unlockedSwapLabel}";
-  systemd.sleep.extraConfig = ''
+  boot.resumeDevice = if withTangFallback then "" else "/dev/disk/by-label/${unlockedSwapLabel}";
+  systemd.sleep.extraConfig = if withTangFallback then "" else ''
     HibernateDelaySec=1h30min
   '';
 
@@ -128,16 +134,17 @@ in {
       #mount keyPartition that stores encryption keys for bcachefs and swap partition
       "mount-keyPartition" = {
         description = "Temporarily mount partition that holds encryption keys";
-        wantedBy = [ "unlock-bcachefs-${utils.escapeSystemdPath "/"}.service" "systemd-cryptsetup@${unlockedSwapLabel}.service" ];
-        before = [ "systemd-cryptsetup@${unlockedSwapLabel}.service" "unlock-bcachefs-${utils.escapeSystemdPath "/"}.service" ];
-        wants = [ "systemd-udev-settle.service" ];
-        after = [ "systemd-modules-load.service" "systemd-udev-settle.service" ];
+        before = [ "systemd-cryptsetup@${unlockedSwapLabel}.service" ];
+        wants = [ "systemd-udev-settle.service" ]
+          ++ lib.lists.optional withTangFallback "network-online.target";
+        after = [ "systemd-modules-load.service" "systemd-udev-settle.service" ]
+          ++ lib.lists.optional withTangFallback "network-online.target";
         unitConfig.DefaultDependencies = false;
         serviceConfig = {
           Type = "oneshot";
           StandardOutput = "tty";
           TimeoutSec = "infinity";
-          RemainAfterExit = true; #so that wants statements don't restart this service
+          RemainAfterExit = true; #so that wants/requires statements don't restart this service
         };
         script = ''
           echo "Trying to unlock ${encryptedKeyPartitionLabel} using clevis (tpm2 + fido2). Please press the button on your fido2 device"
@@ -157,6 +164,8 @@ in {
 
       #use keyfile from keyPartition to unlock automatically (overwrite script of existing NixOS service)
       "unlock-bcachefs-${utils.escapeSystemdPath "/"}" = {
+        requires = [ "mount-keyPartition.service" ];
+        after = [ "mount-keyPartition.service" ];
         serviceConfig.StandardOutput = "tty";
         script = lib.mkForce ''
           ${pkgs.bcachefs-tools}/bin/bcachefs unlock -f /keyPartition/${bcachefsLabel}.key /dev/disk/by-label/${bcachefsLabel}
@@ -164,11 +173,12 @@ in {
       };
 
       "unmount-keyPartition" = {
-        description = "Unmount temporarily mounted key partition";
-        wantedBy = [ "initrd.target" ];
-        before = [ "${utils.escapeSystemdPath config.boot.resumeDevice}.swap" ];
-        wants = [ "mount-keyPartition.service" ];
-        after = [ "systemd-cryptsetup@${unlockedSwapLabel}.service" "unlock-bcachefs-${utils.escapeSystemdPath "/"}.service" ];
+        description = "Unmount temporarily mounted key partition and enable swap";
+        wantedBy = [ "initrd.target"  ];
+        before = [ "initrd.target" ];
+        requires = [ "mount-keyPartition.service" ];
+        after = [ "mount-keyPartition.service" "systemd-cryptsetup@${unlockedSwapLabel}.service" "unlock-bcachefs-${utils.escapeSystemdPath "/"}.service" ];
+        unitConfig.DefaultDependencies = false;
         serviceConfig = {
           Type = "oneshot";
           StandardOutput = "tty";
@@ -178,7 +188,8 @@ in {
         script = ''
           umount /keyPartition
           cryptsetup close ${unlockedKeyPartitionLabel}
-        '';
+        ''
+        + lib.strings.optionalString withTangFallback "swapon /dev/mapper/${unlockedSwapLabel}";
       };
 
       /*
@@ -193,7 +204,7 @@ in {
         description = "Copy current root partition away and create new one";
         wantedBy = [ "initrd.target" ];
         before = [ "sysroot.mount" ];
-        wants = [ "unlock-bcachefs-${utils.escapeSystemdPath "/"}.service" ];
+        requires = [ "unlock-bcachefs-${utils.escapeSystemdPath "/"}.service" ];
         after = [ "unlock-bcachefs-${utils.escapeSystemdPath "/"}.service" "systemd-hibernate-resume.service" ];
         unitConfig.DefaultDependencies = false;
         serviceConfig = {
@@ -243,7 +254,7 @@ in {
   # (the default) this is the recommended approach. When using systemd-networkd it's
   # still possible to use this option, but it's recommended to use it in conjunction
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
-  networking.useDHCP = lib.mkDefault true;
+  # networking.useDHCP = lib.mkDefault true;
   # networking.interfaces.enp0s13f0u1u3.useDHCP = lib.mkDefault true;
   # networking.interfaces.wlp166s0.useDHCP = lib.mkDefault true;
 

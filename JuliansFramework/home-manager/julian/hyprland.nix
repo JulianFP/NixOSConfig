@@ -8,6 +8,7 @@
       source = ./systemScripts/clamshell_mode_hypr.sh;
       executable = true;
     };
+    "lockAndSuspend.sh".source = ./systemScripts/lockAndSuspend.sh; #this device supports hibernation
   };
 
   wayland.windowManager.hyprland.settings = {

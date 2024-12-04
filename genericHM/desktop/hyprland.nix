@@ -1,11 +1,11 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   # set scripts for extended Hyprland behavior (suspend, lock, etc.)
   home.file = {
     "lockAndSuspend.sh" = {
       target = ".systemScripts/lockAndSuspend.sh";
-      source = ./systemScripts/lockAndSuspend.sh;
+      source = lib.mkDefault ./systemScripts/lockAndSuspend.sh; #can be overwritten by the hibernate equivalent 
       executable = true;
     }; "hyprland_output_options.py" = {
       target = ".systemScripts/hyprland_output_options.py";
