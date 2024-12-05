@@ -6,21 +6,20 @@
     ../generic/ssh.nix
   ];
 
-  # Star Citizen tweaks
-  boot.kernel.sysctl = {
-      "vm.max_map_count" = lib.mkDefault 16777216; #also set by nix-gaming
-      "fs.file-max" = 524288;
+  /* -- Networking -- */
+  networking = {
+    useDHCP = false; #overwrite default. See networkd config below
+    enableIPv6 = true;
+    interfaces."enp14s0".wakeOnLan.enable = true; # enable wake-on-lan
+
+    #manage main lan interface through systemd-networkd instead of networkmanager so that it is declarative and also available in initrd
+    networkmanager.unmanaged = [ "enp14s0" ];
   };
 
-  #networking setup
-  networking = {
-    useDHCP = false;
-    enableIPv6 = true;
-  };
   systemd.network =  {
     enable = true;
     networks."10-enp" = {
-      name = "enp*";
+      name = "enp14s0";
       DHCP = "no";
       networkConfig.IPv6AcceptRA = true;
       address = [
@@ -48,6 +47,10 @@
     };
   };
 
-  # enable wake-on-lan
-  networking.interfaces."enp14s0".wakeOnLan.enable = true;
+
+  # Star Citizen tweaks
+  boot.kernel.sysctl = {
+      "vm.max_map_count" = lib.mkDefault 16777216; #also set by nix-gaming
+      "fs.file-max" = 524288;
+  };
 }

@@ -83,6 +83,9 @@ in
       "nebula@${netName}".serviceConfig.Group = lib.mkForce serviceGroup;
     }) enabledInterfaces);
 
+    #exclude nebula interface from networkmanager
+    networking.networkmanager.unmanaged = lib.mapAttrsToList (netName: _: builtins.substring 0 15 "nebula.${netName}") enabledInterfacesWithPort;
+
     services.nebula.networks = lib.mkMerge (lib.mapAttrsToList (netName: netCfg: {
       "${netName}" = rec {
         enable = true;
