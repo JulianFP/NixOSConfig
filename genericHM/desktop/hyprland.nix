@@ -274,4 +274,16 @@
         submap = reset
     '';
   };
+
+  #set hyprsunset as a blue light filter for the evenings
+  systemd.user = {
+    timers."hyprsunset" = {
+      Install.WantedBy = [ "timers.target" ];
+      Timer.OnCalendar = "*-*-* 22:30:00";
+    };
+    services."hyprsunset" = {
+      Service.ExecStart = "${pkgs.hyprsunset}/bin/hyprsunset -t 3500";
+      Unit.Requisite = [ "graphical-session.target" ];
+    };
+  };
 }

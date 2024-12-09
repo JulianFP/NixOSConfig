@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
-import socket, os, sys, json
+import socket, os, sys, json, dbus
+
+session_bus = dbus.SessionBus()
+systemd1 = session_bus.get_object('org.freedesktop.systemd1', '/org/freedesktop/systemd1')
+manager = dbus.Interface(systemd1, 'org.freedesktop.systemd1.Manager')
 
 runtimeDir = os.environ['XDG_RUNTIME_DIR']
 his = os.environ['HYPRLAND_INSTANCE_SIGNATURE']
@@ -16,13 +20,30 @@ def send(msg: str) -> str:
 monitors = json.loads(send("-j/monitors"))
 
 usedMonitorDescriptions = [
-    "Samsung Electric Company C27HG7x HTHK300334"
+    "Samsung Electric Company C27HG7x HTHK300334",
 ]
 
 options = {
     "Reset to Hyprland config": "reload",
-    "Inhibit suspend": "dispatch submap inhibitSuspend"
+    "Inhibit suspend": "dispatch submap inhibitSuspend",
 }
+
+systemdUnits = {
+    "blue light filter": "hyprsunset.service",
+}
+systemdUnitsStart = {}
+
+
+#add systemd units depending on current state
+for unitDesc, unitName in systemdUnits.items():
+    unit = session_bus.get_object('org.freedesktop.systemd1', object_path=manager.GetUnit(unitName))
+    interface = dbus.Interface(unit, dbus_interface='org.freedesktop.DBus.Properties')
+    if interface.Get('org.freedesktop.systemd1.Unit', 'ActiveState') == "active":
+        options["Disable " + unitDesc] = unitName
+        systemdUnitsStart[unitName] = False
+    else:
+        options["Enable " + unitDesc] = unitName
+        systemdUnitsStart[unitName] = True
 
 #check if eDP-1 exists
 internalExists = False
@@ -50,8 +71,14 @@ for monitor in monitors:
 
 if len(sys.argv) > 1:
     option = sys.argv[1]
-    command = options[option]
-    send(command)
+    if options[option] in systemdUnits.values():
+        if systemdUnitsStart[options[option]]:
+             manager.StartUnit('hyprsunset.service', 'fail')
+        else:
+             manager.StopUnit('hyprsunset.service', 'fail')
+    else:
+        command = options[option]
+        send(command)
 else:
     print("\0no-custom\x1ftrue") #set no-custom option of rofi
     print("\n".join(options.keys()))
