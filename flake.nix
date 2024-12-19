@@ -117,7 +117,7 @@
           "guilded"
         ];
         overlays = [
-          nur.overlay
+          nur.overlays.default
           (import ./generic/overlays/clevis_with_fido2.nix)
           (import ./generic/overlays/qtct.nix)
           #(import ./generic/overlays/lyx.nix)
@@ -148,7 +148,7 @@
           "guilded"
         ];
         overlays = [
-          nur.overlay
+          nur.overlays.default
           (import ./generic/overlays/clevis_with_fido2.nix)
           (import ./generic/overlays/qtct.nix)
         ];
