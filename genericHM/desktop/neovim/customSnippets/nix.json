@@ -16,7 +16,7 @@
         "body": [
             "{ pkgs ? import <nixpkgs> { } }:",
             "let",
-            "  fhs = pkgs.buildFHSUserEnv {",
+            "  fhs = pkgs.buildFHSEnv {",
             "    name = \"${1:shell name}\";",
             "    targetPkgs = _: with pkgs; [",
             "      ${2:packages}",
