@@ -167,6 +167,11 @@
         };
         stateVersion = "24.11";
       };
+      "mainserver" = {
+        server = true;
+        boot = 1;
+        stateVersion = "24.11";
+      };
       "NixOSTesting" = {
         proxmoxVmID = 120;
         hasOwnModule = false;

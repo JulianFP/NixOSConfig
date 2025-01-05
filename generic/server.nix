@@ -1,4 +1,4 @@
-{ modulesPath, config, lib, ... }:
+{ modulesPath, lib, ... }:
 
 {
   imports =
@@ -6,11 +6,7 @@
       ./common.nix
       ./ssh.nix
       (modulesPath + "/installer/scan/not-detected.nix")
-      (modulesPath + "/profiles/qemu-guest.nix")
     ];
-
-  #vm stuff
-  services.qemuGuest.enable = true;
 
   #automatic maintenance services
   #automatic garbage collect to avoid storage depletion by autoUpgrade
@@ -30,5 +26,4 @@
   environment.variables.NIX_REMOTE = "daemon";
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

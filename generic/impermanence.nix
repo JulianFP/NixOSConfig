@@ -1,6 +1,6 @@
 { inputs, ... }:
 
-#make sure that /persist and /persist/backMeUp exist, neededForBoot is set to true for them and they are being wiped at reboot before using this module! btrfs-impermanence-disk-config.nix contains a setup for this using btrfs subvolumes
+#make sure that /persist and /persist/backMeUp exist, neededForBoot is set to true for them and they are being wiped at reboot before using this module! ./disk-config-btrfs-impermanence.nix contains a setup for this using btrfs subvolumes
 {
   imports = [
     inputs.impermanence.nixosModules.impermanence

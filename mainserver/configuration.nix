@@ -1,37 +1,24 @@
-{ modulesPath, vmID, ... }:
+{ ... }:
 
 {
-  imports = [ # Include the results of the hardware scan.
-    (modulesPath + "/profiles/qemu-guest.nix")
-    ./disk-config-btrfs-impermanence.nix #filesystem with disko and impermanence setup 
-    ./impermanence.nix
-    ./server.nix
+  imports = [
+    ./hardware-configuration.nix
+    ../generic/impermanence.nix
   ];
 
-  #vm stuff
-  services.qemuGuest.enable = true;
-
-  boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "virtio_pci" "virtio_scsi" "sd_mod" "sr_mod" ];
-  boot.initrd.kernelModules = [ "dm-snapshot" ];
-  boot.loader.grub = {
-    efiSupport = true;
-    efiInstallAsRemovable = true;
-  };
-
-
-  #networking config (systemd.network preferred over networking)
+  #networking config
   networking = {
     useDHCP = false;
     enableIPv6 = false;
   };
-  systemd.network =  {
+  systemd.network = {
     enable = true;
     networks."10-serverLAN" = {
-      name = "ens*";
+      name = "enp0*";
       DHCP = "no";
       networkConfig.IPv6AcceptRA = false;
       address = [
-        "192.168.3.${builtins.toString vmID}/24"
+        "192.168.3.10/24"
       ];
       gateway = [
         "192.168.3.1"
@@ -43,6 +30,9 @@
       ];
     };
   };
+
+  #zfs support for data array
+  boot.zfs.enabled = true;
 
   #set nebula preferred_ranges
   services.nebula.networks."serverNetwork".settings.preferred_ranges = [ "192.168.3.0/24" ];
