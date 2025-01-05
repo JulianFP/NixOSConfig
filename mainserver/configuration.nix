@@ -31,8 +31,11 @@
     };
   };
 
-  #zfs support for data array
-  boot.zfs.enabled = true;
+  #zfs config
+  environment.persistence."/persist".files = [
+    "/etc/zfs/zpool.cache" #see nixos manual
+  ];
+  boot.supportedFilesystems = [ "zfs" ];
 
   #set nebula preferred_ranges
   services.nebula.networks."serverNetwork".settings.preferred_ranges = [ "192.168.3.0/24" ];
