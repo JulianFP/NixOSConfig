@@ -36,6 +36,7 @@
     "/etc/zfs/zpool.cache" #see nixos manual
   ];
   boot.supportedFilesystems = [ "zfs" ];
+  networking.hostId = "39c10fc6"; #see option description
 
   #set nebula preferred_ranges
   services.nebula.networks."serverNetwork".settings.preferred_ranges = [ "192.168.3.0/24" ];
