@@ -9,5 +9,10 @@
   boot.initrd.kernelModules = [ "dm-snapshot" ];
   boot.kernelModules = [ "kvm-intel" ];
 
+  myModules.disko-btrfs-impermanence = {
+    enable = true;
+    uefiOnlySystem = true;
+  };
+
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

@@ -194,7 +194,7 @@ in {
 
       /*
       -- impermanence setup --
-      differences to setup in ../disk-config-btrfs-impermanence-uefi.nix:
+      differences to setup in ../disk-config-btrfs-impermanence.nix:
       - bcachefs instead of btrfs!
       - More old copies with timestaps
       - home partition doesn't get erased

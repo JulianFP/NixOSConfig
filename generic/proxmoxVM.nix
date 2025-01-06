@@ -8,6 +8,8 @@
     ./server.nix
   ];
 
+  myModules.disko-btrfs-impermanence.enable = true;
+
   #vm stuff
   services.qemuGuest.enable = true;
 
