@@ -11,6 +11,7 @@ keys:
   - &NixOSTesting age1qjptsdulm6keutjr2h3mgs0gshjfqrww922hg3870266hlce8cwsm7mfws
   - &JuliansPC age1ts4z7k5ahqzn9f7qpkdjta8kvjfl8rke2zxp3wlusps9xngyv9eqh3zucz
   - &JuliansFramework age18c4fpcl6mvedfudppdammfg4cmfcemxc98nq733l7h76apdgmsnq939yaz
+  - &mainserver age16zwdpg2e4p9ct85xch7zl69nl7tnedwnt4dcxzu7f30d2rwqufqsuy8q6n
 creation_rules:
   - path_regex: ^secrets/JuliansFramework/.*$
     key_groups:
@@ -24,6 +25,12 @@ creation_rules:
       - *yubikey
       age:
       - *JuliansPC
+  - path_regex: ^secrets/mainserver/.*$
+    key_groups:
+    - pgp:
+      - *yubikey
+      age:
+      - *mainserver
   - path_regex: ^secrets/NixOSTesting/.*$
     key_groups:
     - pgp:
@@ -85,6 +92,7 @@ creation_rules:
       age:
       - *JuliansFramework
       - *JuliansPC
+      - *mainserver
       - *NixOSTesting
       - *IonosVPS
       - *LocalProxy
