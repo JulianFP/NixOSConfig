@@ -136,6 +136,7 @@ structure:
       "/var/lib/waydroid"
       "/var/lib/libvirt"
       "/etc/secureboot"
+      "/var/cache/nixseparatedebuginfod" #to stop nixseparatedebuginfod to re-index at every reboot
     ];
   };
 
