@@ -177,20 +177,6 @@
         hasOwnModule = false;
         stateVersion = "23.05";
       };
-      "Nextcloud" = {
-        proxmoxVmID = 131;
-        stateVersion = "24.05";
-      };
-      "Nextcloud-Testing" = {
-        proxmoxVmID = 150;
-        #doesn't have own config but shares config with Nextcloud
-        hasOwnModule = false;
-        systemModules = [
-          ./Nextcloud/configuration.nix
-          ./generic/thelounge.nix
-        ];
-        stateVersion = "23.11";
-      };
       "Jellyfin" = {
         proxmoxVmID = 132;
         stateVersion = "23.05";

@@ -1,24 +1,30 @@
-{ config, lib, pkgs, hostName, ... }:
+{ config, pkgs, lib, hostName, stateVersion, ... }:
 
 let
   cfg = config.services.nextcloud;
 in 
 {
-  fileSystems."/mnt/cloudData" = lib.mkIf (hostName == "Nextcloud") {
-    fsType = "ext4";
-    device = "/dev/disk/by-uuid/48ac0fab-61a1-483f-a912-dd8d35bf1a0a";
+  imports = [
+    ../../generic/sops.nix
+  ];
+
+  networking = {
+    hostName = hostName;
+    useHostResolvConf = lib.mkForce false;
   };
+  services.resolved.enable = true;
+  system.stateVersion = stateVersion;
 
   #setup sops secrets for nextcloud 
   sops.secrets."nextcloud/adminPass" = {
     mode = "0440";
     owner = "nextcloud";
-    sopsFile = ../secrets/${hostName}/nextcloud.yaml;
+    sopsFile = ../../secrets/${hostName}/nextcloud.yaml;
   };
   sops.secrets."nextcloud/secrets.json" = {
     mode = "0440";
     owner = "nextcloud";
-    sopsFile = ../secrets/${hostName}/nextcloud.yaml;
+    sopsFile = ../../secrets/${hostName}/nextcloud.yaml;
   };
 
   #nextcloud setup
@@ -26,7 +32,7 @@ in
     #boilerplate stuff
     enable = true;
     home = "/persist/backMeUp/nextcloud";
-    datadir = lib.mkIf (hostName == "Nextcloud") "/mnt/cloudData/nextcloud";
+    datadir = "/mnt/cloudData/nextcloud";
     hostName = if hostName == "Nextcloud" then "partanengroup.de" else "test.partanengroup.de";
     package = pkgs.nextcloud30;
     secretFile = config.sops.secrets."nextcloud/secrets.json".path;
@@ -68,7 +74,7 @@ in
     settings = {
       #setup reverse proxy config
       trusted_proxies = [
-        "192.168.3.130"
+        "10.42.42.1"
         "48.42.0.5"
       ];
       overwriteprotocol = "https";
@@ -108,11 +114,4 @@ in
 
   #set firewall rules (for both NixOS and nebula firewalls)
   networking.firewall.allowedTCPPorts = [ 80 ];
-  services.nebula.networks."serverNetwork".firewall.inbound = [
-    {
-      port = "80";
-      proto = "tcp";
-      group = "edge";
-    }
-  ];
 }

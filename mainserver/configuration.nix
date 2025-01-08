@@ -3,13 +3,25 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ./containers.nix
     ../generic/impermanence.nix
   ];
+  
+  programs.tmux = {
+    enable = true;
+    clock24 = true;
+  };
 
   #networking config
   networking = {
     useDHCP = false;
     enableIPv6 = false;
+    nat = {
+      enable = true;
+      internalInterfaces = ["ve-*"]; #the * wildcard syntax is specific to nftables, use + if switching back to iptables!
+      externalInterface = "enp0s25";
+      enableIPv6 = false;
+    };
   };
   systemd.network = {
     enable = true;
@@ -31,11 +43,50 @@
     };
   };
 
+  #nebula extend network
+  boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
+  networking.nftables = {
+    enable = true;
+    tables = {
+      "nebula_server-network" = {
+        family = "ip";
+        content = ''
+          chain postrouting {
+            type nat hook postrouting priority srcnat; policy accept;
+            ip saddr 48.42.0.0/16 ip daddr 192.168.3.0/24 counter masquerade
+          }
+
+          chain forward {
+            type filter hook forward priority filter; policy accept;
+            ct state related,established counter accept
+            iifname nebula1 oifname enp6s0 ip saddr 48.42.0.0/16 ip daddr 192.168.3.0/24 counter accept
+          }
+        '';
+      };
+      "nebula_container-network" = {
+        family = "ip";
+        content = ''
+          chain postrouting {
+            type nat hook postrouting priority srcnat; policy accept;
+            ip saddr 48.42.0.0/16 ip daddr 10.42.42.0/24 counter masquerade
+          }
+
+          chain forward {
+            type filter hook forward priority filter; policy accept;
+            ct state related,established counter accept
+            iifname nebula1 oifname enp6s0 ip saddr 48.42.0.0/16 ip daddr 10.42.42.0/24 counter accept
+          }
+        '';
+      };
+    };
+  };
+
   #zfs config
   environment.persistence."/persist".files = [
     "/etc/zfs/zpool.cache" #see nixos manual
   ];
   boot.supportedFilesystems = [ "zfs" ];
+  boot.zfs.extraPools = [ "newData" ];
   networking.hostId = "39c10fc6"; #see option description
 
   #set nebula preferred_ranges
@@ -44,7 +95,7 @@
   #automatic garbage collect and nix store optimisation is done in server.nix
   #automatic upgrade. Pulls newest commits from github daily. Relies on my updating the flake inputs (I want that to be manual and tracked by git)
   system.autoUpgrade = {
-    enable = true;
+    enable = false; #TODO
     flake = "github:JulianFP/NixOSConfig";
     dates = "04:00";
     randomizedDelaySec = "30min";
