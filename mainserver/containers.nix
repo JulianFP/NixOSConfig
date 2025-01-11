@@ -100,10 +100,54 @@
         inputs = inputs;
       };
     };
+    "Jellyfin" = {
+      autoStart = true;
+      ephemeral = true;
+
+      privateNetwork = true;
+      hostAddress = "10.42.42.1";
+      localAddress = "10.42.42.132";
+
+      bindMounts = {
+        "/mnt/mediadata" = {
+          hostPath = "/newData/Jellyfin";
+          isReadOnly = false;
+        };
+        "/persist/jellyfin" = {
+          hostPath = "/persist/Jellyfin";
+          isReadOnly = false;
+        };
+        "/var/lib/jellyfin" = {
+          hostPath = "/persist/backMeUp/Jellyfin/var/lib/jellyfin";
+          isReadOnly = false;
+        };
+        "/var/lib/private/jellyseerr" = {
+          hostPath = "/persist/backMeUp/Jellyfin/var/lib/private/jellyseerr";
+          isReadOnly = false;
+        };
+      };
+
+      config = ./jellyfin/configuration.nix;
+      specialArgs = {
+        hostName = "Jellyfin";
+        stateVersion = config.system.stateVersion;
+        inputs = inputs;
+      };
+    };
   };
   services.nebula.networks."serverNetwork".firewall.inbound = [
-    {
+    { #Nextcloud, Nextcloud-Testing
       port = "80";
+      proto = "tcp";
+      group = "edge";
+    }
+    { #Jellyfin: Jellyfin
+      port = "8096";
+      proto = "tcp";
+      group = "edge";
+    }
+    { #Jellyfin: Jellyseerr
+      port = "5055";
       proto = "tcp";
       group = "edge";
     }

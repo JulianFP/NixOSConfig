@@ -112,6 +112,6 @@ in
     mode = "0700";
   };
 
-  #set firewall rules (for both NixOS and nebula firewalls)
+  #set firewall rules so that app can be reached from host machine through private network
   networking.firewall.allowedTCPPorts = [ 80 ];
 }

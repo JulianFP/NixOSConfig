@@ -177,10 +177,6 @@
         hasOwnModule = false;
         stateVersion = "23.05";
       };
-      "Jellyfin" = {
-        proxmoxVmID = 132;
-        stateVersion = "23.05";
-      };
       "IonosVPS" = {
         server = true;
         args.edge = true;
