@@ -19,7 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 4,
+  "id": 10,
   "links": [],
   "panels": [
     {
@@ -91,12 +91,13 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count(container_last_seen{id=~\"/system.slice/.*service\"})",
+          "expr": "count(container_last_seen{id=~\"/system.slice/.*service\", instance=\"$node\"})",
+          "instant": true,
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "",
           "metric": "container_last_seen",
-          "range": true,
+          "range": false,
           "refId": "A",
           "step": 240
         }
@@ -173,11 +174,13 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "count(container_last_seen{id=~\"^/machine.slice/.*service$\", id!~\"^.*[.]service.+$\"})",
+          "exemplar": false,
+          "expr": "count(container_last_seen{id=~\"^/machine.slice/.*service$\", id!~\"^.*[.]service.+$\", instance=\"$node\"})",
+          "instant": true,
           "intervalFactor": 1,
           "legendFormat": "",
           "metric": "container_last_seen",
-          "range": true,
+          "range": false,
           "refId": "A",
           "step": 240
         }
@@ -253,11 +256,13 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_user_seconds_total{id=~\"/system.slice/.*service\"}[5m]) * 100)",
+          "exemplar": false,
+          "expr": "sum(rate(container_cpu_user_seconds_total{id=~\"/system.slice/.*service\", instance=\"$node\"}[5m]) * 100)",
+          "instant": true,
           "intervalFactor": 2,
           "legendFormat": "",
           "metric": "container_memory_usage_bytes",
-          "range": true,
+          "range": false,
           "refId": "A",
           "step": 240
         }
@@ -333,11 +338,13 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(rate(container_cpu_user_seconds_total{id=~\"^/machine.slice/.*service$\", id!~\"^.*[.]service.+$\"}[5m]) * 100)",
+          "exemplar": false,
+          "expr": "sum(rate(container_cpu_user_seconds_total{id=~\"^/machine.slice/.*service$\", id!~\"^.*[.]service.+$\", instance=\"$node\"}[5m]) * 100)",
+          "instant": true,
           "intervalFactor": 2,
           "legendFormat": "",
           "metric": "container_memory_usage_bytes",
-          "range": true,
+          "range": false,
           "refId": "A",
           "step": 240
         }
@@ -413,11 +420,13 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_usage_bytes{id=~\"/system.slice/.*service\"})/1024/1024",
+          "exemplar": false,
+          "expr": "sum(container_memory_usage_bytes{id=~\"/system.slice/.*service\", instance=\"$node\"})/1024/1024",
+          "instant": true,
           "intervalFactor": 2,
           "legendFormat": "",
           "metric": "container_memory_usage_bytes",
-          "range": true,
+          "range": false,
           "refId": "A",
           "step": 240
         }
@@ -493,11 +502,13 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_usage_bytes{id=~\"^/machine.slice/.*service$\", id!~\"^.*[.]service.+$\"})/1024/1024",
+          "exemplar": false,
+          "expr": "sum(container_memory_usage_bytes{id=~\"^/machine.slice/.*service$\", id!~\"^.*[.]service.+$\", instance=\"$node\"})/1024/1024",
+          "instant": true,
           "intervalFactor": 2,
           "legendFormat": "",
           "metric": "container_memory_usage_bytes",
-          "range": true,
+          "range": false,
           "refId": "A",
           "step": 240
         }
@@ -594,7 +605,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "rate(container_cpu_user_seconds_total{id=~\"/system.slice/.*service\"}[5m]) * 100",
+          "expr": "rate(container_cpu_user_seconds_total{id=~\"/system.slice/.*service\", instance=\"$node\"}[5m]) * 100",
           "intervalFactor": 2,
           "legendFormat": "{{id}}",
           "metric": "cpu",
@@ -707,7 +718,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "rate(container_cpu_user_seconds_total{id=~\"^/machine.slice/.*service$\", id!~\"^.*[.]service.+$\"}[5m]) * 100",
+          "expr": "rate(container_cpu_user_seconds_total{id=~\"^/machine.slice/.*service$\", id!~\"^.*[.]service.+$\", instance=\"$node\"}[5m]) * 100",
           "intervalFactor": 2,
           "legendFormat": "{{id}}",
           "metric": "cpu",
@@ -820,7 +831,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "container_memory_usage_bytes{id=~\"/system.slice/.*service\"}",
+          "expr": "container_memory_usage_bytes{id=~\"/system.slice/.*service\", instance=\"$node\"}",
           "hide": false,
           "intervalFactor": 2,
           "legendFormat": "{{id}}",
@@ -934,7 +945,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "container_memory_usage_bytes{id=~\"^/machine.slice/.*service$\", id!~\"^.*[.]service.+$\"}",
+          "expr": "container_memory_usage_bytes{id=~\"^/machine.slice/.*service$\", id!~\"^.*[.]service.+$\", instance=\"$node\"}",
           "hide": false,
           "intervalFactor": 2,
           "legendFormat": "{{id}}",
@@ -1043,7 +1054,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "irate(container_network_receive_bytes_total{interface=~\"ve-.*\"}[5m])",
+          "expr": "irate(container_network_receive_bytes_total{interface=~\"ve-.*\", instance=\"$node\"}[5m])",
           "intervalFactor": 2,
           "legendFormat": "{{interface}}",
           "metric": "container_network_receive_bytes_total",
@@ -1151,7 +1162,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "irate(container_network_transmit_bytes_total{interface=~\"ve-.*\"}[5m])",
+          "expr": "irate(container_network_transmit_bytes_total{interface=~\"ve-.*\", instance=\"$node\"}[5m])",
           "intervalFactor": 2,
           "legendFormat": "{{interface}}",
           "range": true,
@@ -1177,7 +1188,28 @@
   "schemaVersion": 40,
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "text": "localhost:8080",
+          "value": "localhost:8080"
+        },
+        "definition": "label_values(cadvisor_version_info,instance)",
+        "description": "",
+        "label": "Host",
+        "name": "node",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(cadvisor_version_info,instance)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      }
+    ]
   },
   "time": {
     "from": "now-1h",
@@ -1187,6 +1219,6 @@
   "timezone": "browser",
   "title": "cAdvisor",
   "uid": "de9me2pfkfd34c",
-  "version": 9,
+  "version": 1,
   "weekStart": ""
 }
