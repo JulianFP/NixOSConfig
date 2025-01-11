@@ -1,6 +1,17 @@
 { config, inputs, ... }:
 
 {
+  #the containers get their own private network instead of a bridge for now
+  networking = {
+    nftables.enable = true; #make sure again that we really use nftables because of below
+    nat = {
+      enable = true;
+      internalInterfaces = ["ve-*"]; #the * wildcard syntax is specific to nftables, use + if switching back to iptables!
+      externalInterface = "enp0s25";
+      enableIPv6 = false;
+    };
+  };
+  
   systemd.tmpfiles.settings."10-nextcloud" = {
     "/persist/sops-nix/Nextcloud"."d" = {
       user = "root";

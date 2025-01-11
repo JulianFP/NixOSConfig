@@ -4,6 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ./containers.nix
+    ./monitoring.nix
     ../generic/impermanence.nix
   ];
   
@@ -16,12 +17,6 @@
   networking = {
     useDHCP = false;
     enableIPv6 = false;
-    nat = {
-      enable = true;
-      internalInterfaces = ["ve-*"]; #the * wildcard syntax is specific to nftables, use + if switching back to iptables!
-      externalInterface = "enp0s25";
-      enableIPv6 = false;
-    };
   };
   systemd.network = {
     enable = true;
