@@ -7,10 +7,7 @@ in
 {
   networking = {
     hostName = hostName; # Define your hostname.
-    networkmanager = {
-      enable = true;
-      enableStrongSwan = true; # For l2tp vpn
-    };
+    networkmanager.enable = true;
 
     # rpfilter allow Wireguard traffic (see https://wiki.nixos.org/wiki/WireGuard#Setting_up_WireGuard_with_NetworkManager)
     firewall = { 
@@ -27,14 +24,6 @@ in
       '';
     };
   };
-
-  #for l2tp vpn
-  services.xl2tpd.enable = true;
-  services.strongswan = {
-    enable = true;
-    secrets = [ "ipsec.d/ipsec.nm-l2tp.secrets" ]; #ensure that it does not write secrets on read-only filesystem
-  };
-
   #make nebula config adjustable through toggleNebulaUnsafeRoutes bash package that can be found in ../packages/shellScriptBin/nebulaRoutes.nix
   #this is necessary to adjust unsafe_routes on the fly through a quick terminal command without having to change the NixOS and rebuilding all the time
   systemd.services."nebula-custom_serverNetwork" = {
@@ -53,7 +42,6 @@ in
   };
 
   environment.systemPackages = [
-    pkgs.networkmanager-l2tp
     (import ../packages/shellScriptBin/vlan.nix {inherit pkgs;})
     (import ../packages/shellScriptBin/nebulaRoutes.nix {
       inherit pkgs envFile;

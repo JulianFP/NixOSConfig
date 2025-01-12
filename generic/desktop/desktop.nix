@@ -21,7 +21,6 @@ structure:
     ../impermanence.nix
     ./networking.nix
     ./vpn-uni-heidelberg.nix
-    ./syncthing.nix
   ];
 
 

@@ -1,6 +1,6 @@
 { lib, config, hostName, ... }:
 
-# My Nextcloud server is currently down because of hardware issues. For the time being switch over to syncthing
+# My Nextcloud server was down because of hardware issues. I was using Syncthing temporarily as a replacement. Keeping this file around in case something similar happens again
 {
   sops.secrets = {
     "syncthing/${hostName}.crt" = {
