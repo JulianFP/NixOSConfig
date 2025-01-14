@@ -1,4 +1,4 @@
-{ config, pkgs, hostName, ... }:
+{ config, lib, pkgs, hostName, ... }:
 
 {
   services.prometheus = {
@@ -75,25 +75,20 @@
 
   #define grafana dashboards (obtained from https://grafana.com/grafana/dashboards)
   environment.etc = let
-    node-dashboard = pkgs.fetchurl {
-      url = "https://grafana.com/api/dashboards/1860/revisions/37/download";
-      hash = "sha256-1DE1aaanRHHeCOMWDGdOS1wBXxOF84UXAjJzT5Ek6mM=";
-    };
-    cadvisor-dashboard = ./grafana-cadvisor-dashboard.json;
-  in {
-    "grafana-dashboards/node-dashboard.json" = {
-      source = node-dashboard;
-      mode = "0440";
-      user = "grafana";
-      group = "grafana";
-    };
-    "grafana-dashboards/cadvisor-dashboard.json" = {
-      source = cadvisor-dashboard;
-      mode = "0440";
-      user = "grafana";
-      group = "grafana";
-    };
-  };
+    grafana-dashboards = {
+      "grafana-dashboards/node.json" = pkgs.fetchurl {
+        url = "https://grafana.com/api/dashboards/1860/revisions/37/download";
+        hash = "sha256-1DE1aaanRHHeCOMWDGdOS1wBXxOF84UXAjJzT5Ek6mM=";
+      };
+      "grafana-dashboards/cadvisor.json" = ./grafana-dashboards/cadvisor.json;
+      "grafana-dashboards/zfs.json" = ./grafana-dashboards/zfs.json;
+    };  
+  in lib.mapAttrs (_: value: {
+    source = value;
+    mode = "0440";
+    user = "grafana";
+    group = "grafana";
+  }) grafana-dashboards;
 
   environment.persistence."/persist".directories = [
     "/var/lib/${config.services.prometheus.stateDir}"
