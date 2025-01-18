@@ -19,6 +19,12 @@
           targets = [ "localhost:${toString config.services.cadvisor.port}" ];
         }];
       }
+      { #configured in ./unbound.nix
+        job_name = "unbound";
+        static_configs = [{
+          targets = [ "localhost:${toString config.services.prometheus.exporters.unbound.port}" ];
+        }];
+      }
     ];
 
     #exporters that should run locally on host machine
@@ -26,6 +32,11 @@
       node = {
         enable = true;
         listenAddress = "localhost";
+        enabledCollectors = [
+          #these are used by the Grafana dashboard below
+          "systemd"
+          "processes"
+        ];
       };
     };
   };
@@ -82,6 +93,10 @@
       };
       "grafana-dashboards/cadvisor.json" = ./grafana-dashboards/cadvisor.json;
       "grafana-dashboards/zfs.json" = ./grafana-dashboards/zfs.json;
+      "grafana-dashboards/unbound.json" = pkgs.fetchurl {
+        url = "https://grafana.com/api/dashboards/21006/revisions/2/download";
+        hash = "sha256-5hAlTsOj+Nb5KBSzYpZkr283TWW3xzEY7XiEkZyfcl8=";
+      };
     };  
   in lib.mapAttrs (_: value: {
     source = value;

@@ -4,6 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ./containers.nix
+    ./unbound.nix
     ./monitoring.nix
     ../generic/impermanence.nix
   ];
