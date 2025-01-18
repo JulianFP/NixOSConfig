@@ -19,7 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 10,
+  "id": 13,
   "links": [],
   "panels": [
     {
@@ -1193,6 +1193,10 @@
         "current": {
           "text": "localhost:8080",
           "value": "localhost:8080"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PBFA97CFB590B2093"
         },
         "definition": "label_values(cadvisor_version_info,instance)",
         "description": "",

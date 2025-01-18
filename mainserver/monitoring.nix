@@ -73,6 +73,7 @@
         {
           name = "Prometheus";
           type = "prometheus";
+          uid = "PBFA97CFB590B2093"; #this is referenced in some of my dashboards, so I make it declarative
           url = "http://${config.services.prometheus.listenAddress}:${toString config.services.prometheus.port}";
         }
       ];
@@ -93,9 +94,16 @@
       };
       "grafana-dashboards/cadvisor.json" = ./grafana-dashboards/cadvisor.json;
       "grafana-dashboards/zfs.json" = ./grafana-dashboards/zfs.json;
-      "grafana-dashboards/unbound.json" = pkgs.fetchurl {
-        url = "https://grafana.com/api/dashboards/21006/revisions/2/download";
-        hash = "sha256-5hAlTsOj+Nb5KBSzYpZkr283TWW3xzEY7XiEkZyfcl8=";
+      "grafana-dashboards/unbound.json" = pkgs.stdenv.mkDerivation {
+        name = "unbound-dashboard";
+        src = pkgs.fetchurl {
+          url = "https://grafana.com/api/dashboards/21006/revisions/2/download";
+          hash = "sha256-5hAlTsOj+Nb5KBSzYpZkr283TWW3xzEY7XiEkZyfcl8=";
+        };
+        phases = [ "installPhase" ];
+        installPhase = ''
+          ${pkgs.gnused}/bin/sed 's/\''${DS_PROMETHEUS}/PBFA97CFB590B2093/g' $src > $out
+        '';
       };
     };  
   in lib.mapAttrs (_: value: {

@@ -593,6 +593,10 @@
           "text": "localhost:9100",
           "value": "localhost:9100"
         },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PBFA97CFB590B2093"
+        },
         "definition": "label_values(node_uname_info,instance)",
         "description": "",
         "label": "Host",
@@ -611,6 +615,10 @@
         "current": {
           "text": "newData",
           "value": "newData"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PBFA97CFB590B2093"
         },
         "definition": "label_values(node_zfs_zpool_state,zpool)",
         "description": "",
@@ -636,6 +644,6 @@
   "timezone": "browser",
   "title": "Zfs (Node exporter)",
   "uid": "ce9znkuia3i0wa",
-  "version": 4,
+  "version": 5,
   "weekStart": ""
 }
