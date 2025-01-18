@@ -21,6 +21,7 @@ structure:
     ../impermanence.nix
     ./networking.nix
     ./vpn-uni-heidelberg.nix
+    ./project-W-services.nix
   ];
 
 

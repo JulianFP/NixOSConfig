@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 {
-  sops.secrets."pgadmin".sopsFile = ../secrets/postgres.yaml;
+  sops.secrets."pgadmin".sopsFile = ../../secrets/postgres.yaml;
 
   #impermanence stuff for postgres
   systemd.tmpfiles.settings."10-postgresql"."/persist/postgresql/${config.services.postgresql.package.psqlSchema}"."d" = {
@@ -43,6 +43,12 @@
         log_connections = true;
         log_disconnections = true;
       };
+    };
+
+    redis.servers."project-W" = {
+      enable = true;
+      logLevel = "debug";
+      group = "users";
     };
   };
 }

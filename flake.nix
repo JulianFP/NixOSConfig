@@ -101,7 +101,6 @@
           ./generic/desktop/crazy-bcachefs-hardware-config.nix
           nixos-hardware.nixosModules.framework-12th-gen-intel
           #nixos-hardware.nixosModules.common-gpu-amd
-          ./generic/postgres-playground.nix
         ];
         permittedInsecurePackages = [
           "electron-27.3.11" #needed for logseq until it upgrades its electron package
@@ -132,7 +131,6 @@
           ./generic/desktop/crazy-bcachefs-hardware-config.nix
           nixos-hardware.nixosModules.common-gpu-amd
           nixos-hardware.nixosModules.common-cpu-amd
-          ./generic/postgres-playground.nix
         ];
         permittedInsecurePackages = [
           "electron-27.3.11" #needed for logseq until it upgrades its electron package
