@@ -4,17 +4,19 @@
   services.prometheus = {
     enable = true;
     listenAddress = "localhost";
+
+    #set scrape_interval to be the same for all jobs for grafana. See https://grafana.com/blog/2020/09/28/new-in-grafana-7.2-__rate_interval-for-prometheus-rate-queries-that-just-work/
+    globalConfig.scrape_interval = "10s";
+
     scrapeConfigs = [
       {
         job_name = "node";
-        scrape_interval = "10s";
         static_configs = [{
           targets = [ "localhost:${toString config.services.prometheus.exporters.node.port}" ];
         }];
       }
       {
         job_name = "cadvisor";
-        scrape_interval = "10s";
         static_configs = [{
           targets = [ "localhost:${toString config.services.cadvisor.port}" ];
         }];
@@ -75,6 +77,7 @@
           type = "prometheus";
           uid = "PBFA97CFB590B2093"; #this is referenced in some of my dashboards, so I make it declarative
           url = "http://${config.services.prometheus.listenAddress}:${toString config.services.prometheus.port}";
+          jsonData.timeInterval = config.services.prometheus.globalConfig.scrape_interval;
         }
       ];
 

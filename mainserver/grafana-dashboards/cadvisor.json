@@ -257,7 +257,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(rate(container_cpu_user_seconds_total{id=~\"/system.slice/.*service\", instance=\"$node\"}[5m]) * 100)",
+          "expr": "sum(rate(container_cpu_user_seconds_total{id=~\"/system.slice/.*service\", instance=\"$node\"}[$__rate_interval]) * 100)",
           "instant": true,
           "intervalFactor": 2,
           "legendFormat": "",
@@ -339,7 +339,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(rate(container_cpu_user_seconds_total{id=~\"^/machine.slice/.*service$\", id!~\"^.*[.]service.+$\", instance=\"$node\"}[5m]) * 100)",
+          "expr": "sum(rate(container_cpu_user_seconds_total{id=~\"^/machine.slice/.*service$\", id!~\"^.*[.]service.+$\", instance=\"$node\"}[$__rate_interval]) * 100)",
           "instant": true,
           "intervalFactor": 2,
           "legendFormat": "",
@@ -605,7 +605,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "rate(container_cpu_user_seconds_total{id=~\"/system.slice/.*service\", instance=\"$node\"}[5m]) * 100",
+          "expr": "rate(container_cpu_user_seconds_total{id=~\"/system.slice/.*service\", instance=\"$node\"}[$__rate_interval]) * 100",
           "intervalFactor": 2,
           "legendFormat": "{{id}}",
           "metric": "cpu",
@@ -718,7 +718,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "rate(container_cpu_user_seconds_total{id=~\"^/machine.slice/.*service$\", id!~\"^.*[.]service.+$\", instance=\"$node\"}[5m]) * 100",
+          "expr": "rate(container_cpu_user_seconds_total{id=~\"^/machine.slice/.*service$\", id!~\"^.*[.]service.+$\", instance=\"$node\"}[$__rate_interval]) * 100",
           "intervalFactor": 2,
           "legendFormat": "{{id}}",
           "metric": "cpu",
@@ -1054,7 +1054,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "irate(container_network_receive_bytes_total{interface=~\"ve-.*\", instance=\"$node\"}[5m])",
+          "expr": "irate(container_network_receive_bytes_total{interface=~\"ve-.*\", instance=\"$node\"}[$__rate_interval])",
           "intervalFactor": 2,
           "legendFormat": "{{interface}}",
           "metric": "container_network_receive_bytes_total",
@@ -1162,7 +1162,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "irate(container_network_transmit_bytes_total{interface=~\"ve-.*\", instance=\"$node\"}[5m])",
+          "expr": "irate(container_network_transmit_bytes_total{interface=~\"ve-.*\", instance=\"$node\"}[$__rate_interval])",
           "intervalFactor": 2,
           "legendFormat": "{{interface}}",
           "range": true,

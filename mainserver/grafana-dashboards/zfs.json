@@ -176,7 +176,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "rate(node_zfs_zpool_dataset_nread{instance=\"$node\", zpool=\"$pool\", dataset=\"$pool\"}[5m])",
+          "expr": "rate(node_zfs_zpool_dataset_nread{instance=\"$node\", zpool=\"$pool\", dataset=\"$pool\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "Reads",
@@ -191,7 +191,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "rate(node_zfs_zpool_dataset_nwritten{instance=\"$node\", zpool=\"$pool\", dataset=\"$pool\"}[5m])",
+          "expr": "rate(node_zfs_zpool_dataset_nwritten{instance=\"$node\", zpool=\"$pool\", dataset=\"$pool\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -536,7 +536,7 @@
         {
           "editorMode": "code",
           "exemplar": false,
-          "expr": "rate(node_zfs_arc_hits{instance=\"$node\"}[5m])",
+          "expr": "rate(node_zfs_arc_hits{instance=\"$node\"}[$__rate_interval])",
           "instant": false,
           "legendFormat": "Hits",
           "range": true,
@@ -548,7 +548,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "rate(node_zfs_arc_misses{instance=\"$node\"}[5m])",
+          "expr": "rate(node_zfs_arc_misses{instance=\"$node\"}[$__rate_interval])",
           "hide": false,
           "legendFormat": "Misses",
           "range": true,
@@ -560,7 +560,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "rate(node_zfs_arc_l2_hits{instance=\"$node\"}[5m])",
+          "expr": "rate(node_zfs_arc_l2_hits{instance=\"$node\"}[$__rate_interval])",
           "hide": false,
           "legendFormat": "L2 Hits",
           "range": true,
@@ -572,7 +572,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "rate(node_zfs_arc_l2_misses{instance=\"$node\"}[5m])",
+          "expr": "rate(node_zfs_arc_l2_misses{instance=\"$node\"}[$__rate_interval])",
           "hide": false,
           "legendFormat": "L2 Misses",
           "range": true,
