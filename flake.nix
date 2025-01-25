@@ -168,32 +168,19 @@
       "mainserver" = {
         server = true;
         boot = 1;
-        stateVersion = "24.11";
-      };
-      "NixOSTesting" = {
-        proxmoxVmID = 120;
-        hasOwnModule = false;
-        stateVersion = "23.05";
-      };
-      "IonosVPS" = {
-        server = true;
-        args.edge = true;
         systemModules = [
           ./generic/ssh-sops-key.nix
-          ./generic/proxy.nix
-          ./generic/wireguard.nix
         ];
         homeManagerModules.root = [
           ./genericHM/ssh-sops-key.nix
         ];
-        stateVersion = "23.05";
+        stateVersion = "24.11";
       };
-      "LocalProxy" = {
-        proxmoxVmID = 130;
-        args.edge = false;
+      "IonosVPS" = {
+        server = true;
         systemModules = [
           ./generic/ssh-sops-key.nix
-          ./generic/proxy.nix
+          ./generic/wireguard.nix
         ];
         homeManagerModules.root = [
           ./genericHM/ssh-sops-key.nix

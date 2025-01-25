@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ../generic/proxyConfig.nix
     #./dnat.nix #for dnat config (currently not in use, conflicts with wireguard setup)
   ];
 
@@ -26,6 +27,12 @@
       via = "48.42.0.2";
     }
   ];
+
+  #reverse proxy config
+  myModules.proxy = {
+    enable = true;
+    isEdge = true;
+  };
 
   #use options of generic/wireguard.nix module 
   myModules.servers.wireguard = {

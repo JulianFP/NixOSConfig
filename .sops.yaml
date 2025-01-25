@@ -1,14 +1,11 @@
 keys:
   - &yubikey 5B82BEF3C1A6617707A448FDEB6F11283183E111
-  - &Authentik age14p4qgmvfw844m0ly2gdhxqxdcktf2wjk4fmhwvt3ujfdlt5jhassqxyu4c
   - &Project-W age18w82394zjyn52rmj4jyl0ncq453zrjt3z6uep6q3q7wp0f7k033qvzppy7
   - &Valheim age1qq4e2nsgk96gl6zn605dpt4xwz3yuwxthcnkdhhvkn508503ky5spz9xur
   - &Jellyfin age1d8nx4acd0wsrsk8rkfgvm04vqaal5dcygx5jeumdhsh5s77h234qjxjp0j
   - &Nextcloud age12e9mw8rwsxkqclpcxs3nxcg84l8j8hsxtae5mfn8d9fvnvczw4pqsn8wyf
   - &Nextcloud-Testing age1rjw96c2g46s9qs8s9gy67tz39wm8sq85rzz3cmxvmsgtw32fl43sjegg85
-  - &LocalProxy age1jgxeprdxvxvgz0ya25tgcyfgq5uxe3w6z6cj22yemp2476avds4srumvlk
   - &IonosVPS age1mfk3dc4sekgxccv4dyuypavzelv0tvtlerf3s5qwtfzu9rnjevts9qlxme
-  - &NixOSTesting age1qjptsdulm6keutjr2h3mgs0gshjfqrww922hg3870266hlce8cwsm7mfws
   - &JuliansPC age1ts4z7k5ahqzn9f7qpkdjta8kvjfl8rke2zxp3wlusps9xngyv9eqh3zucz
   - &JuliansFramework age18c4fpcl6mvedfudppdammfg4cmfcemxc98nq733l7h76apdgmsnq939yaz
   - &mainserver age16zwdpg2e4p9ct85xch7zl69nl7tnedwnt4dcxzu7f30d2rwqufqsuy8q6n
@@ -31,24 +28,12 @@ creation_rules:
       - *yubikey
       age:
       - *mainserver
-  - path_regex: ^secrets/NixOSTesting/.*$
-    key_groups:
-    - pgp:
-      - *yubikey
-      age:
-      - *NixOSTesting
   - path_regex: ^secrets/IonosVPS/.*$
     key_groups:
     - pgp:
       - *yubikey
       age:
       - *IonosVPS
-  - path_regex: ^secrets/LocalProxy/.*$
-    key_groups:
-    - pgp:
-      - *yubikey
-      age:
-      - *LocalProxy
   - path_regex: ^secrets/Nextcloud/.*$
     key_groups:
     - pgp:
@@ -79,12 +64,6 @@ creation_rules:
       - *yubikey
       age:
       - *Project-W
-  - path_regex: ^secrets/Authentik/.*$
-    key_groups:
-    - pgp:
-      - *yubikey
-      age:
-      - *Authentik
   - path_regex: ^secrets/[^/]*$
     key_groups:
     - pgp:
@@ -93,15 +72,12 @@ creation_rules:
       - *JuliansFramework
       - *JuliansPC
       - *mainserver
-      - *NixOSTesting
       - *IonosVPS
-      - *LocalProxy
       - *Nextcloud
       - *Nextcloud-Testing
       - *Jellyfin
       - *Valheim
       - *Project-W
-      - *Authentik
   - key_groups:
     - pgp:
       - *yubikey

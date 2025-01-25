@@ -1,7 +1,7 @@
 { config, lib, hostName, ... }:
 
 {
-  #openssh client key config and add LocalProxy to known_hosts
+  #openssh client key config
   sops.secrets."openssh/${hostName}" = {
     sopsFile = ../secrets/${hostName}/ssh.yaml;
     path = "/root/.ssh/${hostName}";
@@ -21,6 +21,6 @@
 
   users.users.root.openssh.authorizedKeys.keyFiles = [
     ../publicKeys/IonosVPS.pub
-    ../publicKeys/LocalProxy.pub
+    ../publicKeys/mainserver.pub
   ];
 }

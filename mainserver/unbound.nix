@@ -26,23 +26,38 @@ in
       stateDir = "/persist/unbound";
 
       settings = {
-        server = {
+        server = let
+          threads = 16; #power of 2 for slabs
+        in {
           interface = [ "192.168.3.10" ];
           
           access-control = [ "192.168.0.0/16 allow" ];
 
+          #security settings
           harden-glue = true;
           harden-dnssec-stripped = true;
-
-          prefetch = true;
-          prefetch-key = true;
-
-          so-reuseport = true;
-
           hide-identity = true;
           hide-version = true;
-
           tls-cert-bundle = "/etc/ssl/certs/ca-certificates.crt";
+
+          #performance tuning
+          #multi-threading
+          num-threads = threads;
+          msg-cache-slabs = threads;
+          rrset-cache-slabs = threads;
+          infra-cache-slabs = threads;
+          key-cache-slabs = threads;
+          so-reuseport = true;
+
+          #cache size
+          msg-cache-size = "100m";
+          rrset-cache-size = "200m"; #should be roughly double msg-cache-size
+          prefetch = true;
+          prefetch-key = true;
+          cache-min-ttl = 0;
+          serve-expired = true;
+          serve-expired-reply-ttl = 0;
+          serve-expired-client-timeout = 0;
 
           extended-statistics = true; #for prometheus statistics
 

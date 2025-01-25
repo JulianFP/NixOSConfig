@@ -7,6 +7,7 @@
     ./unbound.nix
     ./monitoring.nix
     ../generic/impermanence.nix
+    ../generic/proxyConfig.nix
   ];
   
   programs.tmux = {
@@ -36,6 +37,15 @@
         "1.0.0.1"
         "8.8.8.8"
       ];
+    };
+  };
+
+  #Reverse Proxy config
+  myModules.proxy = {
+    enable = true;
+    localDNS = {
+      enable = true;
+      localForwardIP = "192.168.3.10";
     };
   };
 

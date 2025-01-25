@@ -11,8 +11,8 @@
         user = "root";
         identityFile = "/root/.ssh/${hostName}";
       };
-      "LocalProxy" = {
-        hostname = "48.42.1.130";
+      "mainserver" = {
+        hostname = "48.42.0.2";
         user = "root";
         identityFile = "/root/.ssh/${hostName}";
       };
@@ -22,7 +22,7 @@
   home.file.".ssh/known_hostsHM" = {
     text = lib.strings.concatLines [
       ("48.42.0.5 " + builtins.readFile ../publicKeys/IonosVPS-host.pub)
-      ("48.42.1.130 " + builtins.readFile ../publicKeys/LocalProxy-host.pub)
+      ("48.42.0.2 " + builtins.readFile ../publicKeys/mainserver-host.pub)
     ];
   };
 }
