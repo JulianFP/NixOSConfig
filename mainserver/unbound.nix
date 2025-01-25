@@ -8,8 +8,8 @@ let
     src = (pkgs.fetchFromGitHub {
       owner = "StevenBlack";
       repo = "hosts";
-      rev = "3.15.10";
-      sha256 = "sha256-f5SH4qQzRWYKwIjpzOuhI9mPwlyNcBWjr2mrCKLgml4=";
+      rev = "3.15.13";
+      sha256 = "sha256-FBq7yonwKPh57ZYI4XUqYZZyxTWON3Ox5i45qYELkSs=";
     } + "/hosts");
 
     phases = [ "installPhase" ];
