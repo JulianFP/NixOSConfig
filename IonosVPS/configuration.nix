@@ -2,18 +2,14 @@
 
 {
   imports = [
+    ./hardware-configuration.nix
     ../generic/proxyConfig.nix
     #./dnat.nix #for dnat config (currently not in use, conflicts with wireguard setup)
   ];
 
-  boot.loader.grub.device = "/dev/vda";
-  boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "xen_blkfront" "vmw_pvscsi" ];
-  boot.initrd.kernelModules = [ "nvme" ];
-  fileSystems."/" = { device = "/dev/vda1"; fsType = "ext4"; };
-
   networking.domain = "";
 
-  #zramSwap.enable = true; #enable zram (instead of swap)
+  zramSwap.enable = true; #enable zram (instead of swap)
 
   #nebula lighthouse + unsafe_routes settings
   myModules.nebula.interfaces."serverNetwork".isLighthouse = true;
