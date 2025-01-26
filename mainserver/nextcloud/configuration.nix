@@ -56,7 +56,7 @@ in
       "opcache.enable" = "1";
       "opcache.interned_strings_buffer" = "16";
       "opcache.max_accelerated_files" = "10000";
-      "opcache.memory_consumption" = "256";
+      "opcache.memory_consumption" = "2048";
       "opcache.save_comments" = "1";
       "opcache.validate_timestamps" = "0"; #disables opcache.revalidate_freq completely
       "opcache.jit" = "1255"; #php 8.0 or above required
