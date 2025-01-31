@@ -285,9 +285,9 @@
           program = "\${dir} .. '/buildDebug/' .. \${folder}";
           stopOnEntry = false;
         }];
-        extensions.dap-ui.enable = true;
         signs.dapBreakpoint.text = "🛑";
       };
+      dap-ui.enable = true;
     };
     extraConfigLuaPost = ''
       require("ibl").setup()
