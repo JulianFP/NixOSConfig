@@ -84,7 +84,7 @@ in
     }) enabledInterfaces);
 
     #exclude nebula interface from networkmanager
-    networking.networkmanager.unmanaged = lib.mapAttrsToList (netName: _: builtins.substring 0 15 "nebula.${netName}") enabledInterfacesWithPort;
+    networking.networkmanager.unmanaged = lib.mapAttrsToList (netName: _: builtins.substring 0 15 "neb-${netName}") enabledInterfacesWithPort;
 
     services.nebula.networks = lib.mkMerge (lib.mapAttrsToList (netName: netCfg: {
       "${netName}" = rec {
@@ -92,6 +92,7 @@ in
         ca = config.sops.secrets."nebula/ca.crt".path;
         key = config.sops.secrets."nebula/${netCfg.installHostName}.key".path;
         cert = config.sops.secrets."nebula/${netCfg.installHostName}.crt".path;
+        tun.device = "neb-${netName}"; #shorter interface names
         listen.port = netCfg.port;
         lighthouses = lib.mkIf (!netCfg.isLighthouse) [ "48.42.0.1" "48.42.0.5" ];
         isLighthouse = netCfg.isLighthouse;

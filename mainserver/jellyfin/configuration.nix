@@ -1,13 +1,6 @@
-{ lib, hostName, stateVersion, ... }:
+{ ... }:
 
 {
-  networking = {
-    hostName = hostName;
-    useHostResolvConf = lib.mkForce false;
-  };
-  services.resolved.enable = true;
-  system.stateVersion = stateVersion;
-
   services.jellyfin = {
     enable = true;
     openFirewall = true;
@@ -20,6 +13,4 @@
     enable = true;
     openFirewall = true;
   };
-
-  networking.firewall.allowedTCPPorts = [ 8096 5055 ];
 }

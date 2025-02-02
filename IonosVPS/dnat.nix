@@ -2,38 +2,29 @@
 
 {
   networking = {
-    nftables = {
-      enable = true;
-      ruleset = ''
-          table ip nat {
-            chain PREROUTING {
-              type nat hook prerouting priority dstnat; policy accept;
-              iifname "ens6" tcp dport 25565 dnat to 48.42.1.110:25565
-              iifname "ens6" udp dport 25565 dnat to 48.42.1.110:25565
-            }
-          }
-      '';
-    };
-    firewall = {
-      enable = true;
-      allowedTCPPorts = [ 23 ];
-    };
+    nftables.enable = true;
+    firewall.allowedTCPPorts = [ 
+      #23 
+    ];
     nat = {
       enable = true;
-      internalInterfaces = [ "ens6" ];
-      externalInterface = "nebula.serverNe";
+      internalInterfaces = [ "neb-serverNetwo" ];
+      externalInterface = "ens6";
       forwardPorts = [
+      /*
         {
-          sourcePort = 25565;
+          sourcePort = 23;
           proto = "tcp";
-          destination = "48.42.1.110:25565";
+          destination = "48.42.1.150:23";
         }
-        {
-          sourcePort = 25565;
-          proto = "udp";
-          destination = "48.42.1.110:25565";
-        }
+      */
       ];
     };
   };
+
+  services.nebula.networks."serverNetwork".firewall.inbound = [{
+    port = "any";
+    proto = "any";
+    group = "server";
+  }];
 }

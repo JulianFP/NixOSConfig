@@ -1,20 +1,9 @@
-{ config, pkgs, lib, hostName, stateVersion, ... }:
+{ config, pkgs, hostName, ... }:
 
 let
   cfg = config.services.nextcloud;
 in 
 {
-  imports = [
-    ../../generic/sops.nix
-  ];
-
-  networking = {
-    hostName = hostName;
-    useHostResolvConf = lib.mkForce false;
-  };
-  services.resolved.enable = true;
-  system.stateVersion = stateVersion;
-
   #setup sops secrets for nextcloud 
   sops.secrets."nextcloud/adminPass" = {
     mode = "0440";
@@ -111,7 +100,4 @@ in
     group = "mysql";
     mode = "0700";
   };
-
-  #set firewall rules so that app can be reached from host machine through private network
-  networking.firewall.allowedTCPPorts = [ 80 ];
 }

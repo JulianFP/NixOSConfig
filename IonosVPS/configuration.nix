@@ -4,7 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ../generic/proxyConfig.nix
-    #./dnat.nix #for dnat config (currently not in use, conflicts with wireguard setup)
+    ./dnat.nix
   ];
 
   networking.domain = "";
