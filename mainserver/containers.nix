@@ -63,6 +63,17 @@
         };
         config = ./jellyfin/configuration.nix;
       };
+      "FoundryVTT" = {
+        hostID = 133;
+        openTCPPorts = [ 30000 ];
+        additionalBindMounts = {
+          "/persist/backMeUp" = {
+            hostPath = "/persist/backMeUp/FoundryVTT";
+            isReadOnly = false;
+          };
+        };
+        config = ./foundryvtt/configuration.nix;
+      };
     };
   };
 }

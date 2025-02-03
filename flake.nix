@@ -50,6 +50,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     impermanence.url = "github:nix-community/impermanence";
+    foundryvtt.url = "github:reckenrode/nix-foundryvtt";
   };
 
   outputs = inputs: let

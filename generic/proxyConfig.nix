@@ -35,6 +35,11 @@
         destIPedge = "48.42.1.132";
         destPort = 5055;
       };
+      "vtt.partanengroup.de" = { #Foundry VTT server
+        destIP = "10.42.42.133";
+        destIPedge = "48.42.1.133";
+        destPort = 30000;
+      };
     };
     localProxyHostNames = [
       "mainserver"
