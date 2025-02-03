@@ -75,16 +75,30 @@ in
         via = "48.42.0.5";
         install = false;
       }];
-      firewall.inbound = (builtins.map (port: {
-        port = port;
-        proto = "tcp";
-        group = "edge";
-      }) v.openTCPPorts)
-      ++ (builtins.map (port: {
-        port = port;
-        proto = "udp";
-        group = "edge";
-      }) v.openUDPPorts);
+      firewall.inbound = (builtins.concatLists (builtins.map (port: [
+        {
+          port = port;
+          proto = "tcp";
+          group = "edge";
+        }
+        { #allow admins to bypass reverse proxy for debugging/maintenance purposes
+          port = port;
+          proto = "tcp";
+          group = "admin";
+        }
+      ])v.openTCPPorts))
+      ++ (builtins.concatLists (builtins.map (port: [
+        {
+          port = port;
+          proto = "udp";
+          group = "edge";
+        }
+        {
+          port = port;
+          proto = "udp";
+          group = "admin";
+        }
+      ])v.openUDPPorts));
     }) enabledContainers);
 
     #networking stuff that all containers share. systemd service templates
