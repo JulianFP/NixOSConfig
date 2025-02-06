@@ -175,6 +175,9 @@
         homeManagerModules.root = [
           ./genericHM/ssh-sops-key.nix
         ];
+        overlays = [
+          (import ./generic/overlays/caddy-unstable.nix {pkgs-unstable = (import inputs.nixpkgs {system = "x86_64-linux";});})
+        ];
         stateVersion = "24.11";
       };
       "IonosVPS" = {
@@ -185,6 +188,9 @@
         ];
         homeManagerModules.root = [
           ./genericHM/ssh-sops-key.nix
+        ];
+        overlays = [
+          (import ./generic/overlays/caddy-unstable.nix {pkgs-unstable = (import inputs.nixpkgs {system = "x86_64-linux";});})
         ];
         stateVersion = "23.11";
       };

@@ -11,19 +11,19 @@
         destIP = "10.42.42.131";
         destIPedge = "48.42.1.131";
         destPort = 80;
-        additionalLocations = {
-          "/.well-known/carddav".return = "301 $scheme://$host/remote.php/dav";
-          "/.well-known/caldav".return = "301 $scheme://$host/remote.php/dav";
-        };
+        additionalConfig = ''
+          redir /.well-known/carddav /remote.php/dav/ 301
+          redir /.well-known/caldav /remote.php/dav/ 301
+        '';
       };
       "test.partanengroup.de" = { #nextcloud test
         destIP = "10.42.42.150";
         destIPedge = "48.42.1.150";
         destPort = 80;
-        additionalLocations = {
-          "/.well-known/carddav".return = "301 $scheme://$host/remote.php/dav";
-          "/.well-known/caldav".return = "301 $scheme://$host/remote.php/dav";
-        };
+        additionalConfig = ''
+          redir /.well-known/carddav /remote.php/dav/ 301
+          redir /.well-known/caldav /remote.php/dav/ 301
+        '';
       };
       "media.partanengroup.de" = { #jellyfin
         destIP = "10.42.42.132";

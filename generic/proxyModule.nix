@@ -24,10 +24,10 @@ in
             type = lib.types.port;
             description = "Port to which this traffic should be forwarded";
           };
-          additionalLocations = lib.mkOption {
-            type = lib.types.attrs;
-            default = {};
-            description = "Additional entries to nginx's services.nginx.virtualHosts.<name>.locations option for this forward";
+          additionalConfig = lib.mkOption {
+            type = lib.types.lines;
+            default = '''';
+            description = "Additional config added to the virtualHosts section (e.g. for adding additional locations)";
           };
         };
       });
@@ -44,11 +44,6 @@ in
     edgeHostName = lib.mkOption {
       type = lib.types.singleLineStr;
       description = "hostName of edge server so that local proxies know from where to pull certificates. This requires that ssh is configured with a matchBlock for this hostName.";
-    };
-    localProxyCertDir = lib.mkOption {
-      type = lib.types.singleLineStr;
-      default = "/persist/sslCerts";
-      description = "Where the edge proxy should put SSL certs on the local proxy";
     };
     localDNS = {
       enable = lib.mkEnableOption ("Whether to enable a local DNS server for this machine that serves DNS entries of configured domains");
@@ -71,98 +66,78 @@ in
       }
     ];
 
-    #reverse proxy config
-    services.nginx = {
-      #boilerplate stuff
+    sops.secrets."redis/caddy-server" = lib.mkIf cfg.isEdge {
+      mode = "0440";
+      owner = config.services.redis.servers."caddy-storage".user;
+      sopsFile = ../secrets/${hostName}/redis.yaml;
+    };
+    sops.secrets."redis/caddy-client" = {
+      mode = "0440";
+      owner = config.services.caddy.user;
+      sopsFile = ../secrets/${hostName}/redis.yaml;
+    };
+
+    services.redis.servers."caddy-storage" = lib.mkIf cfg.isEdge {
       enable = true;
-      recommendedGzipSettings = true;
-      recommendedOptimisation = true;
-      recommendedProxySettings = true;
-      recommendedTlsSettings = true;
+      port = 7000;
+      bind = "127.0.0.1 48.42.0.5";
+      requirePassFile = config.sops.secrets."redis/caddy-server".path;
+    };
 
-      #hardened security settings
-      # Only allow PFS-enabled ciphers with AES256
-      sslCiphers = "AES256+EECDH:AES256+EDH:!aNULL";
-      #enable HSTS and other hardening (see nixos wiki)
-      appendHttpConfig = ''
-        map $scheme $hsts_header {
-            https   "max-age=31536000; includeSubdomains; preload";
+    services.caddy = {
+      enable = true;
+      package = pkgs.caddy.withPlugins {
+        plugins = [ "github.com/pberkel/caddy-storage-redis@v1.4.0" ];
+        hash = "sha256-xtg5SH1w99tY2hOdo1hlo6W4zoP8O+q7GimeTfPGqy8=";
+      };
+      dataDir = "/persist/caddy";
+      email = "admin@partanengroup.de";
+      globalConfig = ''
+        storage redis {
+          host ${if cfg.isEdge then "127.0.0.1" else "48.42.0.5"}
+          port 7000
+          password "{$REDIS_PASSWORD}"
         }
-        more_set_headers 'Strict-Transport-Security: $hsts_header';
-        more_set_headers 'Referrer-Policy: strict-origin-when-cross-origin';
-        more_set_headers 'X-Frame-Options: SAMEORIGIN';
-        more_set_headers 'X-Content-Type-Options: nosniff';
-        proxy_cookie_path / "/; secure; HttpOnly; SameSite=strict";
       '';
-
-      #allow uploads with file sizes up to 10G
-      clientMaxBodySize = "10G";
-
-      virtualHosts = lib.mkMerge (lib.mapAttrsToList (domain: domCfg: let
+      virtualHosts = let
+        sharedConfig = ''
+          #configure hsts
+          header Strict-Transport-Security "max-age=31536000; includeSubdomains; preload"
+          #compression
+          encode zstd gzip
+        '';
+        domainList = builtins.concatStringsSep ", " (lib.mapAttrsToList (domain: _: "www.${domain}") cfg.proxies);
+      in {
+        "${domainList}" = {
+          logFormat = ''
+            output file ${config.services.caddy.logDir}/access-www-redirects.log
+          '';
+          extraConfig = sharedConfig + ''
+              #redirect www domains
+              redir https://{labels.1}.{labels.0}{uri}
+          '';
+        };
+      } // builtins.mapAttrs (domain: domCfg: let
+        
         forwardURL = if (domCfg.destIPedge != null)
           then "http://${domCfg.destIPedge}:${builtins.toString domCfg.destPort}"
           else "http://${domCfg.destIP}:${builtins.toString domCfg.destPort}";
       in {
-        "${domain}" = {
-          enableACME = lib.mkIf cfg.isEdge true;
-          sslCertificate = lib.mkIf (!cfg.isEdge) "${cfg.localProxyCertDir}/${domain}/fullchain.pem";
-          sslCertificateKey = lib.mkIf (!cfg.isEdge) "${cfg.localProxyCertDir}/${domain}/key.pem";
-          sslTrustedCertificate = lib.mkIf (!cfg.isEdge) "${cfg.localProxyCertDir}/${domain}/chain.pem";
-          forceSSL = true;
-          http2 = true;
-          locations = {
-            "/" = {
-              proxyPass = forwardURL;
-              proxyWebsockets = true;
-            };
-          } // domCfg.additionalLocations;
-        };
-        #www redirect
-        "www.${domain}" = {
-          enableACME = lib.mkIf cfg.isEdge true;
-          sslCertificate = lib.mkIf (!cfg.isEdge) "${cfg.localProxyCertDir}/www.${domain}/fullchain.pem";
-          sslCertificateKey = lib.mkIf (!cfg.isEdge) "${cfg.localProxyCertDir}/www.${domain}/key.pem";
-          sslTrustedCertificate = lib.mkIf (!cfg.isEdge) "${cfg.localProxyCertDir}/www.${domain}/chain.pem";
-          forceSSL = true;
-          http2 = true;
-          globalRedirect = "${domain}";
-        };
-      }) cfg.proxies);
+        extraConfig = sharedConfig + domCfg.additionalConfig + ''
+          #reverse proxy
+          reverse_proxy ${forwardURL}
+        '';
+      }) cfg.proxies;
     };
-
-    #setup acme for let's encrypt validation if this is on edge
-    security.acme = lib.mkIf cfg.isEdge {
-      acceptTerms = true;
-      defaults.email = "admin@partanengroup.de";
-      #ssh matchBlocks for local proxies have to be setup on edge server
-      defaults.postRun = lib.strings.concatMapStrings (proxyHostName: 
-        ''
-          ${pkgs.openssh}/bin/ssh ${proxyHostName} "mkdir -p ${cfg.localProxyCertDir}"
-          ${pkgs.openssh}/bin/scp -r $(pwd) ${proxyHostName}:${cfg.localProxyCertDir}/
-          ${pkgs.openssh}/bin/ssh ${proxyHostName} "chown -R nginx:nginx ${cfg.localProxyCertDir}/*"
-          ${pkgs.openssh}/bin/ssh ${proxyHostName} "systemctl restart nginx.service"
-        ''
-      ) cfg.localProxyHostNames;
+    systemd.tmpfiles.settings."10-caddy"."/persist/caddy"."d" = {
+      user = config.services.caddy.user;
+      group = config.services.caddy.group;
+      mode = "0700";
     };
-    #local proxy can also pull certs from IonosVPS if they are missing (e.g. after reinstall)
-    systemd.services."pre-nginx" = lib.mkIf (!cfg.isEdge) {
-      enable = true;
-      script = ''
-        mkdir -p ${cfg.localProxyCertDir}
-        if ! ls -R ${cfg.localProxyCertDir} | grep -q "cert.pem"; then
-            ${pkgs.openssh}/bin/scp -r ${cfg.edgeHostName}:/var/lib/acme/* ${cfg.localProxyCertDir}/
-            chown -R nginx:nginx ${cfg.localProxyCertDir}/*
-        fi
-      '';
-      serviceConfig = {
-        Type = "oneshot";
-        User = "root";
-      };
-      wantedBy = [ "nginx.service" ];
-    };
+    systemd.services.caddy.serviceConfig.EnvironmentFile = config.sops.secrets."redis/caddy-client".path;
 
     #Firewall stuff
-    networking.firewall.allowedTCPPorts = [ 80 443 ];
+    networking.firewall.allowedTCPPorts = [ 80 443 7000 ];
     services.nebula.networks."serverNetwork" = {
       firewall.inbound = [
         { #open up ssh
@@ -170,7 +145,11 @@ in
           proto = "tcp";
           group = "edge";
         }
-      ];
+      ] ++ lib.optional cfg.isEdge {
+          port = "7000";
+          proto = "tcp";
+          group = "edge";
+      };
     };
 
     services.unbound.settings.server = lib.mkIf cfg.localDNS.enable {
@@ -185,7 +164,7 @@ in
           "\"${domain} 3600 IN A ${cfg.localDNS.localForwardIP}\""
           "\"www.${domain} 3600 IN A ${cfg.localDNS.localForwardIP}\""
         ]
-      ) config.services.nginx.virtualHosts);
+      ) cfg.proxies);
     };
   };
 }
