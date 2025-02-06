@@ -99,35 +99,26 @@ in
           password "{$REDIS_PASSWORD}"
         }
       '';
-      virtualHosts = let
+      virtualHosts = lib.mkMerge (lib.mapAttrsToList (domain: domCfg: let
+        forwardURL = if (domCfg.destIPedge != null)
+          then "http://${domCfg.destIPedge}:${builtins.toString domCfg.destPort}"
+          else "http://${domCfg.destIP}:${builtins.toString domCfg.destPort}";
         sharedConfig = ''
           #configure hsts
           header Strict-Transport-Security "max-age=31536000; includeSubdomains; preload"
           #compression
           encode zstd gzip
         '';
-        domainList = builtins.concatStringsSep ", " (lib.mapAttrsToList (domain: _: "www.${domain}") cfg.proxies);
       in {
-        "${domainList}" = {
-          logFormat = ''
-            output file ${config.services.caddy.logDir}/access-www-redirects.log
-          '';
-          extraConfig = sharedConfig + ''
-              #redirect www domains
-              redir https://{labels.1}.{labels.0}{uri}
-          '';
-        };
-      } // builtins.mapAttrs (domain: domCfg: let
-        
-        forwardURL = if (domCfg.destIPedge != null)
-          then "http://${domCfg.destIPedge}:${builtins.toString domCfg.destPort}"
-          else "http://${domCfg.destIP}:${builtins.toString domCfg.destPort}";
-      in {
-        extraConfig = sharedConfig + domCfg.additionalConfig + ''
+        "${domain}".extraConfig = sharedConfig + domCfg.additionalConfig + ''
           #reverse proxy
           reverse_proxy ${forwardURL}
         '';
-      }) cfg.proxies;
+        "www.${domain}".extraConfig = sharedConfig + ''
+          #redirect www domains
+          redir https://${domain}{uri}
+        '';
+      }) cfg.proxies);
     };
     systemd.tmpfiles.settings."10-caddy"."/persist/caddy"."d" = {
       user = config.services.caddy.user;
