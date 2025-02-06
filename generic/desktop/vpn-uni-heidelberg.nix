@@ -11,14 +11,16 @@
   networking = {
     openconnect.interfaces."uni-heidelberg" = {
       autoStart = false;
-      gateway = "https://vpnsrv2.urz.uni-heidelberg.de/"; #this seems to work better than https://vpn-ac.urz.uni-heidelberg.de for some reason
+      gateway = "vpnsrv0.urz.uni-heidelberg.de"; #now vpnsrv2.urz.uni-heidelberg.de is broken, welp. Just switch around the server if this doesn't work in the future
       protocol = "anyconnect";
       user = "me272";
       passwordFile = config.sops.secrets."openconnect/password".path;
       extraOptions = {
-        useragent = "AnyConnect";
         token-mode = "totp";
         token-secret = "@${config.sops.secrets."openconnect/token-secret".path}";
+        #some fixes needed for AnyConnect
+        useragent = "AnyConnect";
+        no-external-auth = true;
       };
     };
 
