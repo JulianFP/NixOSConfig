@@ -176,6 +176,7 @@ in
         targets = [ "localhost" ];
         labels = {
           job = "caddy";
+          host = hostName;
           __path__ = "/persist/caddy-log/*";
           agent = "caddy-promtail";
         };
