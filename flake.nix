@@ -79,12 +79,6 @@
     */
 
     packages = genSystems {
-      "blankISO" = {
-        format = "iso";
-        server = true;
-	      nebula = false;
-        stateVersion = "24.11";
-      };
       "installISO" = {
         format = "install-iso";
         stable = false;
