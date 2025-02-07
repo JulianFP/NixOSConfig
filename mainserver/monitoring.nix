@@ -215,7 +215,7 @@ in
     {
       port = config.services.grafana.settings.server.http_port;
       proto = "tcp";
-      group = "admin";
+      group = "client";
     }
   ];
 }
