@@ -2,6 +2,7 @@
 
 # This is the setup for all my (reverse) proxies. Currently I have one in the cloud that is exposed to the internet (IonosVPS) and one locally that is not (mainserver)
 # for the first one edge is set, for the second not. The first one syncs ssl certs to the second one
+# The prometheus and loki stuff are mostly from here: https://github.com/Malfhas/caddy-grafana
 let
   cfg = config.myModules.proxy;
 in 
@@ -54,7 +55,10 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = let
+    edgeNebulaIP = config.myModules.nebula."serverNetwork".ipMap."${cfg.edgeHostName}";
+    hostNebulaIP = config.myModules.nebula."serverNetwork".ipMap."${hostName}";
+  in lib.mkIf cfg.enable {
     assertions = [
       {
         assertion = config.sops.secrets."openssh/${hostName}" != {};
@@ -80,7 +84,7 @@ in
     services.redis.servers."caddy-storage" = lib.mkIf cfg.isEdge {
       enable = true;
       port = 7000;
-      bind = "127.0.0.1 48.42.0.5";
+      bind = "127.0.0.1 ${edgeNebulaIP}";
       requirePassFile = config.sops.secrets."redis/caddy-server".path;
     };
 
@@ -91,13 +95,25 @@ in
         hash = "sha256-xtg5SH1w99tY2hOdo1hlo6W4zoP8O+q7GimeTfPGqy8=";
       };
       dataDir = "/persist/caddy";
+      logDir = "/persist/caddy-log";
       email = "admin@partanengroup.de";
       globalConfig = ''
         storage redis {
-          host ${if cfg.isEdge then "127.0.0.1" else "48.42.0.5"}
+          host ${if cfg.isEdge then "127.0.0.1" else edgeNebulaIP}
           port 7000
           password "{$REDIS_PASSWORD}"
         }
+        metrics /metrics
+      '';
+      logFormat = ''
+        output file ${config.services.caddy.logDir}/caddy_main.log {
+          mode 0770
+          roll_size 100MiB
+          roll_keep 5
+          roll_keep_for 100d
+        }
+        format json
+        level INFO
       '';
       virtualHosts = lib.mkMerge (lib.mapAttrsToList (domain: domCfg: let
         forwardURL = if (domCfg.destIPedge != null)
@@ -109,37 +125,89 @@ in
           #compression
           encode zstd gzip
         '';
+        logFormatPerHost = ''
+          output file ${config.services.caddy.logDir}/${domain}.log {
+            mode 0770
+            roll_size 100MiB
+            roll_keep 5
+            roll_keep_for 100d
+          }
+          format json
+          level INFO
+        '';
       in {
-        "${domain}".extraConfig = sharedConfig + domCfg.additionalConfig + ''
-          #reverse proxy
-          reverse_proxy ${forwardURL}
-        '';
-        "www.${domain}".extraConfig = sharedConfig + ''
-          #redirect www domains
-          redir https://${domain}{uri}
-        '';
+        "${domain}" = {
+          logFormat = logFormatPerHost;
+          extraConfig = sharedConfig + domCfg.additionalConfig + ''
+            #reverse proxy
+            reverse_proxy ${forwardURL}
+          '';
+        };
+        "www.${domain}" = {
+          logFormat = logFormatPerHost;
+          extraConfig = sharedConfig + ''
+            #redirect www domains
+            redir https://${domain}{uri}
+          '';
+        };
       }) cfg.proxies);
     };
-    systemd.tmpfiles.settings."10-caddy"."/persist/caddy"."d" = {
-      user = config.services.caddy.user;
-      group = config.services.caddy.group;
-      mode = "0700";
+    systemd.tmpfiles.settings."10-caddy" = {
+      "/persist/caddy"."d" = {
+        user = config.services.caddy.user;
+        group = config.services.caddy.group;
+        mode = "0700";
+      };
+      "/persist/caddy-log"."d" = {
+        user = config.services.caddy.user;
+        group = config.services.caddy.group;
+        mode = "0770";
+      };
     };
-    systemd.services.caddy.serviceConfig.EnvironmentFile = config.sops.secrets."redis/caddy-client".path;
+    systemd.services.caddy = {
+      serviceConfig.EnvironmentFile = config.sops.secrets."redis/caddy-client".path;
+      environment.CADDY_ADMIN = lib.mkIf (hostName != "mainserver") "${hostNebulaIP}:2019";
+    };
+
+    #scrape configs with promtail
+    services.promtail.configuration.scrape_configs = [{
+      job_name = "caddy";
+      static_configs = [{
+        targets = [ "localhost" ];
+        labels = {
+          job = "caddy";
+          __path__ = "/persist/caddy-log/*";
+          agent = "caddy-promtail";
+        };
+      }];
+      pipeline_stages = [
+        {
+          json.expressions = {
+            duration = "duration";
+            status = "status";
+          };
+        }
+        {
+          labels = {
+            duration = "";
+            status = "";
+          };
+        }
+      ];
+    }];
+    users.users.promtail.extraGroups = lib.mkIf config.services.promtail.enable [ config.services.caddy.group ];
 
     #Firewall stuff
-    networking.firewall.allowedTCPPorts = [ 80 443 7000 ];
+    networking.firewall.allowedTCPPorts = [ 80 443 7000 2019 ];
     services.nebula.networks."serverNetwork" = {
-      firewall.inbound = [
-        { #open up ssh
-          port = "22";
+      firewall.inbound = (lib.optional cfg.isEdge {
+          port = 7000;
           proto = "tcp";
           group = "edge";
-        }
-      ] ++ lib.optional cfg.isEdge {
-          port = "7000";
+        }) ++ lib.optional (hostName != "mainserver") { #open up caddy telemetry to mainserver
+          port = 2019;
           proto = "tcp";
-          group = "edge";
+          host = config.myModules.nebula."serverNetwork".ipMap.mainserver;
       };
     };
 

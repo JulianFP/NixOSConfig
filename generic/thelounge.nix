@@ -19,7 +19,7 @@
   networking.firewall.allowedTCPPorts = [ 9000 ];
   services.nebula.networks."serverNetwork".firewall.inbound = [
     {
-      port = "9000";
+      port = 9000;
       proto = "tcp";
       group = "julian";
     }

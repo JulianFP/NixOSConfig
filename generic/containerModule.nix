@@ -65,7 +65,7 @@ in
 
   config = lib.mkIf (enabledContainers != {}) {
     #setup nebula connection for every container
-    myModules.nebula.interfaces = builtins.mapAttrs (n: v: {
+    myModules.nebula = builtins.mapAttrs (n: v: {
       secretHostName = hostName;
       installHostName = n;
     }) enabledContainers;

@@ -80,17 +80,17 @@
 
   services.nebula.networks."serverNetwork".firewall.inbound = [
     {
-      port = "22000";
+      port = 22000;
       proto = "tcp";
       group = "julian";
     }
     {
-      port = "22000";
+      port = 22000;
       proto = "udp";
       group = "julian";
     }
     {
-      port = "21027";
+      port = 21027;
       proto = "udp";
       group = "julian";
     }

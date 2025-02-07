@@ -41,6 +41,9 @@
     nixPath = [ "nixpkgs=/run/current-system/nixpkgs" ];
   };
 
+  #nix daemon should be used by the root user as well!
+  environment.variables.NIX_REMOTE = "daemon";
+
   #internationalisation properties and timezone
   time.timeZone = "Europe/Berlin"; #set timezone
   i18n = {

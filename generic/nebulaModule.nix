@@ -1,9 +1,8 @@
 { config, lib, hostName, ...}:
 
 let
-  cfg = config.myModules.nebula;
-  enabledInterfaces = lib.filterAttrs (n: v: v.enable) cfg.interfaces;
-  enabledInterfacesList = lib.mapAttrsToList (name: value: {inherit name value;}) enabledInterfaces;
+  enabledNetworks = lib.filterAttrs (n: v: v.enable) config.myModules.nebula;
+  enabledInterfacesList = lib.mapAttrsToList (name: value: {inherit name value;}) enabledNetworks;
   portList = builtins.genList (i: 51821+i) (builtins.length enabledInterfacesList);
   enabledInterfacesWithPortList = lib.zipListsWith (iface: port: {name = iface.name; value = iface.value // {port = port;};}) enabledInterfacesList portList;
   enabledInterfacesWithPort = builtins.listToAttrs enabledInterfacesWithPortList;
@@ -15,50 +14,52 @@ in
     ./sops.nix
   ];
 
-  options.myModules.nebula = {
-    interfaces = lib.mkOption {
-      type = lib.types.attrsOf (lib.types.submodule {
-        options = {
-          enable = lib.mkOption {
-            type = lib.types.bool;
-            default = true;
-            description = "Enable or disable this interface";
-          };
-          secretHostName = lib.mkOption {
-            type = lib.types.str;
-            default = hostName;
-            description = ''
-              flake hostName of the device that decrypts and creates the interface.
-            '';
-          };
-          installHostName = lib.mkOption {
-            type = lib.types.str;
-            default = hostName;
-            description = ''
-              flake hostName of the device on which the interface should run. Determines which crt is being used. If not using an container-like setup then this will be the same as hostName.
-            '';
-            example = "testing-cont";
-          };
-          isLighthouse = lib.mkOption {
-            type = lib.types.bool;
-            default = false;
-            description = ''
-              Whether this host is a nebula lighthouse. This also configures this host as a relay automatically.
-            '';
-          };
-          serverFirewallRules = lib.mkOption {
-            type = lib.types.bool;
-            default = true;
-            description = ''
-              Whether to apply certain server specific firewall rules like all icmp traffic and ssh port.
-            '';
-          };
+  options.myModules.nebula = lib.mkOption {
+    type = lib.types.attrsOf (lib.types.submodule {
+      options = {
+        enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Enable or disable this network";
         };
-      });
-    };
+        secretHostName = lib.mkOption {
+          type = lib.types.str;
+          default = hostName;
+          description = ''
+            flake hostName of the device that decrypts and creates the interface.
+          '';
+        };
+        installHostName = lib.mkOption {
+          type = lib.types.str;
+          default = hostName;
+          description = ''
+            flake hostName of the device on which the interface should run. Determines which crt is being used. If not using an container-like setup then this will be the same as hostName.
+          '';
+          example = "testing-cont";
+        };
+        isLighthouse = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = ''
+            Whether this host is a nebula lighthouse. This also configures this host as a relay automatically.
+          '';
+        };
+        serverFirewallRules = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = ''
+            Whether to apply certain server specific firewall rules like all icmp traffic and ssh port.
+          '';
+        };
+        ipMap = lib.mkOption {
+          description = "Each entry in this attribute set is a hostName - nebula ip address pair for easy lookup. See ./nebula.nix for how it is populated";
+          type = lib.types.attrsOf lib.types.str;
+        };
+      };
+    });
   };
 
-  config = lib.mkIf (enabledInterfaces != {}) {
+  config = lib.mkIf (enabledNetworks != {}) {
     users.groups."${serviceGroup}" = {};
 
     sops.secrets = lib.mkMerge ([{
@@ -77,11 +78,11 @@ in
         owner = serviceUser;
         sopsFile = ../secrets/${netCfg.secretHostName}/nebula.yaml;
       };
-    }) enabledInterfaces));
+    }) enabledNetworks));
 
     systemd.services = lib.mkMerge (lib.mapAttrsToList (netName: netCfg: {
       "nebula@${netName}".serviceConfig.Group = lib.mkForce serviceGroup;
-    }) enabledInterfaces);
+    }) enabledNetworks);
 
     #exclude nebula interface from networkmanager
     networking.networkmanager.unmanaged = lib.mapAttrsToList (netName: _: builtins.substring 0 15 "neb-${netName}") enabledInterfacesWithPort;

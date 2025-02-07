@@ -15,7 +15,7 @@
         {
           sourcePort = 23;
           proto = "tcp";
-          destination = "48.42.1.150:23";
+          destination = "config.myModules.nebula."serverNetwork".ipMap.Nextcloud-Testing:23";
         }
       */
       ];

@@ -35,17 +35,17 @@
   services.nebula.networks."serverNetwork" = {
     firewall.inbound = [
       {
-        port = "80";
+        port = 80;
         proto = "tcp";
         group = "edge";
       }
       {
-        port = "80";
+        port = 80;
         proto = "tcp";
         group = "julian";
       }
       {
-        port = "443";
+        port = 443;
         proto = "tcp";
         group = "julian";
       }
