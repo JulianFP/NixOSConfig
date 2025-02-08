@@ -51,6 +51,13 @@ in
             Whether to apply certain server specific firewall rules like all icmp traffic and ssh port.
           '';
         };
+        enableIPv6 = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = ''
+            Whether to listen on IPv6 interfaces and add IPv6 addresses to static maps (in addition to IPv4)
+          '';
+        };
         ipMap = lib.mkOption {
           description = "Each entry in this attribute set is a hostName - nebula ip address pair for easy lookup. See ./nebula.nix for how it is populated";
           type = lib.types.attrsOf lib.types.str;
@@ -94,7 +101,10 @@ in
         key = config.sops.secrets."nebula/${netCfg.installHostName}.key".path;
         cert = config.sops.secrets."nebula/${netCfg.installHostName}.crt".path;
         tun.device = "neb-${netName}"; #shorter interface names
-        listen.port = netCfg.port;
+        listen = {
+          host = if netCfg.enableIPv6 then "[::]" else "0.0.0.0";
+          port = netCfg.port;
+        };
         lighthouses = lib.mkIf (!netCfg.isLighthouse) [ "48.42.0.1" "48.42.0.5" ];
         isLighthouse = netCfg.isLighthouse;
         isRelay = netCfg.isLighthouse;
@@ -105,7 +115,7 @@ in
           ];
           "48.42.0.5" = [
             "85.215.33.173:51821"
-          ];
+          ] ++ lib.optional netCfg.enableIPv6 "[2a02:247a:23e:d300::1]:51821";
         };
         settings = {
           cipher = "aes";
