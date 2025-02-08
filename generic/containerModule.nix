@@ -343,6 +343,7 @@ in
       config = {hostName, ... }: {
         imports = [ 
           v.config 
+          ./promtail.nix #to get systemd-journal out of container into loki
         ] ++ lib.lists.optional v.enableSops ./sops.nix;
         networking = {
           hostName = hostName;

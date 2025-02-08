@@ -3,10 +3,11 @@
 {
   imports =
     [ # Include the results of the hardware scan.
+      (modulesPath + "/installer/scan/not-detected.nix")
       ./common.nix
       ./nebula.nix
       ./ssh.nix
-      (modulesPath + "/installer/scan/not-detected.nix")
+      ./promtail.nix #promtail to get all system logs
     ];
 
   #automatic maintenance services
@@ -34,43 +35,6 @@
       "systemd"
       "processes"
     ];
-  };
-
-  #promtail to get all system logs
-  services.promtail = {
-    enable = true;
-    configuration = {
-      server = {
-        http_listen_port = 9080;
-        grpc_listen_port = 0;
-        log_level = "warn";
-      };
-      positions.filename = "/persist/promtail/positions.yaml";
-      clients = [{
-        url = "http://${config.myModules.nebula."serverNetwork".ipMap.mainserver}:3100/loki/api/v1/push";
-      }];
-      scrape_configs = [
-        {
-          job_name = "journal";
-          journal = {
-            max_age = "12h";
-            labels = {
-              job = "systemd-journal";
-              host = hostName;
-            };
-          };
-          relabel_configs = [{
-            source_labels = [ "__journal__systemd_unit" ];
-            target_label = "unit";
-          }];
-        }
-      ];
-    };
-  };
-  systemd.tmpfiles.settings."10-promtail"."/persist/promtail"."d" = {
-    user = "promtail";
-    group = "promtail";
-    mode = "0700";
   };
 
   networking.firewall.allowedTCPPorts = [ 9100 ];

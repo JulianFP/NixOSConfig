@@ -1,4 +1,4 @@
-{ config, pkgs, hostName, ... }:
+{ config, lib, pkgs, hostName, ... }:
 
 let
   cfg = config.services.nextcloud;
@@ -84,6 +84,9 @@ in
       mail_smtpsecure = "tls";
       mail_domain = "partanengroup.de";
       mail_smtpauthtype = "PLAIN";
+
+      #log as file for better compatibility with Nextcloud logreader and promtail
+      log_type = "file";
     };
     
     #install nextcloud apps
@@ -100,4 +103,18 @@ in
     group = "mysql";
     mode = "0700";
   };
+
+  #scrape Nextcloud logs with promtail
+  services.promtail.configuration.scrape_configs = [{
+    job_name = "nextcloud";
+    static_configs = [{
+      targets = [ "localhost" ];
+      labels = {
+        job = "nextcloud";
+        host = hostName;
+        __path__ = "${config.services.nextcloud.datadir}/data/nextcloud.log";
+      };
+    }];
+  }];
+  users.users.promtail.extraGroups = lib.mkIf config.services.promtail.enable [ "nextcloud" ];
 }

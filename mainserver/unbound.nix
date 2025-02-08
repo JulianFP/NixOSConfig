@@ -100,6 +100,7 @@ in
 
   services.logrotate = {
     enable = true;
+    allowNetworking = true; #required for postrotate script
     settings."${unboundLogFilePath}" = {
       su = "${config.services.unbound.user} ${config.services.unbound.group}";
       frequency = "daily";
