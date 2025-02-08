@@ -87,6 +87,10 @@ in
       bind = "127.0.0.1 ${edgeNebulaIP}";
       requirePassFile = config.sops.secrets."redis/caddy-server".path;
     };
+    systemd.services."redis.caddy-storage" = lib.mkIf cfg.isEdge {
+      after = [ "nebula@serverNetwork.service" ];
+      before = [ "caddy.service" ];
+    };
 
     services.caddy = {
       enable = true;
