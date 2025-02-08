@@ -11,8 +11,8 @@ let
     src = (pkgs.fetchFromGitHub {
       owner = "StevenBlack";
       repo = "hosts";
-      rev = "3.15.15";
-      sha256 = "sha256-wycPhloUQY24wUDFWd/URRlFUiW2hi/wcohrWQ5R8E4=";
+      rev = "3.15.16";
+      sha256 = "sha256-TEk003KAgzs7KUgx2JevONr2aML75FLAp0FdQ+pyz6s=";
     } + "/hosts");
 
     phases = [ "installPhase" ];
