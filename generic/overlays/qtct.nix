@@ -3,26 +3,7 @@ final: prev: {
     qt5ct = qtprev.qt5ct.overrideAttrs (old: {
       buildInputs = old.buildInputs ++ (with prev; [ 
         breeze-qt5 
-        libsForQt5.qtquickcontrols2
-        libsForQt5.kconfig
-        libsForQt5.kconfigwidgets
-        libsForQt5.kiconthemes
       ]);
-
-      nativeBuildInputs = with prev; [
-        cmake
-        libsForQt5.wrapQtAppsHook
-        libsForQt5.qttools
-      ];
-      
-      patches = [(prev.fetchpatch {
-        url = "https://raw.githubusercontent.com/ilya-fedin/nur-repository/refs/heads/master/pkgs/qt5ct/qt5ct-shenanigans.patch";
-        hash = "sha256-4Xg2r15TwkmBXxyeEOicsswTf4daXZTZUgKucNbq5X4=";
-      })];
-
-      cmakeFlags = [
-        "-DPLUGINDIR=${placeholder "out"}/${prev.libsForQt5.qtbase.qtPluginPrefix}"
-      ];
     });
   });
   qt6Packages = prev.qt6Packages.overrideScope (qtfinal: qtprev: {
