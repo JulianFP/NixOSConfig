@@ -23,6 +23,7 @@
   # additions to git (other stuff defined in genericHM/shell.nix)
   programs.git = {
     signing = {
+      format = "openpgp";
       key = "Julian Partanen (Yubikey) <julian@partanengroup.de>";
       signByDefault = true;
     };
