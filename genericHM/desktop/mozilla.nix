@@ -103,12 +103,12 @@
       };
       containersForce = true;
 
-      extensions = with pkgs.nur.repos.rycee.firefox-addons; [
+      #as of now I don't declaratively configure extension settings yet, support for it has been added recently though
+      extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
         multi-account-containers
         keepassxc-browser
         floccus
         ublock-origin
-        i-dont-care-about-cookies
       ];
 
       search = {
