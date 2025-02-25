@@ -107,7 +107,7 @@
           "vista-fonts"
           "xow_dongle-firmware"
           "idea-ultimate"
-          "slack"
+          "discord"
           "guilded"
         ];
         overlays = [
@@ -137,7 +137,7 @@
           "vista-fonts"
           "xow_dongle-firmware"
           "idea-ultimate"
-          "slack"
+          "discord"
           "guilded"
         ];
         overlays = [

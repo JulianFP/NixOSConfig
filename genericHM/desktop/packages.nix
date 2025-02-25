@@ -48,8 +48,7 @@ in
     nextcloud-client
     signal-desktop
     iamb
-    slack
-    webcord
+    discord
     (callPackage ./../../generic/packages/guilded/package.nix {})
     kdePackages.ark
     kdePackages.dolphin
