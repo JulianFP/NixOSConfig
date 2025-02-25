@@ -47,8 +47,31 @@
     enable = true;
     userName = "JulianFP";
     userEmail = "julian@partanengroup.de";
+    #a lot of this is stolen from this great blog post: https://blog.gitbutler.com/how-git-core-devs-configure-git/
     extraConfig = {
-      init.defaultBranch = "main";
+      column.ui = "auto"; #makes commands like git branch, git status, git tag print their output in multiple columns
+      branch.sort = "-committerdate"; #sort branches in git branch output by commit date instead of alphabetically
+      tag.sort = "version:refname"; #sort tags by version number instead of alphabetically
+      init.defaultBranch = "main"; #change default branch for git init
+      diff = {
+        algorithm = "histogram"; #improved version of the default diff algorithm that shows better/easier to understand output in some cases
+        colorMoved = "plain"; #instead of just showing as deletion and insertion highlight moved code in different colors
+        mnemonicPrefix = true; #instead of generic a/ b/ prefixes use prefixes to indicate what actually is being compared, e.g. index vs. working tree
+        renames = true; #detect if file has been renamed
+      };
+      push = {
+        autoSetupRemote = true; #automatically create remote branch if it doesn't exist yet
+        followTags = true; #also push all local tags
+      };
+      fetch = {
+        #prune branches, tags, etc. if deleted remotely
+        prune = true;
+        pruneTags = true;
+        all = true;
+      };
+      pull.rebase = true; #automatically rebase on pull
+      help.autocorrect = "prompt"; #If a command was mistyped git tries to guess the correct command and asks if that should be run instead
+      commit.verbose = true; #show git diff in git commit window to help with writing commit messages
     };
   };
 
