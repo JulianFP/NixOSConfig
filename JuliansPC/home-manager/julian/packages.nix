@@ -8,6 +8,7 @@ let
   ];
 
   star-citizen = nix-gaming.packages.${pkgs.system}.star-citizen.override (prev: {
+    disableEac = false;
     useUmu = true;
     gameScopeEnable = true;
     gameScopeArgs = [
