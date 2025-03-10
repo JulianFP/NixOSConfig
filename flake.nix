@@ -97,9 +97,6 @@
           nixos-hardware.nixosModules.framework-12th-gen-intel
           #nixos-hardware.nixosModules.common-gpu-amd
         ];
-        permittedInsecurePackages = [
-          "electron-27.3.11" #needed for logseq until it upgrades its electron package
-        ];
         permittedUnfreePackages = [
           "steam"
           "steam-unwrapped"
@@ -114,6 +111,7 @@
           nur.overlays.default
           (import ./generic/overlays/clevis_with_fido2.nix)
           (import ./generic/overlays/qtct.nix)
+          (import ./generic/overlays/logseq.nix {inherit inputs;})
           #(import ./generic/overlays/lyx.nix)
         ];
         stateVersion = "24.11";
@@ -127,9 +125,6 @@
           nixos-hardware.nixosModules.common-gpu-amd
           nixos-hardware.nixosModules.common-cpu-amd
         ];
-        permittedInsecurePackages = [
-          "electron-27.3.11" #needed for logseq until it upgrades its electron package
-        ];
         permittedUnfreePackages = [
           "steam"
           "steam-unwrapped"
@@ -144,6 +139,7 @@
           nur.overlays.default
           (import ./generic/overlays/clevis_with_fido2.nix)
           (import ./generic/overlays/qtct.nix)
+          (import ./generic/overlays/logseq.nix {inherit inputs;})
         ];
         stateVersion = "25.05";
       };
@@ -170,7 +166,7 @@
           ./genericHM/ssh-sops-key.nix
         ];
         overlays = [
-          (import ./generic/overlays/caddy-unstable.nix {pkgs-unstable = (import inputs.nixpkgs {system = "x86_64-linux";});})
+          (import ./generic/overlays/caddy-unstable.nix {inherit inputs;})
         ];
         stateVersion = "24.11";
       };
@@ -184,7 +180,7 @@
           ./genericHM/ssh-sops-key.nix
         ];
         overlays = [
-          (import ./generic/overlays/caddy-unstable.nix {pkgs-unstable = (import inputs.nixpkgs {system = "x86_64-linux";});})
+          (import ./generic/overlays/caddy-unstable.nix {inherit inputs;})
         ];
         stateVersion = "23.11";
       };
