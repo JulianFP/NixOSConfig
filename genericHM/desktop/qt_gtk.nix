@@ -6,9 +6,9 @@ let
   #inspiration from following base16 template: https://github.com/mnussbaum/base16-qt5ct
   qt5ct-color-file = with config.lib.stylix.colors; pkgs.writeText "stylix-qt5ct-colors.conf" ''
     [ColorScheme]
-    active_colors=#ff${base05}, #ff${base01}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base0D}, #ff${base06}, #ff${base0B}, #ff${base0E}, #ff${base01}, #ff${base05}, #ff${base01}, #ff${base0C}, #8f${base04}
-    disabled_colors=#ff${base04}, #ff${base00}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base04}, #ff${base04}, #ff${base04}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base06}, #ff${base0B}, #ff${base0E}, #ff${base01}, #ff${base05}, #ff${base01}, #ff${base0C}, #8f${base04}
-    inactive_colors=#ff${base05}, #ff${base01}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base0D}, #ff${base06}, #ff${base0B}, #ff${base0E}, #ff${base01}, #ff${base05}, #ff${base01}, #ff${base0C}, #8f${base04}
+    active_colors=#ff${base05}, #ff${base00}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base01}, #ff${base00}, #ff${base03}, #ff${base0D}, #ff${base06}, #ff${base0B}, #ff${base0E}, #ff${base02}, #ff${base01}, #ff${base01}, #ff${base05}, #ff${base0D}, #ff${base0D}
+    disabled_colors=#ff${base04}, #ff${base00}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base01}, #ff${base00}, #ff${base03}, #ff${base0D}, #ff${base06}, #ff${base0B}, #ff${base0E}, #ff${base02}, #ff${base01}, #ff${base01}, #ff${base05}, #ff${base0D}, #ff${base0D}
+    inactive_colors=#ff${base05}, #ff${base00}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base01}, #ff${base00}, #ff${base03}, #ff${base0D}, #ff${base06}, #ff${base0B}, #ff${base0E}, #ff${base02}, #ff${base01}, #ff${base01}, #ff${base05}, #ff${base0D}, #ff${base0D}
   '';
 
   #custom KColorScheme defintion, used for patched qt6ct and kdeglobals
@@ -125,7 +125,7 @@ let
 
   qtct-configFile = version: ''
     [Appearance]
-    color_scheme_path=${if (version == 5) then qt5ct-color-file else "/home/julian/.config/qt6ct/colors/StylixDark.colors"}
+    color_scheme_path=${qt5ct-color-file}
     custom_palette=true 
     icon_theme=Papirus-Dark
     style=Breeze
@@ -141,15 +141,18 @@ in
 {
   qt = {
     enable = true;
-    style.package = pkgs.kdePackages.breeze;
     platformTheme.name = "qtct";
   };
+  home.packages = with pkgs; [ 
+    kdePackages.breeze
+  ];
+
+  stylix.targets.qt.enable = false;
 
   #qtct config
   xdg.configFile = {
     "qt5ct/qt5ct.conf".text = (qtct-configFile 5);
     "qt6ct/qt6ct.conf".text = (qtct-configFile 6);
-    "qt6ct/colors/StylixDark.colors".text = kColorScheme-INI;
 
     "kdeglobals".text = (lib.generators.toINI {} (kColorSchemeBasic // {
       General.TerminalApplication = "alacritty";
