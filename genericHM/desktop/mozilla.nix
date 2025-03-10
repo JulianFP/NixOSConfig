@@ -1,5 +1,8 @@
 { pkgs, ... }: 
 
+let
+  firefoxProfileName = "JuliansDefaultProfile";
+in 
 {
   programs.firefox = {
     enable = true;
@@ -58,7 +61,7 @@
       };
     };
 
-    profiles."JuliansDefaultProfile" = {
+    profiles."${firefoxProfileName}" = {
       containers = {
         partanengroup = {
           color = "green";
@@ -162,6 +165,9 @@
       };
     };
   };
+  stylix.targets.firefox.profileNames = [
+    firefoxProfileName
+  ];
 
   
   programs.thunderbird = {
