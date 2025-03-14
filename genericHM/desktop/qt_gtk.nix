@@ -4,11 +4,11 @@ let
 
   #custom qtct color palette (only used for qt5ct)
   #inspiration from following base16 template: https://github.com/mnussbaum/base16-qt5ct
-  qt5ct-color-file = with config.lib.stylix.colors; pkgs.writeText "stylix-qt5ct-colors.conf" ''
+  qtct-color-file = with config.lib.stylix.colors; pkgs.writeText "stylix-qt5ct-colors.conf" ''
     [ColorScheme]
-    active_colors=#ff${base05}, #ff${base00}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base01}, #ff${base00}, #ff${base03}, #ff${base0D}, #ff${base06}, #ff${base0B}, #ff${base0E}, #ff${base02}, #ff${base01}, #ff${base01}, #ff${base05}, #ff${base0D}, #ff${base0D}
-    disabled_colors=#ff${base04}, #ff${base00}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base01}, #ff${base00}, #ff${base03}, #ff${base0D}, #ff${base06}, #ff${base0B}, #ff${base0E}, #ff${base02}, #ff${base01}, #ff${base01}, #ff${base05}, #ff${base0D}, #ff${base0D}
-    inactive_colors=#ff${base05}, #ff${base00}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base01}, #ff${base00}, #ff${base03}, #ff${base0D}, #ff${base06}, #ff${base0B}, #ff${base0E}, #ff${base02}, #ff${base01}, #ff${base01}, #ff${base05}, #ff${base0D}, #ff${base0D}
+    active_colors=#ff${base05}, #ff${base01}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base0D}, #ff${base06}, #ff${base0B}, #ff${base0E}, #ff${base02}, #ff${base05}, #ff${base01}, #ff${base0C}, #ff${base0D}, #ff${base0D}
+    disabled_colors=#ff${base04}, #ff${base00}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base04}, #ff${base04}, #ff${base04}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base06}, #ff${base0B}, #ff${base0E}, #ff${base01}, #ff${base05}, #ff${base01}, #ff${base0C}, #ff${base0D}, #ff${base0D}
+    inactive_colors=#ff${base05}, #ff${base01}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base0D}, #ff${base06}, #ff${base0B}, #ff${base0E}, #ff${base01}, #ff${base05}, #ff${base01}, #ff${base0C}, #ff${base0D}, #ff${base0D}
   '';
 
   #custom KColorScheme defintion, used for patched qt6ct and kdeglobals
@@ -125,7 +125,7 @@ let
 
   qtct-configFile = version: ''
     [Appearance]
-    color_scheme_path=${qt5ct-color-file}
+    color_scheme_path=${qtct-color-file}
     custom_palette=true 
     icon_theme=Papirus-Dark
     style=Breeze
