@@ -227,6 +227,12 @@
 
 
   /* -- misc -- */
+  # Disable baloo indexing service
+  xdg.configFile."baloofilerc".text = ''
+    [Basic Settings]
+    Indexing-Enabled=false
+  '';
+
   # Signal start in tray fix
   home.file.".local/share/applications/signal-desktop.desktop".text = ''
     [Desktop Entry]
