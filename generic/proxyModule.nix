@@ -120,7 +120,7 @@ in
         level INFO
       '';
       virtualHosts = lib.mkMerge (lib.mapAttrsToList (domain: domCfg: let
-        forwardURL = if (domCfg.destIPedge != null)
+        forwardURL = if (cfg.isEdge && (domCfg.destIPedge != null))
           then "http://${domCfg.destIPedge}:${builtins.toString domCfg.destPort}"
           else "http://${domCfg.destIP}:${builtins.toString domCfg.destPort}";
         sharedConfig = ''
