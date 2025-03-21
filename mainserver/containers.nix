@@ -74,6 +74,25 @@
         };
         config = ./foundryvtt/configuration.nix;
       };
+      "HomeAssistant" = {
+        hostID = 134;
+        openTCPPorts = [ 8123 ];
+        additionalContainerConfig.allowedDevices = [{
+          modifier = "rw";
+          node = "/dev/ttyUSB0";
+        }];
+        additionalBindMounts = {
+          "/dev/ttyUSB0" = {
+            hostPath = "/dev/ttyUSB0";
+            isReadOnly = false;
+          };
+          "/persist/backMeUp" = {
+            hostPath = "/persist/backMeUp/HomeAssistant";
+            isReadOnly = false;
+          };
+        };
+        config = ./home-assistant/configuration.nix;
+      };
     };
   };
 }

@@ -40,6 +40,11 @@
         destIPedge = config.myModules.nebula."serverNetwork".ipMap.FoundryVTT;
         destPort = 30000;
       };
+      "home.partanengroup.de" = { #Home Assistant
+        destIP = "10.42.42.134";
+        destIPedge = config.myModules.nebula."serverNetwork".ipMap.HomeAssistant;
+        destPort = 8123;
+      };
     };
     localProxyHostNames = [
       "mainserver"
