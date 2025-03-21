@@ -54,6 +54,11 @@ in
             default = {};
             description = "Bind mounts in addition to the one to /persist/backMeUp and /persist/sops-nix";
           };
+          additionalContainerConfig = lib.mkOption {
+            type = lib.types.attrs;
+            default = {};
+            description = "Additional configuration that will be put into the NixOS module under containers.<name>, e.g. to configure extra capabilities";
+          };
           config = lib.mkOption {
             type = lib.types.path;
             description = "Path to config file. Note that some things like stateVersion and DNS fixes are already being configured by this module for all containers.";
@@ -356,6 +361,7 @@ in
         services.resolved.enable = true;
         system.stateVersion = config.system.stateVersion; #stateVersion of container should be the same as the one of the host
       };
-    }) enabledContainers;
+    } // v.additionalContainerConfig
+    ) enabledContainers;
   };
 }
