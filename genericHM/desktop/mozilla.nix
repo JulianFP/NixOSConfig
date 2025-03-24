@@ -115,7 +115,7 @@ in
       ];
 
       search = {
-        default = "DuckDuckGo";
+        default = "ddg";
         engines = {
           "Nix Packages" = {
             urls = [{
@@ -145,17 +145,17 @@ in
 
           "NixOS Wiki" = {
             urls = [{ template = "https://wiki.nixos.org/w/index.php?search={searchTerms}"; }];
-            iconUpdateURL = "https://wiki.nixos.org/favicon.ico";
+            icon = "https://wiki.nixos.org/favicon.ico";
             updateInterval = 24 * 60 * 60 * 1000; # every day
             definedAliases = [ "@nw" ];
           };
 
-          "Bing".metaData.hidden = true;
-          "Google".metaData.alias = "@g"; # builtin engines only support specifying one additional alias
-          "Wikipedia (en)".metaData.alias = "@w";
+          "bing".metaData.hidden = true;
+          "google".metaData.alias = "@g"; # builtin engines only support specifying one additional alias
+          "wikipedia".metaData.alias = "@w";
         };
         force = true;
-        order = [ "DuckDuckGo" "Wikipedia (en)" "Nix Packages" "NixOS options" "NixOS Wiki" ];
+        order = [ "ddg" "wikipedia" "Nix Packages" "NixOS options" "NixOS Wiki" ];
       };
 
       #these settings cannot be set through Preferences policy
