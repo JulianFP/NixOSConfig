@@ -24,7 +24,7 @@ in
     kdePackages.qtsvg #qt6 needs this to load icons
     libsForQt5.kservice #qt5 version needed by dolphin for some reason?
     ripgrep-all
-    swaylock
+    fortune #for hyprlock
     hyprpicker
     grimblast
     adwaita-icon-theme

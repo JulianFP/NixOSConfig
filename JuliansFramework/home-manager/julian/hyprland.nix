@@ -33,4 +33,6 @@
       "$mainMod, XF86AudioMedia, exec, grimblast --notify --freeze copysave area \"$screenshotDir/$(date +\"%Y%m%d_%T\")-Screenshot-area.png\""
     ];
   };
+
+  programs.hyprlock.settings.auth.fingerprint.enabled = true;
 }

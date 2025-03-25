@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, config, ... }:
 
 {
   # set scripts for extended Hyprland behavior (suspend, lock, etc.)
@@ -197,7 +197,7 @@
         "$mainMod, X, exec, hyprctl kill"
 
         # lock
-        "$mainMod, Y, exec, swaylock -f -c 000000 -i $lock_bg"
+        "$mainMod, Y, exec, hyprlock"
 
         #monitor script: has to be SUPER + P since the multi-monitor key on the framework laptop triggers exactly that combination
         "SUPER, P, exec, rofi -show output -modes \"output:~/.systemScripts/hyprland_output_options.py\""
@@ -272,6 +272,42 @@
         bind = ,escape,submap,reset
         submap = reset
     '';
+  };
+
+  programs.hyprlock = {
+    enable = true;
+    settings = with config.lib.stylix.colors; {
+      general.hide_cursor = true;
+      background = {
+        path = lib.mkForce "screenshot";
+        blur_passes = 3;
+      };
+      input-field = {
+        shadow-passes = 2;
+        placeholder_text = "<i>UwU :3</i>";
+      };
+      label = [
+        {
+          shadow-passes = 2;
+          text = "$TIME";
+          color = "rgb(${base05})";
+          font_size = 100;
+          halign = "center";
+          valign = "center";
+          text_align = "center";
+          position = "0, 165";
+        }
+        {
+          shadow-passes = 2;
+          color = "rgb(${base04})";
+          text = "cmd[update:30000] echo \"<span>$(fortune -s | sed 's/&/\\&amp;/g; s/</\\&lt;/g; s/>/\\&gt;/g')</span>\"";
+          halign = "center";
+          valign = "center";
+          text_align = "center";
+          position = "0, -125";
+        }
+      ];
+    };
   };
 
   #set hyprsunset as a blue light filter for the evenings
