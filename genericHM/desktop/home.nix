@@ -5,6 +5,7 @@
     [
       ./packages.nix #Packages and Fonts installed for this user
       ./hyprland.nix #Hyprland stu
+      ./desktop-entries.nix #custom .desktop files and xdg autostart
       ./mangohud.nix #mangohud config
       ./qt_gtk.nix #qt settings (mainly theming, not handled by stylix yet)
       ./rofi.nix
@@ -157,10 +158,7 @@
   stylix.targets.waybar.enable = false; #my styling is better...
   programs.waybar  = {
     enable = true;
-    systemd = {
-      enable = true;
-      target = "hyprland-session.target";
-    };
+    systemd.enable = true;
     settings = import ./waybar/config.nix;
     style = (import ./waybar/style.nix) { config=config; };
   };
@@ -231,20 +229,6 @@
   xdg.configFile."baloofilerc".text = ''
     [Basic Settings]
     Indexing-Enabled=false
-  '';
-
-  # Signal start in tray fix
-  home.file.".local/share/applications/signal-desktop.desktop".text = ''
-    [Desktop Entry]
-    Name=Signal
-    Exec=env LANGUAGE="en-US:de-DE" ${pkgs.signal-desktop}/bin/signal-desktop --no-sandbox --start-in-tray %U
-    Terminal=false
-    Type=Application
-    Icon=signal-desktop
-    StartupWMClass=Signal
-    Comment=Private messaging from your desktop
-    MimeType=x-scheme-handler/sgnl;x-scheme-handler/signalcaptcha;
-    Categories=Network;InstantMessaging;Chat;
   '';
 
   #shutdown reminder timer and service

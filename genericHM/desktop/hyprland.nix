@@ -17,50 +17,18 @@
   # Hyprland config
   wayland.windowManager.hyprland = {
     enable = true;
-    systemd = {
-      enable = true;
-      variables = [ "--all" ];
-    };
 
     settings = {
       # Set lockscreen background
       "$lock_bg" = "/home/julian/Pictures/ufp_ac.jpg";
 
-      /* -- Initialisation -- */
-      exec-once = [
-        # Execute your favorite apps at launch (waybar gets started automatically through systemd)
-        "wl-paste --type text --watch cliphist store #clipboard manager: Stores only text data"
-        "wl-paste --type image --watch cliphist store #clipboard manager: Stores only image data"
-        "wl-paste -t text -w xclip -selection clipboard"
-        "${pkgs.libsForQt5.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1"
-        "[workspace 10 silent] thunderbird"
-        "[workspace 1 silent] sleep 2 && keepassxc"
-        "[workspace 9 silent] sleep 2 && alacritty -e iamb -P private"
-        "[workspace 9 silent] sleep 2 && alacritty -e iamb -P uni"
-        "[silent] sleep 2 && env LANGUAGE='en-US:de-DE' signal-desktop --no-sandbox --start-in-tray"
-        "[silent] sleep 2 && nextcloud"
-        "[silent] sleep 2 && discord --start-minimized"
-        "[silent] xwaylandvideobridge"
-      ];
-
-      env = [
-        # Env vars that get set at startup
-        "XDG_CURRENT_DESKTOP,Hyprland"
-        "XDG_SESSION_DESKTOP,Hyprland"
-        "XDG_SESSION_TYPE,wayland"
-        "QT_QPA_PLATFORM,wayland;xcb"
-        "QT_AUTO_SCREEN_SCALE_FACTOR,1"
-        "QT_WAYLAND_DISABLE_WINDOWDECORATION,1"
-        "GDK_BACKEND,wayland,x11"
-        "CLUTTER_BACKEND,wayland"
-        "_JAVA_AWT_WM_NONREPARENTING,1" #tiling wm fix for Java applications
-        "NIXOS_OZONE_WL,1"
-      ];
-
 
       /* -- Window Rules -- */
       windowrulev2 = [
-        # xwayland screen sharing
+        #start some apps in their designated workspace
+        "workspace 10 silent,class:thunderbird"
+        "workspace 9 silent,title:iamb.*"
+        # xwayland screen sharing (xwayland is not autostarted anymore though because I rarely need it)
         "opacity 0.0 override 0.0 override,class:^(xwaylandvideobridge)$"
         "noanim,class:^(xwaylandvideobridge)$"
         "nofocus,class:^(xwaylandvideobridge)$"
@@ -135,19 +103,19 @@
       #regular bindings
       bind = [
         #essential application shortcuts
-        "$mainMod, RETURN, exec, alacritty"
-        "$mainMod, A, exec, dolphin"
-        "$mainMod, D, exec, rofi -show drun"
+        "$mainMod, RETURN, exec, uwsm app -- Alacritty.desktop"
+        "$mainMod, A, exec, uwsm app -- org.kde.dolphin.desktop"
+        "$mainMod, D, exec, rofi -show drun -run-command \"uwsm app -- {cmd}\""
         "$mainMod, C, exec, cliphist list | rofi -dmenu | cliphist decode | wl-copy"
         "$mainMod SHIFT, C, exec, cliphist wipe"
 
         #basic stuff
         "$mainMod SHIFT, Q, killactive,"
-        "$mainMod SHIFT, E, exit,"
+        "$mainMod SHIFT, E, exec, uwsm stop"
         "$mainMod SHIFT, SPACE, togglefloating,"
         "$mainMod, T, pseudo, # dwindle"
         "$mainMod, V, togglesplit, # dwindle"
-        "$mainMod, F, fullscreen "
+        "$mainMod, F, fullscreen,"
 
         # Move focus (with mainMod + arrow keys + vim keys)
         "$mainMod, left, movefocus, l"
@@ -272,6 +240,31 @@
         bind = ,escape,submap,reset
         submap = reset
     '';
+  };
+
+  xdg.configFile."uwsm/env".text = ''
+    export QT_QPA_PLATFORM="wayland;xcb"
+    export QT_AUTO_SCREEN_SCALE_FACTOR=1
+    export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+    export GDK_BACKEND="wayland,x11"
+    export CLUTTER_BACKEND=wayland
+    export _JAVA_AWT_WM_NONREPARENTING=1
+    export NIXOS_OZONE_WL=1
+  '';
+
+  programs.zsh.profileExtra = ''
+    if uwsm check may-start && uwsm select; then
+      exec uwsm start default
+    fi
+  '';
+
+  services = {
+    hyprpaper.enable = true; #configured by stylix
+    hyprpolkitagent.enable = true;
+    cliphist = {
+      enable = true;
+      allowImages = true;
+    };
   };
 
   programs.hyprlock = {

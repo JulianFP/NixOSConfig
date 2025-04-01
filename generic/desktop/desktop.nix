@@ -93,7 +93,10 @@ structure:
   programs = {
     adb.enable = true; #android adb setup. See users user permission (adbusers group)
     virt-manager.enable = true; #to run qemu/kvm VMs. See virtualisation for more
-    hyprland.enable = true;
+    hyprland = {
+      enable = true;
+      withUWSM = true;
+    };
     partition-manager.enable = true; #enable kde partitionmanager (can't be done in HM, requires services)
     steam = {
       enable = true;
@@ -190,7 +193,7 @@ structure:
     # rtkit is recommended for pipewire 
     rtkit.enable = true;
 
-    #enable polkit. polkit-kde-agent needs to be installed and started at boot seperately (will be done with Hyprland)
+    #enable polkit. polkitagent needs to be started separately (will be done in home-manager)
     polkit.enable = true;  
 
     # Hyprlock needs an entry in PAM to proberly unlock
