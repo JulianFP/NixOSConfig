@@ -23,7 +23,6 @@
       windowrule = [
         #start some apps in their designated workspace
         "workspace 10 silent,class:thunderbird"
-        "workspace 9 silent,title:iamb.*"
         # xwayland screen sharing (xwayland is not autostarted anymore though because I rarely need it)
         "opacity 0.0 override 0.0 override,class:^(xwaylandvideobridge)$"
         "noanim,class:^(xwaylandvideobridge)$"

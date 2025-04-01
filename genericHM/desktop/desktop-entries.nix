@@ -7,7 +7,22 @@
       "autostart/stylix-activate-gnome.desktop".enable = false;
     };
 
-    desktopEntries = {
+    desktopEntries = let
+      makeIamb = profileName: {
+        name = "iamb ${profileName}";
+        genericName = "Matrix client - ${profileName} profile";
+        exec = "iamb -P ${profileName}";
+        terminal = true;
+        type = "Application";
+        comment = "Matrix client for Vim addicts - ${profileName} profile";
+        categories = [
+          "Network"
+          "InstantMessaging"
+          "Chat"
+        ];
+        settings.StartupWMClass = "iamb - ${profileName}";
+      };
+    in {
       signal-desktop = { #start signal in system tray and with more languages supported for spell checker
         name = "Signal";
         exec = "env LANGUAGE=\"en-US:de-DE\" signal-desktop --start-in-tray %U";
@@ -44,6 +59,8 @@
           Version = "1.4";
         };
       };
+      iamb-private = makeIamb "private";
+      iamb-uni = makeIamb "uni";
     };
     autostart = {
       enable = true;
