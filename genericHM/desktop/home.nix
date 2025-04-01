@@ -159,7 +159,7 @@
   programs.waybar  = {
     enable = true;
     systemd.enable = true;
-    settings = import ./waybar/config.nix;
+    settings = import ./waybar/config.nix { pkgs=pkgs; };
     style = (import ./waybar/style.nix) { config=config; };
   };
   xdg.configFile."mako.sh" = {

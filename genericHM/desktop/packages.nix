@@ -18,7 +18,7 @@ in
     brightnessctl
     pulseaudio
     pavucontrol
-    networkmanagerapplet
+    #networkmanagerapplet
     qt5.qtwayland
     qt6.qtwayland
     kdePackages.qtsvg #qt6 needs this to load icons
