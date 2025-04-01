@@ -56,7 +56,6 @@ in
     kdePackages.okular
     kdePackages.kcalc
     yubioath-flutter
-    yubikey-manager-qt
     seafile-client
 
     # Multimedia
