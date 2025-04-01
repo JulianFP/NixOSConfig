@@ -12,7 +12,7 @@ else
 
     #lock and suspend/dpms if there is only one monitor (probably eDP-1)
     if [ $monitorCount -eq 1 ]; then
-        /home/julian/.systemScripts/lockAndSuspend.sh $1 0 $2
+        /home/julian/.systemScripts/lockAndSuspend.sh 0 $1
     #if there are multiple monitors, then don't lock&suspend but disable eDP-1
     else
         hyprctl keyword monitor eDP-1,disable

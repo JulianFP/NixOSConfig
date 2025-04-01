@@ -19,12 +19,8 @@
     enable = true;
 
     settings = {
-      # Set lockscreen background
-      "$lock_bg" = "/home/julian/Pictures/ufp_ac.jpg";
-
-
       /* -- Window Rules -- */
-      windowrulev2 = [
+      windowrule = [
         #start some apps in their designated workspace
         "workspace 10 silent,class:thunderbird"
         "workspace 9 silent,title:iamb.*"
@@ -202,13 +198,13 @@
         ", XF86AudioMicMute, exec, pactl set-source-mute @DEFAULT_SOURCE@ toggle"
 
         # lid suspend & lock screen & dpms (Lid Switch)
-        ", switch:Lid Switch, exec, /home/julian/.systemScripts/clamshell_mode_hypr.sh $lock_bg"
+        ", switch:Lid Switch, exec, /home/julian/.systemScripts/clamshell_mode_hypr.sh"
 
         # special keys: audio player, power off
         ", XF86AudioPlay, exec, playerctl play-pause"
         ", XF86AudioNext, exec, playerctl next"
         ", XF86AudioPrev, exec, playerctl previous"
-        ", XF86PowerOff, exec, /home/julian/.systemScripts/lockAndSuspend.sh $lock_bg 1"
+        ", XF86PowerOff, exec, /home/julian/.systemScripts/lockAndSuspend.sh 1"
       ];
 
       # bindings that should also work when locked + holding down will repeat key press
@@ -226,7 +222,7 @@
     # inhibitSuspend submap
     extraConfig =''
         submap = inhibitSuspend
-        bindl = , switch:Lid Switch, exec, /home/julian/.systemScripts/clamshell_mode_hypr.sh $lock_bg inhibitSuspend
+        bindl = , switch:Lid Switch, exec, /home/julian/.systemScripts/clamshell_mode_hypr.sh inhibitSuspend
         bindle = , XF86AudioRaiseVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ +5%
         bindle = , XF86AudioLowerVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ -5%
         bindl = , XF86AudioMute, exec, pactl set-sink-mute @DEFAULT_SINK@ toggle
@@ -236,7 +232,7 @@
         bindl = , XF86AudioPlay, exec, playerctl play-pause
         bindl = , XF86AudioNext, exec, playerctl next
         bindl = , XF86AudioPrev, exec, playerctl previous
-        bindl = , XF86PowerOff, exec, /home/julian/.systemScripts/lockAndSuspend.sh $lock_bg 1 inhibitSuspend
+        bindl = , XF86PowerOff, exec, /home/julian/.systemScripts/lockAndSuspend.sh 1 inhibitSuspend
         bind = ,escape,submap,reset
         submap = reset
     '';
