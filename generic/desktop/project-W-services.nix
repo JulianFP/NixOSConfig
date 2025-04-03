@@ -9,12 +9,20 @@
     group = "postgres";
     mode = "0700";
   };
-  environment.persistence."/persist".directories = [{
-    directory = "/var/lib/private/pgadmin";
-    user = "pgadmin";
-    group = "pgadmin";
-    mode = "0700";
-  }];
+  environment.persistence."/persist".directories = [
+    {
+      directory = "/var/lib/private/pgadmin";
+      user = "pgadmin";
+      group = "pgadmin";
+      mode = "0700";
+    }
+    {
+      directory = "/var/lib/kanidm";
+      user = "kanidm";
+      group = "kanidm";
+      mode = "0770";
+    }
+  ];
 
   services =  {
     pgadmin = {
@@ -49,6 +57,26 @@
       enable = true;
       logLevel = "debug";
       group = "users";
+    };
+
+    kanidm = {
+      package = pkgs.kanidm_1_5;
+      enableServer = true;
+      enableClient = true;
+      serverSettings = {
+        domain = "localhost";
+        origin = "https://localhost:8443";
+        ldapbindaddress = "127.0.0.1:3636";
+
+        #this is only fine because this is a testing/development setup that is only accessible locally
+        #Never do this in production!
+        tls_key = ./kanidm_private_key.pem;
+        tls_chain = ./kanidm_public_chain.pem;
+      };
+      clientSettings = {
+        uri = "https://localhost:8443";
+        verify_ca = false;
+      };
     };
   };
 }
