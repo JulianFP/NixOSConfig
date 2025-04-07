@@ -13,6 +13,9 @@ let
   #to be able to boot without yubikey or when the tpm values temporarily don't fit anymore add a tang server in the local network as a fallback
   #requires networking, so currently not enabled for JuliansFramework
   withTangFallback = if hostName == "JuliansPC" then true else false; #make sure you added networking to initrd first!
+
+  #JuliansPC also uses a tang server as an alternative for fido2, so change display message
+  promptText = if hostName == "JuliansPC" then "Trying to unlock ${encryptedKeyPartitionLabel} using clevis (two of tpm2, fido2 and tang server). If you want to enter the encryption password instead then press Ctrl+C" else "Trying to unlock ${encryptedKeyPartitionLabel} using clevis (tpm2 + fido2). If you want to enter the encryption password instead then press Ctrl+C";
 in {
   imports = [ 
     (modulesPath + "/installer/scan/not-detected.nix")
@@ -143,22 +146,36 @@ in {
         serviceConfig = {
           Type = "oneshot";
           StandardOutput = "tty";
+          StandardInput = "tty";
           TimeoutSec = "infinity";
           RemainAfterExit = true; #so that wants/requires statements don't restart this service
         };
         script = ''
-          echo "Trying to unlock ${encryptedKeyPartitionLabel} using clevis (tpm2 + fido2). Please press the button on your fido2 device"
-          if ! clevis luks unlock -d /dev/disk/by-label/${encryptedKeyPartitionLabel} -n ${unlockedKeyPartitionLabel}; then
+          after_unlock() {
+              echo "Unlock of keyPartition successful!"
+
+              mkdir /keyPartition
+              mount -t ext4 /dev/mapper/${unlockedKeyPartitionLabel} /keyPartition
+              echo "Mounting of keyPartition successful!"
+          }
+
+          password_fallback() {
               echo "Automatic unlock not successful. TPM2 security policy might be violated, this computer might be compromised! Please enter the Passphrase if you want to proceed anyway:"
               until systemd-ask-password --id="cryptsetup:/dev/disk/by-label/${encryptedKeyPartitionLabel}" --keyname="cryptsetup" | cryptsetup open /dev/disk/by-label/${encryptedKeyPartitionLabel} ${unlockedKeyPartitionLabel}; do
                   echo "Incorrect passphrase, please try again:"
               done
-          fi
-          echo "Unlock of keyPartition successful!"
 
-          mkdir /keyPartition
-          mount -t ext4 /dev/mapper/${unlockedKeyPartitionLabel} /keyPartition
-          echo "Mounting of keyPartition successful!"
+              after_unlock
+              exit
+          }
+
+          trap password_fallback SIGINT
+
+          echo "${promptText}"
+          if ! clevis luks unlock -d /dev/disk/by-label/${encryptedKeyPartitionLabel} -n ${unlockedKeyPartitionLabel}; then
+              password_fallback
+          fi
+          after_unlock
         '';
       };
 
