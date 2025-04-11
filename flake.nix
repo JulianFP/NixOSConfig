@@ -111,7 +111,6 @@
           nur.overlays.default
           (import ./generic/overlays/clevis_with_fido2.nix)
           (import ./generic/overlays/qtct.nix)
-          (import ./generic/overlays/logseq.nix {inherit inputs;})
           #(import ./generic/overlays/lyx.nix)
         ];
         stateVersion = "24.11";
@@ -139,7 +138,6 @@
           nur.overlays.default
           (import ./generic/overlays/clevis_with_fido2.nix)
           (import ./generic/overlays/qtct.nix)
-          (import ./generic/overlays/logseq.nix {inherit inputs;})
         ];
         stateVersion = "25.05";
       };
