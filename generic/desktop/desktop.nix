@@ -183,7 +183,7 @@ structure:
         rofi-wayland
       ];
 
-      openssh.authorizedKeys.keyFiles = lib.lists.optional config.services.openssh.enable ../../publicKeys/id_rsa.pub;
+      openssh.authorizedKeys.keyFiles = lib.lists.optional config.services.openssh.enable ../../publicKeys/yubikey-new_ssh.pub;
     };
   };
 

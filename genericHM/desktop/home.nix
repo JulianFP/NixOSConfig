@@ -25,7 +25,7 @@
   programs.git = {
     signing = {
       format = "openpgp";
-      key = "Julian Partanen (Yubikey) <julian@partanengroup.de>";
+      key = "Julian Partanen <julian@partanengroup.de>";
       signByDefault = true;
     };
     ignores = [ #add direnv stuff to global gitignore

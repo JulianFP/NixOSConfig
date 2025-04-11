@@ -3,8 +3,8 @@
 # yubikey config shared by julian and root user of JuliansFramework
 {
   #get general public key in place
-  home.file.".ssh/id_rsa.pub" = {
-    source = ../publicKeys/id_rsa.pub;
+  home.file.".ssh/id_ed25519.pub" = {
+    source = ../publicKeys/yubikey-new_ssh.pub;
   };
 
   #ssh support
@@ -39,9 +39,15 @@
       disable-ccid = true;
       reader-port = "Yubico Yubi";
     };
-    publicKeys = [{
-      source = ../publicKeys/gpg_yubikey.asc;
-      trust = 5;
-    }];
+    publicKeys = [
+      {
+        source = ../publicKeys/yubikey_gpg.asc;
+        trust = 5;
+      }
+      {
+        source = ../publicKeys/yubikey-new_gpg.asc;
+        trust = 5;
+      }
+    ];
   };
 }

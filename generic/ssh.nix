@@ -14,7 +14,8 @@
     '';
   };
   users.users.root.openssh.authorizedKeys.keyFiles = [
-    ../publicKeys/id_rsa.pub #Yubikey
+    ../publicKeys/yubikey_ssh.pub #Yubikey
+    ../publicKeys/yubikey-new_ssh.pub #new Yubikey
     ../publicKeys/backupSSHkey.pub #backup key in case Yubikey breaks
   ];
 }
