@@ -125,6 +125,10 @@
         };
       };
     };
-    diagnostics.only_current_line = true;
+    diagnostics = {
+      #disable vim's virtual_text, configure lsp-lines instead
+      virtual_text = false;
+      virtual_lines.only_current_line = true;
+    };
   };
 }
