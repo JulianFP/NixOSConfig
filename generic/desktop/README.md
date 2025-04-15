@@ -40,7 +40,7 @@ Where do I even start. Well, I wanted to use bcachefs and a NixOS impermanence s
 - [x] easy monitor switching when connecting to random external monitors (e.g. for presentation) with Hyprland (python script for this)
 - [x] Firefox & Thunderbird config
 - [x] bluefilter mode for hyprland?
-- [ ] (automatic) timezone switcher for when traveling?
+- [x] automatic timezone switcher for when traveling (only for JuliansFramework)
 
 ## new Install guide for bcachefs and impermanence
 - `fdisk /dev/nvme0n1`, create partition table with efi system +1G, linux filesystem +100M, linux filesystem -24G, linux swap up to largest sector (don't forget to set partition types as well)

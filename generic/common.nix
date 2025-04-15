@@ -45,7 +45,7 @@
   environment.variables.NIX_REMOTE = "daemon";
 
   #internationalisation properties and timezone
-  time.timeZone = "Europe/Berlin"; #set timezone
+  time.timeZone = lib.mkDefault "Europe/Berlin"; #set timezone to its default value, will be overwritten for example by automatic timezone switcher
   i18n = {
     defaultLocale = "en_US.UTF-8";
     extraLocaleSettings = {

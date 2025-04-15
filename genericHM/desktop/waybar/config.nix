@@ -40,7 +40,6 @@
     };
 
     "clock" = {
-      timezone = "Europe/Berlin";
       tooltip-format = "<big>{:%B %Y}</big><tt><small>{calendar}</small></tt>";
       format-alt = "{:%Y-%m-%d}";
       calendar = {

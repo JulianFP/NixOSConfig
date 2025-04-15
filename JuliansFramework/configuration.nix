@@ -27,6 +27,9 @@
 
     fwupd.enable = true; #for Firmware updates
     hardware.bolt.enable = true; #enable Thunderbolt Device management
+
+    automatic-timezoned.enable = true; #automatic timezone switcher
+    geoclue2.geoProviderUrl = "https://api.beacondb.net/v1/geolocate"; #mozilla's service is deprecated
   };
 
   environment = {
