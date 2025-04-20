@@ -1,20 +1,30 @@
 { config, lib, hostName, ... }:
 
 {
-  #openssh client key config
-  sops.secrets."openssh/${hostName}" = {
-    sopsFile = ../secrets/${hostName}/ssh.yaml;
-    path = "/root/.ssh/${hostName}";
-  };
+  sops.secrets = {
+    #openssh client key config
+    "openssh/${hostName}" = {
+      sopsFile = ../secrets/${hostName}/ssh.yaml;
+      path = "/root/.ssh/${hostName}";
+    };
 
-  #openssh host key
-  sops.secrets."openssh-host/${hostName}" = {
-    sopsFile = ../secrets/${hostName}/ssh.yaml;
+    #openssh host keys
+    "openssh-host/${hostName}-ed25519" = {
+      sopsFile = ../secrets/${hostName}/ssh.yaml;
+    };
+    "openssh-host/${hostName}-rsa" = {
+      sopsFile = ../secrets/${hostName}/ssh.yaml;
+    };
   };
 
   services.openssh.hostKeys = lib.mkForce [
     {
-      path =  config.sops.secrets."openssh-host/${hostName}".path;
+      bits = 4096;
+      path =  config.sops.secrets."openssh-host/${hostName}-rsa".path;
+      type = "rsa";
+    }
+    {
+      path =  config.sops.secrets."openssh-host/${hostName}-ed25519".path;
       type = "ed25519";
     }
   ];

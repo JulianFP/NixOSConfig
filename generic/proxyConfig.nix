@@ -46,9 +46,6 @@
         destPort = 8123;
       };
     };
-    localProxyHostNames = [
-      "mainserver"
-    ];
     edgeHostName = "IonosVPS";
   };
 }

@@ -38,10 +38,6 @@ in
       default = false;
       description = "Whether this machine is an edge machine, e.g. accepting internet traffic on a VPS";
     };
-    localProxyHostNames = lib.mkOption {
-      type = lib.types.listOf lib.types.singleLineStr;
-      description = "IP addresses of all local proxy so that edge server knows where to push certificates to. This requires that ssh is configured with matchBlocks for these hostNames.";
-    };
     edgeHostName = lib.mkOption {
       type = lib.types.singleLineStr;
       description = "hostName of edge server so that local proxies know from where to pull certificates. This requires that ssh is configured with a matchBlock for this hostName.";
@@ -60,10 +56,6 @@ in
     hostNebulaIP = config.myModules.nebula."serverNetwork".ipMap."${hostName}";
   in lib.mkIf cfg.enable {
     assertions = [
-      {
-        assertion = config.sops.secrets."openssh/${hostName}" != {};
-        message = "Custom assertion: please setup ./generic/ssh-sops-key.nix and ./genericHM/ssh-sops-key.nix to use the proxy module";
-      }
       {
         assertion = if cfg.localDNS.enable then config.services.unbound.enable else true;
         message = "Custom assertion: to use localDNS.enable in proxy module please configure unbound elsewhere. This just adds some entries to an existing unbound server";

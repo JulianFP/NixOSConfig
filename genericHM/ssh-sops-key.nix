@@ -21,8 +21,10 @@
 
   home.file.".ssh/known_hostsHM" = {
     text = lib.strings.concatLines [
-      ("48.42.0.5 " + builtins.readFile ../publicKeys/IonosVPS-host.pub)
-      ("48.42.0.2 " + builtins.readFile ../publicKeys/mainserver-host.pub)
+      ("48.42.0.5 " + builtins.readFile ../publicKeys/IonosVPS-host-rsa.pub)
+      ("48.42.0.5 " + builtins.readFile ../publicKeys/IonosVPS-host-ed25519.pub)
+      ("48.42.0.2 " + builtins.readFile ../publicKeys/mainserver-host-rsa.pub)
+      ("48.42.0.2 " + builtins.readFile ../publicKeys/mainserver-host-ed25519.pub)
     ];
   };
 }
