@@ -70,6 +70,8 @@
 
         #this is only fine because this is a testing/development setup that is only accessible locally
         #Never do this in production!
+        #command used to generate certificate:
+        #openssl req -x509 -newkey rsa:4096 -sha256 -nodes -keyout kanidm_private_key.pem -out kanidm_public_chain.pem -subj '/CN=localhost' -addext 'subjectAltName=IP:127.0.0.1'
         tls_key = ./kanidm_private_key.pem;
         tls_chain = ./kanidm_public_chain.pem;
       };
