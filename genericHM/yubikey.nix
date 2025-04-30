@@ -31,7 +31,7 @@
     maxCacheTtl = 3600;
     maxCacheTtlSsh = 3600;
 
-    pinentryPackage = if config.home.username == "root" then pkgs.pinentry-tty else pkgs.pinentry-qt;
+    pinentry.package = if config.home.username == "root" then pkgs.pinentry-tty else pkgs.pinentry-qt;
   };
   programs.gpg = {
     enable = true;

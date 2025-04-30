@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, stable, ... }:
 
 # this is a neovim configuration for (pretty much) all my devices & users.
 # basic stuff only 
@@ -125,7 +125,16 @@
         };
       };
     };
+  }
+  // lib.optionalAttrs (stable) { #syntax changed for 25.05
     diagnostics = {
+      #disable vim's virtual_text, configure lsp-lines instead
+      virtual_text = false;
+      virtual_lines.only_current_line = true;
+    };
+  }
+  // lib.optionalAttrs (!stable) { #for 24.11 hosts
+    diagnostic.config = {
       #disable vim's virtual_text, configure lsp-lines instead
       virtual_text = false;
       virtual_lines.only_current_line = true;
