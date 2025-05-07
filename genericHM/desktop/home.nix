@@ -135,23 +135,25 @@
   # Mako (notification daemon)
   services.mako =  {
     enable = true;
-    borderRadius = 4;
-    borderSize = 2;
-    height = 300;
-    groupBy = "app-name";
-    ignoreTimeout = true;
-    extraConfig = with pkgs; ''
-    on-notify=exec kill -35 $(pidof waybar)
-    on-button-left=exec ${mako}/bin/makoctl invoke -n "$id" && ${mako}/bin/makoctl dismiss -n "$id" && kill -35 $(pidof waybar)
-    on-button-right=exec ${mako}/bin/makoctl dismiss -n "$id" && kill -35 $(pidof waybar)
-
-    [app-name="shutdown-reminder"]
-    layer=overlay
-    on-notify=exec kill -35 $(pidof waybar) && ${mpv}/bin/mpv ${sound-theme-freedesktop}/share/sounds/freedesktop/stereo/dialog-warning.oga
-
-    [mode=doNotDisturb]
-    invisible=1
-    '';
+    settings = {
+      border-radius = 4;
+      border-size = 2;
+      height = 300;
+      group-by = "app-name";
+      ignore-timeout = true;
+      on-notify = "exec kill -35 $(pidof waybar)";
+      on-button-left = "exec ${pkgs.mako}/bin/makoctl invoke -n \"$id\" && ${pkgs.mako}/bin/makoctl dismiss -n \"$id\" && kill -35 $(pidof waybar)";
+      on-button-right = "exec ${pkgs.mako}/bin/makoctl dismiss -n \"$id\" && kill -35 $(pidof waybar)";
+    };
+    criteria = {
+      "app-name=\"shutdown-reminder\"" = {
+        layer = "overlay";
+        on-notify = "exec kill -35 $(pidof waybar) && ${pkgs.mpv}/bin/mpv ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/dialog-warning.oga";
+      };
+      "mode=doNotDisturb" = {
+        invisible = 1;
+      };
+    };
   };
 
   # Waybar

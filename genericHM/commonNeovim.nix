@@ -126,15 +126,15 @@
       };
     };
   }
-  // lib.optionalAttrs (stable) { #syntax changed for 25.05
+  // lib.optionalAttrs (stable) { #for 24.11 hosts
     diagnostics = {
       #disable vim's virtual_text, configure lsp-lines instead
       virtual_text = false;
       virtual_lines.only_current_line = true;
     };
   }
-  // lib.optionalAttrs (!stable) { #for 24.11 hosts
-    diagnostic.config = {
+  // lib.optionalAttrs (!stable) { #syntax changed for 25.05 
+    diagnostic.settings = {
       #disable vim's virtual_text, configure lsp-lines instead
       virtual_text = false;
       virtual_lines.only_current_line = true;
