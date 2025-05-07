@@ -139,5 +139,12 @@
       virtual_text = false;
       virtual_lines.only_current_line = true;
     };
+
+    #this config option doesn't exist yet in 24.11
+    #add keymap to restart lsp server to load external file changes
+    lsp.keymaps = [{
+      action = "<CMD>LspRestart<Enter>";
+      key = "<LocalLeader>r";
+    }];
   };
 }
