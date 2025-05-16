@@ -57,6 +57,7 @@
       enable = true;
       logLevel = "debug";
       group = "users";
+      port = 6379;
     };
 
     kanidm = {
