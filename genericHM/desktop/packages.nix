@@ -25,8 +25,6 @@ in
     libsForQt5.kservice #qt5 version needed by dolphin for some reason?
     ripgrep-all
     fortune #for hyprlock
-    hyprpicker
-    grimblast
     adwaita-icon-theme
     nur.repos.mikilio.xwaylandvideobridge-hypr
 
@@ -46,7 +44,7 @@ in
     logseq
     keepassxc
     nextcloud-client
-    signal-desktop
+    signal-desktop-bin #switch to bin version until https://github.com/NixOS/nixpkgs/issues/407967 is resolved
     iamb
     discord
     (callPackage ./../../generic/packages/guilded/package.nix {})

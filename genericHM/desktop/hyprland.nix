@@ -148,13 +148,13 @@
         "$mainMod ALT, L, movecurrentworkspacetomonitor, r"
 
         # screenshot (print: active window, framework key/scroll lock (laptop/docked): area. With mainmod: copysave, Without: copy)
-        ", Print, exec, grimblast --notify copy active "
-        "$mainMod, Print, exec, grimblast --notify copysave active \"$screenshotDir/$(date +\"%Y%m%d_%T\")-Screenshot-active.png\""
-        ", Scroll_Lock, exec, grimblast --notify --freeze copy area"
-        "$mainMod, Scroll_Lock, exec, grimblast --notify --freeze copysave area \"$screenshotDir/$(date +\"%Y%m%d_%T\")-Screenshot-area.png\""
+        ", Print, exec, ${pkgs.grimblast}/bin/grimblast --notify copy active "
+        "$mainMod, Print, exec, ${pkgs.grimblast}/bin/grimblast --notify copysave active \"$screenshotDir/$(date +\"%Y%m%d_%T\")-Screenshot-active.png\""
+        ", Scroll_Lock, exec, ${pkgs.grimblast}/bin/grimblast --notify --freeze copy area"
+        "$mainMod, Scroll_Lock, exec, ${pkgs.grimblast}/bin/grimblast --notify --freeze copysave area \"$screenshotDir/$(date +\"%Y%m%d_%T\")-Screenshot-area.png\""
 
         #hyprpicker 
-        "ALT, Print, exec, hyprpicker -a -r"
+        "ALT, Print, exec, ${pkgs.hyprpicker}/bin/hyprpicker -a -r"
 
         # hyprctl kill 
         "$mainMod, X, exec, hyprctl kill"
@@ -215,6 +215,15 @@
         # screen brightness control
         ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
         ", XF86MonBrightnessUp, exec, brightnessctl set 5%+"
+      ];
+      
+      #setup screencopy permissions
+      ecosystem.enforce_permissions = true;
+      permission = [
+        "${pkgs.xdg-desktop-portal-hyprland}/libexec/.xdg-desktop-portal-hyprland-wrapped, screencopy, allow"
+        "${pkgs.grimblast}/bin/grimblast, screencopy, allow"
+        "${pkgs.grim}/bin/grim, screencopy, allow"
+        "${pkgs.hyprpicker}/bin/hyprpicker, screencopy, allow"
       ];
     };
 

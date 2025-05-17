@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   #additional system script for laptop lid
@@ -29,8 +29,8 @@
 
     bind = [
       #framework button
-      ", XF86AudioMedia, exec, grimblast --notify --freeze copy area"
-      "$mainMod, XF86AudioMedia, exec, grimblast --notify --freeze copysave area \"$screenshotDir/$(date +\"%Y%m%d_%T\")-Screenshot-area.png\""
+      ", XF86AudioMedia, exec, ${pkgs.grimblast}/bin/grimblast --notify --freeze copy area"
+      "$mainMod, XF86AudioMedia, exec, ${pkgs.grimblast}/bin/grimblast --notify --freeze copysave area \"$screenshotDir/$(date +\"%Y%m%d_%T\")-Screenshot-area.png\""
     ];
   };
 
