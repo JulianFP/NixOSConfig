@@ -144,8 +144,6 @@
       on-notify = "exec kill -35 $(pidof waybar)";
       on-button-left = "exec ${pkgs.mako}/bin/makoctl invoke -n \"$id\" && ${pkgs.mako}/bin/makoctl dismiss -n \"$id\" && kill -35 $(pidof waybar)";
       on-button-right = "exec ${pkgs.mako}/bin/makoctl dismiss -n \"$id\" && kill -35 $(pidof waybar)";
-    };
-    criteria = {
       "app-name=\"shutdown-reminder\"" = {
         layer = "overlay";
         on-notify = "exec kill -35 $(pidof waybar) && ${pkgs.mpv}/bin/mpv ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/dialog-warning.oga";
