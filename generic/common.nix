@@ -37,6 +37,7 @@
     settings = {
       experimental-features = [ "nix-command" "flakes" ];
       trusted-users = [ "root" "@wheel" ];
+      download-buffer-size = 524288000; #500MiB
     };
     nixPath = [ "nixpkgs=/run/current-system/nixpkgs" ];
   };
