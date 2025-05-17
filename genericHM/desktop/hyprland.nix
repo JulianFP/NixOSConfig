@@ -224,6 +224,7 @@
         "${pkgs.grimblast}/bin/grimblast, screencopy, allow"
         "${pkgs.grim}/bin/grim, screencopy, allow"
         "${pkgs.hyprpicker}/bin/hyprpicker, screencopy, allow"
+        "${pkgs.hyprlock}/bin/hyprlock, screencopy, allow"
       ];
     };
 
