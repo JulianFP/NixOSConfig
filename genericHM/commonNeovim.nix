@@ -1,4 +1,4 @@
-{ lib, stable, ... }:
+{ ... }:
 
 # this is a neovim configuration for (pretty much) all my devices & users.
 # basic stuff only 
@@ -125,22 +125,13 @@
         };
       };
     };
-  }
-  // lib.optionalAttrs (stable) { #for 24.11 hosts
-    diagnostics = {
-      #disable vim's virtual_text, configure lsp-lines instead
-      virtual_text = false;
-      virtual_lines.only_current_line = true;
-    };
-  }
-  // lib.optionalAttrs (!stable) { #syntax changed for 25.05 
+
     diagnostic.settings = {
       #disable vim's virtual_text, configure lsp-lines instead
       virtual_text = false;
       virtual_lines.only_current_line = true;
     };
 
-    #this config option doesn't exist yet in 24.11
     #add keymap to restart lsp server to load external file changes
     lsp.keymaps = [{
       action = "<CMD>LspRestart<Enter>";
