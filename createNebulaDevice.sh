@@ -17,7 +17,7 @@ luksUSBNebulaPath="nebula" #path to directory in which nebula crt is stored rela
 echoerr() { echo "$@" 1>&2; }
 
 help() {
-    printf "general usage: ./createNebulaDevice.sh <flakeSecretHostName> <flakeInstallHostName> <nebula ip> <nebula groups> [dry-run]\n\n"
+    printf "general usage: ./createNebulaDevice.sh <flakeSecretHostName> <flakeInstallHostName> <nebula ip> <nebula groups> <nebula subnets> [dry-run]\n\n"
     printf "flakeSecretHostName:\n"
     printf "   name of machine that should have access to the key and crt (i.e. be able to decrypt it using sops-nix)\n"
     printf "   for example: NixOSTesting\n\n"
@@ -33,6 +33,10 @@ help() {
     printf "   groups of device in nebula network\n"
     printf "   mandatory. pass an empty string if you don't want the target to be in any group\n"
     printf "   for example: \"server,edge\"\n\n"
+    printf "nebula subnets:\n"
+    printf "   ip addresses and networks in cidr notation that this host should be able to forward traffic to\n"
+    printf "   mandatory. pass an empty string if you don't want the target to have any unsafe routes\n"
+    printf "   for example: \"192.168.3.0/24,192.168.1.0/24\"\n\n"
     printf "dry-run:\n"
     printf "   optional, if added then this script won't add and commit changes automatically\n"
     printf "   but instead just return the path to the tmp git repository for inspection\n"
@@ -102,14 +106,14 @@ addDevice() {
     fi
 
     #generate nebula key and crt
-    nebula-cert sign -ca-crt "/mnt/$luksUSBNebulaPath/ca.crt" -ca-key "/mnt/$luksUSBNebulaPath/ca.key" -out-crt "/mnt/$luksUSBNebulaPath/$nebname.crt" -out-key "/mnt/$luksUSBNebulaPath/$nebname.key" -name $2 -ip $3 -groups $4
+    nebula-cert sign -ca-crt "/mnt/$luksUSBNebulaPath/ca.crt" -ca-key "/mnt/$luksUSBNebulaPath/ca.key" -out-crt "/mnt/$luksUSBNebulaPath/$nebname.crt" -out-key "/mnt/$luksUSBNebulaPath/$nebname.key" -name $2 -ip $3 -groups $4 -subnets $5
 
     #generate yaml file to store secrets
     printf "    $2.key: |\n        $(sed ':a;N;$!ba;s/\n/\n        /g' /mnt/$luksUSBNebulaPath/$nebname.key)\n    $2.crt: |\n        $(sed ':a;N;$!ba;s/\n/\n        /g' /mnt/$luksUSBNebulaPath/$nebname.crt)" >> "/tmp/$gitname/secrets/$1/nebula.yaml"
     sops --config "/tmp/$gitname/.sops.yaml" -e -i "/tmp/$gitname/secrets/$1/nebula.yaml"
 
     #add changes to git and push them
-    if [ "$5" != "dry-run" ]; then
+    if [ "$6" != "dry-run" ]; then
         git -C "/tmp/$gitname" add "/tmp/$gitname/*"
         git -C "/tmp/$gitname" commit -m "added nebula certificates for $2 to $1"
         git -C "/tmp/$gitname" push origin "$githubBranch"
