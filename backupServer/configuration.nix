@@ -18,10 +18,10 @@
       DHCP = "no";
       networkConfig.IPv6AcceptRA = false;
       address = [
-        "192.168.3.20/24"
+        "192.168.1.189/24"
       ];
       gateway = [
-        "192.168.3.1"
+        "192.168.1.1"
       ];
       dns = [
         "1.1.1.1"
