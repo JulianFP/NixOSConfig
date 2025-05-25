@@ -2,8 +2,8 @@
 { lib, config, inputs, ... }: 
 
 let
-  bootDev = "f6988248-1a64-4ee5-90a1-943158b8ee7d";
-  bootDevPath = "/dev/disk/by-uuid/${bootDev}"; #do not change because of below!
+  bootDev = "sda";
+  bootDevPath = "/dev/${bootDev}"; #do not change because of below!
   cfg = config.myModules.disko-btrfs-impermanence;
 in 
 {
