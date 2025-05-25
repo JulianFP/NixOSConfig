@@ -83,7 +83,10 @@
         format = "install-iso";
         stable = false;
         nebula = false;
-        stateVersion = "25.05";
+        systemModules = [
+          ./generic/ssh.nix #for nixos-anywhere installations
+        ];
+        stateVersion = "25.11";
       };
     };
 
