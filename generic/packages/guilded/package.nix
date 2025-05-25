@@ -50,11 +50,11 @@
 
 stdenv.mkDerivation rec {
   pname = "guilded";
-  version = "1.0.9284034";
+  version = "2.0";
 
   src = fetchurl {
     url = "https://www.guilded.gg/downloads/Guilded-Linux.deb";
-    hash = "sha256-O17EV03JnOarHClQiCR9aEu7XUIoFTWvLVyLe3Q1jBo=";
+    hash = "sha256-Um0VtliKLDIrBPu1YuVuaPcIIKLbWK90CK5vc4Z8PXo=";
   };
 
   nativeBuildInputs = [
