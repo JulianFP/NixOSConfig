@@ -82,8 +82,8 @@
           node = "/dev/ttyUSB0";
         }];
         additionalBindMounts = {
-          "/dev/ttyUSB0" = {
-            hostPath = "/dev/ttyUSB0";
+          "/dev_host" = {
+            hostPath = "/dev";
             isReadOnly = false;
           };
           "/persist/backMeUp" = {
