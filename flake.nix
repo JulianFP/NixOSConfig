@@ -182,6 +182,10 @@
         ];
         stateVersion = "23.11";
       };
+      "backupServer" = {
+        server = true;
+        stateVersion = "25.05";
+      };
       "Valheim" = {
         proxmoxVmID = 135;
         permittedUnfreePackages = [
