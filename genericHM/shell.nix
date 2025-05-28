@@ -39,6 +39,14 @@
         hostname = "85.215.33.173";
         user = "root";
       };
+      "project-w_urz" = {
+        hostname = "project-w.urz.uni-heidelberg.de";
+        user = "debian";
+      };
+      "project-w-runner_urz" = {
+        hostname = "129.206.119.205";
+        user = "localadmin";
+      };
     };
   };
 
