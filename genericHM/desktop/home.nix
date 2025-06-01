@@ -90,6 +90,7 @@
     mimeApps = {
       enable = true;
       defaultApplications = {
+        "inode/directory" =  [ "org.kde.dolphin.desktop" "lf.desktop" ];
         "application/pdf" = [ "org.kde.okular.desktop" "firefox.desktop" ]; #pdf
         "application/x-xz" = [ "org.kde.ark.desktop" ]; #.tar.xz
         "application/gzip" = [ "org.kde.ark.desktop" ]; #.tar.gz

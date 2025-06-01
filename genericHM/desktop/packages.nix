@@ -47,7 +47,6 @@ in
     signal-desktop-bin #switch to bin version until https://github.com/NixOS/nixpkgs/issues/407967 is resolved
     iamb
     discord
-    (callPackage ./../../generic/packages/guilded/package.nix {})
     kdePackages.ark
     kdePackages.dolphin
     kdePackages.filelight
