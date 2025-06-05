@@ -47,6 +47,10 @@
         hostname = "129.206.119.205";
         user = "localadmin";
       };
+      "ssc-whisper" = {
+        hostname = "ssc-whisper.iwr.uni-heidelberg.de";
+        user = "jpartanen";
+      };
     };
   };
 
