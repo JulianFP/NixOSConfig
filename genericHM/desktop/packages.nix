@@ -44,7 +44,7 @@ in
     logseq
     keepassxc
     nextcloud-client
-    signal-desktop-bin #switch to bin version until https://github.com/NixOS/nixpkgs/issues/407967 is resolved
+    signal-desktop
     iamb
     discord
     kdePackages.ark
