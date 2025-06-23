@@ -47,9 +47,21 @@
     };
     impermanence.url = "github:nix-community/impermanence";
     foundryvtt.url = "github:reckenrode/nix-foundryvtt";
+    systems.url = "github:nix-systems/default";
+    pre-commit-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs: let
+    eachSystem = inputs.nixpkgs.lib.genAttrs (import inputs.systems);
+    pkgsFor = eachSystem (
+      system:
+      import inputs.nixpkgs {
+        inherit system;
+      }
+    );
     mkSystems = import ./generic/utils/mkSystems.nix inputs;
     genSystems = import ./generic/utils/genSystems.nix inputs;
   in with inputs; {
@@ -85,6 +97,13 @@
         stateVersion = "25.11";
       };
     };
+
+    devShells = eachSystem (system: {
+      default = import ./shell.nix {
+        inherit inputs system;
+        pkgs = pkgsFor.${system};
+      };
+    });
 
     nixosConfigurations = mkSystems {
       "JuliansFramework" = {

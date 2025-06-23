@@ -1,0 +1,13 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: check-symlinks
+  - repo: https://github.com/NixOS/nixfmt
+    rev: af5529a9e56b3429408c9d281518527d3a63cf33
+    hooks:
+      - id: nixfmt
