@@ -1,17 +1,16 @@
 { config, pkgs, ... }:
 
 {
-  imports = 
-    [
-      ./packages.nix #Packages and Fonts installed for this user
-      ./hyprland.nix #Hyprland stu
-      ./desktop-entries.nix #custom .desktop files and xdg autostart
-      ./mangohud.nix #mangohud config
-      ./qt_gtk.nix #qt settings (mainly theming, not handled by stylix yet)
-      ./rofi.nix
-      ./neovim/neovim.nix
-      ./mozilla.nix
-    ];
+  imports = [
+    ./packages.nix # Packages and Fonts installed for this user
+    ./hyprland.nix # Hyprland stu
+    ./desktop-entries.nix # custom .desktop files and xdg autostart
+    ./mangohud.nix # mangohud config
+    ./qt_gtk.nix # qt settings (mainly theming, not handled by stylix yet)
+    ./rofi.nix
+    ./neovim/neovim.nix
+    ./mozilla.nix
+  ];
 
   # direnv
   programs.direnv = {
@@ -28,7 +27,8 @@
       key = "Julian Partanen <julian@partanengroup.de>";
       signByDefault = true;
     };
-    ignores = [ #add direnv stuff to global gitignore
+    ignores = [
+      # add direnv stuff to global gitignore
       "*.direnv"
       "*.envrc"
     ];
@@ -43,7 +43,7 @@
         &{{
           mimetype=$(file --brief --dereference --mime-type $f)
           defapp=$(xdg-mime query default $mimetype)
-          case "$defapp" in 
+          case "$defapp" in
           nvim.desktop)
           lf -remote "send $id \$nvim $f"
             ;;
@@ -77,7 +77,8 @@
   # set defaultApplications through mime types
   xdg = {
     enable = true;
-    systemDirs.data = [ # add flatpak dirs to path
+    systemDirs.data = [
+      # add flatpak dirs to path
       "/usr/share:/var/lib/flatpak/exports/share"
       "\$HOME/.local/share/flatpak/exports/share"
     ];
@@ -86,30 +87,45 @@
       createDirectories = true;
       desktop = config.xdg.userDirs.documents;
     };
-    mime.enable = false; #set mime apps manually
+    mime.enable = false; # set mime apps manually
     mimeApps = {
       enable = true;
       defaultApplications = {
-        "inode/directory" =  [ "org.kde.dolphin.desktop" "lf.desktop" ];
-        "application/pdf" = [ "org.kde.okular.desktop" "firefox.desktop" ]; #pdf
-        "application/x-xz" = [ "org.kde.ark.desktop" ]; #.tar.xz
-        "application/gzip" = [ "org.kde.ark.desktop" ]; #.tar.gz
-        "application/zip" = [ "org.kde.ark.desktop" ]; #.zip
-        "application/vnd.oasis.opendocument.spreadsheet" = [ "calc.desktop" ]; #.ods
-        "application/vnd.oasis.opendocument.text" = [ "writer.desktop" ]; #.odt
-        "application/vnd.oasis.opendocument.presentation" = [ "impress.desktop" ]; #.odp
+        "inode/directory" = [
+          "org.kde.dolphin.desktop"
+          "lf.desktop"
+        ];
+        "application/pdf" = [
+          "org.kde.okular.desktop"
+          "firefox.desktop"
+        ]; # pdf
+        "application/x-xz" = [ "org.kde.ark.desktop" ]; # .tar.xz
+        "application/gzip" = [ "org.kde.ark.desktop" ]; # .tar.gz
+        "application/zip" = [ "org.kde.ark.desktop" ]; # .zip
+        "application/vnd.oasis.opendocument.spreadsheet" = [ "calc.desktop" ]; # .ods
+        "application/vnd.oasis.opendocument.text" = [ "writer.desktop" ]; # .odt
+        "application/vnd.oasis.opendocument.presentation" = [ "impress.desktop" ]; # .odp
         "text/plain" = [ "nvim.desktop" ];
-        "text/x-c" = [ "nvim.desktop" ]; #.cpp
-        "text/x-file" = [ "nvim.desktop" ]; #.h
-        "text/x-shellscript" = [ "nvim.desktop" ]; #.sh
-        "text/x-script.python" = [ "nvim.desktop" ]; #.py
-        "text/csv" = [ "calc.desktop" "nvim.desktop" ]; #.csv, .log
-        "video/mp4" = [ "mpv.desktop" "vlc.desktop" ]; #.mp4
-        "video/webm" = [ "mpv.desktop" "vlc.desktop" ]; #.webm
-        "image/png" = [ "org.kde.gwenview.desktop" ]; #.png
-        "image/jpeg" = [ "org.kde.gwenview.desktop" ]; #.jpg
-        "image/webp" = [ "org.kde.gwenview.desktop" ]; #.webp
-        "image/gif" = [ "org.kde.gwenview.desktop" ]; #.gif
+        "text/x-c" = [ "nvim.desktop" ]; # .cpp
+        "text/x-file" = [ "nvim.desktop" ]; # .h
+        "text/x-shellscript" = [ "nvim.desktop" ]; # .sh
+        "text/x-script.python" = [ "nvim.desktop" ]; # .py
+        "text/csv" = [
+          "calc.desktop"
+          "nvim.desktop"
+        ]; # .csv, .log
+        "video/mp4" = [
+          "mpv.desktop"
+          "vlc.desktop"
+        ]; # .mp4
+        "video/webm" = [
+          "mpv.desktop"
+          "vlc.desktop"
+        ]; # .webm
+        "image/png" = [ "org.kde.gwenview.desktop" ]; # .png
+        "image/jpeg" = [ "org.kde.gwenview.desktop" ]; # .jpg
+        "image/webp" = [ "org.kde.gwenview.desktop" ]; # .webp
+        "image/gif" = [ "org.kde.gwenview.desktop" ]; # .gif
         #web browser
         "x-scheme-handler/http" = [ "firefox.desktop" ];
         "x-scheme-handler/https" = [ "firefox.desktop" ];
@@ -134,7 +150,7 @@
   };
 
   # Mako (notification daemon)
-  services.mako =  {
+  services.mako = {
     enable = true;
     settings = {
       border-radius = 4;
@@ -156,12 +172,12 @@
   };
 
   # Waybar
-  stylix.targets.waybar.enable = false; #my styling is better...
-  programs.waybar  = {
+  stylix.targets.waybar.enable = false; # my styling is better...
+  programs.waybar = {
     enable = true;
     systemd.enable = true;
-    settings = import ./waybar/config.nix { pkgs=pkgs; };
-    style = (import ./waybar/style.nix) { config=config; };
+    settings = import ./waybar/config.nix { pkgs = pkgs; };
+    style = (import ./waybar/style.nix) { config = config; };
   };
   xdg.configFile."mako.sh" = {
     target = "waybar/scripts/mako.sh";
@@ -210,8 +226,8 @@
   # virt-manager stu. See NixOS Wiki for more
   dconf.settings = {
     "org/virt-manager/virt-manager/connections" = {
-      autoconnect = ["qemu:///system"];
-      uris = ["qemu:///system"];
+      autoconnect = [ "qemu:///system" ];
+      uris = [ "qemu:///system" ];
     };
   };
 
@@ -224,8 +240,7 @@
     };
   };
 
-
-  /* -- misc -- */
+  # -- misc --
   # Disable baloo indexing service
   xdg.configFile."baloofilerc".text = ''
     [Basic Settings]

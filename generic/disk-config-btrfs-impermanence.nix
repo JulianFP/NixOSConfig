@@ -1,11 +1,16 @@
 # Example to create a bios compatible gpt partition
-{ lib, config, inputs, ... }: 
+{
+  lib,
+  config,
+  inputs,
+  ...
+}:
 
 let
   bootDev = "sda";
-  bootDevPath = "/dev/${bootDev}"; #do not change because of below!
+  bootDevPath = "/dev/${bootDev}"; # do not change because of below!
   cfg = config.myModules.disko-btrfs-impermanence;
-in 
+in
 {
   imports = [
     inputs.disko.nixosModules.disko
@@ -23,105 +28,108 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    disko.devices.disk."${bootDevPath}" = if cfg.uefiOnlySystem then {
-      device = bootDevPath;
-      type = "disk";
-      content = {
-        type = "gpt";
-        partitions = {
-          ESP = {
-            type = "EF00";
-            size = "500M";
-            content = {
-              type = "filesystem";
-              format = "vfat";
-              mountpoint = "/boot";
-              mountOptions = [ "umask=0077" ];
+    disko.devices.disk."${bootDevPath}" =
+      if cfg.uefiOnlySystem then
+        {
+          device = bootDevPath;
+          type = "disk";
+          content = {
+            type = "gpt";
+            partitions = {
+              ESP = {
+                type = "EF00";
+                size = "500M";
+                content = {
+                  type = "filesystem";
+                  format = "vfat";
+                  mountpoint = "/boot";
+                  mountOptions = [ "umask=0077" ];
+                };
+              };
+              nixos = {
+                name = "nixos";
+                size = "100%";
+                content = {
+                  type = "btrfs";
+                  extraArgs = [ "-f" ]; # Override existing partition
+                  # Subvolumes must set a mountpoint in order to be mounted,
+                  # unless their parent is mounted
+                  subvolumes = {
+                    #volatile subvolumes (will be wiped at every reboot)
+                    "/root".mountpoint = "/";
+                    "/home".mountpoint = "/home";
+                    # Subvolume for the swapfile
+                    "/swap" = {
+                      mountpoint = "/.swapvol";
+                      swap.swapfile.size = "16G";
+                    };
+                    #stable subvolumes (will persist accross reboots)
+                    "/nix" = {
+                      mountOptions = [ "noatime" ];
+                      mountpoint = "/nix";
+                    };
+                    "/persist".mountpoint = "/persist";
+                    #The following contains everything that should also be backed up. Logs etc. would not be put in here, but just in /persist
+                    "/persist/backMeUp" = { }; # will be mounted under /persist/noBackup automatically because parents mountpoint is set
+                  };
+                };
+              };
             };
           };
-          nixos = {
-            name = "nixos";
-            size = "100%";
-            content = {
-              type = "btrfs";
-              extraArgs = [ "-f" ]; # Override existing partition
-              # Subvolumes must set a mountpoint in order to be mounted,
-              # unless their parent is mounted
-              subvolumes = {
-                #volatile subvolumes (will be wiped at every reboot)
-                "/root".mountpoint = "/";
-                "/home".mountpoint = "/home";
-                # Subvolume for the swapfile
-                "/swap" = {
-                  mountpoint = "/.swapvol";
-                  swap.swapfile.size = "16G";
+        }
+      else
+        {
+          device = bootDevPath;
+          type = "disk";
+          content = {
+            type = "gpt";
+            partitions = {
+              boot = {
+                name = "boot";
+                size = "1M";
+                type = "EF02"; # for grub MBR
+              };
+              ESP = {
+                name = "ESP";
+                size = "512M";
+                type = "EF00";
+                content = {
+                  type = "filesystem";
+                  format = "vfat";
+                  mountpoint = "/boot";
                 };
-                #stable subvolumes (will persist accross reboots)
-                "/nix" = {
-                  mountOptions = [ "noatime" ];
-                  mountpoint = "/nix";
+              };
+              nixos = {
+                name = "nixos";
+                size = "100%";
+                content = {
+                  type = "btrfs";
+                  extraArgs = [ "-f" ]; # Override existing partition
+                  # Subvolumes must set a mountpoint in order to be mounted,
+                  # unless their parent is mounted
+                  subvolumes = {
+                    #volatile subvolumes (will be wiped at every reboot)
+                    "/root".mountpoint = "/";
+                    "/home".mountpoint = "/home";
+                    # Subvolume for the swapfile
+                    "/swap" = {
+                      mountpoint = "/.swapvol";
+                      swap.swapfile.size = "4G";
+                    };
+                    #stable subvolumes (will persist accross reboots)
+                    "/nix" = {
+                      mountOptions = [ "noatime" ];
+                      mountpoint = "/nix";
+                    };
+                    "/persist".mountpoint = "/persist";
+                    #The following contains everything that should also be backed up. Logs etc. would not be put in here, but just in /persist
+                    "/persist/backMeUp" = { }; # will be mounted under /persist/noBackup automatically because parents mountpoint is set
+                  };
                 };
-                "/persist".mountpoint = "/persist";
-                #The following contains everything that should also be backed up. Logs etc. would not be put in here, but just in /persist
-                "/persist/backMeUp" = {}; #will be mounted under /persist/noBackup automatically because parents mountpoint is set
               };
             };
           };
         };
-      };
-    }
-    else {
-      device = bootDevPath;
-      type = "disk";
-      content = {
-        type = "gpt";
-        partitions = {
-          boot = {
-            name = "boot";
-            size = "1M";
-            type = "EF02"; #for grub MBR
-          };
-          ESP = {
-            name = "ESP";
-            size = "512M";
-            type = "EF00";
-            content = {
-              type = "filesystem";
-              format = "vfat";
-              mountpoint = "/boot";
-            };
-          };
-          nixos = {
-            name = "nixos";
-            size = "100%";
-            content = {
-              type = "btrfs";
-              extraArgs = [ "-f" ]; # Override existing partition
-              # Subvolumes must set a mountpoint in order to be mounted,
-              # unless their parent is mounted
-              subvolumes = {
-                #volatile subvolumes (will be wiped at every reboot)
-                "/root".mountpoint = "/";
-                "/home".mountpoint = "/home";
-                # Subvolume for the swapfile
-                "/swap" = {
-                  mountpoint = "/.swapvol";
-                  swap.swapfile.size = "4G";
-                };
-                #stable subvolumes (will persist accross reboots)
-                "/nix" = {
-                  mountOptions = [ "noatime" ];
-                  mountpoint = "/nix";
-                };
-                "/persist".mountpoint = "/persist";
-                #The following contains everything that should also be backed up. Logs etc. would not be put in here, but just in /persist
-                "/persist/backMeUp" = {}; #will be mounted under /persist/noBackup automatically because parents mountpoint is set
-              };
-            };
-          };
-        };
-      };
-    };
 
     fileSystems."/persist".neededForBoot = true;
 

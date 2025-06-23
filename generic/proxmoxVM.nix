@@ -1,9 +1,10 @@
 { modulesPath, vmID, ... }:
 
 {
-  imports = [ # Include the results of the hardware scan.
+  imports = [
+    # Include the results of the hardware scan.
     (modulesPath + "/profiles/qemu-guest.nix")
-    ./disk-config-btrfs-impermanence.nix #filesystem with disko and impermanence setup 
+    ./disk-config-btrfs-impermanence.nix # filesystem with disko and impermanence setup
     ./impermanence.nix
     ./server.nix
   ];
@@ -13,20 +14,26 @@
   #vm stuff
   services.qemuGuest.enable = true;
 
-  boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "virtio_pci" "virtio_scsi" "sd_mod" "sr_mod" ];
+  boot.initrd.availableKernelModules = [
+    "ata_piix"
+    "uhci_hcd"
+    "virtio_pci"
+    "virtio_scsi"
+    "sd_mod"
+    "sr_mod"
+  ];
   boot.initrd.kernelModules = [ "dm-snapshot" ];
   boot.loader.grub = {
     efiSupport = true;
     efiInstallAsRemovable = true;
   };
 
-
   #networking config (systemd.network preferred over networking)
   networking = {
     useDHCP = false;
     enableIPv6 = false;
   };
-  systemd.network =  {
+  systemd.network = {
     enable = true;
     networks."10-serverLAN" = {
       name = "ens*";

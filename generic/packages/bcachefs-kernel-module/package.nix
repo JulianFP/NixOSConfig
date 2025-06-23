@@ -1,21 +1,26 @@
-{ 
-  pkgs, 
-  lib, 
+{
+  pkgs,
+  lib,
   fetchFromGitHub,
-  kernel ? pkgs.linuxPackages_testing.kernel
+  kernel ? pkgs.linuxPackages_testing.kernel,
 }:
 
 pkgs.stdenv.mkDerivation {
   pname = "bcachefs-kernel-module";
-  inherit (kernel) src version postPatch nativeBuildInputs;
+  inherit (kernel)
+    src
+    version
+    postPatch
+    nativeBuildInputs
+    ;
 
-/*
-  src = fetchFromGitHub {
-    owner = "koverstreet";
-    repo = "bcachefs";
-    rev = "23692ade03727026efe1b76e103e89a3c9cb1224";
-    hash = "sha256-rdZub0alTPU139bYMwK51Xg+BbjHNrHFOmV9j1Gah4c=";
-  };
+  /*
+    src = fetchFromGitHub {
+      owner = "koverstreet";
+      repo = "bcachefs";
+      rev = "23692ade03727026efe1b76e103e89a3c9cb1224";
+      hash = "sha256-rdZub0alTPU139bYMwK51Xg+BbjHNrHFOmV9j1Gah4c=";
+    };
   */
 
   kernel_dev = kernel.dev;

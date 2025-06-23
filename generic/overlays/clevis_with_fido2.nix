@@ -1,8 +1,13 @@
-final: prev: let
-  clevis-pin-fido2 = (prev.callPackage ../packages/clevis-pin-fido2/package.nix {});
-in {
-  clevis = prev.clevis.overrideAttrs(old: {
-    buildInputs = old.buildInputs ++ [ prev.jq clevis-pin-fido2 ];
+final: prev:
+let
+  clevis-pin-fido2 = (prev.callPackage ../packages/clevis-pin-fido2/package.nix { });
+in
+{
+  clevis = prev.clevis.overrideAttrs (old: {
+    buildInputs = old.buildInputs ++ [
+      prev.jq
+      clevis-pin-fido2
+    ];
     postInstall =
       let
         includeIntoPath = [

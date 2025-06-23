@@ -1,4 +1,4 @@
-{ config, ... }: 
+{ config, ... }:
 
 {
   imports = [
@@ -9,7 +9,7 @@
 
   networking.domain = "";
 
-  zramSwap.enable = true; #enable zram (instead of swap)
+  zramSwap.enable = true; # enable zram (instead of swap)
 
   #nebula lighthouse + unsafe_routes settings
   myModules.nebula."serverNetwork".isLighthouse = true;
@@ -30,13 +30,13 @@
     isEdge = true;
   };
 
-  #use options of generic/wireguard.nix module 
+  #use options of generic/wireguard.nix module
   myModules.servers.wireguard = {
     enable = true;
     externalInterface = "ens6";
-    publicKeys = [ 
-      "byifao8fmvsS7Dc/k8NnYwqbuFzSPtiRf/ZcKyK0hgw=" #JuliansFramework
-      "12I+6LyvdoagWTctUOg40YoitODSFDrnFF2gfo2ILTU=" #Marias Laptop
+    publicKeys = [
+      "byifao8fmvsS7Dc/k8NnYwqbuFzSPtiRf/ZcKyK0hgw=" # JuliansFramework
+      "12I+6LyvdoagWTctUOg40YoitODSFDrnFF2gfo2ILTU=" # Marias Laptop
     ];
   };
 }

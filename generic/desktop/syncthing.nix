@@ -1,4 +1,9 @@
-{ lib, config, hostName, ... }:
+{
+  lib,
+  config,
+  hostName,
+  ...
+}:
 
 # My Nextcloud server was down because of hardware issues. I was using Syncthing temporarily as a replacement. Keeping this file around in case something similar happens again
 {
@@ -17,7 +22,7 @@
 
   services.syncthing = {
     enable = true;
-    
+
     #all sync directories are for this user anyway
     user = "julian";
     group = "users";
@@ -57,9 +62,10 @@
             type = "simple";
             params.keep = "10";
           };
-          devices = [ "JuliansPixel6a" ]
-          ++ lib.lists.optional (hostName != "JuliansFramework") "JuliansFramework"
-          ++ lib.lists.optional (hostName != "JuliansPC") "JuliansPC";
+          devices =
+            [ "JuliansPixel6a" ]
+            ++ lib.lists.optional (hostName != "JuliansFramework") "JuliansFramework"
+            ++ lib.lists.optional (hostName != "JuliansPC") "JuliansPC";
         };
         "Camera-Pixel6a" = {
           id = "pixel_6a_wvqg-photos";
@@ -68,9 +74,10 @@
             type = "simple";
             params.keep = "10";
           };
-          devices = [ ]
-          ++ lib.lists.optional (hostName != "JuliansFramework") "JuliansFramework"
-          ++ lib.lists.optional (hostName != "JuliansPC") "JuliansPC";
+          devices =
+            [ ]
+            ++ lib.lists.optional (hostName != "JuliansFramework") "JuliansFramework"
+            ++ lib.lists.optional (hostName != "JuliansPC") "JuliansPC";
         };
       };
     };

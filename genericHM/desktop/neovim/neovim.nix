@@ -79,7 +79,7 @@
       }
 
       #for luasnips
-      { 
+      {
         mode = [
           ""
           "i"
@@ -88,7 +88,7 @@
         action = "<cmd>lua require('luasnip').jump(1)<Cr>";
         options.silent = true;
       }
-      { 
+      {
         mode = [
           ""
           "i"
@@ -97,7 +97,7 @@
         action = "<cmd>lua require('luasnip').jump(-1)<Cr>";
         options.silent = true;
       }
-      { 
+      {
         mode = [
           ""
           "i"
@@ -216,7 +216,7 @@
       #snippet engine
       luasnip = {
         enable = true;
-	      fromVscode = [
+        fromVscode = [
           {
             include = [
               "bash"
@@ -233,7 +233,7 @@
           {
             paths = ./customSnippets;
           }
-	      ];
+        ];
       };
       #collection of default snippets
       friendly-snippets.enable = true;
@@ -241,15 +241,16 @@
       #error highlighting and autocomplete (different language servers + luasnip config)
       lsp = {
         servers = {
-          bashls.enable = true;	#lsp server for Bash
-          clangd.enable = true; #lsp server for C/C++
-          pyright.enable = true;#lsp server for Python
-          nil_ls.enable = true;	#lsp server for Nix
-          texlab.enable = true; #lsp Server for LaTeX
-          java_language_server.enable = true; #lsp Server for Java
-          ts_ls.enable = true; #lsp server for Typescript
-          svelte.enable = true; #lsp server for Svelte (Javascript Framework)
-          rust_analyzer = { #lsp server for Rust
+          bashls.enable = true; # lsp server for Bash
+          clangd.enable = true; # lsp server for C/C++
+          pyright.enable = true; # lsp server for Python
+          nil_ls.enable = true; # lsp server for Nix
+          texlab.enable = true; # lsp Server for LaTeX
+          java_language_server.enable = true; # lsp Server for Java
+          ts_ls.enable = true; # lsp server for Typescript
+          svelte.enable = true; # lsp server for Svelte (Javascript Framework)
+          rust_analyzer = {
+            # lsp server for Rust
             enable = true;
             installRustc = true;
             installCargo = true;
@@ -260,31 +261,36 @@
         snippet.expand = ''function(args) require('luasnip').lsp_expand(args.body) end'';
         sources = [
           { name = "nvim_lsp"; }
-          { name = "luasnip"; } #For luasnip users.
+          { name = "luasnip"; } # For luasnip users.
           { name = "path"; }
           { name = "buffer"; }
           { name = "nvim_lsp_signature_help"; }
         ];
       };
-      cmp-nvim-lsp-signature-help.enable = true; #shows signature of functions etc. while typing
+      cmp-nvim-lsp-signature-help.enable = true; # shows signature of functions etc. while typing
 
-      #debugging 
+      #debugging
       dap = {
-        enable = true; 
+        enable = true;
         adapters.servers."codelldb" = {
           port = 13000;
           executable = {
             command = "${pkgs.vscode-extensions.vadimcn.vscode-lldb}/share/vscode/extensions/vadimcn.vscode-lldb/adapter/codelldb";
-            args = [ "--port" "13000" ];
+            args = [
+              "--port"
+              "13000"
+            ];
           };
         };
-        configurations."cpp" = [{
-          name = "Launch file";
-          type = "codelldb";
-          request = "launch";
-          program = "\${dir} .. '/buildDebug/' .. \${folder}";
-          stopOnEntry = false;
-        }];
+        configurations."cpp" = [
+          {
+            name = "Launch file";
+            type = "codelldb";
+            request = "launch";
+            program = "\${dir} .. '/buildDebug/' .. \${folder}";
+            stopOnEntry = false;
+          }
+        ];
         signs.dapBreakpoint.text = "🛑";
       };
       dap-ui.enable = true;

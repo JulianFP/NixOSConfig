@@ -7,7 +7,7 @@
 #change these variables to make this script work for your setup
 githubRepo="JulianFP/NixOSConfig" #github repo that contains flake config (syntax: '<Github user name>/<repo name>'). Always uses default branch
 githubBranch="main" #branch that contains flake config
-#the following option is only needed for the deploySops and sops option 
+#the following option is only needed for the deploySops and sops option
 ageKeyFile="/persist/sops-nix/key.txt" #path to ageKeyFile on target machine
 
 
@@ -56,7 +56,7 @@ deploy() {
     fi
 
     #check if device is reachable over ssh and wait until user fixed it
-    until ssh -o "StrictHostKeyChecking no" root@$2 true >/dev/null 2>&1; do 
+    until ssh -o "StrictHostKeyChecking no" root@$2 true >/dev/null 2>&1; do
         echo "couldn't connect to target machines root user over ssh."
         read -p "check ssh config and then press enter to try again"
     done
@@ -69,15 +69,15 @@ deploy() {
 
     #wait until device becomes reachable over ssh with new ip address
     echo "wait for vm to become reachable over ssh and new ip address"
-    until ssh -o "StrictHostKeyChecking no" root@$3 true >/dev/null 2>&1; do 
-        sleep 1 
+    until ssh -o "StrictHostKeyChecking no" root@$3 true >/dev/null 2>&1; do
+        sleep 1
     done
 }
 
 #$1: flakehostname, $2: TargetIP
 sopsConfig() {
     #check if device is reachable over ssh and wait until user fixed it
-    until ssh -o "StrictHostKeyChecking no" root@$2 true >/dev/null 2>&1; do 
+    until ssh -o "StrictHostKeyChecking no" root@$2 true >/dev/null 2>&1; do
         echo "couldn't connect to target machines root user over ssh."
         read -p "check ssh config and then press enter to try again"
     done
@@ -110,13 +110,13 @@ sopsConfig() {
         #it is: just update the age key
         sed -i "/&$1/c\\  - &$1 age$(cat /tmp/$agename | sed ':a;N;$!ba;s/\n//g')" "/tmp/$gitname/.sops.yaml"
     else
-        #it is not: add it and its config 
+        #it is not: add it and its config
         sed -i -e '/&yubikey/a\' -e "  - &$1 age$(cat /tmp/$agename | sed ':a;N;$!ba;s/\n//g')" "/tmp/$gitname/.sops.yaml" #add age key to keys
         sed -i -e '/- key_groups:/i\' -e "      - *$1" "/tmp/$gitname/.sops.yaml" #add hostname to regex for all general secrets
         sed -i -e '/secrets\/\[/i\' -e "  - path_regex: ^secrets/$1/.*$\n    key_groups:\n    - pgp:\n      - *yubikey\n      age:\n      - *$1" "/tmp/$gitname/.sops.yaml" #add new path_regex for all keys that should only be decrypted by target
     fi
 
-    #reencrypt secrets for new age key 
+    #reencrypt secrets for new age key
     sops --config /tmp/$gitname/.sops.yaml updatekeys -y /tmp/$gitname/secrets/*.yaml
     ls -1 "/tmp/$gitname/secrets/$1" | sed -e "s/^/\/tmp\/$gitname\/secrets\/$1\//" | xargs -L1 sops --config /tmp/$gitname/.sops.yaml updatekeys -y
 
@@ -132,8 +132,8 @@ sopsConfig() {
     #reboot machine and wait until it becomes reachable again
     ssh root@$2 -o "StrictHostKeyChecking no" "reboot"
     echo "wait for vm to become reachable after restart again"
-    until ssh -o "StrictHostKeyChecking no" root@$2 true >/dev/null 2>&1; do 
-        sleep 1 
+    until ssh -o "StrictHostKeyChecking no" root@$2 true >/dev/null 2>&1; do
+        sleep 1
     done
 
     #remove temp git directory
@@ -190,7 +190,7 @@ lxc() {
 
 set -e #exit on any kind of error
 
-case $1 in 
+case $1 in
     deploy)
     deploy "$2" "$3" "$4"
     echo "deployment completed"
@@ -216,7 +216,7 @@ case $1 in
     exit 0
         ;;
     *)
-    help 
+    help
     exit 0
         ;;
 esac

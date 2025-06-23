@@ -34,7 +34,7 @@ class selectMenu:
             print("\x1b[1A", end="")
             print("\x1b[2K", end="")
         self.__show()
-    
+
     def __rawread(self, numberOfChars, fd, oldTerminalSettings, newTerminalSettings) -> str:
         try:
             termios.tcsetattr(fd, termios.TCSADRAIN, newTerminalSettings)

@@ -1,10 +1,11 @@
 { pkgs, ... }:
 
 let
-  python-packages = ps: with ps; [
-    dbus-python #e.g. eduroam-cat relies on that
-  ];
-in 
+  python-packages =
+    ps: with ps; [
+      dbus-python # e.g. eduroam-cat relies on that
+    ];
+in
 {
 
   #Activates ability to install fonts through home-manager
@@ -21,16 +22,16 @@ in
     #networkmanagerapplet
     qt5.qtwayland
     qt6.qtwayland
-    kdePackages.qtsvg #qt6 needs this to load icons
-    libsForQt5.kservice #qt5 version needed by dolphin for some reason?
+    kdePackages.qtsvg # qt6 needs this to load icons
+    libsForQt5.kservice # qt5 version needed by dolphin for some reason?
     ripgrep-all
-    fortune #for hyprlock
+    fortune # for hyprlock
     adwaita-icon-theme
     nur.repos.mikilio.xwaylandvideobridge-hypr
 
     # CLI Applications
-    file #needed for open command of lf
-    libnotify #needed for shutdown reminder
+    file # needed for open command of lf
+    libnotify # needed for shutdown reminder
     tree
     unzip
 
@@ -81,7 +82,7 @@ in
     # Fonts
     roboto-mono
     font-awesome
-    nerd-fonts.symbols-only #for waybar
+    nerd-fonts.symbols-only # for waybar
     corefonts
     vistafonts
   ];

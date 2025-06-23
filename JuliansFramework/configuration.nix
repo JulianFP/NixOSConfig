@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 {
-  imports = [ 
+  imports = [
     ./hardware-configuration.nix # Include the results of the hardware scan.
   ];
 
@@ -17,32 +17,32 @@
       settings = {
         CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
         CPU_ENERGY_PERF_POLICY_ON_BAT = "balance_power";
-        PLATFORM_PROFILE_ON_AC="performance";
-        PLATFORM_PROFILE_ON_BAT="low-power";
+        PLATFORM_PROFILE_ON_AC = "performance";
+        PLATFORM_PROFILE_ON_BAT = "low-power";
         CPU_SCALING_GOVERNOR_ON_AC = "performance";
         CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
         PCIE_ASPM_ON_BAT = "powersupersave";
       };
     };
 
-    fwupd.enable = true; #for Firmware updates
-    hardware.bolt.enable = true; #enable Thunderbolt Device management
+    fwupd.enable = true; # for Firmware updates
+    hardware.bolt.enable = true; # enable Thunderbolt Device management
 
-    automatic-timezoned.enable = true; #automatic timezone switcher
-    geoclue2.geoProviderUrl = "https://api.beacondb.net/v1/geolocate"; #mozilla's service is deprecated
+    automatic-timezoned.enable = true; # automatic timezone switcher
+    geoclue2.geoProviderUrl = "https://api.beacondb.net/v1/geolocate"; # mozilla's service is deprecated
   };
 
   environment = {
     variables = {
-      RADV_PERFTEST = "nosam"; #performance improvement for eGPUs
+      RADV_PERFTEST = "nosam"; # performance improvement for eGPUs
     };
 
     systemPackages = with pkgs; [
       intel-media-driver
       intel-gpu-tools
 
-      (import ../generic/packages/shellScriptBin/egpu.nix {inherit pkgs;} )
-      (import ../generic/packages/shellScriptBin/egpu2.nix {inherit pkgs;} )
+      (import ../generic/packages/shellScriptBin/egpu.nix { inherit pkgs; })
+      (import ../generic/packages/shellScriptBin/egpu2.nix { inherit pkgs; })
     ];
 
     persistence."/persist".directories = [
@@ -50,7 +50,6 @@
       "/var/lib/fprint"
     ];
   };
-
 
   # power usage optimization
   powerManagement = {

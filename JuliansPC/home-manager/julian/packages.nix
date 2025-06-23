@@ -1,4 +1,9 @@
-{ pkgs, lib, nix-gaming, ... }:
+{
+  pkgs,
+  lib,
+  nix-gaming,
+  ...
+}:
 
 let
   #fixes gamemode when using omu-launcher. See https://github.com/FeralInteractive/gamemode/issues/254#issuecomment-643648779
@@ -24,7 +29,8 @@ let
       export LD_PRELOAD="${gamemodeSharedObjects}"
     '';
   });
-in {
+in
+{
   home.packages = with pkgs; [
     # CLI Applications
     amdgpu_top

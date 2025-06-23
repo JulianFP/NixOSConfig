@@ -1,14 +1,22 @@
-{ lib, pkgs, config, hostName, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  hostName,
+  ...
+}:
 
-let 
+let
   cfg = config.myModules.servers.wireguard;
-  clientIPs = builtins.genList (i: "10.100.0.${builtins.toString (2+i)}/32") (builtins.length cfg.publicKeys);
+  clientIPs = builtins.genList (i: "10.100.0.${builtins.toString (2 + i)}/32") (
+    builtins.length cfg.publicKeys
+  );
 in
 {
   options.myModules.servers.wireguard = {
     enable = lib.mkEnableOption "Wireguard server config with sops";
     externalInterface = lib.mkOption {
-      type = lib.types.str; 
+      type = lib.types.str;
       example = "eth0";
     };
     publicKeys = lib.mkOption {
@@ -57,7 +65,10 @@ in
         # recommended.
         privateKeyFile = config.sops.secrets."wireguard-priv-key".path;
 
-        peers = lib.lists.zipListsWith (a: b: {publicKey = a; allowedIPs = [ b ];}) cfg.publicKeys clientIPs;
+        peers = lib.lists.zipListsWith (a: b: {
+          publicKey = a;
+          allowedIPs = [ b ];
+        }) cfg.publicKeys clientIPs;
       };
     };
   };

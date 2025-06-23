@@ -1,4 +1,9 @@
-{ config, lib, hostName, ... }:
+{
+  config,
+  lib,
+  hostName,
+  ...
+}:
 
 {
   sops.secrets = {
@@ -20,11 +25,11 @@
   services.openssh.hostKeys = lib.mkForce [
     {
       bits = 4096;
-      path =  config.sops.secrets."openssh-host/${hostName}-rsa".path;
+      path = config.sops.secrets."openssh-host/${hostName}-rsa".path;
       type = "rsa";
     }
     {
-      path =  config.sops.secrets."openssh-host/${hostName}-ed25519".path;
+      path = config.sops.secrets."openssh-host/${hostName}-ed25519".path;
       type = "ed25519";
     }
   ];

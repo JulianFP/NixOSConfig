@@ -1,16 +1,22 @@
-{ lib, pkgs, config, hostName, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  hostName,
+  ...
+}:
 
 let
   nebulaSystemdService = config.systemd.services."nebula@serverNetwork";
   envFile = "/persist/nebulaOverwriter/envFile";
-in 
+in
 {
   networking = {
     hostName = hostName; # Define your hostname.
     networkmanager.enable = true;
 
     # rpfilter allow Wireguard traffic (see https://wiki.nixos.org/wiki/WireGuard#Setting_up_WireGuard_with_NetworkManager)
-    firewall = { 
+    firewall = {
       # if packets are still dropped, they will show up in dmesg
       logReversePathDrops = true;
       # wireguard trips rpfilter up
@@ -28,24 +34,38 @@ in
   #this is necessary to adjust unsafe_routes on the fly through a quick terminal command without having to change the NixOS and rebuilding all the time
   systemd.services."nebula-custom_serverNetwork" = {
     description = "Adjusted Nebula VPN service for serverNetwork that works together with the nebulaOverwriter python script";
-    after = [ "nebula@serverNetwork.service" "basic.target" "network.target" ];
-    wantedBy = [ "multi-user.target" "nebula@serverNetwork.service" ];
+    after = [
+      "nebula@serverNetwork.service"
+      "basic.target"
+      "network.target"
+    ];
+    wantedBy = [
+      "multi-user.target"
+      "nebula@serverNetwork.service"
+    ];
     conflicts = [ "nebula@serverNetwork.service" ];
     unitConfig = {
       StartLimitIntervalSec = 0;
       ConditionPathExists = envFile;
     };
-    serviceConfig = lib.mkMerge [ nebulaSystemdService.serviceConfig {
-      EnvironmentFile = envFile;
-      ExecStart = lib.mkForce "${config.services.nebula.networks."serverNetwork".package}/bin/nebula -config \"$NEBULA_CONFIG_PATH\"";
-    }];
+    serviceConfig = lib.mkMerge [
+      nebulaSystemdService.serviceConfig
+      {
+        EnvironmentFile = envFile;
+        ExecStart = lib.mkForce "${
+          config.services.nebula.networks."serverNetwork".package
+        }/bin/nebula -config \"$NEBULA_CONFIG_PATH\"";
+      }
+    ];
   };
 
   environment.systemPackages = [
-    (import ../packages/shellScriptBin/vlan.nix {inherit pkgs;})
+    (import ../packages/shellScriptBin/vlan.nix { inherit pkgs; })
     (import ../packages/shellScriptBin/nebulaRoutes.nix {
       inherit pkgs envFile;
-      oldConfigFile = builtins.head (builtins.match "^.*(\/nix\/store\/.{32}-nebula-config.*)$" nebulaSystemdService.serviceConfig.ExecStart);
+      oldConfigFile = builtins.head (
+        builtins.match "^.*(\/nix\/store\/.{32}-nebula-config.*)$" nebulaSystemdService.serviceConfig.ExecStart
+      );
     })
   ];
 }

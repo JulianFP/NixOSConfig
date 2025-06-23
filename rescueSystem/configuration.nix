@@ -8,7 +8,6 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-
   #for latest bcachefs support in case I need to rescue the system
   environment.systemPackages = [ pkgs.keyutils ];
   boot = {
@@ -17,7 +16,9 @@
       bcachefs = true;
     };
     extraModulePackages = [
-      (pkgs.callPackage ../generic/packages/bcachefs-kernel-module/package.nix {kernel = config.boot.kernelPackages.kernel;})
+      (pkgs.callPackage ../generic/packages/bcachefs-kernel-module/package.nix {
+        kernel = config.boot.kernelPackages.kernel;
+      })
     ];
   };
 
@@ -56,7 +57,7 @@
     magic-wormhole
     rsync
     age
-    (import ../generic/packages/shellScriptBin/vlan.nix {inherit pkgs;} )
+    (import ../generic/packages/shellScriptBin/vlan.nix { inherit pkgs; })
   ];
 
   users.users.julian = {

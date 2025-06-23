@@ -1,30 +1,30 @@
 { ... }:
 
 # this is a neovim configuration for (pretty much) all my devices & users.
-# basic stuff only 
+# basic stuff only
 # some devices/users may expand uppon this
 {
   programs.nixvim = {
     enable = true;
 
     opts = {
-      compatible = false; 	#disable compatibility to old-time vi
-      showmatch = true; 	#show matching
-      ignorecase = true; 	#case insensitive
-      mouse = "a"; 		#enable mouse for all modes
-      hlsearch = true; 		#highlight search
-      incsearch = true; 	#incremental search
-      tabstop = 4; 		#how wide tab character should be displayed
-      softtabstop = 0; 		#how wide pressing tab should span (replicate tabstop)
-      shiftwidth = 0; 		#how wide shift commands should be (replicate tabstop)
-      expandtab = true; 	#converts tabs to white space
-      shiftround = true;        #round indentation to multiples shiftwidth
-      autoindent = true; 	#indent a new line the same amount as the line just typed
-      smartindent = true;	#make smart indentation (after { and so on)
-      number = true; 		#add line numbers
-      cursorline = true;	#highlight current cursorline
-      ttyfast = true;		#Speed up scrolling in Vim
-      ve = "onemore";		#allow cursor to be at first empty space after line
+      compatible = false; # disable compatibility to old-time vi
+      showmatch = true; # show matching
+      ignorecase = true; # case insensitive
+      mouse = "a"; # enable mouse for all modes
+      hlsearch = true; # highlight search
+      incsearch = true; # incremental search
+      tabstop = 4; # how wide tab character should be displayed
+      softtabstop = 0; # how wide pressing tab should span (replicate tabstop)
+      shiftwidth = 0; # how wide shift commands should be (replicate tabstop)
+      expandtab = true; # converts tabs to white space
+      shiftround = true; # round indentation to multiples shiftwidth
+      autoindent = true; # indent a new line the same amount as the line just typed
+      smartindent = true; # make smart indentation (after { and so on)
+      number = true; # add line numbers
+      cursorline = true; # highlight current cursorline
+      ttyfast = true; # Speed up scrolling in Vim
+      ve = "onemore"; # allow cursor to be at first empty space after line
       encoding = "utf8";
       spelllang = "en_us";
       spell = true;
@@ -39,23 +39,30 @@
     };
 
     autoCmd = [
-      {	#set indentation of some file types to 2
+      {
+        #set indentation of some file types to 2
         event = [
           "BufEnter"
           "BufWinEnter"
         ];
-        pattern = [ "*.nix" "*.svelte" "*.ts" "*.html" ];
+        pattern = [
+          "*.nix"
+          "*.svelte"
+          "*.ts"
+          "*.html"
+        ];
         # Or use `vimCallback` with a vimscript function name
         # Or use `command` if you want to run a normal vimscript command
-        command = "setlocal tabstop=2";	#set tabstop of 2
+        command = "setlocal tabstop=2"; # set tabstop of 2
       }
-      {	#set indentation of reStructuredText files to 3 (because rst is weird)
+      {
+        #set indentation of reStructuredText files to 3 (because rst is weird)
         event = [
           "BufEnter"
           "BufWinEnter"
         ];
         pattern = [ "*.rst" ];
-        command = "setlocal tabstop=3";	#set tabstop of 3
+        command = "setlocal tabstop=3"; # set tabstop of 3
       }
     ];
 
@@ -78,11 +85,11 @@
         settings.options.theme = "onedark";
       };
 
-      #nix and bash lsp 
+      #nix and bash lsp
       lsp = {
         enable = true;
         servers = {
-          bashls.enable = true; #lsp server for bash 
+          bashls.enable = true; # lsp server for bash
           nil_ls.enable = true;
         };
         keymaps = {
@@ -101,21 +108,22 @@
         };
       };
       lsp-lines = {
-        enable = true; #show lsp in virtual line
+        enable = true; # show lsp in virtual line
       };
       cmp = {
         enable = true;
         settings = {
           mapping = {
             "<CR>" = "cmp.mapping.confirm({select = false})";
-            "<Tab>" = ''cmp.mapping(function(fallback)
-                if cmp.visible() then
-                  cmp.select_next_item()
-                else
-                  fallback()
-                end
-              end
-              ,{"i","s"})'';
+            "<Tab>" = ''
+              cmp.mapping(function(fallback)
+                              if cmp.visible() then
+                                cmp.select_next_item()
+                              else
+                                fallback()
+                              end
+                            end
+                            ,{"i","s"})'';
           };
           sources = [
             { name = "nvim_lsp"; }
@@ -133,9 +141,11 @@
     };
 
     #add keymap to restart lsp server to load external file changes
-    lsp.keymaps = [{
-      action = "<CMD>LspRestart<Enter>";
-      key = "<LocalLeader>r";
-    }];
+    lsp.keymaps = [
+      {
+        action = "<CMD>LspRestart<Enter>";
+        key = "<LocalLeader>r";
+      }
+    ];
   };
 }

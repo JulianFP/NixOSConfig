@@ -1,30 +1,50 @@
-args@{ config, lib, pkgs, utils, modulesPath, hostName, ...}:
+args@{
+  config,
+  lib,
+  pkgs,
+  utils,
+  modulesPath,
+  hostName,
+  ...
+}:
 
 let
   bcachefsLabel = if hostName == "JuliansPC" then "JuliansNixOSPC" else "JuliansNixOS";
   uefiLabel = if hostName == "JuliansPC" then "UEFIPC" else "UEFI";
-  encryptedSwapLabel = if hostName == "JuliansPC" then "JuliansEncryptedSwapPC" else "JuliansEncryptedSwap";
+  encryptedSwapLabel =
+    if hostName == "JuliansPC" then "JuliansEncryptedSwapPC" else "JuliansEncryptedSwap";
   unlockedSwapLabel = if hostName == "JuliansPC" then "JuliansSwapPC" else "JuliansSwap";
-  encryptedKeyPartitionLabel = if hostName == "JuliansPC" then "EncryptedKeyPartitionPC" else "EncryptedKeyPartition";
+  encryptedKeyPartitionLabel =
+    if hostName == "JuliansPC" then "EncryptedKeyPartitionPC" else "EncryptedKeyPartition";
   unlockedKeyPartitionLabel = if hostName == "JuliansPC" then "KeyPartitionPC" else "KeyPartition";
-  oldSystemdInitrd = ((import (modulesPath + "/system/boot/systemd/initrd.nix")) args).config.content.boot.initrd.systemd;
-  oldSystemdTmpfiles = ((import (modulesPath + "/system/boot/systemd/tmpfiles.nix")) args).config.boot.initrd.systemd;
+  oldSystemdInitrd =
+    ((import (modulesPath + "/system/boot/systemd/initrd.nix")) args)
+    .config.content.boot.initrd.systemd;
+  oldSystemdTmpfiles =
+    ((import (modulesPath + "/system/boot/systemd/tmpfiles.nix")) args).config.boot.initrd.systemd;
 
   #to be able to boot without yubikey or when the tpm values temporarily don't fit anymore add a tang server in the local network as a fallback
   #requires networking, so currently not enabled for JuliansFramework
-  withTangFallback = if hostName == "JuliansPC" then true else false; #make sure you added networking to initrd first!
+  withTangFallback = if hostName == "JuliansPC" then true else false; # make sure you added networking to initrd first!
 
   #JuliansPC also uses a tang server as an alternative for fido2, so change display message
-  promptText = if hostName == "JuliansPC" then "Trying to unlock ${encryptedKeyPartitionLabel} using clevis (two of tpm2, fido2 and tang server). If you want to enter the encryption password instead then press Ctrl+C" else "Trying to unlock ${encryptedKeyPartitionLabel} using clevis (tpm2 + fido2). If you want to enter the encryption password instead then press Ctrl+C";
-in {
-  imports = [ 
+  promptText =
+    if hostName == "JuliansPC" then
+      "Trying to unlock ${encryptedKeyPartitionLabel} using clevis (two of tpm2, fido2 and tang server). If you want to enter the encryption password instead then press Ctrl+C"
+    else
+      "Trying to unlock ${encryptedKeyPartitionLabel} using clevis (tpm2 + fido2). If you want to enter the encryption password instead then press Ctrl+C";
+in
+{
+  imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  assertions = [{
-    assertion = ! config.system.etc.overlay.enable;
-    message = "Custom assertion: Because of custom initrd script and switchting into /sysroot/root instead of /sysroot the etc overlay can't work currently. Modify it to make it work first, then remove this warning";
-  }];
+  assertions = [
+    {
+      assertion = !config.system.etc.overlay.enable;
+      message = "Custom assertion: Because of custom initrd script and switchting into /sysroot/root instead of /sysroot the etc overlay can't work currently. Modify it to make it work first, then remove this warning";
+    }
+  ];
 
   #KeyPartition is ext4 partition and is not part of fstab below since it's only needed in initrd
   boot.supportedFilesystems.ext4 = true;
@@ -32,7 +52,7 @@ in {
 
   #decrypt keyPartition using clevis (enable this to get many required packages into initramfs)
   #do not specify secretfile because it will be put into initramfs image, change its hash and thus change PCR 9 at next boot
-  #instead we will use clevises own unlocking mechanism that puts the jwe file into luks2 header 
+  #instead we will use clevises own unlocking mechanism that puts the jwe file into luks2 header
   boot.initrd.clevis = {
     enable = true;
     useTang = withTangFallback;
@@ -40,16 +60,17 @@ in {
 
   #I applied an overlay for the clevis package that includes the fido2 pin for yubikey support. This copies that pin and its extra dependencies to the initrd as well
   boot.initrd.systemd = {
-    extraBin = {
-      grep = "${pkgs.gnugrep}/bin/grep";
-      sed = "${pkgs.gnused}/bin/sed";
-      cryptsetup = "${pkgs.cryptsetup}/bin/cryptsetup";
-    }
-    // lib.optionalAttrs withTangFallback {
-      swapon = "${pkgs.util-linux}/bin/swapon";
-    };
+    extraBin =
+      {
+        grep = "${pkgs.gnugrep}/bin/grep";
+        sed = "${pkgs.gnused}/bin/sed";
+        cryptsetup = "${pkgs.cryptsetup}/bin/cryptsetup";
+      }
+      // lib.optionalAttrs withTangFallback {
+        swapon = "${pkgs.util-linux}/bin/swapon";
+      };
     storePaths = [
-      (pkgs.callPackage ../packages/clevis-pin-fido2/package.nix {})
+      (pkgs.callPackage ../packages/clevis-pin-fido2/package.nix { })
       "${pkgs.libfido2}/bin/fido2-assert"
       "${pkgs.libfido2}/bin/fido2-token"
       (lib.getLib pkgs.pcsclite)
@@ -68,32 +89,32 @@ in {
       device = "/home";
       fsType = "none";
       neededForBoot = true;
-      options = [ 
-        "bind" 
-        "x-gvfs-hide" #hides mount
-      ]; 
+      options = [
+        "bind"
+        "x-gvfs-hide" # hides mount
+      ];
     };
     "/root/nix" = {
       depends = [ "/" ];
       device = "/nix";
       fsType = "none";
       neededForBoot = true;
-      options = [ 
-        "bind" 
-        "x-gvfs-hide" #hides mount
-      ]; 
+      options = [
+        "bind"
+        "x-gvfs-hide" # hides mount
+      ];
     };
     "/root/persist" = {
       depends = [ "/" ];
       device = "/persist";
       fsType = "none";
       neededForBoot = true;
-      options = [ 
-        "bind" 
-        "x-gvfs-hide" #hides mount
-      ]; 
+      options = [
+        "bind"
+        "x-gvfs-hide" # hides mount
+      ];
     };
-    "/root/boot" = { 
+    "/root/boot" = {
       depends = [ "/" ];
       label = uefiLabel;
       fsType = "vfat";
@@ -117,38 +138,63 @@ in {
   };
   #define how long system should suspend before waking up and hibernating (hibernation always happens on low battery, whatever happens first)
   boot.resumeDevice = if withTangFallback then "" else "/dev/disk/by-label/${unlockedSwapLabel}";
-  systemd.sleep.extraConfig = if withTangFallback then "" else ''
-    HibernateDelaySec=1h30min
-  '';
+  systemd.sleep.extraConfig =
+    if withTangFallback then
+      ""
+    else
+      ''
+        HibernateDelaySec=1h30min
+      '';
 
   boot.initrd.systemd = {
     enable = true;
-    mounts = lib.mkForce (builtins.map (x: x // {where = builtins.replaceStrings ["/sysroot"] ["/sysroot/root"] x.where;}) oldSystemdInitrd.mounts);
+    mounts = lib.mkForce (
+      builtins.map (
+        x: x // { where = builtins.replaceStrings [ "/sysroot" ] [ "/sysroot/root" ] x.where; }
+      ) oldSystemdInitrd.mounts
+    );
     services = {
 
       #bcachefs doesn't allow mounting subvolumes or rollback / (like btrfs or zfs does), so as a workaround I adjust switch-root here to execute the switch_root command on the /root subdir of the bcachefs filesystem instead
-      initrd-switch-root.serviceConfig.ExecStart = lib.mkForce (builtins.map (x: builtins.replaceStrings ["/sysroot"] ["/sysroot/root"] x) oldSystemdInitrd.services.initrd-switch-root.serviceConfig.ExecStart);
+      initrd-switch-root.serviceConfig.ExecStart = lib.mkForce (
+        builtins.map (
+          x: builtins.replaceStrings [ "/sysroot" ] [ "/sysroot/root" ] x
+        ) oldSystemdInitrd.services.initrd-switch-root.serviceConfig.ExecStart
+      );
       initrd-nixos-activation = {
-        script = lib.mkForce (builtins.replaceStrings ["/sysroot"] ["/sysroot/root"] oldSystemdInitrd.services.initrd-nixos-activation.script);
-        unitConfig.RequiresMountsFor = lib.mkForce (builtins.map (x: builtins.replaceStrings ["/sysroot"] ["/sysroot/root"] x) oldSystemdInitrd.services.initrd-nixos-activation.unitConfig.RequiresMountsFor);
+        script = lib.mkForce (
+          builtins.replaceStrings [ "/sysroot" ] [ "/sysroot/root" ]
+            oldSystemdInitrd.services.initrd-nixos-activation.script
+        );
+        unitConfig.RequiresMountsFor = lib.mkForce (
+          builtins.map (
+            x: builtins.replaceStrings [ "/sysroot" ] [ "/sysroot/root" ] x
+          ) oldSystemdInitrd.services.initrd-nixos-activation.unitConfig.RequiresMountsFor
+        );
       };
-      systemd-tmpfiles-setup-sysroot.serviceConfig.ExecStart = lib.mkForce (builtins.replaceStrings ["/sysroot"] ["/sysroot/root"] oldSystemdTmpfiles.services.systemd-tmpfiles-setup-sysroot.serviceConfig.ExecStart);
+      systemd-tmpfiles-setup-sysroot.serviceConfig.ExecStart = lib.mkForce (
+        builtins.replaceStrings [ "/sysroot" ] [ "/sysroot/root" ]
+          oldSystemdTmpfiles.services.systemd-tmpfiles-setup-sysroot.serviceConfig.ExecStart
+      );
 
       #mount keyPartition that stores encryption keys for bcachefs and swap partition
       "mount-keyPartition" = {
         description = "Temporarily mount partition that holds encryption keys";
         before = [ "systemd-cryptsetup@${unlockedSwapLabel}.service" ];
-        wants = [ "systemd-udev-settle.service" ]
-          ++ lib.lists.optional withTangFallback "network-online.target";
-        after = [ "systemd-modules-load.service" "systemd-udev-settle.service" ]
-          ++ lib.lists.optional withTangFallback "network-online.target";
+        wants = [
+          "systemd-udev-settle.service"
+        ] ++ lib.lists.optional withTangFallback "network-online.target";
+        after = [
+          "systemd-modules-load.service"
+          "systemd-udev-settle.service"
+        ] ++ lib.lists.optional withTangFallback "network-online.target";
         unitConfig.DefaultDependencies = false;
         serviceConfig = {
           Type = "oneshot";
           StandardOutput = "tty";
           StandardInput = "tty";
           TimeoutSec = "infinity";
-          RemainAfterExit = true; #so that wants/requires statements don't restart this service
+          RemainAfterExit = true; # so that wants/requires statements don't restart this service
         };
         script = ''
           after_unlock() {
@@ -191,10 +237,14 @@ in {
 
       "unmount-keyPartition" = {
         description = "Unmount temporarily mounted key partition and enable swap";
-        wantedBy = [ "initrd.target"  ];
+        wantedBy = [ "initrd.target" ];
         before = [ "initrd.target" ];
         requires = [ "mount-keyPartition.service" ];
-        after = [ "mount-keyPartition.service" "systemd-cryptsetup@${unlockedSwapLabel}.service" "unlock-bcachefs-${utils.escapeSystemdPath "/"}.service" ];
+        after = [
+          "mount-keyPartition.service"
+          "systemd-cryptsetup@${unlockedSwapLabel}.service"
+          "unlock-bcachefs-${utils.escapeSystemdPath "/"}.service"
+        ];
         unitConfig.DefaultDependencies = false;
         serviceConfig = {
           Type = "oneshot";
@@ -202,31 +252,35 @@ in {
           TimeoutSec = "infinity";
           RemainAfterExit = true;
         };
-        script = ''
-          umount /keyPartition
-          cryptsetup close ${unlockedKeyPartitionLabel}
-        ''
-        + lib.strings.optionalString withTangFallback "swapon /dev/mapper/${unlockedSwapLabel}";
+        script =
+          ''
+            umount /keyPartition
+            cryptsetup close ${unlockedKeyPartitionLabel}
+          ''
+          + lib.strings.optionalString withTangFallback "swapon /dev/mapper/${unlockedSwapLabel}";
       };
 
       /*
-      -- impermanence setup --
-      differences to setup in ../disk-config-btrfs-impermanence.nix:
-      - bcachefs instead of btrfs!
-      - More old copies with timestaps
-      - home partition doesn't get erased
-      - is done with systemd instead of initrd.postDeviceCommands because of full disk encryption
+        -- impermanence setup --
+        differences to setup in ../disk-config-btrfs-impermanence.nix:
+        - bcachefs instead of btrfs!
+        - More old copies with timestaps
+        - home partition doesn't get erased
+        - is done with systemd instead of initrd.postDeviceCommands because of full disk encryption
       */
       "impermanence-wipe" = {
         description = "Copy current root partition away and create new one";
         wantedBy = [ "initrd.target" ];
         before = [ "sysroot.mount" ];
         requires = [ "unlock-bcachefs-${utils.escapeSystemdPath "/"}.service" ];
-        after = [ "unlock-bcachefs-${utils.escapeSystemdPath "/"}.service" "systemd-hibernate-resume.service" ];
+        after = [
+          "unlock-bcachefs-${utils.escapeSystemdPath "/"}.service"
+          "systemd-hibernate-resume.service"
+        ];
         unitConfig.DefaultDependencies = false;
         serviceConfig = {
           Type = "oneshot";
-          KeyringMode = "inherit"; #mount needs access to kernel keyring because bcachefs encryption key is stored there (unlock-bcachefs--.service unlocks partition and puts key into keyring)
+          KeyringMode = "inherit"; # mount needs access to kernel keyring because bcachefs encryption key is stored there (unlock-bcachefs--.service unlocks partition and puts key into keyring)
           StandardOutput = "tty";
           TimeoutSec = "infinity";
           RemainAfterExit = true;
@@ -263,8 +317,8 @@ in {
 
   #also change some environment stuff
   environment = {
-    variables.ESP_PATH = "/boot"; #since with my setup the mount point in fstab is set to /root/boot this variable ensures that sbctl still finds efi partition
-    systemPackages = [ pkgs.clevis ]; #to update bindings
+    variables.ESP_PATH = "/boot"; # since with my setup the mount point in fstab is set to /root/boot this variable ensures that sbctl still finds efi partition
+    systemPackages = [ pkgs.clevis ]; # to update bindings
   };
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking

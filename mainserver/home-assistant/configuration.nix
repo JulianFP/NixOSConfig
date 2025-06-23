@@ -1,9 +1,11 @@
 { config, inputs, ... }:
 
 let
-  pkgs-unstable = (import inputs.nixpkgs {
-    system = "x86_64-linux";
-  });
+  pkgs-unstable = (
+    import inputs.nixpkgs {
+      system = "x86_64-linux";
+    }
+  );
 in
 {
   nixpkgs.overlays = [
@@ -44,10 +46,10 @@ in
     config = {
       # Includes dependencies for a basic setup
       # https://www.home-assistant.io/integrations/default_config/
-      default_config = {};
+      default_config = { };
 
       http = {
-        trusted_proxies = [ 
+        trusted_proxies = [
           "10.42.42.1"
           "48.42.0.5"
         ];
@@ -60,15 +62,18 @@ in
     enable = true;
     dataDir = "/persist/postgresql/${config.services.postgresql.package.psqlSchema}";
     ensureDatabases = [ "hass" ];
-    ensureUsers = [{
-      name = "hass";
-      ensureDBOwnership = true;
-    }];
+    ensureUsers = [
+      {
+        name = "hass";
+        ensureDBOwnership = true;
+      }
+    ];
   };
   #impermanence stuff for postgres
-  systemd.tmpfiles.settings."10-postgresql"."/persist/postgresql/${config.services.postgresql.package.psqlSchema}"."d" = {
-    user = "postgres";
-    group = "postgres";
-    mode = "0700";
-  };
+  systemd.tmpfiles.settings."10-postgresql"."/persist/postgresql/${config.services.postgresql.package.psqlSchema}"."d" =
+    {
+      user = "postgres";
+      group = "postgres";
+      mode = "0700";
+    };
 }

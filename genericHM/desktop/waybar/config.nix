@@ -5,8 +5,25 @@
     position = "top";
     height = 30;
     spacing = 4;
-    modules-left = [ "hyprland/workspaces" "hyprland/submap" "hyprland/window" ]; 
-    modules-right = [ "tray" "gamemode" "custom/mako" "pulseaudio" "network" "bluetooth" "cpu" "memory" "temperature" "backlight" "battery" "clock" ];
+    modules-left = [
+      "hyprland/workspaces"
+      "hyprland/submap"
+      "hyprland/window"
+    ];
+    modules-right = [
+      "tray"
+      "gamemode"
+      "custom/mako"
+      "pulseaudio"
+      "network"
+      "bluetooth"
+      "cpu"
+      "memory"
+      "temperature"
+      "backlight"
+      "battery"
+      "clock"
+    ];
 
     "hyprland/workspaces" = {
       sort-by-number = true;
@@ -31,7 +48,7 @@
       format = "{name} {icon}";
       format-icons = {
         locked = "";
-	      unlocked = "";
+        unlocked = "";
       };
     };
 
@@ -69,35 +86,63 @@
       input-filename = "temp1_input";
       critical-threshold = 95;
       format = "{temperatureC}°C {icon}";
-      format-icons = ["" "" "" "" "" ];
+      format-icons = [
+        ""
+        ""
+        ""
+        ""
+        ""
+      ];
     };
 
     "backlight" = {
       format = "{percent}% {icon}";
-      format-icons = ["" "" "" "" "" "" "" "" ""];
+      format-icons = [
+        ""
+        ""
+        ""
+        ""
+        ""
+        ""
+        ""
+        ""
+        ""
+      ];
     };
 
     "battery" = {
       states = {
         warning = 30;
-	      critical = 15;
+        critical = 15;
       };
       format = "{capacity}% {icon}";
       format-charging = "{capacity}% ";
       format-plugged = "{capacity}% ";
       format-alt = "{time} {icon}";
-      format-icons = ["" "" "" "" ""];
+      format-icons = [
+        ""
+        ""
+        ""
+        ""
+        ""
+      ];
     };
 
     "network" = {
       format-wifi = "{essid} ({signalStrength}%) {icon}";
-      format-icons = [ "󰤯" "󰤟" "󰤢" "󰤥" "󰤨" ];
+      format-icons = [
+        "󰤯"
+        "󰤟"
+        "󰤢"
+        "󰤥"
+        "󰤨"
+      ];
       format-ethernet = "{ipaddr}/{cidr} ";
       tooltip-format = "{ifname} via {gwaddr} ";
       format-linked = "{ifname} (No IP) ";
       format-disconnected = "Disconnected ";
       format-alt = "{ifname}: {ipaddr}/{cidr}";
-      on-click-right = "alacritty -e ~/.systemScripts/launch.sh nmtui"; #nmtui renders weirdly without using launch.sh
+      on-click-right = "alacritty -e ~/.systemScripts/launch.sh nmtui"; # nmtui renders weirdly without using launch.sh
       on-click-middle = "${pkgs.networkmanagerapplet}/bin/nm-connection-editor";
     };
 
@@ -110,12 +155,16 @@
       format-source-muted = "";
       format-icons = {
         headphones = "";
-	      hands-free = "";
+        hands-free = "";
         headset = "";
         phone = "";
         portable = "";
         car = "";
-        default = ["" "" ""];
+        default = [
+          ""
+          ""
+          ""
+        ];
       };
       on-click = "pavucontrol";
     };
@@ -127,7 +176,7 @@
       tooltip-format = "{controller_alias}\t{controller_address}\n\n{num_connections} connected";
       tooltip-format-connected = "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}";
       tooltip-format-enumerate-connected = "{device_alias}\t{device_address}";
-      tooltip-format-enumerate-conntected-battery = "{device_alias}\t{device_address}\t{device_battery_percentage}%"; 
+      tooltip-format-enumerate-conntected-battery = "{device_alias}\t{device_address}\t{device_battery_percentage}%";
       on-click = "alacritty -e bluetoothctl";
     };
 

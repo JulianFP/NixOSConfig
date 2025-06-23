@@ -36,7 +36,7 @@ pkgs.writeShellScriptBin "SwitchGPUs" ''
           echo "$CARD" > /sys/bus/pci/drivers/"$DRIVER"/unbind
           echo 1 > /sys/bus/pci/devices/"$CARD"/remove
 
-        fi 
+        fi
       done
 
       #enable framebuffers again
@@ -54,13 +54,13 @@ pkgs.writeShellScriptBin "SwitchGPUs" ''
       for CARD in $(${pkgs.pciutils}/bin/lspci -D -d ::0300 -n | awk -F' ' '{print $1}'); do
         DRIVER=$(${pkgs.pciutils}/bin/lspci -D -k | grep -A 3 $CARD | awk -F': ' 'index($1, "Kernel driver") { print $2 }')
         if [ $DRIVER = "amdgpu" ]; then
-          AMDGPU=1 
-          echo 1 > /sys/bus/pci/rescan 
-        fi 
+          AMDGPU=1
+          echo 1 > /sys/bus/pci/rescan
+        fi
       done
-      if [ $AMDGPU -eq 0 ]; then 
+      if [ $AMDGPU -eq 0 ]; then
         echo "no egpu detected and internal gpu already active. Plug in eGPU first"
-      fi 
+      fi
     fi
   )
 ''

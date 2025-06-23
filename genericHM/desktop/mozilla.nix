@@ -1,12 +1,16 @@
-{ pkgs, ... }: 
+{ pkgs, ... }:
 
 let
   firefoxProfileName = "JuliansDefaultProfile";
-in 
+in
 {
   programs.firefox = {
     enable = true;
-    languagePacks = [ "en-US" "de" "fi" ];
+    languagePacks = [
+      "en-US"
+      "de"
+      "fi"
+    ];
 
     policies = {
       DisableFirefoxStudies = true;
@@ -54,10 +58,22 @@ in
       Handlers.mimeTypes."application/pdf".ask = true;
       #set firefox settings through policies so that they are grayed out in UI and I can see which settings are set using home-manager and which not
       Preferences = {
-        "browser.download.useDownloadDir" = { Value = false; Status = "locked"; };
-        "browser.ctrlTab.sortByRecentlyUsed" = { Value = true; Status = "locked"; };
-        "browser.tabs.inTitlebar" = { Value = 0; Status = "locked"; };
-        "privacy.globalprivacycontrol.enabled" = { Value = true; Status = "locked"; };
+        "browser.download.useDownloadDir" = {
+          Value = false;
+          Status = "locked";
+        };
+        "browser.ctrlTab.sortByRecentlyUsed" = {
+          Value = true;
+          Status = "locked";
+        };
+        "browser.tabs.inTitlebar" = {
+          Value = 0;
+          Status = "locked";
+        };
+        "privacy.globalprivacycontrol.enabled" = {
+          Value = true;
+          Status = "locked";
+        };
       };
     };
 
@@ -118,33 +134,49 @@ in
         default = "ddg";
         engines = {
           "Nix Packages" = {
-            urls = [{
-              template = "https://search.nixos.org/packages";
-              params = [
-                { name = "type"; value = "packages"; }
-                { name = "channel"; value = "unstable"; }
-                { name = "query"; value = "{searchTerms}"; }
-              ];
-            }];
+            urls = [
+              {
+                template = "https://search.nixos.org/packages";
+                params = [
+                  {
+                    name = "type";
+                    value = "packages";
+                  }
+                  {
+                    name = "channel";
+                    value = "unstable";
+                  }
+                  {
+                    name = "query";
+                    value = "{searchTerms}";
+                  }
+                ];
+              }
+            ];
 
             icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
             definedAliases = [ "@np" ];
           };
 
           "NixOS options" = {
-            urls = [{
-              template = "https://search.nixos.org/options";
-              params = [
-                { name = "query"; value = "{searchTerms}"; }
-              ];
-            }];
+            urls = [
+              {
+                template = "https://search.nixos.org/options";
+                params = [
+                  {
+                    name = "query";
+                    value = "{searchTerms}";
+                  }
+                ];
+              }
+            ];
 
             icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
             definedAliases = [ "@no" ];
           };
 
           "NixOS Wiki" = {
-            urls = [{ template = "https://wiki.nixos.org/w/index.php?search={searchTerms}"; }];
+            urls = [ { template = "https://wiki.nixos.org/w/index.php?search={searchTerms}"; } ];
             icon = "https://wiki.nixos.org/favicon.ico";
             updateInterval = 24 * 60 * 60 * 1000; # every day
             definedAliases = [ "@nw" ];
@@ -155,12 +187,18 @@ in
           "wikipedia".metaData.alias = "@w";
         };
         force = true;
-        order = [ "ddg" "wikipedia" "Nix Packages" "NixOS options" "NixOS Wiki" ];
+        order = [
+          "ddg"
+          "wikipedia"
+          "Nix Packages"
+          "NixOS options"
+          "NixOS Wiki"
+        ];
       };
 
       #these settings cannot be set through Preferences policy
       settings = {
-        "extensions.autoDisableScopes" = 0; #activate extensions defined above by default
+        "extensions.autoDisableScopes" = 0; # activate extensions defined above by default
         "privacy.donottrackheader.enabled" = true;
       };
     };
@@ -169,7 +207,6 @@ in
     firefoxProfileName
   ];
 
-  
   programs.thunderbird = {
     enable = true;
 

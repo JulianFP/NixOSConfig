@@ -6,13 +6,13 @@
     ./server.nix
   ];
 
-  #disable hostname and networking configuration through proxmox 
+  #disable hostname and networking configuration through proxmox
   proxmoxLXC = {
     manageHostName = true;
     manageNetwork = true;
   };
 
-#networking config (don't use systemd-networkd because the host will manage/overwrite this config)
+  #networking config (don't use systemd-networkd because the host will manage/overwrite this config)
   networking = {
     enableIPv6 = false;
     nameservers = [
@@ -21,10 +21,12 @@
     ];
     interfaces = {
       "eth0" = {
-        ipv4.addresses = [{
-          address = "192.168.3.${builtins.toString vmID}";
-          prefixLength = 24;
-        }];
+        ipv4.addresses = [
+          {
+            address = "192.168.3.${builtins.toString vmID}";
+            prefixLength = 24;
+          }
+        ];
         useDHCP = false;
       };
     };

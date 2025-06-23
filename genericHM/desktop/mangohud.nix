@@ -14,14 +14,20 @@
       gpu_mem_clock = true;
       gpu_power = true;
       gpu_load_change = true;
-      gpu_load_value= [ 50 90 ]; 
+      gpu_load_value = [
+        50
+        90
+      ];
       gpu_text = "GPU";
       cpu_stats = true;
       cpu_temp = true;
       core_load = true;
       cpu_mhz = true;
       cpu_load_change = true;
-      cpu_load_value = [ 50 90];
+      cpu_load_value = [
+        50
+        90
+      ];
       cpu_text = "CPU";
       swap = true;
       vram = true;
@@ -35,7 +41,7 @@
       toggle_hud = "Shift_R+F12";
       toggle_logging = "Shift_L+F2";
       upload_log = "F5";
-      output_folder=/home/julian/Documents;
+      output_folder = /home/julian/Documents;
     };
   };
 }

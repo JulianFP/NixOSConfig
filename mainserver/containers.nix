@@ -42,7 +42,10 @@
       };
       "Jellyfin" = {
         hostID = 132;
-        openTCPPorts = [ 8096 5055 ];
+        openTCPPorts = [
+          8096
+          5055
+        ];
         additionalBindMounts = {
           "/mnt/mediadata" = {
             hostPath = "/newData/Jellyfin";
@@ -77,10 +80,12 @@
       "HomeAssistant" = {
         hostID = 134;
         openTCPPorts = [ 8123 ];
-        additionalContainerConfig.allowedDevices = [{
-          modifier = "rw";
-          node = "/dev/ttyUSB0";
-        }];
+        additionalContainerConfig.allowedDevices = [
+          {
+            modifier = "rw";
+            node = "/dev/ttyUSB0";
+          }
+        ];
         additionalBindMounts = {
           "/dev_host" = {
             hostPath = "/dev";

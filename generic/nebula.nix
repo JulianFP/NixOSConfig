@@ -1,7 +1,7 @@
 { config, ... }:
 
 {
-  imports = [ 
+  imports = [
     ./nebulaModule.nix
   ];
 

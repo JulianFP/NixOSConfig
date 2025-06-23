@@ -1,10 +1,16 @@
-{ config, lib, pkgs, hostName, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  hostName,
+  ...
+}:
 
 let
   cfg = config.services.nextcloud;
-in 
+in
 {
-  #setup sops secrets for nextcloud 
+  #setup sops secrets for nextcloud
   sops.secrets."nextcloud/adminPass" = {
     mode = "0440";
     owner = "nextcloud";
@@ -47,9 +53,9 @@ in
       "opcache.max_accelerated_files" = "10000";
       "opcache.memory_consumption" = "2048";
       "opcache.save_comments" = "1";
-      "opcache.validate_timestamps" = "0"; #disables opcache.revalidate_freq completely
-      "opcache.jit" = "1255"; #php 8.0 or above required
-      "opcache.jit_buffer_size" = "128M"; #php 8.0 or above required
+      "opcache.validate_timestamps" = "0"; # disables opcache.revalidate_freq completely
+      "opcache.jit" = "1255"; # php 8.0 or above required
+      "opcache.jit_buffer_size" = "128M"; # php 8.0 or above required
     };
     poolSettings = {
       pm = "dynamic";
@@ -88,10 +94,21 @@ in
       #log as file for better compatibility with Nextcloud logreader and promtail
       log_type = "file";
     };
-    
+
     #install nextcloud apps
     extraApps = {
-      inherit (cfg.package.packages.apps) bookmarks calendar contacts groupfolders notes polls registration spreed tasks twofactor_webauthn;
+      inherit (cfg.package.packages.apps)
+        bookmarks
+        calendar
+        contacts
+        groupfolders
+        notes
+        polls
+        registration
+        spreed
+        tasks
+        twofactor_webauthn
+        ;
     };
     extraAppsEnable = true;
   };
@@ -105,16 +122,20 @@ in
   };
 
   #scrape Nextcloud logs with promtail
-  services.promtail.configuration.scrape_configs = [{
-    job_name = "nextcloud";
-    static_configs = [{
-      targets = [ "localhost" ];
-      labels = {
-        job = "nextcloud";
-        host = hostName;
-        __path__ = "${config.services.nextcloud.datadir}/data/nextcloud.log";
-      };
-    }];
-  }];
+  services.promtail.configuration.scrape_configs = [
+    {
+      job_name = "nextcloud";
+      static_configs = [
+        {
+          targets = [ "localhost" ];
+          labels = {
+            job = "nextcloud";
+            host = hostName;
+            __path__ = "${config.services.nextcloud.datadir}/data/nextcloud.log";
+          };
+        }
+      ];
+    }
+  ];
   users.users.promtail.extraGroups = lib.mkIf config.services.promtail.enable [ "nextcloud" ];
 }

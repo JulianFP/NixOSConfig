@@ -10,9 +10,11 @@
         log_level = "warn";
       };
       positions.filename = "/persist/promtail/positions.yaml";
-      clients = [{
-        url = "http://48.42.0.2:3100/loki/api/v1/push";
-      }];
+      clients = [
+        {
+          url = "http://48.42.0.2:3100/loki/api/v1/push";
+        }
+      ];
       scrape_configs = [
         {
           job_name = "journal";
@@ -23,10 +25,12 @@
               host = hostName;
             };
           };
-          relabel_configs = [{
-            source_labels = [ "__journal__systemd_unit" ];
-            target_label = "unit";
-          }];
+          relabel_configs = [
+            {
+              source_labels = [ "__journal__systemd_unit" ];
+              target_label = "unit";
+            }
+          ];
         }
       ];
     };

@@ -1,10 +1,10 @@
-#!/usr/bin/env bash 
+#!/usr/bin/env bash
 #
 #this script only checks the current mako mode. The setting is done in the "on-click" command of waybar
 #
 COUNT=$(makoctl list | grep -o "App name:" | wc -l)
 
-if [ $COUNT -ne 0 ]; then 
+if [ $COUNT -ne 0 ]; then
     ENABLED="{\"text\": \" ${COUNT}\", \"tooltip\": \"Notifications enabled\", \"class\": [\"enabled\", \"notifications\"]}"
     DISABLED="{\"text\": \" ${COUNT}\", \"tooltip\": \"Notifications disabled\", \"class\": [\"disabled\", \"notifications\"]}"
 else

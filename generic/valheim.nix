@@ -1,10 +1,16 @@
-{ config, pkgs, lib, hostName, ...}:
+{
+  config,
+  pkgs,
+  lib,
+  hostName,
+  ...
+}:
 # this config is inspired from: https://kevincox.ca/2022/12/09/valheim-server-nixos-v2/
 # thank you!
 # please note that the host enabling this module needs to have a sops valheim.yaml secret file containing the server access password set up!
 let
-	# Set to {id}-{branch}-{password} for betas.
-	steam-app = "896660";
+  # Set to {id}-{branch}-{password} for betas.
+  steam-app = "896660";
   cfg = config.services.valheim;
 in
 {
@@ -72,7 +78,7 @@ in
         homeMode = "750";
         createHome = true;
       };
-      groups."${cfg.group}" = {};
+      groups."${cfg.group}" = { };
     };
 
     systemd.services."steam@" = {
@@ -81,52 +87,56 @@ in
       };
       serviceConfig = {
         Type = "oneshot";
-        ExecStart = "${pkgs.resholve.writeScript "steam" {
-          interpreter = "${pkgs.zsh}/bin/zsh";
-          inputs = with pkgs; [
-            patchelf
-            steamcmd
-          ];
-          execer = with pkgs; [
-            "cannot:${steamcmd}/bin/steamcmd"
-          ];
-        } ''
-          set -eux
+        ExecStart = "${
+          pkgs.resholve.writeScript "steam"
+            {
+              interpreter = "${pkgs.zsh}/bin/zsh";
+              inputs = with pkgs; [
+                patchelf
+                steamcmd
+              ];
+              execer = with pkgs; [
+                "cannot:${steamcmd}/bin/steamcmd"
+              ];
+            }
+            ''
+              set -eux
 
-          instance=''${1:?Instance Missing}
-          eval 'args=(''${(@s:_:)instance})'
-          app=''${args[1]:?App ID missing}
-          beta=''${args[2]:-}
-          betapass=''${args[3]:-}
+              instance=''${1:?Instance Missing}
+              eval 'args=(''${(@s:_:)instance})'
+              app=''${args[1]:?App ID missing}
+              beta=''${args[2]:-}
+              betapass=''${args[3]:-}
 
-          dir=${cfg.steamPersistDir}/steam-app-$instance
+              dir=${cfg.steamPersistDir}/steam-app-$instance
 
-          cmds=(
-            +force_install_dir $dir
-            +login anonymous
-            +app_update $app validate
-          )
+              cmds=(
+                +force_install_dir $dir
+                +login anonymous
+                +app_update $app validate
+              )
 
-          if [[ $beta ]]; then
-            cmds+=(-beta $beta)
-            if [[ $betapass ]]; then
-              cmds+=(-betapassword $betapass)
-            fi
-          fi
+              if [[ $beta ]]; then
+                cmds+=(-beta $beta)
+                if [[ $betapass ]]; then
+                  cmds+=(-betapassword $betapass)
+                fi
+              fi
 
-          cmds+=(+quit)
+              cmds+=(+quit)
 
-          steamcmd $cmds
+              steamcmd $cmds
 
-          for f in $dir/*; do
-            if ! [[ -f $f && -x $f ]]; then
-              continue
-            fi
+              for f in $dir/*; do
+                if ! [[ -f $f && -x $f ]]; then
+                  continue
+                fi
 
-            # Update the interpreter to the path on NixOS.
-            patchelf --set-interpreter ${pkgs.glibc}/lib/ld-linux-x86-64.so.2 $f || true
-          done
-        ''} %i";
+                # Update the interpreter to the path on NixOS.
+                patchelf --set-interpreter ${pkgs.glibc}/lib/ld-linux-x86-64.so.2 $f || true
+              done
+            ''
+        } %i";
         PrivateTmp = true;
         Restart = "on-failure";
         StateDirectory = "steam-app-%i";
@@ -136,7 +146,6 @@ in
         WorkingDirectory = "~";
       };
     };
-
 
     #setup valheim
     users.users."${cfg.valheimUser}" = {
@@ -153,17 +162,25 @@ in
     sops.templates."start_server.sh" = {
       content = lib.escapeShellArgs [
         "${cfg.steamPersistDir}/steam-app-${steam-app}/valheim_server.x86_64"
-        "-nographics" #not documented, does it do anything?
-        "-batchmode" #not documented, does it do anything?
-        "-name" cfg.serverName
-        "-port" cfg.port
-        "-world" cfg.serverName
-        "-password" "${config.sops.placeholder.serverPassword}"
-        "-savedir" "${cfg.dataDir}/save"
-        "-public" "1"
+        "-nographics" # not documented, does it do anything?
+        "-batchmode" # not documented, does it do anything?
+        "-name"
+        cfg.serverName
+        "-port"
+        cfg.port
+        "-world"
+        cfg.serverName
+        "-password"
+        "${config.sops.placeholder.serverPassword}"
+        "-savedir"
+        "${cfg.dataDir}/save"
+        "-public"
+        "1"
         #"-logFile" "${persistDir}/log" # if enabled then log will not appear in journal
-        "-saveinterval" "600" #saves every 10 minutes automatically
-        "-backups" "0" # I take my own backups, if you don't you can remove this to use the built-in basic rotation system.
+        "-saveinterval"
+        "600" # saves every 10 minutes automatically
+        "-backups"
+        "0" # I take my own backups, if you don't you can remove this to use the built-in basic rotation system.
         # "-crossplay" # This is broken because it looks for "party" shared library in the wrong path.
       ];
       owner = cfg.valheimUser;

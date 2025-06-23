@@ -60,7 +60,7 @@
   #automatic garbage collect and nix store optimisation is done in server.nix
   #automatic upgrade. Pulls newest commits from github daily. Relies on my updating the flake inputs (I want that to be manual and tracked by git)
   system.autoUpgrade = {
-    enable = false; #TODO
+    enable = false; # TODO
     flake = "github:JulianFP/NixOSConfig";
     dates = "04:00";
     randomizedDelaySec = "30min";

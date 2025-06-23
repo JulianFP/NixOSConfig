@@ -1,21 +1,26 @@
 /*
-shared config file for desktop PCs
-like JuliansPC, JuliansFramework
-structure:
-- imports (networking, impermanence and shared hardware stuff gets imported here)
-- boot 
-- hardware
-- services 
-- programs 
-- environment (e.g. systemPackages)
-- users
-- security & virtualisation
-- misc 
+  shared config file for desktop PCs
+  like JuliansPC, JuliansFramework
+  structure:
+  - imports (networking, impermanence and shared hardware stuff gets imported here)
+  - boot
+  - hardware
+  - services
+  - programs
+  - environment (e.g. systemPackages)
+  - users
+  - security & virtualisation
+  - misc
 */
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
-  /* -- imports -- */
+  # -- imports --
   imports = [
     ../common.nix
     ../impermanence.nix
@@ -24,21 +29,18 @@ structure:
     ./project-W-services.nix
   ];
 
-
-  /* -- boot -- */
+  # -- boot --
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-
-  /* -- hardware -- */
+  # -- hardware --
   # enable Vulkan (32- and 64-bit), Hardware Video encoding/decoding is done in nixos-hardware
   hardware = {
     graphics.enable = true;
     bluetooth.enable = true;
-    xone.enable = true; #enable xone driver for Xbox One Controller Adapter
+    xone.enable = true; # enable xone driver for Xbox One Controller Adapter
   };
 
-
-  /* -- services -- */
+  # -- services --
   services = {
     #logind disable lidSwitch and PowerButtoon (managed by wm)
     logind = {
@@ -83,21 +85,20 @@ structure:
     udev.packages = [ pkgs.yubikey-personalization ];
     pcscd.enable = true;
 
-    flatpak.enable = true; #enable flatpak
-    
+    flatpak.enable = true; # enable flatpak
+
     nixseparatedebuginfod.enable = true;
   };
 
-
-  /* -- programs -- */
+  # -- programs --
   programs = {
-    adb.enable = true; #android adb setup. See users user permission (adbusers group)
-    virt-manager.enable = true; #to run qemu/kvm VMs. See virtualisation for more
+    adb.enable = true; # android adb setup. See users user permission (adbusers group)
+    virt-manager.enable = true; # to run qemu/kvm VMs. See virtualisation for more
     hyprland = {
       enable = true;
       withUWSM = true;
     };
-    partition-manager.enable = true; #enable kde partitionmanager (can't be done in HM, requires services)
+    partition-manager.enable = true; # enable kde partitionmanager (can't be done in HM, requires services)
     steam = {
       enable = true;
       remotePlay.openFirewall = true;
@@ -117,20 +118,38 @@ structure:
     nix-ld = {
       enable = true;
       libraries = with pkgs; [
-        zlib zstd stdenv.cc.cc curl openssl attr libssh bzip2 libxml2 acl libsodium util-linux xz systemd
+        zlib
+        zstd
+        stdenv.cc.cc
+        curl
+        openssl
+        attr
+        libssh
+        bzip2
+        libxml2
+        acl
+        libsodium
+        util-linux
+        xz
+        systemd
       ];
     };
   };
 
-
-  /* -- environment (e.g. systemPackages) -- */
+  # -- environment (e.g. systemPackages) --
   environment = {
     variables = {
       #for kde theming support
-      QT_PLUGIN_PATH = [ "${pkgs.libsForQt5.qqc2-desktop-style}/${pkgs.libsForQt5.qtbase.qtPluginPrefix}" "${pkgs.kdePackages.qqc2-desktop-style}/${pkgs.qt6Packages.qtbase.qtPluginPrefix}" ];
-      QML2_IMPORT_PATH = [ "${pkgs.libsForQt5.qqc2-desktop-style}/${pkgs.libsForQt5.qtbase.qtQmlPrefix}" "${pkgs.kdePackages.qqc2-desktop-style}/${pkgs.kdePackages.qtbase.qtQmlPrefix}" ];
+      QT_PLUGIN_PATH = [
+        "${pkgs.libsForQt5.qqc2-desktop-style}/${pkgs.libsForQt5.qtbase.qtPluginPrefix}"
+        "${pkgs.kdePackages.qqc2-desktop-style}/${pkgs.qt6Packages.qtbase.qtPluginPrefix}"
+      ];
+      QML2_IMPORT_PATH = [
+        "${pkgs.libsForQt5.qqc2-desktop-style}/${pkgs.libsForQt5.qtbase.qtQmlPrefix}"
+        "${pkgs.kdePackages.qqc2-desktop-style}/${pkgs.kdePackages.qtbase.qtQmlPrefix}"
+      ];
     };
-    
+
     systemPackages = with pkgs; [
       bluez
 
@@ -145,12 +164,11 @@ structure:
       "/var/lib/waydroid"
       "/var/lib/libvirt"
       "/etc/secureboot"
-      "/var/cache/nixseparatedebuginfod" #to stop nixseparatedebuginfod to re-index at every reboot
+      "/var/cache/nixseparatedebuginfod" # to stop nixseparatedebuginfod to re-index at every reboot
     ];
   };
 
-
-  /* -- users -- */
+  # -- users --
   sops.secrets = {
     "users/root" = {
       neededForUsers = true;
@@ -170,14 +188,22 @@ structure:
       hashedPasswordFile = config.sops.secrets."users/julian".path;
 
       /*
-      user groups:
-        wheel: sudo/admin rights 
-        networkmanager: network settings access 
-        adbusers: adb/fastboot for android devices stuff 
-        video, render: rocm support
-        dialout: serial device access for arduino-ide
+        user groups:
+          wheel: sudo/admin rights
+          networkmanager: network settings access
+          adbusers: adb/fastboot for android devices stuff
+          video, render: rocm support
+          dialout: serial device access for arduino-ide
       */
-      extraGroups = [ "wheel" "networkmanager" "adbusers" "video" "render" "dialout" "wireshark" ];
+      extraGroups = [
+        "wheel"
+        "networkmanager"
+        "adbusers"
+        "video"
+        "render"
+        "dialout"
+        "wireshark"
+      ];
 
       packages = with pkgs; [
         rofi-wayland
@@ -187,17 +213,16 @@ structure:
     };
   };
 
-
-  /* -- security & virtualisation -- */
+  # -- security & virtualisation --
   security = {
-    # rtkit is recommended for pipewire 
+    # rtkit is recommended for pipewire
     rtkit.enable = true;
 
     #enable polkit. polkitagent needs to be started separately (will be done in home-manager)
-    polkit.enable = true;  
+    polkit.enable = true;
 
     # Hyprlock needs an entry in PAM to proberly unlock
-    pam.services.hyprlock = {};
+    pam.services.hyprlock = { };
 
     #enable basic tpm2 support for clevis
     tpm2 = {
@@ -208,59 +233,60 @@ structure:
   };
 
   virtualisation = {
-    waydroid.enable = true; #waydroid to run android apps
-    libvirtd.enable = true; #for qemu/kvm VMs in virt-manager
-    spiceUSBRedirection.enable = true; #for virt-manager usb forwarding
+    waydroid.enable = true; # waydroid to run android apps
+    libvirtd.enable = true; # for qemu/kvm VMs in virt-manager
+    spiceUSBRedirection.enable = true; # for virt-manager usb forwarding
   };
 
-
-  /* -- misc -- */
+  # -- misc --
   #enable xdg desktop integration (mainly for flatpaks)
-  xdg.portal.enable = true; 
+  xdg.portal.enable = true;
 
-  systemd = let
-    shutdownServiceTimout = "DefaultTimeoutStopSec=5s";
-  in {
-    #this makes shutdowns and reboots quicker by not waiting nearly as long for services to stop (90s -> 5s)
-    extraConfig = shutdownServiceTimout;
-    user.extraConfig = shutdownServiceTimout;
+  systemd =
+    let
+      shutdownServiceTimout = "DefaultTimeoutStopSec=5s";
+    in
+    {
+      #this makes shutdowns and reboots quicker by not waiting nearly as long for services to stop (90s -> 5s)
+      extraConfig = shutdownServiceTimout;
+      user.extraConfig = shutdownServiceTimout;
 
-    #shutdown timer and service
-    services."shutdown" = {
-      startAt = "*-*-* 00:15:00"; #automatically configures timer for this service
-      #shutdown only happens if logFile exists, currentTime is between 00:10 and 00:20 and the logFile was last modified today
-      script = ''
-        currentTime=$(date +%H:%M)
-        currentDay=$(date +%Y%m%d)
-        logFile="/home/julian/shutdownFailures.log"
-        if [ -f "$logFile" ]; then
-            logFileModifyDay=$(date +%Y%m%d -r "$logFile")
-            if [[ "$currentTime" > "00:10" ]] && [[ "$currentTime" < "00:20" ]] && [[ "$logFileModifyDay" == "$currentDay" ]]; then
-                sed -i '$ d' "$logFile"
-                shutdown now
-            fi
-        else
-            echo "$logFile missing, shutdown-reminder didn't run?" >> "$logFile"
-            chown julian:users "$logFile"
-        fi
-      '';
-      serviceConfig = {
-        Type = "oneshot";
-        User = "root";
+      #shutdown timer and service
+      services."shutdown" = {
+        startAt = "*-*-* 00:15:00"; # automatically configures timer for this service
+        #shutdown only happens if logFile exists, currentTime is between 00:10 and 00:20 and the logFile was last modified today
+        script = ''
+          currentTime=$(date +%H:%M)
+          currentDay=$(date +%Y%m%d)
+          logFile="/home/julian/shutdownFailures.log"
+          if [ -f "$logFile" ]; then
+              logFileModifyDay=$(date +%Y%m%d -r "$logFile")
+              if [[ "$currentTime" > "00:10" ]] && [[ "$currentTime" < "00:20" ]] && [[ "$logFileModifyDay" == "$currentDay" ]]; then
+                  sed -i '$ d' "$logFile"
+                  shutdown now
+              fi
+          else
+              echo "$logFile missing, shutdown-reminder didn't run?" >> "$logFile"
+              chown julian:users "$logFile"
+          fi
+        '';
+        serviceConfig = {
+          Type = "oneshot";
+          User = "root";
+        };
       };
+
+      #workaround until https://github.com/nix-community/impermanence/issues/229 is fixed
+      suppressedSystemUnits = [ "systemd-machine-id-commit.service" ];
     };
 
-    #workaround until https://github.com/nix-community/impermanence/issues/229 is fixed
-    suppressedSystemUnits = ["systemd-machine-id-commit.service"];
-  };
-
   #workaround until https://github.com/nix-community/impermanence/issues/229 is fixed
-  boot.initrd.systemd.suppressedUnits = ["systemd-machine-id-commit.service"];
+  boot.initrd.systemd.suppressedUnits = [ "systemd-machine-id-commit.service" ];
 
   #enable cachix for nix-gaming
   nix.settings = {
-    substituters = ["https://nix-gaming.cachix.org" ];
-    trusted-public-keys = ["nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4=" ];
+    substituters = [ "https://nix-gaming.cachix.org" ];
+    trusted-public-keys = [ "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4=" ];
   };
 
   #stylix define system wide theme (can be overwritten on a per-user level in home-manager)
@@ -269,10 +295,11 @@ structure:
     image = pkgs.fetchurl {
       url = "https://w.wallhaven.cc/full/4d/wallhaven-4dmxg4.jpg";
       hash = "sha256-TjbV20mckBX4QcvKgzxLaXAZgn0qQvFVtl34csEsm+U=";
-      curlOptsList = ["-HUser-Agent: Wget/1.21.4"]; #some sides want a valid user agent
+      curlOptsList = [ "-HUser-Agent: Wget/1.21.4" ]; # some sides want a valid user agent
     };
     polarity = "dark";
-    override = { #swap 'cause better. Comments should not be blue
+    override = {
+      # swap 'cause better. Comments should not be blue
       base03 = config.stylix.base16Scheme.base0D;
       base0D = config.stylix.base16Scheme.base03;
     };

@@ -63,7 +63,7 @@ addDevice() {
     fi
 
     #wait until usb stick with ca.key is present
-    until [[ -e "$luksUSBDevice" ]]; do 
+    until [[ -e "$luksUSBDevice" ]]; do
         echo "configured usb device not found"
         read -r -p "plug in usb device with nebula cert and then press enter"
     done
@@ -71,7 +71,7 @@ addDevice() {
     cryptsetup open $luksUSBDevice luksUSBDeviceNebula
     unlocked=true
     mkdir -p /mnt
-    mount /dev/mapper/luksUSBDeviceNebula /mnt 
+    mount /dev/mapper/luksUSBDeviceNebula /mnt
     mounted=true
 
 
@@ -127,7 +127,7 @@ addDevice() {
     fi
 
     #remove private key from usb stick
-    rm /mnt/$luksUSBNebulaPath/$nebname.key 
+    rm /mnt/$luksUSBNebulaPath/$nebname.key
 
     #umount and lock usb stick (try again if still busy)
     unmounting
@@ -141,13 +141,13 @@ function unmounting(){
     if $mounted; then
         echo "Unmounting usb device...."
         until umount /mnt; do
-            sleep 1 
+            sleep 1
         done
     fi
     if $unlocked; then
         echo "Closing luks device..."
         until cryptsetup close /dev/mapper/luksUSBDeviceNebula; do
-            sleep 1 
+            sleep 1
         done
     fi
 }
@@ -164,4 +164,3 @@ case $1 in
     exit 0
         ;;
 esac
-

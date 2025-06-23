@@ -1,4 +1,10 @@
-{ config, pkgs, lib, modulesPath, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  modulesPath,
+  ...
+}:
 
 #select latest zfs compatible kernel
 let
@@ -13,7 +19,8 @@ let
       builtins.attrValues zfsCompatibleKernelPackages
     )
   );
-in {
+in
+{
   imports = [
     (modulesPath + "/installer/cd-dvd/installation-cd-graphical-calamares-plasma6.nix")
   ];
@@ -25,9 +32,9 @@ in {
     "dm-mirror" # for pvmove
   ];
 
-  environment.systemPackages = with pkgs; [ 
+  environment.systemPackages = with pkgs; [
     keyutils
-    multipath-tools #for kpartx for opening disks in lvm volumes
+    multipath-tools # for kpartx for opening disks in lvm volumes
   ];
 
   boot = {
@@ -39,5 +46,5 @@ in {
     };
   };
 
-  services.lvm.boot.thin.enable = true; #to mount pve volumes
+  services.lvm.boot.thin.enable = true; # to mount pve volumes
 }

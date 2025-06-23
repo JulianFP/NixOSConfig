@@ -4,7 +4,7 @@
   fetchurl,
   autoPatchelfHook,
   dpkg,
-  wrapGAppsHook3, 
+  wrapGAppsHook3,
   makeShellWrapper,
   gtk3,
   libX11,
@@ -45,7 +45,7 @@
   libXScrnSaver,
   libappindicator-gtk3,
   libdbusmenu,
-  wayland
+  wayland,
 }:
 
 stdenv.mkDerivation rec {

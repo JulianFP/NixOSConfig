@@ -3,7 +3,7 @@
 {
   imports = [
     ./packages.nix
-    ./hyprland.nix 
+    ./hyprland.nix
   ];
 
   programs.mangohud.enable = true;
