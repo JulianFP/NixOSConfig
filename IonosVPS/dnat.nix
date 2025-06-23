@@ -3,8 +3,11 @@
 {
   networking = {
     nftables.enable = true;
-    firewall.allowedTCPPorts = [
-      #23
+    firewall.allowedUDPPorts = [
+      2456
+      2457
+      2458
+      2459
     ];
     nat = {
       enable = true;

@@ -140,6 +140,18 @@ in
     #taken from https://uint.one/posts/all-internet-over-wireguard-using-systemd-networkd-on-nixos/ and adapted for my use case with nebula
     networking = {
       nftables.enable = true; # make sure again that we really use nftables because of below
+      firewall = {
+        allowedTCPPorts = (
+          builtins.concatLists (
+            lib.mapAttrsToList (n: v: if v.forwardPorts then v.openTCPPorts else [ ]) enabledContainers
+          )
+        );
+        allowedUDPPorts = (
+          builtins.concatLists (
+            lib.mapAttrsToList (n: v: if v.forwardPorts then v.openUDPPorts else [ ]) enabledContainers
+          )
+        );
+      };
       nat = {
         enable = true;
         internalInterfaces = [ "ve-*" ]; # the * wildcard syntax is specific to nftables, use + if switching back to iptables!
