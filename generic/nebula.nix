@@ -18,7 +18,8 @@
       Jellyfin = "48.42.1.132";
       FoundryVTT = "48.42.1.133";
       HomeAssistant = "48.42.1.134";
-      Valheim = "48.42.1.135";
+      ValheimMarvin = "48.42.1.135";
+      ValheimBrueder = "48.42.1.136";
       #client devices
       JuliansFramework = "48.42.2.1";
       JuliansPC = "48.42.2.3";

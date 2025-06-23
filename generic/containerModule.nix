@@ -49,6 +49,11 @@ in
             default = [];
             description = "List of UDP ports that should be opened at container (for both NixOS firewall and nebula firewall for edge group)";
           };
+          permittedUnfreePackages = lib.mkOption {
+            type = lib.types.listOf lib.types.singleLineStr;
+            default = [];
+            description = "List of unfree package names that should be allowed inside this container";
+          };
           additionalBindMounts = lib.mkOption {
             type = lib.types.attrs;
             default = {};
@@ -350,6 +355,7 @@ in
           v.config 
           ./promtail.nix #to get systemd-journal out of container into loki
         ] ++ lib.lists.optional v.enableSops ./sops.nix;
+        nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) v.permittedUnfreePackages;
         networking = {
           hostName = hostName;
           useHostResolvConf = lib.mkForce false;

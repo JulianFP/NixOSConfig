@@ -185,14 +185,6 @@
         server = true;
         stateVersion = "25.05";
       };
-      "Valheim" = {
-        proxmoxVmID = 135;
-        permittedUnfreePackages = [
-          "steamcmd"
-          "steam-unwrapped"
-        ];
-        stateVersion = "23.05";
-      };
     };
   };
 }

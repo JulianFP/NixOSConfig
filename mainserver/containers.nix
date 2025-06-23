@@ -93,6 +93,52 @@
         };
         config = ./home-assistant/configuration.nix;
       };
+      "ValheimMarvin" = {
+        hostID = 135;
+        openUDPPorts = [
+          2456
+          2457
+        ];
+        enableSops = true;
+        permittedUnfreePackages = [
+          "steamcmd"
+          "steam-unwrapped"
+        ];
+        additionalBindMounts = {
+          "/var/lib/steam" = {
+            hostPath = "/persist/ValheimMarvin";
+            isReadOnly = false;
+          };
+          "/persist/backMeUp" = {
+            hostPath = "/persist/backMeUp/ValheimMarvin";
+            isReadOnly = false;
+          };
+        };
+        config = ./valheim-marvin/configuration.nix;
+      };
+      "ValheimBrueder" = {
+        hostID = 136;
+        openUDPPorts = [
+          2458
+          2459
+        ];
+        enableSops = true;
+        permittedUnfreePackages = [
+          "steamcmd"
+          "steam-unwrapped"
+        ];
+        additionalBindMounts = {
+          "/var/lib/steam" = {
+            hostPath = "/persist/ValheimBrueder";
+            isReadOnly = false;
+          };
+          "/persist/backMeUp" = {
+            hostPath = "/persist/backMeUp/ValheimBrueder";
+            isReadOnly = false;
+          };
+        };
+        config = ./valheim-brueder/configuration.nix;
+      };
     };
   };
 }
