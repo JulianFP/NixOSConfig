@@ -104,6 +104,7 @@
           2456
           2457
         ];
+        forwardPorts = true;
         enableSops = true;
         permittedUnfreePackages = [
           "steamcmd"
@@ -127,6 +128,7 @@
           2458
           2459
         ];
+        forwardPorts = true;
         enableSops = true;
         permittedUnfreePackages = [
           "steamcmd"

@@ -5,7 +5,7 @@
     ../../generic/valheim.nix
   ];
 
-  services.valheim = {
+  myModules.valheim = {
     enable = true;
     port = 2458;
     serverName = "Fulcrum";

@@ -57,6 +57,11 @@ in
               default = [ ];
               description = "List of UDP ports that should be opened at container (for both NixOS firewall and nebula firewall for edge group)";
             };
+            forwardPorts = lib.mkOption {
+              type = lib.types.bool;
+              default = false;
+              description = "Whether to forward opened udp and tcp ports to the local external interface using dnat";
+            };
             permittedUnfreePackages = lib.mkOption {
               type = lib.types.listOf lib.types.singleLineStr;
               default = [ ];
@@ -140,6 +145,28 @@ in
         internalInterfaces = [ "ve-*" ]; # the * wildcard syntax is specific to nftables, use + if switching back to iptables!
         externalInterface = cfg.externalNetworkInterface;
         enableIPv6 = false;
+        forwardPorts = (
+          lib.lists.flatten (
+            lib.mapAttrsToList (
+              n: v:
+              if v.forwardPorts then
+                (
+                  (builtins.map (tcp_port: {
+                    destination = "10.42.42.${builtins.toString v.hostID}:${builtins.toString tcp_port}";
+                    proto = "tcp";
+                    sourcePort = tcp_port;
+                  }) v.openTCPPorts)
+                  ++ (builtins.map (udp_port: {
+                    destination = "10.42.42.${builtins.toString v.hostID}:${builtins.toString udp_port}";
+                    proto = "udp";
+                    sourcePort = udp_port;
+                  }) v.openUDPPorts)
+                )
+              else
+                [ ]
+            ) enabledContainers
+          )
+        );
       };
     };
     systemd = lib.mkMerge (

@@ -11,11 +11,11 @@
 let
   # Set to {id}-{branch}-{password} for betas.
   steam-app = "896660";
-  cfg = config.services.valheim;
+  cfg = config.myModules.valheim;
 in
 {
   options = {
-    services.valheim = {
+    myModules.valheim = {
       enable = lib.mkEnableOption ("Valheim dedicated server");
       port = lib.mkOption {
         type = lib.types.port;

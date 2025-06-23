@@ -1,4 +1,4 @@
-{ ... }:
+{ config, ... }:
 
 {
   networking = {
@@ -11,13 +11,27 @@
       internalInterfaces = [ "neb-serverNetwo" ];
       externalInterface = "ens6";
       forwardPorts = [
-        /*
-          {
-            sourcePort = 23;
-            proto = "tcp";
-            destination = "config.myModules.nebula."serverNetwork".ipMap.Nextcloud-Testing:23";
-          }
-        */
+        #Valheim
+        {
+          sourcePort = 2456;
+          proto = "udp";
+          destination = "${config.myModules.nebula."serverNetwork".ipMap.ValheimMarvin}:2456";
+        }
+        {
+          sourcePort = 2457;
+          proto = "udp";
+          destination = "${config.myModules.nebula."serverNetwork".ipMap.ValheimMarvin}:2456";
+        }
+        {
+          sourcePort = 2458;
+          proto = "udp";
+          destination = "${config.myModules.nebula."serverNetwork".ipMap.ValheimBrueder}:2456";
+        }
+        {
+          sourcePort = 2459;
+          proto = "udp";
+          destination = "${config.myModules.nebula."serverNetwork".ipMap.ValheimBrueder}:2456";
+        }
       ];
     };
   };
