@@ -41,10 +41,6 @@
       url = "github:JulianFP/project-W";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
-    project-W-frontend = {
-      url = "github:JulianFP/project-W-frontend";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
-    };
     nix-gaming = {
       url = "github:fufexan/nix-gaming";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -196,17 +192,6 @@
           "steam-unwrapped"
         ];
         stateVersion = "23.05";
-      };
-      "Project-W" = {
-        proxmoxVmID = 136;
-        overlays = [
-          inputs.project-W.overlays.default
-        ];
-        systemModules = [
-          inputs.project-W.nixosModules.default
-          inputs.project-W-frontend.nixosModules.default
-        ];
-        stateVersion = "23.11";
       };
     };
   };
