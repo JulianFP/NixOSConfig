@@ -1,4 +1,4 @@
-{ ... }:
+{ config, ... }:
 
 {
   imports = [
@@ -147,5 +147,17 @@
         config = ./valheim-brueder/configuration.nix;
       };
     };
+  };
+
+  #some local DNS overwrites for the forwarded ports (not done over http proxy)
+  services.unbound.settings.server = {
+    local-zone = [
+      "\"valheim.partanengroup.de\" transparent"
+      "\"valheim.marvin.partanengroup.de\" transparent"
+    ];
+    local-data = [
+      "\"valheim.partanengroup.de 3600 IN A ${config.myModules.proxy.localDNS.localForwardIP}\""
+      "\"valheim.marvin.partanengroup.de 3600 IN A ${config.myModules.proxy.localDNS.localForwardIP}\""
+    ];
   };
 }

@@ -146,7 +146,7 @@ in
         externalInterface = cfg.externalNetworkInterface;
         enableIPv6 = false;
         forwardPorts = (
-          lib.lists.flatten (
+          builtins.concatLists (
             lib.mapAttrsToList (
               n: v:
               if v.forwardPorts then
