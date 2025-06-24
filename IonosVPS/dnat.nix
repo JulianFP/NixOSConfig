@@ -15,25 +15,33 @@
       externalInterface = "ens6";
       forwardPorts = [
         #Valheim
-        {
+        rec {
           sourcePort = 2456;
           proto = "udp";
-          destination = "${config.myModules.nebula."serverNetwork".ipMap.ValheimMarvin}:2456";
+          destination = "${
+            config.myModules.nebula."serverNetwork".ipMap.ValheimMarvin
+          }:${builtins.toString sourcePort}";
         }
-        {
+        rec {
           sourcePort = 2457;
           proto = "udp";
-          destination = "${config.myModules.nebula."serverNetwork".ipMap.ValheimMarvin}:2456";
+          destination = "${
+            config.myModules.nebula."serverNetwork".ipMap.ValheimMarvin
+          }:${builtins.toString sourcePort}";
         }
-        {
+        rec {
           sourcePort = 2458;
           proto = "udp";
-          destination = "${config.myModules.nebula."serverNetwork".ipMap.ValheimBrueder}:2456";
+          destination = "${
+            config.myModules.nebula."serverNetwork".ipMap.ValheimBrueder
+          }:${builtins.toString sourcePort}";
         }
-        {
+        rec {
           sourcePort = 2459;
           proto = "udp";
-          destination = "${config.myModules.nebula."serverNetwork".ipMap.ValheimBrueder}:2456";
+          destination = "${
+            config.myModules.nebula."serverNetwork".ipMap.ValheimBrueder
+          }:${builtins.toString sourcePort}";
         }
       ];
     };
