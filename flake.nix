@@ -208,6 +208,10 @@
           server = true;
           stateVersion = "25.05";
         };
+        "backupServerOffsite" = {
+          server = true;
+          stateVersion = "25.05";
+        };
       };
     };
 }

@@ -3,7 +3,9 @@
   lib,
   bash,
   sops,
-  nix,
+  nixos-rebuild,
+  nixos-anywhere,
+  nixos-generators,
   openssh,
   makeWrapper,
 }:
@@ -14,7 +16,9 @@ stdenv.mkDerivation rec {
   buildInputs = [
     bash
     sops
-    nix
+    nixos-rebuild
+    nixos-anywhere
+    nixos-generators
     openssh
   ];
   nativeBuildInputs = [ makeWrapper ];

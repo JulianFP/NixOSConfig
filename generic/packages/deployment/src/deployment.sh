@@ -58,7 +58,8 @@ deploy() {
 	done
 
 	# run nixos-anywhere
-	nix run github:numtide/nixos-anywhere -- --flake ".#$1" "root@$2"
+	ssh "root@$2" -o "StrictHostKeyChecking no" "chsh --shell /bin/sh root" #make sure target host uses POSIX compliant shell since nixos-anywhere requires that
+	nixos-anywhere --flake ".#$1" "root@$2"
 
 	#delete futureTargetIP ssh known_hosts to prevent error messages in terminal
 	ssh-keygen -R "$3"
@@ -102,14 +103,14 @@ sopsConfig() {
 		sed -i "/&$1/c\\  - &$1 age$(cat /tmp/$agename | sed ':a;N;$!ba;s/\n//g')" "./.sops.yaml"
 	else
 		#it is not: add it and its config
-		sed -i -e '/&yubikey/a\ ' -e "  - &$1 age$(cat /tmp/$agename | sed ':a;N;$!ba;s/\n//g')" "./.sops.yaml"                                                  #add age key to keys
-		sed -i -e '/- key_groups:/i\ ' -e "      - *$1" "./.sops.yaml"                                                                                           #add hostname to regex for all general secrets
-		sed -i -e '/secrets\/\[/i\ ' -e "  - path_regex: ^secrets/$1/.*$\n    key_groups:\n    - pgp:\n      - *yubikey\n      age:\n      - *$1" "./.sops.yaml" #add new path_regex for all keys that should only be decrypted by target
+		sed -i "/&yubikey/a \ \ - &$1 age$(cat /tmp/$agename | sed ':a;N;$!ba;s/\n//g')" "./.sops.yaml"                                                                            #add age key to keys
+		sed -i "/- key_groups:/i \ \ \ \ \ \ - *$1" "./.sops.yaml"                                                                                                                 #add hostname to regex for all general secrets
+		sed -i "/secrets\/\[/i \ \ - path_regex: ^secrets/$1/.*$\n\ \ \ \ key_groups:\n\ \ \ \ - pgp:\n\ \ \ \ \ \ - *yubikey\n\ \ \ \ \ \ age:\n\ \ \ \ \ \ - *$1" "./.sops.yaml" #add new path_regex for all keys that should only be decrypted by target
 	fi
 
 	#reencrypt secrets for new age key
-	sops --config ./.sops.yaml updatekeys -y ./secrets/*.yaml
-	sops --config ./.sops.yaml updatekeys -y "./secrets/{**,.}/*.yaml"
+	list=(./secrets/{**,.}/*.yaml)
+	sops --config ./.sops.yaml updatekeys -y "${list[@]}"
 
 	#build changes for target
 	nixos-rebuild switch --flake ".#$1" --target-host "root@$2"
@@ -117,6 +118,7 @@ sopsConfig() {
 	#reboot machine and wait until it becomes reachable again
 	ssh "root@$2" -o "StrictHostKeyChecking no" "reboot"
 	echo "wait for vm to become reachable after restart again"
+	sleep 5
 	until ssh -o "StrictHostKeyChecking no" "root@$2" true >/dev/null 2>&1; do
 		sleep 1
 	done
@@ -145,7 +147,7 @@ iso() {
 	done
 
 	#run generation script and inform user about output file name
-	nix run github:nix-community/nixos-generators -- -f iso -o "$path/$isoname" --flake ".#$1"
+	nixos-generate -f iso -o "$path/$isoname" --flake ".#$1"
 	echo "you can find your iso in $path/$isoname"
 }
 
@@ -169,7 +171,7 @@ lxc() {
 	done
 
 	#run generation script and inform user about output file name
-	nix run github:nix-community/nixos-generators -- -f proxmox-lxc -o "$path/$templateName" --flake ".#$1"
+	nixos-generate -f proxmox-lxc -o "$path/$templateName" --flake ".#$1"
 	echo "you can find your Proxmox LXC template in $path/$templateName"
 }
 

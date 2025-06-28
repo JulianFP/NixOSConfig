@@ -108,7 +108,7 @@ done
 #unlock and mount usb stick
 sudo cryptsetup open $luksUSBDevice luksUSBDeviceNebula
 unlocked=true
-mkdir -p /mnt
+sudo mkdir -p /mnt
 sudo mount /dev/mapper/luksUSBDeviceNebula /mnt
 mounted=true
 echo "usb device decrypted and mounted successfully"

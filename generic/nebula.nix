@@ -8,6 +8,7 @@
   myModules.nebula."serverNetwork" = {
     serverFirewallRules = config.services.openssh.enable;
     ipMap = {
+      backupServerOffsite = "48.42.0.8";
       #servers
       mainserver = "48.42.0.2";
       IonosVPS = "48.42.0.5";

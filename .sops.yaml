@@ -1,5 +1,6 @@
 keys:
   - &yubikey 3843C723C748227138A7EAA4F22E9E9D8F5CCE04
+  - &backupServerOffsite age1qzf4xf3r0zl7u8v0u6ct5uv78ejp9gapn8tnphw2a8q39rltceaq6c6n48
   - &Jellyfin age1d8nx4acd0wsrsk8rkfgvm04vqaal5dcygx5jeumdhsh5s77h234qjxjp0j
   - &Nextcloud age12e9mw8rwsxkqclpcxs3nxcg84l8j8hsxtae5mfn8d9fvnvczw4pqsn8wyf
   - &Nextcloud-Testing age1rjw96c2g46s9qs8s9gy67tz39wm8sq85rzz3cmxvmsgtw32fl43sjegg85
@@ -64,6 +65,12 @@ creation_rules:
       - *yubikey
       age:
       - *ValheimMarvin
+  - path_regex: ^secrets/backupServerOffsite/.*$
+    key_groups:
+    - pgp:
+      - *yubikey
+      age:
+      - *backupServerOffsite
   - path_regex: ^secrets/[^/]*$
     key_groups:
     - pgp:
@@ -78,6 +85,7 @@ creation_rules:
       - *Jellyfin
       - *ValheimBrueder
       - *ValheimMarvin
+      - *backupServerOffsite
   - key_groups:
     - pgp:
       - *yubikey
