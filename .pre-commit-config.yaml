@@ -2,6 +2,9 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
+      - id: check-ast
+      - id: check-builtin-literals
+      - id: check-docstring-first
       - id: end-of-file-fixer
       - id: trailing-whitespace
       - id: check-added-large-files
@@ -11,3 +14,26 @@ repos:
     rev: af5529a9e56b3429408c9d281518527d3a63cf33
     hooks:
       - id: nixfmt
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.11.0-1
+    hooks:
+      - id: shfmt         # prebuilt upstream executable
+  - repo: https://github.com/koalaman/shellcheck-precommitjk
+    rev: v0.10.0
+    hooks:
+      - id: shellcheck
+        exclude: "(.envrc|deployment.sh)",
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 25.1.0
+    hooks:
+      - id: black
+        args: [ "--line-length", "100" ]
+  - repo: https://github.com/PyCQA/isort
+    rev: 6.0.1
+    hooks:
+      - id: isort
+        args: [ "--profile", "black" ]
+  - repo: https://github.com/yuvipanda/pre-commit-hook-ensure-sops
+    rev: v1.1
+    hooks:
+      - id: sops-encryption

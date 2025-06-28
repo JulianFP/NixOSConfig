@@ -7,12 +7,37 @@ let
   pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
     src = ./.;
     hooks = {
+      #general stuff
       end-of-file-fixer.enable = true;
       trim-trailing-whitespace.enable = true;
       check-added-large-files.enable = true;
       check-merge-conflicts.enable = true;
       check-symlinks.enable = true;
+      #nix
       nixfmt-rfc-style.enable = true;
+      #bash
+      shellcheck = {
+        enable = true;
+        excludes = [
+          ".envrc"
+          "deployment.sh" # exclude for now because it needs refactor
+        ];
+      };
+      shfmt.enable = true;
+      #python
+      check-docstring-first.enable = true;
+      check-builtin-literals.enable = true;
+      check-python.enable = true;
+      black = {
+        enable = true;
+        settings.flags = "--line-length 100";
+      };
+      isort = {
+        enable = true;
+        settings.profile = "black";
+      };
+      #sops
+      pre-commit-hook-ensure-sops.enable = true;
     };
   };
 in
@@ -22,6 +47,7 @@ pkgs.mkShell {
     [
       sops
       nebula
+      (callPackage ./generic/packages/createNebulaDevice/package.nix { })
     ]
     ++ pre-commit-check.enabledPackages;
 
@@ -32,7 +58,6 @@ pkgs.mkShell {
           git update-index --skip-worktree "$localOverwriteFile"
           rm "$localOverwriteFile"
       fi
-      git update-index --skip-worktree "config.yml"
     ''
     + pre-commit-check.shellHook;
 }
