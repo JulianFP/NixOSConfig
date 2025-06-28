@@ -22,5 +22,8 @@
   #this machine is running libreboot which searches for kernels in boot partition
   boot.loader.grub.copyKernels = true;
 
+  #since this is a laptop
+  services.logind.lidSwitch = "ignore";
+
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
