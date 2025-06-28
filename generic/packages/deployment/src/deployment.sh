@@ -1,12 +1,9 @@
-#! /usr/bin/env nix-shell
-#! nix-shell -i bash --packages git sops
+#! /usr/bin/bash
 
 # this script automates deployments onto any remote Linux machine (e.g. Proxmox VMs or the cloud)
 # using the deploySops or sops option it can also update sops age keys. For this the script assumes that your sops config is in the root of the git repository and is named .sops.yaml
 
 #change these variables to make this script work for your setup
-githubRepo="JulianFP/NixOSConfig" #github repo that contains flake config (syntax: '<Github user name>/<repo name>'). Always uses default branch
-githubBranch="main"               #branch that contains flake config
 #the following option is only needed for the deploySops and sops option
 ageKeyFile="/persist/sops-nix/key.txt" #path to ageKeyFile on target machine
 
@@ -55,88 +52,77 @@ deploy() {
 	fi
 
 	#check if device is reachable over ssh and wait until user fixed it
-	until ssh -o "StrictHostKeyChecking no" root@$2 true >/dev/null 2>&1; do
+	until ssh -o "StrictHostKeyChecking no" "root@$2" true >/dev/null 2>&1; do
 		echo "couldn't connect to target machines root user over ssh."
-		read -p "check ssh config and then press enter to try again"
+		read -r -p "check ssh config and then press enter to try again"
 	done
 
 	# run nixos-anywhere
-	nix run github:numtide/nixos-anywhere -- --flake "github:$githubRepo/$githubBranch#$1" root@$2
+	nix run github:numtide/nixos-anywhere -- --flake ".#$1" "root@$2"
 
 	#delete futureTargetIP ssh known_hosts to prevent error messages in terminal
 	ssh-keygen -R "$3"
 
 	#wait until device becomes reachable over ssh with new ip address
 	echo "wait for vm to become reachable over ssh and new ip address"
-	until ssh -o "StrictHostKeyChecking no" root@$3 true >/dev/null 2>&1; do
+	until ssh -o "StrictHostKeyChecking no" "root@$3" true >/dev/null 2>&1; do
 		sleep 1
 	done
 }
 
 #$1: flakehostname, $2: TargetIP
 sopsConfig() {
+	#check if we are in root of git repository
+	if ! [[ -d ./.git ]]; then
+		echoerr "you need to execute this script in the root of the NixOSConfig repository!"
+		exit 1
+	fi
+
 	#check if device is reachable over ssh and wait until user fixed it
-	until ssh -o "StrictHostKeyChecking no" root@$2 true >/dev/null 2>&1; do
+	until ssh -o "StrictHostKeyChecking no" "root@$2" true >/dev/null 2>&1; do
 		echo "couldn't connect to target machines root user over ssh."
-		read -p "check ssh config and then press enter to try again"
+		read -r -p "check ssh config and then press enter to try again"
 	done
 
 	#find free filename for age public key in /tmp
 	agename="ageKey.pub"
 	fileNum=2
-	while ls "/tmp" | grep -q "$agename"; do
+	while [[ -e "/tmp/$agename" ]]; do
 		agename="ageKey-$fileNum.pub"
 		((++fileNum))
 	done
 
 	#cut public key (without age prefix) out of keyFile and copy it to localhost
-	ssh root@$2 -o "StrictHostKeyChecking no" "awk -F'age|\n' '{print \$2}' $ageKeyFile > $agename"
+	ssh "root@$2" -o "StrictHostKeyChecking no" "awk -F'age|\n' '{print \$2}' $ageKeyFile > $agename"
 	scp -o "StrictHostKeyChecking no" "root@$2:$agename" "/tmp/$agename"
 
-	#find free dirname for tmp directory for github repo
-	gitname="githubRepo"
-	gitNum=2
-	while ls "/tmp" | grep -q "$gitname"; do
-		gitname="githubRepo-$gitNum"
-		((++gitNum))
-	done
-
-	#clone github repo
-	git clone -b "$githubBranch" "git@github.com:$githubRepo.git" "/tmp/$gitname"
-
 	#check if sops config is already present for this host
-	if cat "/tmp/$gitname/.sops.yaml" | grep -q "&$1"; then
+	if grep -q "&$1" "./.sops.yaml"; then
 		#it is: just update the age key
-		sed -i "/&$1/c\\  - &$1 age$(cat /tmp/$agename | sed ':a;N;$!ba;s/\n//g')" "/tmp/$gitname/.sops.yaml"
+		sed -i "/&$1/c\\  - &$1 age$(cat /tmp/$agename | sed ':a;N;$!ba;s/\n//g')" "./.sops.yaml"
 	else
 		#it is not: add it and its config
-		sed -i -e '/&yubikey/a\' -e "  - &$1 age$(cat /tmp/$agename | sed ':a;N;$!ba;s/\n//g')" "/tmp/$gitname/.sops.yaml"                                                  #add age key to keys
-		sed -i -e '/- key_groups:/i\' -e "      - *$1" "/tmp/$gitname/.sops.yaml"                                                                                           #add hostname to regex for all general secrets
-		sed -i -e '/secrets\/\[/i\' -e "  - path_regex: ^secrets/$1/.*$\n    key_groups:\n    - pgp:\n      - *yubikey\n      age:\n      - *$1" "/tmp/$gitname/.sops.yaml" #add new path_regex for all keys that should only be decrypted by target
+		sed -i -e '/&yubikey/a\ ' -e "  - &$1 age$(cat /tmp/$agename | sed ':a;N;$!ba;s/\n//g')" "./.sops.yaml"                                                  #add age key to keys
+		sed -i -e '/- key_groups:/i\ ' -e "      - *$1" "./.sops.yaml"                                                                                           #add hostname to regex for all general secrets
+		sed -i -e '/secrets\/\[/i\ ' -e "  - path_regex: ^secrets/$1/.*$\n    key_groups:\n    - pgp:\n      - *yubikey\n      age:\n      - *$1" "./.sops.yaml" #add new path_regex for all keys that should only be decrypted by target
 	fi
 
 	#reencrypt secrets for new age key
-	sops --config /tmp/$gitname/.sops.yaml updatekeys -y /tmp/$gitname/secrets/*.yaml
-	ls -1 "/tmp/$gitname/secrets/$1" | sed -e "s/^/\/tmp\/$gitname\/secrets\/$1\//" | xargs -L1 sops --config /tmp/$gitname/.sops.yaml updatekeys -y
-
-	#add changes to git and push them
-	git -C "/tmp/$gitname" add "/tmp/$gitname/*"
-	git -C "/tmp/$gitname" add "/tmp/$gitname/.sops.yaml"
-	git -C "/tmp/$gitname" commit -m "$1: Changed age key"
-	git -C "/tmp/$gitname" push origin "$githubBranch"
+	sops --config ./.sops.yaml updatekeys -y ./secrets/*.yaml
+	sops --config ./.sops.yaml updatekeys -y "./secrets/{**,.}/*.yaml"
 
 	#build changes for target
-	nixos-rebuild switch --flake "/tmp/$gitname#$1" --target-host root@$2
+	nixos-rebuild switch --flake ".#$1" --target-host "root@$2"
 
 	#reboot machine and wait until it becomes reachable again
-	ssh root@$2 -o "StrictHostKeyChecking no" "reboot"
+	ssh "root@$2" -o "StrictHostKeyChecking no" "reboot"
 	echo "wait for vm to become reachable after restart again"
-	until ssh -o "StrictHostKeyChecking no" root@$2 true >/dev/null 2>&1; do
+	until ssh -o "StrictHostKeyChecking no" "root@$2" true >/dev/null 2>&1; do
 		sleep 1
 	done
 
-	#remove temp git directory
-	rm -fr "/tmp/$gitname"
+	#remove public age key from temp
+	rm -f "/tmp/$agename"
 }
 
 #$1 flakehostname
@@ -153,13 +139,13 @@ iso() {
 	isoname="$1.iso"
 	path=$(pwd)
 	fileNum=2
-	while ls $path | grep -q "$isoname"; do
+	while [[ -e "$path/$isoname" ]]; do
 		isoname="$1-$fileNum.iso"
 		((++fileNum))
 	done
 
 	#run generation script and inform user about output file name
-	nix run github:nix-community/nixos-generators -- -f iso -o "$path/$isoname" --flake "github:$githubRepo/$githubBranch#$1"
+	nix run github:nix-community/nixos-generators -- -f iso -o "$path/$isoname" --flake ".#$1"
 	echo "you can find your iso in $path/$isoname"
 }
 
@@ -177,13 +163,13 @@ lxc() {
 	templateName="$1.tar.xz"
 	path=$(pwd)
 	fileNum=2
-	while ls $path | grep -q "$templateName"; do
+	while [[ -e "$path/$templateName" ]]; do
 		templateName="$1-$fileNum.tar.xz"
 		((++fileNum))
 	done
 
 	#run generation script and inform user about output file name
-	nix run github:nix-community/nixos-generators -- -f proxmox-lxc -o "$path/$templateName" --flake "github:$githubRepo/$githubBranch#$1"
+	nix run github:nix-community/nixos-generators -- -f proxmox-lxc -o "$path/$templateName" --flake ".#$1"
 	echo "you can find your Proxmox LXC template in $path/$templateName"
 }
 

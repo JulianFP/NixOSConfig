@@ -20,7 +20,6 @@ let
         enable = true;
         excludes = [
           ".envrc"
-          "deployment.sh" # exclude for now because it needs refactor
         ];
       };
       shfmt.enable = true;
@@ -48,6 +47,7 @@ pkgs.mkShell {
       sops
       nebula
       (callPackage ./generic/packages/createNebulaDevice/package.nix { })
+      (callPackage ./generic/packages/deployment/package.nix { })
     ]
     ++ pre-commit-check.enabledPackages;
 
