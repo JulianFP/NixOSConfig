@@ -54,7 +54,6 @@ in
     kdePackages.okular
     kdePackages.kcalc
     yubioath-flutter
-    seafile-client
 
     # Multimedia
     kdePackages.gwenview

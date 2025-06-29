@@ -69,7 +69,7 @@
     };
 
     kanidm = {
-      package = pkgs.kanidm_1_5;
+      package = pkgs.kanidm_1_6;
       enableServer = true;
       enableClient = true;
       serverSettings = {
