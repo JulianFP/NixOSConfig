@@ -154,7 +154,7 @@ in
       };
       nat = {
         enable = true;
-        internalInterfaces = [ "ve-*" ]; # the * wildcard syntax is specific to nftables, use + if switching back to iptables!
+        internalInterfaces = [ "br0" ];
         externalInterface = cfg.externalNetworkInterface;
         enableIPv6 = false;
         forwardPorts = (
@@ -182,7 +182,26 @@ in
       };
     };
     systemd = lib.mkMerge (
-      lib.mapAttrsToList (
+      [
+        {
+          services."br0" = {
+            description = "Network bridge for container network";
+            serviceConfig = {
+              Type = "oneshot";
+              RemainAfterExit = true;
+              ExecStart =
+                with pkgs;
+                writeShellScript "br0-up" ''
+                  ${iproute2}/bin/ip link add br0 type bridge
+                  ${iproute2}/bin/ip addr add 10.42.42.1/23 dev br0
+                  ${iproute2}/bin/ip link set dev br0 up
+                '';
+              ExecStop = with pkgs; "${iproute2}/bin/ip link del br0";
+            };
+          };
+        }
+      ]
+      ++ (lib.mapAttrsToList (
         n: v:
         let
           shortenedN = builtins.substring 0 11 n;
@@ -227,8 +246,14 @@ in
               "veth@${n}" = {
                 description = "virtual ethernet network interface between the main and ${n} containers network namespaces";
 
-                bindsTo = [ "netns@${n}.service" ];
-                after = [ "netns@${n}.service" ];
+                bindsTo = [
+                  "netns@${n}.service"
+                  "br0.service"
+                ];
+                after = [
+                  "netns@${n}.service"
+                  "br0.service"
+                ];
 
                 serviceConfig = {
                   Type = "oneshot";
@@ -242,12 +267,12 @@ in
                           ${iproute2}/bin/ip link add ve-${shortenedN} type veth peer name eth-${shortenedN}
                           ${iproute2}/bin/ip link set eth-${shortenedN} netns ${shortenedN}
                           ${iproute2}/bin/ip -n ${shortenedN} link set dev eth-${shortenedN} name eth-lan
-                          ${iproute2}/bin/ip addr add 10.42.42.1/32 dev ve-${shortenedN}
-                          ${iproute2}/bin/ip -n ${shortenedN} addr add 10.42.42.${builtins.toString v.hostID}/32 dev eth-lan
-                          ${iproute2}/bin/ip link set ve-${shortenedN} up
+                          ${iproute2}/bin/ip -n ${shortenedN} addr add 10.42.${
+                            if v.nebulaOnly then "43" else "42"
+                          }.${builtins.toString v.hostID}/23 dev eth-lan
                           ${iproute2}/bin/ip -n ${shortenedN} link set eth-lan up
-                          ${iproute2}/bin/ip route add 10.42.42.${builtins.toString v.hostID}/32 dev ve-${shortenedN}
-                          ${iproute2}/bin/ip -n ${shortenedN} route add 10.42.42.1/32 dev eth-lan
+                          ${iproute2}/bin/ip link set dev ve-${shortenedN} master br0
+                          ${iproute2}/bin/ip link set ve-${shortenedN} up
                           ${iproute2}/bin/ip -n ${shortenedN} route add default via 10.42.42.1
                         '';
                     in
@@ -315,6 +340,7 @@ in
                     [
                       "lo@neb-${n}.service"
                       "moveNebNS@${n}.service"
+                      "veth@neb-${n}.service"
                     ]
                   else
                     [
@@ -337,8 +363,8 @@ in
               "lo@neb-${n}" = {
                 description = "loopback in ${n} containers nebula-only network namespace";
 
-                bindsTo = [ "netns@${n}.service" ];
-                after = [ "netns@${n}.service" ];
+                bindsTo = [ "netns@neb-${n}.service" ];
+                after = [ "netns@neb-${n}.service" ];
 
                 serviceConfig = {
                   Type = "oneshot";
@@ -402,6 +428,50 @@ in
                     RestartSec = 1;
                   };
               };
+              "veth@neb-${n}" = {
+                description = "virtual ethernet network interface between the main and ${n} containers nebula-only network namespaces";
+
+                bindsTo = [
+                  "netns@neb-${n}.service"
+                  "br0.service"
+                ];
+                after = [
+                  "netns@neb-${n}.service"
+                  "moveNebNS@${n}.service"
+                  "br0.service"
+                ];
+
+                serviceConfig = {
+                  Type = "oneshot";
+                  RemainAfterExit = true;
+                  ExecStart =
+                    let
+                      start =
+                        with pkgs;
+                        writeShellScript "veth-neb-${n}-up" ''
+                          set -e
+                          ${iproute2}/bin/ip link add ven-${shortenedN} type veth peer name etn-${shortenedN}
+                          ${iproute2}/bin/ip link set etn-${shortenedN} netns neb-${shortenedN}
+                          ${iproute2}/bin/ip -n neb-${shortenedN} link set dev etn-${shortenedN} name eth-lan
+                          ${iproute2}/bin/ip -n neb-${shortenedN} addr add 10.42.42.${builtins.toString v.hostID}/23 dev eth-lan
+                          ${iproute2}/bin/ip -n neb-${shortenedN} link set eth-lan up
+                          ${iproute2}/bin/ip link set dev ven-${shortenedN} master br0
+                          ${iproute2}/bin/ip link set ven-${shortenedN} up
+                        '';
+                    in
+                    "${start}";
+                  ExecStopPost =
+                    let
+                      stop =
+                        with pkgs;
+                        writeShellScript "veth-down" ''
+                          ${iproute2}/bin/ip -n $1 link del eth-lan
+                          ${iproute2}/bin/ip link del ven-$1
+                        '';
+                    in
+                    "${stop} ${shortenedN}";
+                };
+              };
             };
           #if the system uses systemd networkd, then mark our manually created veth interface as unmanaged so that networkd doesn't touch it
           network.networks."20-${n}-unmanaged" = lib.mkIf config.systemd.network.enable {
@@ -427,7 +497,7 @@ in
               }) v.additionalBindMounts
             );
         }
-      ) enabledContainers
+      ) enabledContainers)
     );
 
     containers = builtins.mapAttrs (
