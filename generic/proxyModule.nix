@@ -32,10 +32,20 @@ in
               type = lib.types.port;
               description = "Port to which this traffic should be forwarded";
             };
+            destIsHttps = lib.mkOption {
+              type = lib.types.bool;
+              default = false;
+              description = "Whether the destination also uses https, i.e. whether to enable tls encryption between reverse proxy and backend";
+            };
             additionalConfig = lib.mkOption {
               type = lib.types.lines;
               default = '''';
               description = "Additional config added to the virtualHosts section (e.g. for adding additional locations)";
+            };
+            additionalReverseProxyConfig = lib.mkOption {
+              type = lib.types.lines;
+              default = '''';
+              description = "Additional config added to the reverse_proxy section of the caddy config";
             };
           };
         }
@@ -129,9 +139,13 @@ in
             let
               forwardURL =
                 if (cfg.isEdge && (domCfg.destIPedge != null)) then
-                  "http://${domCfg.destIPedge}:${builtins.toString domCfg.destPort}"
+                  "http${
+                    if domCfg.destIsHttps then "s" else ""
+                  }://${domCfg.destIPedge}:${builtins.toString domCfg.destPort}"
                 else
-                  "http://${domCfg.destIP}:${builtins.toString domCfg.destPort}";
+                  "http${
+                    if domCfg.destIsHttps then "s" else ""
+                  }://${domCfg.destIP}:${builtins.toString domCfg.destPort}";
               sharedConfig = ''
                 #configure hsts
                 header Strict-Transport-Security "max-age=31536000; includeSubdomains; preload"
@@ -157,7 +171,9 @@ in
                   + domCfg.additionalConfig
                   + ''
                     #reverse proxy
-                    reverse_proxy ${forwardURL}
+                    reverse_proxy ${forwardURL} {
+                      ${domCfg.additionalReverseProxyConfig}
+                    }
                   '';
               };
               "www.${domain}" = {

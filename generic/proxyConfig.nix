@@ -51,6 +51,18 @@
         destIPedge = config.myModules.nebula."serverNetwork".ipMap.HomeAssistant;
         destPort = 8123;
       };
+      "account.partanengroup.de" = {
+        destIP = "10.42.42.137";
+        destIPedge = config.myModules.nebula."serverNetwork".ipMap.Kanidm;
+        destPort = 443;
+        destIsHttps = true;
+        additionalReverseProxyConfig = ''
+          transport http {
+            proxy_protocol v2
+            tls_server_name account.partanengroup.de
+          }
+        '';
+      };
     };
     edgeHostName = "IonosVPS";
   };

@@ -88,6 +88,11 @@
     flatpak.enable = true; # enable flatpak
 
     nixseparatedebuginfod.enable = true;
+
+    kanidm = {
+      enableClient = true;
+      clientSettings."partanengroup".uri = "https://account.partanengroup.de";
+    };
   };
 
   # -- programs --

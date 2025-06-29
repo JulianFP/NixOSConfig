@@ -146,6 +146,25 @@
         };
         config = ./valheim-brueder/configuration.nix;
       };
+      "Kanidm" = {
+        hostID = 137;
+        openTCPPorts = [
+          443
+          3636
+        ];
+        enableSops = true;
+        additionalBindMounts = {
+          "/var/lib/acme" = {
+            hostPath = "/persist/Kanidm-acme";
+            isReadOnly = false;
+          };
+          "/var/lib/kanidm" = {
+            hostPath = "/persist/backMeUp/Kanidm";
+            isReadOnly = false;
+          };
+        };
+        config = ./kanidm/configuration.nix;
+      };
     };
   };
 }

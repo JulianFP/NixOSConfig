@@ -125,7 +125,7 @@ done
 if [[ ! (-e "./secrets/${flakeSecretHostName}") ]]; then
 	mkdir "./secrets/${flakeSecretHostName}"
 	printf "nebula:\n" >"./secrets/${flakeSecretHostName}/nebula.yaml"
-elif grep -q "$flakeInstallHostName" "./secrets/${flakeInstallHostName}/nebula.yaml"; then
+elif grep -q "$flakeInstallHostName" "./secrets/${flakeSecretHostName}/nebula.yaml"; then
 	echoerr "nebula key for hostName ${flakeInstallHostName} already exists for this device (${flakeSecretHostName})."
 	unmounting
 	exit 1
