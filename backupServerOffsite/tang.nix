@@ -9,8 +9,9 @@
       "192.168.10.0/24"
     ];
   };
+  systemd.sockets.tangd.socketConfig.FreeBind = "yes"; # required when listenStream is set
   environment.persistence."/persist".directories = [
-    "/var/lib/tang"
+    "/var/lib/private/tang"
   ];
   networking.firewall.allowedTCPPorts = [ 7654 ];
 
