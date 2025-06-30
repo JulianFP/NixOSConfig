@@ -8,6 +8,7 @@
   myModules.nebula."serverNetwork" = {
     serverFirewallRules = config.services.openssh.enable;
     ipMap = {
+      Email = "48.42.1.138";
       Kanidm = "48.42.1.137";
       backupServerOffsite = "48.42.0.8";
       #servers

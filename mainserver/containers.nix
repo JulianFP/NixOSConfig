@@ -165,6 +165,33 @@
         };
         config = ./kanidm/configuration.nix;
       };
+      "Email" = {
+        hostID = 138;
+        openTCPPorts = [
+          25 # SMTP
+          80 # ACME challenge
+          #110 #POP3 STARTTLS, enable if enablePop3 is set in snm
+          143 # IMAP STARTTLS
+          465 # SMTP TLS
+          587 # SMTP STARTTLS
+          993 # IMAP TLS
+          #995 #POP3 TLS, enable if enablePop3Ssl is set in snm
+          #4190 #sieve, enable if enableManageSieve is set in snm
+        ];
+        nebulaOnly = true;
+        enableSops = true;
+        additionalBindMounts = {
+          "/var/lib/acme" = {
+            hostPath = "/persist/Email";
+            isReadOnly = false;
+          };
+          "/persist/backMeUp" = {
+            hostPath = "/persist/backMeUp/Email";
+            isReadOnly = false;
+          };
+        };
+        config = ./email/configuration.nix;
+      };
     };
   };
 }

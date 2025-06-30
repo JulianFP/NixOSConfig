@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   imports = [
@@ -14,6 +14,8 @@
     enable = true;
     clock24 = true;
   };
+
+  environment.systemPackages = with pkgs; [ age ];
 
   #networking config
   networking = {
