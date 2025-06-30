@@ -11,8 +11,13 @@
     inputs.simple-nixos-mailserver.nixosModule
   ];
 
-  #to access Kanidm using it's domain over local container ip
-  networking.hosts."10.42.42.137" = [ "account.partanengroup.de" ];
+  networking.hosts = {
+    #to access Kanidm using it's domain over local container ip
+    "10.42.42.137" = [ "account.partanengroup.de" ];
+
+    #to access itself, e.g. for roundcube webmail
+    "127.0.0.1" = [ "mail.partanengroup.de" ];
+  };
 
   sops.secrets."ldap_token" = {
     sopsFile = ../../secrets/${hostName}/ldap.yaml;
@@ -86,13 +91,21 @@
       de
     ];
     extraConfig = ''
-      # starttls needed for authentication, so the fqdn required to match
-      # the certificate
-      $config['smtp_host'] = "tls://${config.mailserver.fqdn}";
-      $config['smtp_user'] = "%u";
-      $config['smtp_pass'] = "%p";
+      $config['imap_host'] = 'ssl://${config.mailserver.fqdn}:993';
+      $config['username_domain'] = [
+        '${config.mailserver.fqdn}' => 'partanengroup.de',
+      ];
+      $config['smtp_host'] = 'ssl://%h:465';
+      $config['smtp_user'] = '%u';
+      $config['smtp_pass'] = '%p';
     '';
   };
+  systemd.tmpfiles.settings."10-postgresql"."/persist/backMeUp/roundcube/postgres"."d" = {
+    user = "postgres";
+    group = "postgres";
+    mode = "0700";
+  };
+  services.postgresql.dataDir = "/persist/backMeUp/roundcube/postgres";
 
   #access to rspamd web interface
   sops.secrets."rspamd_ui" = {
