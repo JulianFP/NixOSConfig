@@ -104,7 +104,7 @@
           2456
           2457
         ];
-        nebulaOnly = true;
+        nebulaGateway = "48.42.0.5";
         enableSops = true;
         permittedUnfreePackages = [
           "steamcmd"
@@ -128,7 +128,7 @@
           2458
           2459
         ];
-        nebulaOnly = true;
+        nebulaGateway = "48.42.0.5";
         enableSops = true;
         permittedUnfreePackages = [
           "steamcmd"
@@ -172,17 +172,22 @@
           80 # ACME challenge
           #110 #POP3 STARTTLS, enable if enablePop3 is set in snm
           143 # IMAP STARTTLS
+          443 # HTTPS for roundcube and rspamd UI
           465 # SMTP TLS
           587 # SMTP STARTTLS
           993 # IMAP TLS
           #995 #POP3 TLS, enable if enablePop3Ssl is set in snm
           #4190 #sieve, enable if enableManageSieve is set in snm
         ];
-        nebulaOnly = true;
+        nebulaGateway = "48.42.0.1";
         enableSops = true;
         additionalBindMounts = {
           "/var/lib/acme" = {
-            hostPath = "/persist/Email";
+            hostPath = "/persist/Email/acme";
+            isReadOnly = false;
+          };
+          "/var/lib/rspamd" = {
+            hostPath = "/persist/Email/rspamd";
             isReadOnly = false;
           };
           "/persist/backMeUp" = {

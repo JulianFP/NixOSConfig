@@ -21,6 +21,8 @@
   networking = {
     useDHCP = false;
     enableIPv6 = false;
+    #to access Kanidm using it's domain over local container ip
+    hosts."10.42.42.137" = [ "account.partanengroup.de" ];
   };
   systemd.network = {
     enable = true;

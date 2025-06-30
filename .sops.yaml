@@ -1,5 +1,6 @@
 keys:
   - &yubikey 3843C723C748227138A7EAA4F22E9E9D8F5CCE04
+  - &IonosVPS2 age190v5scsrpgkw4mues9nlsmwxcn5fw5jwg88pxlsh0xmw6q3kffns6r9eqq
   - &backupServerOffsite age1qzf4xf3r0zl7u8v0u6ct5uv78ejp9gapn8tnphw2a8q39rltceaq6c6n48
   - &Email age1mfzehz2uj6vv0y0lvcv2s5egpqfl6403r30x8v7drztc0tqwd9zq89kqg2
   - &Kanidm age17egct2kj27ze3046aqqje79jtcq0evpjmceehp6uyf3zvqnnayyqjpt6dp
@@ -85,6 +86,12 @@ creation_rules:
       - *yubikey
       age:
       - *backupServerOffsite
+  - path_regex: ^secrets/IonosVPS2/.*$
+    key_groups:
+    - pgp:
+      - *yubikey
+      age:
+      - *IonosVPS2
   - path_regex: ^secrets/[^/]*$
     key_groups:
     - pgp:
@@ -102,6 +109,7 @@ creation_rules:
       - *Kanidm
       - *Email
       - *backupServerOffsite
+      - *IonosVPS2
   - key_groups:
     - pgp:
       - *yubikey

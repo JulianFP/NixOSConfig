@@ -59,6 +59,22 @@
             "mail-server"
           ];
         };
+        "marvin" = {
+          displayName = "Marvin";
+          legalName = "Marvin Partanen";
+          mailAddresses = [ "marvin@partanengroup.de" ];
+          groups = [
+            "mail-server"
+          ];
+        };
+        "robin" = {
+          displayName = "Robin";
+          legalName = "Robin Partanen";
+          mailAddresses = [ "robin@partanengroup.de" ];
+          groups = [
+            "mail-server"
+          ];
+        };
       };
     };
   };

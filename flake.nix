@@ -205,6 +205,10 @@
           ];
           stateVersion = "23.11";
         };
+        "IonosVPS2" = {
+          server = true;
+          stateVersion = "25.05";
+        };
         "backupServer" = {
           server = true;
           stateVersion = "25.05";

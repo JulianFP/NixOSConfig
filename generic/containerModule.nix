@@ -11,7 +11,6 @@ let
   cfg = config.myModules.container;
   enabledContainers = lib.filterAttrs (n: v: v.enable) cfg.containers;
   nebulaSubnet = "48.42.0.0/16";
-  nebulaGateway = "48.42.0.5";
   nebulaContainerIPNetId = "48.42.1";
 in
 {
@@ -42,10 +41,10 @@ in
               type = lib.types.ints.u8;
               description = "Host ID of local and nebula IP address (equivalent to what vmID was for Proxmox VMs before)";
             };
-            nebulaOnly = lib.mkOption {
-              type = lib.types.bool;
-              default = false;
-              description = "Whether this container should only have access to its nebula interface (aside from loopback) and set its default route to it (route everything over nebula)";
+            nebulaGateway = lib.mkOption {
+              type = lib.types.nullOr lib.types.singleLineStr;
+              default = null;
+              description = "If this container should only have access to its nebula interface (aside from loopback) and route everything through the nebula network then set this to the nebula IP of the nebula device that should be the gateway (i.e. exit node)";
             };
             openTCPPorts = lib.mkOption {
               type = lib.types.listOf lib.types.port;
@@ -95,10 +94,10 @@ in
     }) enabledContainers;
     services.nebula.networks = (
       builtins.mapAttrs (n: v: {
-        settings.tun.unsafe_routes = lib.mkIf v.nebulaOnly [
+        settings.tun.unsafe_routes = lib.mkIf (v.nebulaGateway != null) [
           {
             route = "0.0.0.0/0";
-            via = "48.42.0.5";
+            via = v.nebulaGateway;
             install = false;
           }
         ];
@@ -268,7 +267,7 @@ in
                           ${iproute2}/bin/ip link set eth-${shortenedN} netns ${shortenedN}
                           ${iproute2}/bin/ip -n ${shortenedN} link set dev eth-${shortenedN} name eth-lan
                           ${iproute2}/bin/ip -n ${shortenedN} addr add 10.42.${
-                            if v.nebulaOnly then "43" else "42"
+                            if (v.nebulaGateway != null) then "43" else "42"
                           }.${builtins.toString v.hostID}/23 dev eth-lan
                           ${iproute2}/bin/ip -n ${shortenedN} link set eth-lan up
                           ${iproute2}/bin/ip link set dev ve-${shortenedN} master br0
@@ -336,7 +335,7 @@ in
               #overwriting default systemd services
               "container@${n}" = {
                 requires =
-                  if v.nebulaOnly then
+                  if (v.nebulaGateway != null) then
                     [
                       "lo@neb-${n}.service"
                       "moveNebNS@${n}.service"
@@ -350,7 +349,7 @@ in
               };
               "nebula@${n}".enable = lib.mkForce false; # we have our own systemd service
             }
-            // lib.optionalAttrs v.nebulaOnly {
+            // lib.optionalAttrs (v.nebulaGateway != null) {
               "netns@neb-${n}" = {
                 description = "${n} containers nebula-only network namespace";
                 serviceConfig = with pkgs; {
@@ -419,7 +418,7 @@ in
                             ${iproute2}/bin/ip -n neb-${shortenedN} addr add ${nebulaContainerIPNetId}.${builtins.toString v.hostID} dev ${nebulaInterfaceName}
                             ${iproute2}/bin/ip -n neb-${shortenedN} link set ${nebulaInterfaceName} up
                             ${iproute2}/bin/ip -n neb-${shortenedN} route add ${nebulaSubnet} dev ${nebulaInterfaceName}
-                            ${iproute2}/bin/ip -n neb-${shortenedN} route add default via ${nebulaGateway}
+                            ${iproute2}/bin/ip -n neb-${shortenedN} route add default via ${v.nebulaGateway}
                           '';
                       in
                       "${start}";
@@ -511,7 +510,7 @@ in
         ephemeral = true;
 
         networkNamespace =
-          if v.nebulaOnly then "/run/netns/neb-${shortenedN}" else "/run/netns/${shortenedN}";
+          if (v.nebulaGateway != null) then "/run/netns/neb-${shortenedN}" else "/run/netns/${shortenedN}";
         bindMounts =
           lib.optionalAttrs v.enableSops {
             "/persist/sops-nix" = {

@@ -5,4 +5,4 @@
 - insert ssh public key into `/root/.ssh/authorized_keys` and test it
 - reboot
 - `wget https://raw.githubusercontent.com/JulianFP/LaptopNixOSConfig/main/IonosVPS/extraInstallConfig.nix`
-- `curl https://raw.githubusercontent.com/elitak/nixos-infect/master/nixos-infect | NIXOS_IMPORT=/root/extraInstallConfig.nix NIX_CHANNEL=nixos-23.05 bash -x`
+- `curl https://raw.githubusercontent.com/elitak/nixos-infect/master/nixos-infect | NIXOS_IMPORT=/root/extraInstallConfig.nix NIX_CHANNEL=nixos-25.05 bash -x`
