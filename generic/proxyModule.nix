@@ -110,7 +110,7 @@ in
         enable = true;
         package = pkgs.caddy.withPlugins {
           plugins = [ "github.com/pberkel/caddy-storage-redis@v1.4.0" ];
-          hash = "sha256-TkylmwkyUT1gHKGQukNIsfrlfZDA35gkbhAs2X4Bp5g=";
+          hash = "sha256-ZPwBy+iGDgpEY68XLCxP1SsFHt8Fz7R4E5DM6XHHlGw=";
         };
         dataDir = "/persist/caddy";
         logDir = "/persist/caddy-log";
