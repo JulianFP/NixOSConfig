@@ -28,6 +28,8 @@ in
             targets = [
               "localhost:${toString config.services.prometheus.exporters.node.port}"
               "${config.myModules.nebula."serverNetwork".ipMap.IonosVPS}:9100"
+              "${config.myModules.nebula."serverNetwork".ipMap.IonosVPS2}:9100"
+              "${config.myModules.nebula."serverNetwork".ipMap.backupServerOffsite}:9100"
             ];
           }
         ];

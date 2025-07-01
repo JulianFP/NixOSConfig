@@ -53,7 +53,7 @@
       #open up loki port to all servers so that they can push their logs too
       port = 9100;
       proto = "tcp";
-      host = config.myModules.nebula."serverNetwork".ipMap.mainserver;
+      host = "mainserver";
     }
   ];
 
