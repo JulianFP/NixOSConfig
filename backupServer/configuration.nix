@@ -4,6 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ../generic/impermanence.nix
+    ./restic.nix
   ];
 
   #networking config
@@ -14,14 +15,14 @@
   systemd.network = {
     enable = true;
     networks."10-serverLAN" = {
-      name = "enp0*";
+      name = "eno1";
       DHCP = "no";
       networkConfig.IPv6AcceptRA = false;
       address = [
-        "192.168.1.189/24"
+        "192.168.3.30/24"
       ];
       gateway = [
-        "192.168.1.1"
+        "192.168.3.1"
       ];
       dns = [
         "1.1.1.1"
@@ -56,6 +57,16 @@
 
   #set nebula preferred_ranges
   services.nebula.networks."serverNetwork".settings.preferred_ranges = [ "192.168.3.0/24" ];
+
+  #auto-mount backup HDD
+  fileSystems."/mnt/backupHDD" = {
+    device = "/dev/disk/by-label/backupHDD1";
+    fsType = "btrfs";
+    options = [
+      "nofail"
+      "subvol=restic"
+    ];
+  };
 
   #automatic garbage collect and nix store optimisation is done in server.nix
   #automatic upgrade. Pulls newest commits from github daily. Relies on my updating the flake inputs (I want that to be manual and tracked by git)

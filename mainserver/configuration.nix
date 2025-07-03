@@ -6,6 +6,7 @@
     ./containers.nix
     ./unbound.nix
     ./monitoring.nix
+    ./backup.nix
     ../generic/impermanence.nix
     ../generic/proxyConfig.nix
   ];
