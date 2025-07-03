@@ -509,6 +509,10 @@ in
         autoStart = true;
         ephemeral = true;
 
+        #even changing age key for one machine will trigger a restart of containers.
+        #we want to restart them explicitly only when needed (or on reboot)!
+        restartIfChanged = false;
+
         networkNamespace =
           if (v.nebulaGateway != null) then "/run/netns/neb-${shortenedN}" else "/run/netns/${shortenedN}";
         bindMounts =
