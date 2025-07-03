@@ -98,9 +98,9 @@ sopsConfig() {
 	scp -o "StrictHostKeyChecking no" "root@$2:$agename" "/tmp/$agename"
 
 	#check if sops config is already present for this host
-	if grep -q "&$1" "./.sops.yaml"; then
+	if grep -q "&$1 age" "./.sops.yaml"; then
 		#it is: just update the age key
-		sed -i "/&$1/c\\  - &$1 age$(cat /tmp/$agename | sed ':a;N;$!ba;s/\n//g')" "./.sops.yaml"
+		sed -i "/&$1 age/c\\  - &$1 age$(cat /tmp/$agename | sed ':a;N;$!ba;s/\n//g')" "./.sops.yaml"
 	else
 		#it is not: add it and its config
 		sed -i "/&yubikey/a \ \ - &$1 age$(cat /tmp/$agename | sed ':a;N;$!ba;s/\n//g')" "./.sops.yaml"                                                                            #add age key to keys
