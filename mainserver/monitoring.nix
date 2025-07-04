@@ -10,6 +10,10 @@ let
   hostNebulaIP = config.myModules.nebula."serverNetwork".ipMap."${hostName}";
 in
 {
+  sops.secrets."restic/metricsPassword" = {
+    sopsFile = ../secrets/${hostName}/restic.yaml;
+    owner = "prometheus";
+  };
   services.prometheus = {
     enable = true;
     listenAddress = "localhost";
@@ -59,6 +63,20 @@ in
             targets = [
               "localhost:2019"
               "${config.myModules.nebula."serverNetwork".ipMap.IonosVPS}:2019"
+            ];
+          }
+        ];
+      }
+      {
+        job_name = "rest_server";
+        basic_auth = {
+          username = "metrics";
+          password_file = config.sops.secrets."restic/metricsPassword".path;
+        };
+        static_configs = [
+          {
+            targets = [
+              "192.168.3.30:8000"
             ];
           }
         ];
@@ -191,7 +209,7 @@ in
           src = src;
           phases = [ "installPhase" ];
           installPhase = ''
-            ${pkgs.gnused}/bin/sed -e 's/\''${DS_PROMETHEUS-INDUMIA}/PBFA97CFB590B2093/g ; s/\''${DS_PROMETHEUS}/PBFA97CFB590B2093/g ; s/\''${DS_LOKI-INDUMIA}/P8E80F9AEF21F6940/g ; s/\''${DS_LOKI}/P8E80F9AEF21F6940/g' $src > $out
+            ${pkgs.gnused}/bin/sed -e 's/\''${DS_PROMETHEUS-INDUMIA}/PBFA97CFB590B2093/g ; s/\''${DS_PROMETHEUS-INFRA}/PBFA97CFB590B2093/g ;s/\''${DS_PROMETHEUS}/PBFA97CFB590B2093/g ; s/\''${DS_LOKI-INDUMIA}/P8E80F9AEF21F6940/g ; s/\''${DS_LOKI}/P8E80F9AEF21F6940/g' $src | ${pkgs.gnused}/bin/sed -E 's/rate\(([^][]*)\[[^][]*\]\)/rate(\1[$__rate_interval])/g' > $out
           '';
         };
       grafana-dashboards = {
@@ -213,6 +231,15 @@ in
             url = "https://grafana.com/api/dashboards/20802/revisions/1/download";
             hash = "sha256-vSt63PakGp5NzKFjbU5Yh0nDbKET5QRWp5nusM76/O4=";
           }
+        );
+        "grafana-dashboards/rest_server.json" = dashboard-builder (
+          pkgs.fetchFromGitHub {
+            owner = "restic";
+            repo = "rest-server";
+            rev = "v0.14.0";
+            sha256 = "sha256-cWnZ91mrllhTlCLb+BoJMXqUON2wOWCqVShg+NKU7gs=";
+          }
+          + "/examples/compose-with-grafana/dashboards/rest-server.json"
         );
       };
     in
