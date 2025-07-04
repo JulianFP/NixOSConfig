@@ -1,4 +1,4 @@
-{ config, inputs, ... }:
+{ inputs, ... }:
 
 let
   pkgs-unstable = (
@@ -24,7 +24,7 @@ in
 
   services.home-assistant = {
     enable = true;
-    configDir = "/persist/backMeUp";
+    configDir = "/persist/backMeUp/hass";
 
     #use PostgreSQL instead of SQLite for better performance
     extraPackages = ps: with ps; [ psycopg2 ];
@@ -58,22 +58,22 @@ in
     };
   };
 
-  services.postgresql = {
-    enable = true;
-    dataDir = "/persist/postgresql/${config.services.postgresql.package.psqlSchema}";
-    ensureDatabases = [ "hass" ];
-    ensureUsers = [
-      {
-        name = "hass";
-        ensureDBOwnership = true;
-      }
-    ];
-  };
-  #impermanence stuff for postgres
-  systemd.tmpfiles.settings."10-postgresql"."/persist/postgresql/${config.services.postgresql.package.psqlSchema}"."d" =
-    {
-      user = "postgres";
-      group = "postgres";
-      mode = "0700";
+  services = {
+    postgresql = {
+      enable = true;
+      ensureDatabases = [ "hass" ];
+      ensureUsers = [
+        {
+          name = "hass";
+          ensureDBOwnership = true;
+        }
+      ];
     };
+    postgresqlBackup = {
+      enable = true;
+      startAt = "*-*-* 02:00:00";
+      compression = "zstd";
+      location = "/persist/backMeUp/postgresqlBackup";
+    };
+  };
 }

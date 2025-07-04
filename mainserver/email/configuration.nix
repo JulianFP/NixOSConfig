@@ -100,12 +100,12 @@
       $config['smtp_pass'] = '%p';
     '';
   };
-  systemd.tmpfiles.settings."10-postgresql"."/persist/backMeUp/roundcube/postgres"."d" = {
-    user = "postgres";
-    group = "postgres";
-    mode = "0700";
+  services.postgresqlBackup = {
+    enable = true;
+    startAt = "*-*-* 02:00:00";
+    compression = "zstd";
+    location = "/persist/backMeUp/roundcube/postgresqlBackup";
   };
-  services.postgresql.dataDir = "/persist/backMeUp/roundcube/postgres";
 
   #access to rspamd web interface
   sops.secrets."rspamd_ui" = {

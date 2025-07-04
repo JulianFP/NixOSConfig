@@ -113,12 +113,13 @@ in
     extraAppsEnable = true;
   };
 
-  #also change dir of mysql and ensure it exists
-  services.mysql.dataDir = "/persist/backMeUp/mysql";
-  systemd.tmpfiles.settings."10-nextcloud"."/persist/backMeUp/mysql"."d" = {
-    user = "mysql";
-    group = "mysql";
-    mode = "0700";
+  services.mysqlBackup = {
+    enable = true;
+    databases = [ "nextcloud" ];
+    singleTransaction = true;
+    calendar = "02:00:00";
+    compressionAlg = "zstd";
+    location = "/persist/backMeUp/mysqlBackup";
   };
 
   #scrape Nextcloud logs with promtail

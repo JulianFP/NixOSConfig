@@ -17,6 +17,10 @@
             hostPath = "/persist/backMeUp/Nextcloud";
             isReadOnly = false;
           };
+          "/var/lib/mysql" = {
+            hostPath = "/persist/Nextcloud/mysql";
+            isReadOnly = false;
+          };
           "/mnt/cloudData/nextcloud" = {
             hostPath = "/newData/Nextcloud";
             isReadOnly = false;
@@ -30,11 +34,15 @@
         enableSops = true;
         additionalBindMounts = {
           "/persist/backMeUp" = {
-            hostPath = "/persist/Nextcloud-Testing";
+            hostPath = "/persist/Nextcloud-Testing/backMeUpData";
+            isReadOnly = false;
+          };
+          "/var/lib/mysql" = {
+            hostPath = "/persist/Nextcloud-Testing/mysql";
             isReadOnly = false;
           };
           "/mnt/cloudData/nextcloud" = {
-            hostPath = "/persist/Nextcloud-Testing_cloudData";
+            hostPath = "/persist/Nextcloud-Testing/cloudData";
             isReadOnly = false;
           };
         };
@@ -89,6 +97,10 @@
         additionalBindMounts = {
           "/dev_host" = {
             hostPath = "/dev";
+            isReadOnly = false;
+          };
+          "/var/lib/postgresql" = {
+            hostPath = "/persist/HomeAssistant/postgresql";
             isReadOnly = false;
           };
           "/persist/backMeUp" = {
@@ -188,6 +200,10 @@
           };
           "/var/lib/rspamd" = {
             hostPath = "/persist/Email/rspamd";
+            isReadOnly = false;
+          };
+          "/var/lib/postgresql" = {
+            hostPath = "/persist/Email/roundcube";
             isReadOnly = false;
           };
           "/persist/backMeUp" = {
