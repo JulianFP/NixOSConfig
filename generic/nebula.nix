@@ -8,6 +8,7 @@
   myModules.nebula."serverNetwork" = {
     serverFirewallRules = config.services.openssh.enable;
     ipMap = {
+      Unifi = "48.42.1.139";
       IonosVPS2 = "48.42.0.1";
       Email = "48.42.1.138";
       Kanidm = "48.42.1.137";

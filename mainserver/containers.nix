@@ -213,6 +213,32 @@
         };
         config = ./email/configuration.nix;
       };
+      "Unifi" = {
+        hostID = 139;
+        permittedUnfreePackages = [
+          "unifi-controller"
+          "mongodb"
+        ];
+        openTCPPorts = [
+          8080 # Port for UAP to inform controller.
+          8443 # Web UI
+          8880 # Port for HTTP portal redirect, if guest portal is enabled.
+          8843 # Port for HTTPS portal redirect, ditto.
+          6789 # Port for UniFi mobile speed test.
+        ];
+        openUDPPorts = [
+          3478 # UDP port used for STUN.
+          10001 # UDP port used for device discovery.
+        ];
+        forwardPorts = true;
+        additionalBindMounts = {
+          "/var/lib/unifi" = {
+            hostPath = "/persist/backMeUp/Unifi";
+            isReadOnly = false;
+          };
+        };
+        config = ./unifi-controller/configuration.nix;
+      };
     };
   };
 }
