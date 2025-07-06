@@ -35,6 +35,10 @@ let
 in
 {
   services = {
+    #systemd-resolved's stub listener clashes with unbound on localhost otherwise
+    resolved.extraConfig = ''
+      DNSStubListener=no
+    '';
     unbound = {
       enable = true;
       stateDir = "/persist/unbound";
@@ -45,9 +49,15 @@ in
             threads = 16; # power of 2 for slabs
           in
           {
-            interface = [ "192.168.3.10" ];
+            interface = [
+              "0.0.0.0"
+              "2a02:247a:23e:d300:0:4000:0:1"
+            ];
 
-            access-control = [ "192.168.0.0/16 allow" ];
+            access-control = [
+              "0.0.0.0/0 allow"
+              "::/0 allow"
+            ];
 
             #security settings
             harden-glue = true;
@@ -94,6 +104,8 @@ in
             forward-addr = [
               "1.1.1.1@853#cloudflare-dns.com"
               "1.0.0.1@853#cloudflare-dns.com"
+              "2606:4700:4700::1111@853#cloudflare-dns.com"
+              "2606:4700:4700::1001@853#cloudflare-dns.com"
             ];
             forward-tls-upstream = true;
           }

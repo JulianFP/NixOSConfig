@@ -64,9 +64,13 @@ in
       enable = lib.mkEnableOption (
         "Whether to enable a local DNS server for this machine that serves DNS entries of configured domains"
       );
-      localForwardIP = lib.mkOption {
+      localForwardIPv4 = lib.mkOption {
         type = lib.types.singleLineStr;
         description = "IPv4 address to set A DNS entry of configured domains to";
+      };
+      localForwardIPv6 = lib.mkOption {
+        type = lib.types.singleLineStr;
+        description = "IPv6 address to set A DNS entry of configured domains to";
       };
     };
   };
@@ -272,8 +276,10 @@ in
         );
         local-data = builtins.concatLists (
           lib.mapAttrsToList (domain: _: [
-            "\"${domain} 3600 IN A ${cfg.localDNS.localForwardIP}\""
-            "\"www.${domain} 3600 IN A ${cfg.localDNS.localForwardIP}\""
+            "\"${domain} 3600 IN A ${cfg.localDNS.localForwardIPv4}\""
+            "\"www.${domain} 3600 IN A ${cfg.localDNS.localForwardIPv4}\""
+            "\"${domain} 3600 IN AAAA ${cfg.localDNS.localForwardIPv6}\""
+            "\"www.${domain} 3600 IN AAAA ${cfg.localDNS.localForwardIPv6}\""
           ]) cfg.proxies
         );
       };

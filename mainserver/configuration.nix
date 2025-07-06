@@ -21,7 +21,6 @@
   #networking config
   networking = {
     useDHCP = false;
-    enableIPv6 = false;
     #to access Kanidm using it's domain over local container ip
     hosts."10.42.42.137" = [ "account.partanengroup.de" ];
   };
@@ -30,9 +29,19 @@
     networks."10-serverLAN" = {
       name = "enp0*";
       DHCP = "no";
-      networkConfig.IPv6AcceptRA = false;
+      networkConfig.IPv6AcceptRA = true;
+      addresses = [
+        {
+          Address = "192.168.3.10/24";
+        }
+        {
+          #this is an Ionos IP that I own and have a static route in place so that it points to this server
+          Address = "2a02:247a:23e:d300:0:4000:0:1/128";
+          PreferredLifetime = 0; # dont use for outgoing connections
+        }
+      ];
       address = [
-        "192.168.3.10/24"
+
       ];
       gateway = [
         "192.168.3.1"
@@ -50,7 +59,8 @@
     enable = true;
     localDNS = {
       enable = true;
-      localForwardIP = "192.168.3.10";
+      localForwardIPv4 = "192.168.3.10";
+      localForwardIPv6 = "2a02:247a:23e:d300:0:4000:0:1";
     };
   };
 
@@ -101,7 +111,17 @@
   networking.hostId = "39c10fc6"; # see option description
 
   #set nebula preferred_ranges
-  services.nebula.networks."serverNetwork".settings.preferred_ranges = [ "192.168.3.0/24" ];
+  services.nebula.networks."serverNetwork" = {
+    settings.preferred_ranges = [ "192.168.3.0/24" ];
+    firewall.inbound = [
+      {
+        #UI of TP-Link switches
+        port = 80;
+        proto = "tcp";
+        group = "admin";
+      }
+    ];
+  };
 
   #automatic garbage collect and nix store optimisation is done in server.nix
   #automatic upgrade. Pulls newest commits from github daily. Relies on my updating the flake inputs (I want that to be manual and tracked by git)

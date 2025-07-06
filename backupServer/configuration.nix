@@ -10,14 +10,13 @@
   #networking config
   networking = {
     useDHCP = false;
-    enableIPv6 = false;
   };
   systemd.network = {
     enable = true;
     networks."10-serverLAN" = {
       name = "eno1";
       DHCP = "no";
-      networkConfig.IPv6AcceptRA = false;
+      networkConfig.IPv6AcceptRA = true;
       address = [
         "192.168.3.30/24"
       ];
