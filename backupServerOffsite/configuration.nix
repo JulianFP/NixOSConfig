@@ -61,22 +61,17 @@
     };
   };
 
-  #set nebula preferred_ranges
   services.nebula.networks."serverNetwork" = {
+    settings.preferred_ranges = [ "192.168.10.0/24" ];
     firewall.inbound = [
       # for access to extended network, i.e. router web interface
       {
-        port = 80;
-        proto = "tcp";
-        group = "admin";
-      }
-      {
-        port = 443;
-        proto = "tcp";
+        #network forwarding
+        port = "any";
+        proto = "any";
         group = "admin";
       }
     ];
-    settings.preferred_ranges = [ "192.168.10.0/24" ];
   };
 
   #automatic garbage collect and nix store optimisation is done in server.nix

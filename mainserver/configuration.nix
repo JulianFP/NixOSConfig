@@ -117,20 +117,13 @@
   boot.zfs.extraPools = [ "newData" ];
   networking.hostId = "39c10fc6"; # see option description
 
-  #set nebula preferred_ranges
   services.nebula.networks."serverNetwork" = {
     settings.preferred_ranges = [ "192.168.3.0/24" ];
     firewall.inbound = [
       {
-        #UI of TP-Link switches
-        port = 80;
-        proto = "tcp";
-        group = "admin";
-      }
-      {
-        #PiKVM
-        port = 443;
-        proto = "tcp";
+        #network forwarding
+        port = "any";
+        proto = "any";
         group = "admin";
       }
     ];
