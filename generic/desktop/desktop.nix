@@ -187,7 +187,6 @@
 
   users = {
     users.root.hashedPasswordFile = config.sops.secrets."users/root".path;
-    # Define julian account. Don't forget to set a password with ‘passwd’.
     users.julian = {
       isNormalUser = true;
       hashedPasswordFile = config.sops.secrets."users/julian".path;

@@ -1,4 +1,4 @@
-{ ... }:
+{ config, ... }:
 
 {
   imports = [
@@ -6,6 +6,13 @@
     ../generic/impermanence.nix
     ./restic.nix
   ];
+
+  # set a password for a root user as a fallback if there is no networking
+  sops.secrets."users/root" = {
+    neededForUsers = true;
+    sopsFile = ../secrets/backupServer/users.yaml;
+  };
+  users.users.root.hashedPasswordFile = config.sops.secrets."users/root".path;
 
   #networking config
   networking = {

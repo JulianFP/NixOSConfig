@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
 {
   imports = [
@@ -10,6 +10,13 @@
     ../generic/impermanence.nix
     ../generic/proxyConfig.nix
   ];
+
+  # set a password for a root user as a fallback if there is no networking
+  sops.secrets."users/root" = {
+    neededForUsers = true;
+    sopsFile = ../secrets/mainserver/users.yaml;
+  };
+  users.users.root.hashedPasswordFile = config.sops.secrets."users/root".path;
 
   programs.tmux = {
     enable = true;
@@ -117,6 +124,12 @@
       {
         #UI of TP-Link switches
         port = 80;
+        proto = "tcp";
+        group = "admin";
+      }
+      {
+        #PiKVM
+        port = 443;
         proto = "tcp";
         group = "admin";
       }
