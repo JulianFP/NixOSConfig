@@ -74,6 +74,14 @@ in
           Value = true;
           Status = "locked";
         };
+        "browser.urlbar.trimURLs" = {
+          Value = false;
+          Status = "locked";
+        };
+        "browser.urlbar.showSearchTerms.enabled" = {
+          Value = false;
+          Status = "locked";
+        };
       };
     };
 
