@@ -4,6 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ../generic/impermanence.nix
+    ../generic/restic.nix
     ./tang.nix
   ];
 
@@ -71,6 +72,16 @@
         proto = "any";
         group = "admin";
       }
+    ];
+  };
+
+  #auto-mount backup HDD
+  fileSystems."/mnt/backupHDD" = {
+    device = "/dev/disk/by-label/backupHDD2";
+    fsType = "btrfs";
+    options = [
+      "nofail"
+      "subvol=restic"
     ];
   };
 

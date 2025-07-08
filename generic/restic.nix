@@ -16,4 +16,11 @@
   };
 
   networking.firewall.allowedTCPPorts = [ 8000 ];
+  services.nebula.networks."serverNetwork".firewall.inbound = [
+    {
+      port = 8000;
+      proto = "tcp";
+      group = "server";
+    }
+  ];
 }

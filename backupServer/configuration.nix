@@ -4,7 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ../generic/impermanence.nix
-    ./restic.nix
+    ../generic/restic.nix
   ];
 
   # set a password for a root user as a fallback if there is no networking
