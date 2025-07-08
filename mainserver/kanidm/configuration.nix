@@ -121,7 +121,7 @@
           ];
         };
         "marvin" = {
-          displayName = "Marvin";
+          displayName = "Marvin Partanen"; # for compatibility with old Nextcloud username until custom attributes are a thing
           legalName = "Marvin Partanen";
           mailAddresses = [ "marvin@partanengroup.de" ];
           groups = [
@@ -163,7 +163,7 @@
           ];
         };
         "fabian" = {
-          displayName = "Fabian";
+          displayName = "fpartanen@t-online.de"; # for compatibility with old Nextcloud username until custom attributes are a thing
           legalName = "Fabian Partanen";
           mailAddresses = [ "fpartanen@t-online.de" ];
           groups = [

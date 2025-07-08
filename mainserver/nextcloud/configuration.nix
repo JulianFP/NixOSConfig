@@ -115,16 +115,16 @@ in
         oidc_login_button_text = "Login with PartanenGroup Account";
         oidc_login_hide_password_form = true;
         oidc_login_attributes = {
-          "id" = "sub";
+          "id" = "name";
           "name" = "name";
           "mail" = "email";
           "quota" = "nextcloud_quota";
           "groups" = "nextcloud_groups";
         };
         oidc_login_scope = "openid profile email";
-        oidc_login_disable_registration = false;
-        oidc_create_groups = true;
-        oidc_login_webdav_enabled = true;
+        oidc_login_disable_registration = true;
+        oidc_create_groups = false;
+        oidc_login_webdav_enabled = false;
         oidc_login_password_authentication = true; # for WebDav clients like DAVx5
         oidc_login_code_challenge_method = "S256";
       };
