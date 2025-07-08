@@ -25,6 +25,14 @@
     sopsFile = ../../secrets/${hostName}/kanidm.yaml;
     owner = "kanidm";
   };
+  sops.secrets."test-nextcloud_service" = {
+    sopsFile = ../../secrets/${hostName}/kanidm.yaml;
+    owner = "kanidm";
+  };
+  sops.secrets."nextcloud_service" = {
+    sopsFile = ../../secrets/${hostName}/kanidm.yaml;
+    owner = "kanidm";
+  };
   services.kanidm = {
     package = pkgs.kanidmWithSecretProvisioning;
     enableServer = true;
@@ -48,6 +56,54 @@
 
       groups = {
         "mail-server" = { };
+        "jellyfin" = { };
+        "jellyfin-admin" = { };
+        "test-nextcloud" = { };
+        "nextcloud" = { };
+        "family" = { };
+      };
+
+      systems.oauth2 = {
+        "test-nextcloud_service" = {
+          displayName = "Nextcloud test instance";
+          originLanding = "https://test.partanengroup.de/apps/oidc_login/oidc";
+          originUrl = "https://test.partanengroup.de/apps/oidc_login/oidc";
+          basicSecretFile = config.sops.secrets."test-nextcloud_service".path;
+          #currently only RS256 is supported, see https://github.com/jumbojett/OpenID-Connect-PHP/issues/287
+          enableLegacyCrypto = true;
+          scopeMaps."test-nextcloud" = [
+            "openid"
+            "profile"
+            "email"
+          ];
+          claimMaps = {
+            "nextcloud_groups".valuesByGroup."family" = [ "Familie" ];
+            "nextcloud_quota" = {
+              valuesByGroup."family" = [ "2199023255552" ]; # 2TiB
+              joinType = "ssv";
+            };
+          };
+        };
+        "nextcloud_service" = {
+          displayName = "Nextcloud main instance";
+          originLanding = "https://partanengroup.de/apps/oidc_login/oidc";
+          originUrl = "https://partanengroup.de/apps/oidc_login/oidc";
+          basicSecretFile = config.sops.secrets."nextcloud_service".path;
+          #currently only RS256 is supported, see https://github.com/jumbojett/OpenID-Connect-PHP/issues/287
+          enableLegacyCrypto = true;
+          scopeMaps."nextcloud" = [
+            "openid"
+            "profile"
+            "email"
+          ];
+          claimMaps = {
+            "nextcloud_groups".valuesByGroup."family" = [ "Familie" ];
+            "nextcloud_quota" = {
+              valuesByGroup."family" = [ "2199023255552" ];
+              joinType = "ssv";
+            };
+          };
+        };
       };
 
       persons = {
@@ -56,7 +112,12 @@
           legalName = "Julian Partanen";
           mailAddresses = [ "julian@partanengroup.de" ];
           groups = [
+            "family"
+            "test-nextcloud"
+            "nextcloud"
             "mail-server"
+            "jellyfin"
+            "jellyfin-admin"
           ];
         };
         "marvin" = {
@@ -64,7 +125,10 @@
           legalName = "Marvin Partanen";
           mailAddresses = [ "marvin@partanengroup.de" ];
           groups = [
+            "family"
+            "nextcloud"
             "mail-server"
+            "jellyfin"
           ];
         };
         "robin" = {
@@ -72,7 +136,40 @@
           legalName = "Robin Partanen";
           mailAddresses = [ "robin@partanengroup.de" ];
           groups = [
+            "family"
+            "nextcloud"
             "mail-server"
+            "jellyfin"
+          ];
+        };
+        "finn" = {
+          displayName = "Finn";
+          legalName = "Finn Partanen";
+          mailAddresses = [ "fnpartanen@t-online.de" ];
+          groups = [
+            "family"
+            "nextcloud"
+            "jellyfin"
+          ];
+        };
+        "maria" = {
+          displayName = "Maria";
+          legalName = "Maria Partanen";
+          mailAddresses = [ "partanen@t-online.de" ];
+          groups = [
+            "family"
+            "nextcloud"
+            "jellyfin"
+          ];
+        };
+        "fabian" = {
+          displayName = "Fabian";
+          legalName = "Fabian Partanen";
+          mailAddresses = [ "fpartanen@t-online.de" ];
+          groups = [
+            "family"
+            "nextcloud"
+            "jellyfin"
           ];
         };
       };

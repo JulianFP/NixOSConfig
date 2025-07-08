@@ -14,6 +14,11 @@ in
     })
   ];
 
+  networking.hosts = {
+    #to access Kanidm using it's domain over local container ip
+    "10.42.42.137" = [ "account.partanengroup.de" ];
+  };
+
   disabledModules = [
     "services/home-automation/home-assistant.nix"
   ];

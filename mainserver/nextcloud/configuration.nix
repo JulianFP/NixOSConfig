@@ -10,6 +10,11 @@ let
   cfg = config.services.nextcloud;
 in
 {
+  networking.hosts = {
+    #to access Kanidm using it's domain over local container ip
+    "10.42.42.137" = [ "account.partanengroup.de" ];
+  };
+
   #setup sops secrets for nextcloud
   sops.secrets."nextcloud/adminPass" = {
     mode = "0440";
@@ -31,7 +36,6 @@ in
     hostName = if hostName == "Nextcloud" then "partanengroup.de" else "test.partanengroup.de";
     package = pkgs.nextcloud30;
     secretFile = config.sops.secrets."nextcloud/secrets.json".path;
-    settings.default_phone_region = "DE";
     config.adminuser = "admin";
     config.adminpassFile = config.sops.secrets."nextcloud/adminPass".path;
 
@@ -42,7 +46,6 @@ in
     #setup caching
     caching.redis = true;
     configureRedis = true;
-    settings.filelocking.enabled = true;
 
     #setup php
     maxUploadSize = "32G";
@@ -66,38 +69,70 @@ in
       "pm.max_spare_servers" = "32";
     };
 
-    settings = {
-      #setup reverse proxy config
-      trusted_proxies = [
-        "10.42.42.1"
-        "48.42.0.5"
-      ];
-      overwriteprotocol = "https";
-      overwritehost = cfg.hostName;
-      overwrite.cli.url = "${cfg.settings.overwriteprotocol}://${cfg.settings.overwritehost}";
+    settings =
+      let
+        oidc_client_id = if hostName == "Nextcloud" then "nextcloud_service" else "test-nextcloud_service";
+      in
+      {
+        #setup reverse proxy config
+        trusted_proxies = [
+          "10.42.42.1"
+          "48.42.0.5"
+        ];
+        overwriteprotocol = "https";
+        overwritehost = cfg.hostName;
+        overwrite.cli.url = "${cfg.settings.overwriteprotocol}://${cfg.settings.overwritehost}";
 
-      #set timeframe in which heavy operations should be done. This value as in hour of the day (1 -> 01:00) + 4 hour time window
-      maintenance_window_start = 1;
+        #set timeframe in which heavy operations should be done. This value as in hour of the day (1 -> 01:00) + 4 hour time window
+        maintenance_window_start = 1;
 
-      #mail delivery
-      mail_smtpmode = "smtp";
-      mail_sendmailmode = "smtp";
-      mail_from_address = "admin";
-      mail_smtpauth = 1;
-      mail_smtphost = "mail.partanengroup.de";
-      mail_smtpport = "587";
-      mail_smtpname = "admin@partanengroup.de";
-      mail_smtpsecure = "tls";
-      mail_domain = "partanengroup.de";
-      mail_smtpauthtype = "PLAIN";
+        #some generic stuff
+        default_phone_region = "DE";
+        filelocking.enabled = true;
 
-      #log as file for better compatibility with Nextcloud logreader and promtail
-      log_type = "file";
-    };
+        #mail delivery
+        mail_smtpmode = "smtp";
+        mail_sendmailmode = "smtp";
+        mail_from_address = "admin";
+        mail_smtpauth = 1;
+        mail_smtphost = "mail.partanengroup.de";
+        mail_smtpport = "587";
+        mail_smtpname = "admin@partanengroup.de";
+        mail_smtpsecure = "tls";
+        mail_domain = "partanengroup.de";
+        mail_smtpauthtype = "PLAIN";
+
+        #log as file for better compatibility with Nextcloud logreader and promtail
+        log_type = "file";
+
+        #OIDC related
+        allow_user_to_change_display_name = false;
+        lost_password_link = "disabled";
+        oidc_login_client_id = oidc_client_id;
+        oidc_login_provider_url = "https://account.partanengroup.de/oauth2/openid/${oidc_client_id}";
+        oidc_login_auto_redirect = false;
+        oidc_login_default_quota = "1000000000";
+        oidc_login_button_text = "Login with PartanenGroup Account";
+        oidc_login_hide_password_form = true;
+        oidc_login_attributes = {
+          "id" = "sub";
+          "name" = "name";
+          "mail" = "email";
+          "quota" = "nextcloud_quota";
+          "groups" = "nextcloud_groups";
+        };
+        oidc_login_scope = "openid profile email";
+        oidc_login_disable_registration = false;
+        oidc_create_groups = true;
+        oidc_login_webdav_enabled = true;
+        oidc_login_password_authentication = true; # for WebDav clients like DAVx5
+        oidc_login_code_challenge_method = "S256";
+      };
 
     #install nextcloud apps
     extraApps = {
       inherit (cfg.package.packages.apps)
+        oidc_login
         bookmarks
         calendar
         contacts
