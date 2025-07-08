@@ -34,7 +34,7 @@ in
     home = "/persist/backMeUp/nextcloud";
     datadir = "/mnt/cloudData/nextcloud";
     hostName = if hostName == "Nextcloud" then "partanengroup.de" else "test.partanengroup.de";
-    package = pkgs.nextcloud30;
+    package = pkgs.nextcloud31;
     secretFile = config.sops.secrets."nextcloud/secrets.json".path;
     config.adminuser = "admin";
     config.adminpassFile = config.sops.secrets."nextcloud/adminPass".path;
