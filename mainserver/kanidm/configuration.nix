@@ -26,11 +26,11 @@
     owner = "kanidm";
   };
   sops.secrets."test-nextcloud_service" = {
-    sopsFile = ../../secrets/${hostName}/kanidm.yaml;
+    sopsFile = ../../secrets/${hostName}/Nextcloud-Testing_client-secret.yaml;
     owner = "kanidm";
   };
   sops.secrets."nextcloud_service" = {
-    sopsFile = ../../secrets/${hostName}/kanidm.yaml;
+    sopsFile = ../../secrets/${hostName}/Nextcloud_client-secret.yaml;
     owner = "kanidm";
   };
   services.kanidm = {
@@ -66,19 +66,17 @@
       systems.oauth2 = {
         "test-nextcloud_service" = {
           displayName = "Nextcloud test instance";
-          originLanding = "https://test.partanengroup.de/apps/oidc_login/oidc";
-          originUrl = "https://test.partanengroup.de/apps/oidc_login/oidc";
+          originLanding = "https://test.partanengroup.de/apps/user_oidc/login/1";
+          originUrl = "https://test.partanengroup.de/apps/user_oidc/code";
           basicSecretFile = config.sops.secrets."test-nextcloud_service".path;
-          #currently only RS256 is supported, see https://github.com/jumbojett/OpenID-Connect-PHP/issues/287
-          enableLegacyCrypto = true;
           scopeMaps."test-nextcloud" = [
             "openid"
             "profile"
             "email"
           ];
           claimMaps = {
-            "nextcloud_groups".valuesByGroup."family" = [ "Familie" ];
-            "nextcloud_quota" = {
+            "groups".valuesByGroup."family" = [ "Familie" ];
+            "quota" = {
               valuesByGroup."family" = [ "2199023255552" ]; # 2TiB
               joinType = "ssv";
             };
@@ -86,20 +84,18 @@
         };
         "nextcloud_service" = {
           displayName = "Nextcloud main instance";
-          originLanding = "https://partanengroup.de/apps/oidc_login/oidc";
-          originUrl = "https://partanengroup.de/apps/oidc_login/oidc";
+          originLanding = "https://partanengroup.de/apps/user_oidc/login/1";
+          originUrl = "https://partanengroup.de/apps/user_oidc/code";
           basicSecretFile = config.sops.secrets."nextcloud_service".path;
-          #currently only RS256 is supported, see https://github.com/jumbojett/OpenID-Connect-PHP/issues/287
-          enableLegacyCrypto = true;
           scopeMaps."nextcloud" = [
             "openid"
             "profile"
             "email"
           ];
           claimMaps = {
-            "nextcloud_groups".valuesByGroup."family" = [ "Familie" ];
-            "nextcloud_quota" = {
-              valuesByGroup."family" = [ "2199023255552" ];
+            "groups".valuesByGroup."family" = [ "Familie" ];
+            "quota" = {
+              valuesByGroup."family" = [ "2199023255552" ]; # 2TiB
               joinType = "ssv";
             };
           };

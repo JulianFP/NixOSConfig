@@ -69,6 +69,20 @@ creation_rules:
       - *yubikey
       age:
       - *ValheimMarvin
+  - path_regex: ^secrets/Kanidm/Nextcloud-Testing_client-secret.yaml$
+    key_groups:
+    - pgp:
+      - *yubikey
+      age:
+      - *Kanidm
+      - *Nextcloud-Testing
+  - path_regex: ^secrets/Kanidm/Nextcloud_client-secret.yaml$
+    key_groups:
+    - pgp:
+      - *yubikey
+      age:
+      - *Kanidm
+      - *Nextcloud
   - path_regex: ^secrets/Kanidm/.*$
     key_groups:
     - pgp:

@@ -8,6 +8,7 @@
 
 let
   cfg = config.services.nextcloud;
+  oidc_client_id = if hostName == "Nextcloud" then "nextcloud_service" else "test-nextcloud_service";
 in
 {
   networking.hosts = {
@@ -26,6 +27,7 @@ in
     owner = "nextcloud";
     sopsFile = ../../secrets/${hostName}/nextcloud.yaml;
   };
+  sops.secrets."${oidc_client_id}".sopsFile = ../../secrets/Kanidm/${hostName}_client-secret.yaml;
 
   #nextcloud setup
   services.nextcloud = {
@@ -69,70 +71,52 @@ in
       "pm.max_spare_servers" = "32";
     };
 
-    settings =
-      let
-        oidc_client_id = if hostName == "Nextcloud" then "nextcloud_service" else "test-nextcloud_service";
-      in
-      {
-        #setup reverse proxy config
-        trusted_proxies = [
-          "10.42.42.1"
-          "48.42.0.5"
-        ];
-        overwriteprotocol = "https";
-        overwritehost = cfg.hostName;
-        overwrite.cli.url = "${cfg.settings.overwriteprotocol}://${cfg.settings.overwritehost}";
+    settings = {
+      #setup reverse proxy config
+      trusted_proxies = [
+        "10.42.42.1"
+        "48.42.0.5"
+      ];
+      overwriteprotocol = "https";
+      overwritehost = cfg.hostName;
+      overwrite.cli.url = "${cfg.settings.overwriteprotocol}://${cfg.settings.overwritehost}";
 
-        #set timeframe in which heavy operations should be done. This value as in hour of the day (1 -> 01:00) + 4 hour time window
-        maintenance_window_start = 1;
+      #set timeframe in which heavy operations should be done. This value as in hour of the day (1 -> 01:00) + 4 hour time window
+      maintenance_window_start = 1;
 
-        #some generic stuff
-        default_phone_region = "DE";
-        filelocking.enabled = true;
+      #some generic stuff
+      default_phone_region = "DE";
+      filelocking.enabled = true;
 
-        #mail delivery
-        mail_smtpmode = "smtp";
-        mail_sendmailmode = "smtp";
-        mail_from_address = "admin";
-        mail_smtpauth = 1;
-        mail_smtphost = "mail.partanengroup.de";
-        mail_smtpport = "587";
-        mail_smtpname = "admin@partanengroup.de";
-        mail_smtpsecure = "tls";
-        mail_domain = "partanengroup.de";
-        mail_smtpauthtype = "PLAIN";
+      #mail delivery
+      mail_smtpmode = "smtp";
+      mail_sendmailmode = "smtp";
+      mail_from_address = "admin";
+      mail_smtpauth = 1;
+      mail_smtphost = "mail.partanengroup.de";
+      mail_smtpport = "587";
+      mail_smtpname = "admin@partanengroup.de";
+      mail_smtpsecure = "tls";
+      mail_domain = "partanengroup.de";
+      mail_smtpauthtype = "PLAIN";
 
-        #log as file for better compatibility with Nextcloud logreader and promtail
-        log_type = "file";
+      #log as file for better compatibility with Nextcloud logreader and promtail
+      log_type = "file";
 
-        #OIDC related
-        allow_user_to_change_display_name = false;
-        lost_password_link = "disabled";
-        oidc_login_client_id = oidc_client_id;
-        oidc_login_provider_url = "https://account.partanengroup.de/oauth2/openid/${oidc_client_id}";
-        oidc_login_auto_redirect = false;
-        oidc_login_default_quota = "1000000000";
-        oidc_login_button_text = "Login with PartanenGroup Account";
-        oidc_login_hide_password_form = true;
-        oidc_login_attributes = {
-          "id" = "name";
-          "name" = "name";
-          "mail" = "email";
-          "quota" = "nextcloud_quota";
-          "groups" = "nextcloud_groups";
-        };
-        oidc_login_scope = "openid profile email";
-        oidc_login_disable_registration = true;
-        oidc_create_groups = false;
-        oidc_login_webdav_enabled = false;
-        oidc_login_password_authentication = true; # for WebDav clients like DAVx5
-        oidc_login_code_challenge_method = "S256";
+      #OIDC related
+      allow_local_remote_servers = true;
+      allow_user_to_change_display_name = false;
+      lost_password_link = "disabled";
+      user_oidc = {
+        login_label = "Login with PartanenGroup Account";
+        single_logout = false; # not supported by Kanidm yet, see https://github.com/kanidm/kanidm/issues/1997
       };
+    };
 
     #install nextcloud apps
     extraApps = {
       inherit (cfg.package.packages.apps)
-        oidc_login
+        user_oidc
         bookmarks
         calendar
         contacts
@@ -146,6 +130,29 @@ in
         ;
     };
     extraAppsEnable = true;
+  };
+
+  #OIDC provider automatic provisioning
+  sops.templates."nextcloud-oidc-setup-script" = {
+    mode = "0500";
+    content = ''
+      #!/bin/sh
+      nextcloud-occ user_oidc:provider "PartanenGroup Account" --clientid="${oidc_client_id}" --clientsecret="${
+        config.sops.placeholder."${oidc_client_id}"
+      }" --discoveryuri="https://account.partanengroup.de/oauth2/openid/${oidc_client_id}/.well-known/openid-configuration" --mapping-uid="name" --unique-uid=0 --group-provisioning=1 --check-bearer=1 --bearer-provisioning=1
+    '';
+  };
+  systemd.services.nextcloud-custom-setup = {
+    after = [ "nextcloud-setup.service" ];
+    wantedBy = [ "multi-user.target" ];
+    path = [
+      config.services.nextcloud.occ
+    ];
+    serviceConfig = {
+      Type = "exec";
+      KillMode = "process";
+      ExecStart = config.sops.templates."nextcloud-oidc-setup-script".path;
+    };
   };
 
   services.mysqlBackup = {
