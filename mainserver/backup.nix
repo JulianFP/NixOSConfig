@@ -13,7 +13,10 @@
     "restic/backupServerOffsiteRepository".sopsFile = ../secrets/${hostName}/restic.yaml;
   };
 
-  environment.persistence."/persist".directories = [ "/var/cache/restic-backups-mainserver" ];
+  environment.persistence."/persist".directories = [
+    "/var/cache/restic-backups-backupServer"
+    "/var/cache/restic-backups-backupServerOffsite"
+  ];
   services.restic.backups."backupServer" = {
     repository = "rest:http://192.168.3.30:8000/julian/mainserver";
     environmentFile = config.sops.secrets."restic/backupServer".path;

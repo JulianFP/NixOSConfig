@@ -109,12 +109,22 @@
     };
   };
 
-  #zfs config
+  #zfs & btrfs config
   environment.persistence."/persist".files = [
     "/etc/zfs/zpool.cache" # see nixos manual
   ];
   boot.supportedFilesystems = [ "zfs" ];
   boot.zfs.extraPools = [ "newData" ];
+  services.zfs.autoScrub = {
+    enable = true;
+    interval = "weekly";
+  };
+  services.btrfs.autoScrub = {
+    enable = true;
+    fileSystems = [ "/" ];
+    interval = "weekly";
+  };
+
   networking.hostId = "39c10fc6"; # see option description
 
   services.nebula.networks."serverNetwork" = {
