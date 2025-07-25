@@ -211,6 +211,16 @@ in
           src = src;
           phases = [ "installPhase" ];
           installPhase = ''
+            ${pkgs.gnused}/bin/sed -e 's/\''${DS_PROMETHEUS-INDUMIA}/PBFA97CFB590B2093/g ; s/\''${DS_PROMETHEUS-INFRA}/PBFA97CFB590B2093/g ;s/\''${DS_PROMETHEUS}/PBFA97CFB590B2093/g ; s/\''${DS_LOKI-INDUMIA}/P8E80F9AEF21F6940/g ; s/\''${DS_LOKI}/P8E80F9AEF21F6940/g' $src > $out
+          '';
+        };
+      dashboard-builder-with-interval-replacement =
+        src:
+        pkgs.stdenv.mkDerivation {
+          name = "unbound-dashboard";
+          src = src;
+          phases = [ "installPhase" ];
+          installPhase = ''
             ${pkgs.gnused}/bin/sed -e 's/\''${DS_PROMETHEUS-INDUMIA}/PBFA97CFB590B2093/g ; s/\''${DS_PROMETHEUS-INFRA}/PBFA97CFB590B2093/g ;s/\''${DS_PROMETHEUS}/PBFA97CFB590B2093/g ; s/\''${DS_LOKI-INDUMIA}/P8E80F9AEF21F6940/g ; s/\''${DS_LOKI}/P8E80F9AEF21F6940/g' $src | ${pkgs.gnused}/bin/sed -E 's/rate\(([^][]*)\[[^][]*\]\)/rate(\1[$__rate_interval])/g' > $out
           '';
         };
@@ -228,13 +238,13 @@ in
           }
           + "/unbound-dashboard.json"
         );
-        "grafana-dashboards/caddy.json" = dashboard-builder (
+        "grafana-dashboards/caddy.json" = dashboard-builder-with-interval-replacement (
           pkgs.fetchurl {
             url = "https://grafana.com/api/dashboards/20802/revisions/1/download";
             hash = "sha256-vSt63PakGp5NzKFjbU5Yh0nDbKET5QRWp5nusM76/O4=";
           }
         );
-        "grafana-dashboards/rest_server.json" = dashboard-builder (
+        "grafana-dashboards/rest_server.json" = dashboard-builder-with-interval-replacement (
           pkgs.fetchFromGitHub {
             owner = "restic";
             repo = "rest-server";
