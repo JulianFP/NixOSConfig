@@ -33,12 +33,16 @@
       Persistent = true;
     };
     backupPrepareCommand = ''
+      echo "Creating zfs and btrfs snapshots..."
       ${pkgs.zfs}/bin/zfs snapshot newData@backup-snapshot
       ${pkgs.btrfs-progs}/bin/btrfs subvolume snapshot /persist/backMeUp backup-snapshot
+      echo "Successfully created zfs and btrfs snapshots"
     '';
     backupCleanupCommand = ''
+      echo "Restic backup complete, destroying zfs and btrfs snapshots..."
       ${pkgs.zfs}/bin/zfs destroy newData@backup-snapshot
       ${pkgs.btrfs-progs}/bin/btrfs subvolume delete backup-snapshot
+      echo "Successfully destroyed zfs and btrfs snapshots"
     '';
   };
   services.restic.backups."backupServerOffsite" = {
@@ -57,12 +61,16 @@
       Persistent = true;
     };
     backupPrepareCommand = ''
+      echo "Creating zfs and btrfs snapshots..."
       ${pkgs.zfs}/bin/zfs snapshot newData@offsite-backup-snapshot
       ${pkgs.btrfs-progs}/bin/btrfs subvolume snapshot /persist/backMeUp offsite-backup-snapshot
+      echo "Successfully created zfs and btrfs snapshots"
     '';
     backupCleanupCommand = ''
+      echo "Restic backup complete, destroying zfs and btrfs snapshots..."
       ${pkgs.zfs}/bin/zfs destroy newData@offsite-backup-snapshot
       ${pkgs.btrfs-progs}/bin/btrfs subvolume delete offsite-backup-snapshot
+      echo "Successfully destroyed zfs and btrfs snapshots"
     '';
   };
 }
