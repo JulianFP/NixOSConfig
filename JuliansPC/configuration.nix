@@ -59,4 +59,10 @@
       KERNEL=="hidraw*", ATTRS{idVendor}=="044f", ATTRS{idProduct}=="b10a", MODE="0666", TAG+="uaccess"
     '';
   */
+
+  #for running jobs remotely
+  programs.tmux = {
+    enable = true;
+    clock24 = true;
+  };
 }
