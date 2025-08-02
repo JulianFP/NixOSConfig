@@ -103,6 +103,14 @@
       };
 
       persons = {
+        "noreply" = {
+          #service account for sending noreply emails. Cannot put Kanidm service accounts into provisioned groups and email to it
+          displayName = "noreply";
+          mailAddresses = [ "noreply@partanengroup.de" ];
+          groups = [
+            "mail-server"
+          ];
+        };
         "julian" = {
           displayName = "Julian";
           legalName = "Julian Partanen";

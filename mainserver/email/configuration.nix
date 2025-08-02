@@ -63,9 +63,13 @@
       memoryLimit = 2000;
     };
 
+    rejectRecipients = [
+      "noreply@partanengroup.de"
+    ];
     forwards = {
       "postmaster@partanengroup.de" = "julian@partanengroup.de";
       "abuse@partanengroup.de" = "julian@partanengroup.de";
+      "admin@partanengroup.de" = "julian@partanengroup.de";
       "maro@partanengroup.de" = [
         "marvin@partanengroup.de"
         "robin@partanengroup.de"
