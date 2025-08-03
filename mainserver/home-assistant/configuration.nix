@@ -1,4 +1,9 @@
-{ inputs, ... }:
+{
+  inputs,
+  pkgs,
+  hostName,
+  ...
+}:
 
 let
   pkgs-unstable = (
@@ -6,6 +11,7 @@ let
       system = "x86_64-linux";
     }
   );
+  ldap_auth_pkg = (pkgs.callPackage ../../generic/packages/hass-ldap-auth/package.nix { });
 in
 {
   nixpkgs.overlays = [
@@ -26,6 +32,12 @@ in
   imports = [
     "${inputs.nixpkgs}/nixos/modules/services/home-automation/home-assistant.nix"
   ];
+
+  sops.secrets."ldap_token" = {
+    mode = "0440";
+    owner = "hass";
+    sopsFile = ../../secrets/${hostName}/ldap.yaml;
+  };
 
   services.home-assistant = {
     enable = true;
@@ -60,6 +72,14 @@ in
         ];
         use_x_forwarded_for = true;
       };
+
+      homeassistant.auth_providers = [
+        {
+          type = "command_line";
+          command = "${ldap_auth_pkg}/bin/hass_ldap_auth";
+          meta = true;
+        }
+      ];
     };
   };
 

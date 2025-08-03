@@ -88,6 +88,7 @@
       "HomeAssistant" = {
         hostID = 134;
         openTCPPorts = [ 8123 ];
+        enableSops = true;
         additionalContainerConfig.allowedDevices = [
           {
             modifier = "rw";

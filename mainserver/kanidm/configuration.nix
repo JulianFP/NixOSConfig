@@ -60,6 +60,8 @@
         "jellyfin-admin" = { };
         "test-nextcloud" = { };
         "nextcloud" = { };
+        "hass-admin" = { };
+        "hass" = { };
         "family" = { };
       };
 
@@ -122,6 +124,8 @@
             "mail-server"
             "jellyfin"
             "jellyfin-admin"
+            "hass"
+            "hass-admin"
           ];
         };
         "marvin" = {
@@ -133,6 +137,7 @@
             "nextcloud"
             "mail-server"
             "jellyfin"
+            "hass"
           ];
         };
         "robin" = {
@@ -144,6 +149,7 @@
             "nextcloud"
             "mail-server"
             "jellyfin"
+            "hass"
           ];
         };
         "finn" = {
@@ -154,6 +160,7 @@
             "family"
             "nextcloud"
             "jellyfin"
+            "hass"
           ];
         };
         "maria" = {
@@ -164,6 +171,7 @@
             "family"
             "nextcloud"
             "jellyfin"
+            "hass"
           ];
         };
         "fabian" = {
@@ -174,6 +182,7 @@
             "family"
             "nextcloud"
             "jellyfin"
+            "hass"
           ];
         };
       };

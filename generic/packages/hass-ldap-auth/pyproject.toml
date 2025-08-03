@@ -1,0 +1,10 @@
+[project]
+name = "hass_ldap_auth"
+version = "0.1.0"
+description = "Home Assistant script for LDAP authentication"
+dependencies = [
+    "bonsai"
+]
+
+[project.scripts]
+hass_ldap_auth = "hass_ldap_auth:main"

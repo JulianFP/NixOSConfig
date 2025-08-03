@@ -8,6 +8,7 @@ keys:
   - &Jellyfin age1d8nx4acd0wsrsk8rkfgvm04vqaal5dcygx5jeumdhsh5s77h234qjxjp0j
   - &Nextcloud age12e9mw8rwsxkqclpcxs3nxcg84l8j8hsxtae5mfn8d9fvnvczw4pqsn8wyf
   - &Nextcloud-Testing age1rjw96c2g46s9qs8s9gy67tz39wm8sq85rzz3cmxvmsgtw32fl43sjegg85
+  - &HomeAssistant age1tmsx76qmnw5jp7828vajyq4qdx6lew0t2hcnv58d7dsur84g9qfqey3fyp
   - &ValheimBrueder age19nvp86n9ujxzk0nqw8l5ffnhem7wjxcv32kf9nhfq7ax682al59s4g220v
   - &ValheimMarvin age15r4k9est2u4j2zvv9avd4ts0sv7squftxex7wptqa9hyvsdfqcyq6avm29
   - &IonosVPS age1pqd9d8a8p3626uvshcxvdp56cvz95nvx7xygvna5lvnrkp4s03uq9xz5kd
@@ -95,6 +96,12 @@ creation_rules:
       - *yubikey
       age:
       - *Email
+  - path_regex: ^secrets/HomeAssistant/.*$
+    key_groups:
+    - pgp:
+      - *yubikey
+      age:
+      - *HomeAssistant
   - path_regex: ^secrets/backupServerOffsite/.*$
     key_groups:
     - pgp:
@@ -129,6 +136,7 @@ creation_rules:
       - *ValheimMarvin
       - *Kanidm
       - *Email
+      - *HomeAssistant
       - *backupServerOffsite
       - *IonosVPS2
       - *backupServer
