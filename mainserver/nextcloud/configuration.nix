@@ -123,10 +123,8 @@ in
         groupfolders
         notes
         polls
-        registration
         spreed
         tasks
-        twofactor_webauthn
         ;
     };
     extraAppsEnable = true;
