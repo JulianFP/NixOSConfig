@@ -58,6 +58,10 @@ in
       Handlers.mimeTypes."application/pdf".ask = true;
       #set firefox settings through policies so that they are grayed out in UI and I can see which settings are set using home-manager and which not
       Preferences = {
+        "intl.regional_prefs.use_os_locales" = {
+          Value = true;
+          Status = "locked";
+        };
         "browser.download.useDownloadDir" = {
           Value = false;
           Status = "locked";
