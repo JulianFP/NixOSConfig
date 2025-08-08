@@ -121,7 +121,7 @@ def addNebulaUnsafeRouteFor(routeName: str, selected: bool):
     try:
         yaml.dump(nebulaConfig, newConfigFile)
         newConfigFile.close()
-    except:
+    except Exception:
         print("Error: Couldn't open file {0}".format(sys.argv[3]))
         newConfigFile.close()
         return
@@ -132,7 +132,7 @@ def addNebulaUnsafeRouteFor(routeName: str, selected: bool):
             'NEBULA_CONFIG_PATH="{0}"'.format(sys.argv[3])
         )  # write path to new config file into envFile
         envFile.close()
-    except:
+    except Exception:
         print("Error: Couldn't open file {0}".format(sys.argv[4]))
         envFile.close()
         return
@@ -165,7 +165,7 @@ with open(sys.argv[1], "r") as stream:
         try:
             currentRoutes = currentConfig["tun"]["unsafe_routes"]
             nebulaConfig["tun"]["unsafe_routes"] = currentRoutes
-        except:
+        except Exception:
             noneSelected = True
     except FileNotFoundError:
         noneSelected = True

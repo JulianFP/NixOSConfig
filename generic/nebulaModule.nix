@@ -145,7 +145,8 @@ in
             ];
             "48.42.0.5" = [
               "85.215.33.173:51821"
-            ] ++ lib.optional netCfg.enableIPv6 "[2a02:247a:23e:d300::1]:51821";
+            ]
+            ++ lib.optional netCfg.enableIPv6 "[2a02:247a:23e:d300::1]:51821";
           };
           settings = {
             cipher = "aes";

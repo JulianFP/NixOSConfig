@@ -182,12 +182,10 @@ in
               };
               "www.${domain}" = {
                 logFormat = logFormatPerHost;
-                extraConfig =
-                  sharedConfig
-                  + ''
-                    #redirect www domains
-                    redir https://${domain}{uri}
-                  '';
+                extraConfig = sharedConfig + ''
+                  #redirect www domains
+                  redir https://${domain}{uri}
+                '';
               };
             }
           ) cfg.proxies

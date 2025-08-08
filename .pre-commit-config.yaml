@@ -10,29 +10,37 @@ repos:
       - id: check-added-large-files
       - id: check-merge-conflict
       - id: check-symlinks
+      - id: debug-statements
+
   - repo: https://github.com/NixOS/nixfmt
     rev: af5529a9e56b3429408c9d281518527d3a63cf33
     hooks:
       - id: nixfmt
+
   - repo: https://github.com/scop/pre-commit-shfmt
     rev: v3.11.0-1
     hooks:
       - id: shfmt         # prebuilt upstream executable
+
   - repo: https://github.com/koalaman/shellcheck-precommitjk
     rev: v0.10.0
     hooks:
       - id: shellcheck
-        exclude: "(.envrc)",
-  - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 25.1.0
+        exclude: "(.envrc)"
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.8
     hooks:
-      - id: black
-        args: [ "--line-length", "100" ]
-  - repo: https://github.com/PyCQA/isort
-    rev: 6.0.1
+      - id: ruff-check
+        args: [--fix, --exit-non-zero-on-fix, --show-fixes]
+      - id: ruff-format
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
     hooks:
-      - id: isort
-        args: [ "--profile", "black" ]
+      - id: codespell
+        args: [-w ]
+
   - repo: https://github.com/yuvipanda/pre-commit-hook-ensure-sops
     rev: v1.1
     hooks:

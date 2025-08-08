@@ -206,272 +206,271 @@ in
           shortenedN = builtins.substring 0 11 n;
         in
         {
-          services =
-            {
+          services = {
 
-              "netns@${n}" = {
-                description = "${n} containers veth network namespace";
-                serviceConfig = with pkgs; {
-                  Type = "oneshot";
-                  RemainAfterExit = true;
-                  ExecStart = "${iproute2}/bin/ip netns add ${shortenedN}";
-                  ExecStop = "${iproute2}/bin/ip netns del ${shortenedN}";
-                };
+            "netns@${n}" = {
+              description = "${n} containers veth network namespace";
+              serviceConfig = with pkgs; {
+                Type = "oneshot";
+                RemainAfterExit = true;
+                ExecStart = "${iproute2}/bin/ip netns add ${shortenedN}";
+                ExecStop = "${iproute2}/bin/ip netns del ${shortenedN}";
               };
-              "lo@${n}" = {
-                description = "loopback in ${n} containers network namespace";
+            };
+            "lo@${n}" = {
+              description = "loopback in ${n} containers network namespace";
 
-                bindsTo = [ "netns@${n}.service" ];
-                after = [ "netns@${n}.service" ];
+              bindsTo = [ "netns@${n}.service" ];
+              after = [ "netns@${n}.service" ];
 
-                serviceConfig = {
-                  Type = "oneshot";
-                  RemainAfterExit = true;
-                  ExecStart =
-                    let
-                      start =
-                        with pkgs;
-                        writeShellScript "lo-up" ''
-                          set -e
+              serviceConfig = {
+                Type = "oneshot";
+                RemainAfterExit = true;
+                ExecStart =
+                  let
+                    start =
+                      with pkgs;
+                      writeShellScript "lo-up" ''
+                        set -e
 
-                          ${iproute2}/bin/ip -n $1 addr add 127.0.0.1/8 dev lo
-                          ${iproute2}/bin/ip -n $1 link set lo up
-                        '';
-                    in
-                    "${start} ${shortenedN}";
-                  ExecStopPost = with pkgs; "${iproute2}/bin/ip -n ${shortenedN} link del lo";
-                };
+                        ${iproute2}/bin/ip -n $1 addr add 127.0.0.1/8 dev lo
+                        ${iproute2}/bin/ip -n $1 link set lo up
+                      '';
+                  in
+                  "${start} ${shortenedN}";
+                ExecStopPost = with pkgs; "${iproute2}/bin/ip -n ${shortenedN} link del lo";
               };
-              "veth@${n}" = {
-                description = "virtual ethernet network interface between the main and ${n} containers network namespaces";
+            };
+            "veth@${n}" = {
+              description = "virtual ethernet network interface between the main and ${n} containers network namespaces";
+
+              bindsTo = [
+                "netns@${n}.service"
+                "br0.service"
+              ];
+              after = [
+                "netns@${n}.service"
+                "br0.service"
+              ];
+
+              serviceConfig = {
+                Type = "oneshot";
+                RemainAfterExit = true;
+                ExecStart =
+                  let
+                    start =
+                      with pkgs;
+                      writeShellScript "veth-${n}-up" ''
+                        set -e
+                        ${iproute2}/bin/ip link add ve-${shortenedN} type veth peer name eth-${shortenedN}
+                        ${iproute2}/bin/ip link set eth-${shortenedN} netns ${shortenedN}
+                        ${iproute2}/bin/ip -n ${shortenedN} link set dev eth-${shortenedN} name eth-lan
+                        ${iproute2}/bin/ip -n ${shortenedN} addr add 10.42.${
+                          if (v.nebulaGateway != null) then "43" else "42"
+                        }.${builtins.toString v.hostID}/23 dev eth-lan
+                        ${iproute2}/bin/ip -n ${shortenedN} link set eth-lan up
+                        ${iproute2}/bin/ip link set dev ve-${shortenedN} master br0
+                        ${iproute2}/bin/ip link set ve-${shortenedN} up
+                        ${iproute2}/bin/ip -n ${shortenedN} route add default via 10.42.42.1
+                      '';
+                  in
+                  "${start}";
+                ExecStopPost =
+                  let
+                    stop =
+                      with pkgs;
+                      writeShellScript "veth-down" ''
+                        ${iproute2}/bin/ip -n $1 link del eth-lan
+                        ${iproute2}/bin/ip link del ve-$1
+                      '';
+                  in
+                  "${stop} ${shortenedN}";
+              };
+            };
+            "nebulaVeth@${n}" =
+              let
+                nebulaSystemdService = config.systemd.services."nebula@${n}";
+              in
+              {
+                description = "nebula network interface in ${n} containers network namespace (same one where veth is in)";
 
                 bindsTo = [
                   "netns@${n}.service"
-                  "br0.service"
+                  "veth@${n}.service"
+                ];
+                wants = [
+                  "network-online.target"
+                  "nss-lookup.target"
                 ];
                 after = [
                   "netns@${n}.service"
-                  "br0.service"
+                  "veth@${n}.service"
+                  "network-online.target"
+                  "nss-lookup.target"
                 ];
 
-                serviceConfig = {
-                  Type = "oneshot";
-                  RemainAfterExit = true;
-                  ExecStart =
-                    let
-                      start =
-                        with pkgs;
-                        writeShellScript "veth-${n}-up" ''
-                          set -e
-                          ${iproute2}/bin/ip link add ve-${shortenedN} type veth peer name eth-${shortenedN}
-                          ${iproute2}/bin/ip link set eth-${shortenedN} netns ${shortenedN}
-                          ${iproute2}/bin/ip -n ${shortenedN} link set dev eth-${shortenedN} name eth-lan
-                          ${iproute2}/bin/ip -n ${shortenedN} addr add 10.42.${
-                            if (v.nebulaGateway != null) then "43" else "42"
-                          }.${builtins.toString v.hostID}/23 dev eth-lan
-                          ${iproute2}/bin/ip -n ${shortenedN} link set eth-lan up
-                          ${iproute2}/bin/ip link set dev ve-${shortenedN} master br0
-                          ${iproute2}/bin/ip link set ve-${shortenedN} up
-                          ${iproute2}/bin/ip -n ${shortenedN} route add default via 10.42.42.1
-                        '';
-                    in
-                    "${start}";
-                  ExecStopPost =
-                    let
-                      stop =
-                        with pkgs;
-                        writeShellScript "veth-down" ''
-                          ${iproute2}/bin/ip -n $1 link del eth-lan
-                          ${iproute2}/bin/ip link del ve-$1
-                        '';
-                    in
-                    "${stop} ${shortenedN}";
-                };
-              };
-              "nebulaVeth@${n}" =
-                let
-                  nebulaSystemdService = config.systemd.services."nebula@${n}";
-                in
-                {
-                  description = "nebula network interface in ${n} containers network namespace (same one where veth is in)";
-
-                  bindsTo = [
-                    "netns@${n}.service"
-                    "veth@${n}.service"
-                  ];
-                  wants = [
-                    "network-online.target"
-                    "nss-lookup.target"
-                  ];
-                  after = [
-                    "netns@${n}.service"
-                    "veth@${n}.service"
-                    "network-online.target"
-                    "nss-lookup.target"
-                  ];
-
-                  unitConfig.StartLimitIntervalSec = 0;
-
-                  serviceConfig =
-                    with pkgs;
-                    lib.mkMerge [
-                      nebulaSystemdService.serviceConfig
-                      {
-                        ExecStart = lib.mkForce "${iproute2}/bin/ip netns exec ${shortenedN} ${nebulaSystemdService.serviceConfig.ExecStart}";
-                        CapabilityBoundingSet = lib.mkForce [
-                          "CAP_SYS_ADMIN"
-                          "CAP_NET_ADMIN"
-                        ];
-                        AmbientCapabilities = lib.mkForce [
-                          "CAP_SYS_ADMIN"
-                          "CAP_NET_ADMIN"
-                        ];
-                        RestrictNamespaces = lib.mkForce false;
-                        RestrictSUIDSGID = lib.mkForce false;
-                      }
-                    ];
-                };
-
-              #overwriting default systemd services
-              "container@${n}" = {
-                requires =
-                  if (v.nebulaGateway != null) then
-                    [
-                      "lo@neb-${n}.service"
-                      "moveNebNS@${n}.service"
-                      "veth@neb-${n}.service"
-                    ]
-                  else
-                    [
-                      "lo@${n}.service"
-                      "nebulaVeth@${n}.service"
-                    ];
-              };
-              "nebula@${n}".enable = lib.mkForce false; # we have our own systemd service
-            }
-            // lib.optionalAttrs (v.nebulaGateway != null) {
-              "netns@neb-${n}" = {
-                description = "${n} containers nebula-only network namespace";
-                serviceConfig = with pkgs; {
-                  Type = "oneshot";
-                  RemainAfterExit = true;
-                  ExecStart = "${iproute2}/bin/ip netns add neb-${shortenedN}";
-                  ExecStop = "${iproute2}/bin/ip netns del neb-${shortenedN}";
-                };
-              };
-              "lo@neb-${n}" = {
-                description = "loopback in ${n} containers nebula-only network namespace";
-
-                bindsTo = [ "netns@neb-${n}.service" ];
-                after = [ "netns@neb-${n}.service" ];
-
-                serviceConfig = {
-                  Type = "oneshot";
-                  RemainAfterExit = true;
-                  ExecStart =
-                    let
-                      start =
-                        with pkgs;
-                        writeShellScript "lo-up" ''
-                          set -e
-
-                          ${iproute2}/bin/ip -n $1 addr add 127.0.0.1/8 dev lo
-                          ${iproute2}/bin/ip -n $1 link set lo up
-                        '';
-                    in
-                    "${start} neb-${shortenedN}";
-                  ExecStopPost = with pkgs; "${iproute2}/bin/ip -n neb-${shortenedN} link del lo";
-                };
-              };
-              "moveNebNS@${n}" = {
-                description = "Move nebula interface of ${n} container into its own nebula-only network namespace";
-
-                bindsTo = [
-                  "netns@neb-${n}.service"
-                  "nebulaVeth@${n}.service"
-                ];
-                after = [
-                  "netns@neb-${n}.service"
-                  "nebulaVeth@${n}.service"
-                ];
-
-                unitConfig = {
-                  StartLimitBurst = 10;
-                  StartLimitInterval = 11;
-                };
+                unitConfig.StartLimitIntervalSec = 0;
 
                 serviceConfig =
                   with pkgs;
-                  let
-                    nebulaInterfaceName = builtins.substring 0 15 "neb-${n}";
-                  in
-                  {
-                    Type = "oneshot";
-                    RemainAfterExit = true;
-                    ExecStart =
-                      let
-                        start =
-                          with pkgs;
-                          writeShellScript "moveNebNS-${n}" ''
-                            set -e
-                            ${iproute2}/bin/ip -n ${shortenedN} link set ${nebulaInterfaceName} netns neb-${shortenedN}
-                            ${iproute2}/bin/ip -n neb-${shortenedN} addr add ${nebulaContainerIPNetId}.${builtins.toString v.hostID} dev ${nebulaInterfaceName}
-                            ${iproute2}/bin/ip -n neb-${shortenedN} link set ${nebulaInterfaceName} up
-                            ${iproute2}/bin/ip -n neb-${shortenedN} route add ${nebulaSubnet} dev ${nebulaInterfaceName}
-                            ${iproute2}/bin/ip -n neb-${shortenedN} route add default via ${v.nebulaGateway}
-                          '';
-                      in
-                      "${start}";
-                    ExecStop = "${iproute2}/bin/ip link set ${nebulaInterfaceName} ${shortenedN}";
-                    Restart = "on-failure";
-                    RestartSec = 1;
-                  };
+                  lib.mkMerge [
+                    nebulaSystemdService.serviceConfig
+                    {
+                      ExecStart = lib.mkForce "${iproute2}/bin/ip netns exec ${shortenedN} ${nebulaSystemdService.serviceConfig.ExecStart}";
+                      CapabilityBoundingSet = lib.mkForce [
+                        "CAP_SYS_ADMIN"
+                        "CAP_NET_ADMIN"
+                      ];
+                      AmbientCapabilities = lib.mkForce [
+                        "CAP_SYS_ADMIN"
+                        "CAP_NET_ADMIN"
+                      ];
+                      RestrictNamespaces = lib.mkForce false;
+                      RestrictSUIDSGID = lib.mkForce false;
+                    }
+                  ];
               };
-              "veth@neb-${n}" = {
-                description = "virtual ethernet network interface between the main and ${n} containers nebula-only network namespaces";
 
-                bindsTo = [
-                  "netns@neb-${n}.service"
-                  "br0.service"
-                ];
-                after = [
-                  "netns@neb-${n}.service"
-                  "moveNebNS@${n}.service"
-                  "br0.service"
-                ];
+            #overwriting default systemd services
+            "container@${n}" = {
+              requires =
+                if (v.nebulaGateway != null) then
+                  [
+                    "lo@neb-${n}.service"
+                    "moveNebNS@${n}.service"
+                    "veth@neb-${n}.service"
+                  ]
+                else
+                  [
+                    "lo@${n}.service"
+                    "nebulaVeth@${n}.service"
+                  ];
+            };
+            "nebula@${n}".enable = lib.mkForce false; # we have our own systemd service
+          }
+          // lib.optionalAttrs (v.nebulaGateway != null) {
+            "netns@neb-${n}" = {
+              description = "${n} containers nebula-only network namespace";
+              serviceConfig = with pkgs; {
+                Type = "oneshot";
+                RemainAfterExit = true;
+                ExecStart = "${iproute2}/bin/ip netns add neb-${shortenedN}";
+                ExecStop = "${iproute2}/bin/ip netns del neb-${shortenedN}";
+              };
+            };
+            "lo@neb-${n}" = {
+              description = "loopback in ${n} containers nebula-only network namespace";
 
-                serviceConfig = {
+              bindsTo = [ "netns@neb-${n}.service" ];
+              after = [ "netns@neb-${n}.service" ];
+
+              serviceConfig = {
+                Type = "oneshot";
+                RemainAfterExit = true;
+                ExecStart =
+                  let
+                    start =
+                      with pkgs;
+                      writeShellScript "lo-up" ''
+                        set -e
+
+                        ${iproute2}/bin/ip -n $1 addr add 127.0.0.1/8 dev lo
+                        ${iproute2}/bin/ip -n $1 link set lo up
+                      '';
+                  in
+                  "${start} neb-${shortenedN}";
+                ExecStopPost = with pkgs; "${iproute2}/bin/ip -n neb-${shortenedN} link del lo";
+              };
+            };
+            "moveNebNS@${n}" = {
+              description = "Move nebula interface of ${n} container into its own nebula-only network namespace";
+
+              bindsTo = [
+                "netns@neb-${n}.service"
+                "nebulaVeth@${n}.service"
+              ];
+              after = [
+                "netns@neb-${n}.service"
+                "nebulaVeth@${n}.service"
+              ];
+
+              unitConfig = {
+                StartLimitBurst = 10;
+                StartLimitInterval = 11;
+              };
+
+              serviceConfig =
+                with pkgs;
+                let
+                  nebulaInterfaceName = builtins.substring 0 15 "neb-${n}";
+                in
+                {
                   Type = "oneshot";
                   RemainAfterExit = true;
                   ExecStart =
                     let
                       start =
                         with pkgs;
-                        writeShellScript "veth-neb-${n}-up" ''
+                        writeShellScript "moveNebNS-${n}" ''
                           set -e
-                          ${iproute2}/bin/ip link add ven-${shortenedN} type veth peer name etn-${shortenedN}
-                          ${iproute2}/bin/ip link set etn-${shortenedN} netns neb-${shortenedN}
-                          ${iproute2}/bin/ip -n neb-${shortenedN} link set dev etn-${shortenedN} name eth-lan
-                          ${iproute2}/bin/ip -n neb-${shortenedN} addr add 10.42.42.${builtins.toString v.hostID}/23 dev eth-lan
-                          ${iproute2}/bin/ip -n neb-${shortenedN} link set eth-lan up
-                          ${iproute2}/bin/ip link set dev ven-${shortenedN} master br0
-                          ${iproute2}/bin/ip link set ven-${shortenedN} up
+                          ${iproute2}/bin/ip -n ${shortenedN} link set ${nebulaInterfaceName} netns neb-${shortenedN}
+                          ${iproute2}/bin/ip -n neb-${shortenedN} addr add ${nebulaContainerIPNetId}.${builtins.toString v.hostID} dev ${nebulaInterfaceName}
+                          ${iproute2}/bin/ip -n neb-${shortenedN} link set ${nebulaInterfaceName} up
+                          ${iproute2}/bin/ip -n neb-${shortenedN} route add ${nebulaSubnet} dev ${nebulaInterfaceName}
+                          ${iproute2}/bin/ip -n neb-${shortenedN} route add default via ${v.nebulaGateway}
                         '';
                     in
                     "${start}";
-                  ExecStopPost =
-                    let
-                      stop =
-                        with pkgs;
-                        writeShellScript "veth-down" ''
-                          ${iproute2}/bin/ip -n $1 link del eth-lan
-                          ${iproute2}/bin/ip link del ven-$1
-                        '';
-                    in
-                    "${stop} ${shortenedN}";
+                  ExecStop = "${iproute2}/bin/ip link set ${nebulaInterfaceName} ${shortenedN}";
+                  Restart = "on-failure";
+                  RestartSec = 1;
                 };
+            };
+            "veth@neb-${n}" = {
+              description = "virtual ethernet network interface between the main and ${n} containers nebula-only network namespaces";
+
+              bindsTo = [
+                "netns@neb-${n}.service"
+                "br0.service"
+              ];
+              after = [
+                "netns@neb-${n}.service"
+                "moveNebNS@${n}.service"
+                "br0.service"
+              ];
+
+              serviceConfig = {
+                Type = "oneshot";
+                RemainAfterExit = true;
+                ExecStart =
+                  let
+                    start =
+                      with pkgs;
+                      writeShellScript "veth-neb-${n}-up" ''
+                        set -e
+                        ${iproute2}/bin/ip link add ven-${shortenedN} type veth peer name etn-${shortenedN}
+                        ${iproute2}/bin/ip link set etn-${shortenedN} netns neb-${shortenedN}
+                        ${iproute2}/bin/ip -n neb-${shortenedN} link set dev etn-${shortenedN} name eth-lan
+                        ${iproute2}/bin/ip -n neb-${shortenedN} addr add 10.42.42.${builtins.toString v.hostID}/23 dev eth-lan
+                        ${iproute2}/bin/ip -n neb-${shortenedN} link set eth-lan up
+                        ${iproute2}/bin/ip link set dev ven-${shortenedN} master br0
+                        ${iproute2}/bin/ip link set ven-${shortenedN} up
+                      '';
+                  in
+                  "${start}";
+                ExecStopPost =
+                  let
+                    stop =
+                      with pkgs;
+                      writeShellScript "veth-down" ''
+                        ${iproute2}/bin/ip -n $1 link del eth-lan
+                        ${iproute2}/bin/ip link del ven-$1
+                      '';
+                  in
+                  "${stop} ${shortenedN}";
               };
             };
+          };
           #if the system uses systemd networkd, then mark our manually created veth interface as unmanaged so that networkd doesn't touch it
           network.networks."20-${n}-unmanaged" = lib.mkIf config.systemd.network.enable {
             matchConfig.Name = "ve-${shortenedN}";
@@ -535,7 +534,8 @@ in
             imports = [
               v.config
               ./promtail.nix # to get systemd-journal out of container into loki
-            ] ++ lib.lists.optional v.enableSops ./sops.nix;
+            ]
+            ++ lib.lists.optional v.enableSops ./sops.nix;
             nixpkgs.config.allowUnfreePredicate =
               pkg: builtins.elem (lib.getName pkg) v.permittedUnfreePackages;
             networking = {

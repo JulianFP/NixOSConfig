@@ -13,6 +13,10 @@ let
       check-added-large-files.enable = true;
       check-merge-conflicts.enable = true;
       check-symlinks.enable = true;
+      cspell = {
+        enable = true;
+        args = [ "-w" ];
+      };
       #nix
       nixfmt-rfc-style.enable = true;
       #bash
@@ -27,13 +31,14 @@ let
       check-docstring-first.enable = true;
       check-builtin-literals.enable = true;
       check-python.enable = true;
-      black = {
+      python-debug-statements.enable = true;
+      ruff.enable = true;
+      ruff-format = {
         enable = true;
-        settings.flags = "--line-length 100";
-      };
-      isort = {
-        enable = true;
-        settings.profile = "black";
+        args = [
+          "--line-length"
+          "100"
+        ];
       };
       #sops
       pre-commit-hook-ensure-sops.enable = true;

@@ -35,7 +35,8 @@
     extraSpecialArgs = {
       #pass nixneovim as additional Arg to home-manager config
       inherit nixvim;
-    } // homeManagerExtraSpecialArgs;
+    }
+    // homeManagerExtraSpecialArgs;
     /*
       homeManagerModules is a attribute set of users which are lists of paths to import into home manager
       the following will change the users to attribute sets with home manager config

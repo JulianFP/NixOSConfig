@@ -60,15 +60,14 @@ in
 
   #I applied an overlay for the clevis package that includes the fido2 pin for yubikey support. This copies that pin and its extra dependencies to the initrd as well
   boot.initrd.systemd = {
-    extraBin =
-      {
-        grep = "${pkgs.gnugrep}/bin/grep";
-        sed = "${pkgs.gnused}/bin/sed";
-        cryptsetup = "${pkgs.cryptsetup}/bin/cryptsetup";
-      }
-      // lib.optionalAttrs withTangFallback {
-        swapon = "${pkgs.util-linux}/bin/swapon";
-      };
+    extraBin = {
+      grep = "${pkgs.gnugrep}/bin/grep";
+      sed = "${pkgs.gnused}/bin/sed";
+      cryptsetup = "${pkgs.cryptsetup}/bin/cryptsetup";
+    }
+    // lib.optionalAttrs withTangFallback {
+      swapon = "${pkgs.util-linux}/bin/swapon";
+    };
     storePaths = [
       (pkgs.callPackage ../packages/clevis-pin-fido2/package.nix { })
       "${pkgs.libfido2}/bin/fido2-assert"
@@ -183,11 +182,13 @@ in
         before = [ "systemd-cryptsetup@${unlockedSwapLabel}.service" ];
         wants = [
           "systemd-udev-settle.service"
-        ] ++ lib.lists.optional withTangFallback "network-online.target";
+        ]
+        ++ lib.lists.optional withTangFallback "network-online.target";
         after = [
           "systemd-modules-load.service"
           "systemd-udev-settle.service"
-        ] ++ lib.lists.optional withTangFallback "network-online.target";
+        ]
+        ++ lib.lists.optional withTangFallback "network-online.target";
         unitConfig.DefaultDependencies = false;
         serviceConfig = {
           Type = "oneshot";
@@ -252,12 +253,11 @@ in
           TimeoutSec = "infinity";
           RemainAfterExit = true;
         };
-        script =
-          ''
-            umount /keyPartition
-            cryptsetup close ${unlockedKeyPartitionLabel}
-          ''
-          + lib.strings.optionalString withTangFallback "swapon /dev/mapper/${unlockedSwapLabel}";
+        script = ''
+          umount /keyPartition
+          cryptsetup close ${unlockedKeyPartitionLabel}
+        ''
+        + lib.strings.optionalString withTangFallback "swapon /dev/mapper/${unlockedSwapLabel}";
       };
 
       /*

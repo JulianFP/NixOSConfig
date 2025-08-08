@@ -62,10 +62,11 @@
             type = "simple";
             params.keep = "10";
           };
-          devices =
-            [ "JuliansPixel6a" ]
-            ++ lib.lists.optional (hostName != "JuliansFramework") "JuliansFramework"
-            ++ lib.lists.optional (hostName != "JuliansPC") "JuliansPC";
+          devices = [
+            "JuliansPixel6a"
+          ]
+          ++ lib.lists.optional (hostName != "JuliansFramework") "JuliansFramework"
+          ++ lib.lists.optional (hostName != "JuliansPC") "JuliansPC";
         };
         "Camera-Pixel6a" = {
           id = "pixel_6a_wvqg-photos";
