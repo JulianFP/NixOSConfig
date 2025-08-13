@@ -129,6 +129,7 @@
             "idea-ultimate"
             "discord"
             "guilded"
+            "spotify"
           ];
           overlays = [
             nur.overlays.default
@@ -156,6 +157,7 @@
             "idea-ultimate"
             "discord"
             "guilded"
+            "spotify"
           ];
           overlays = [
             nur.overlays.default

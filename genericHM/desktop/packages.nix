@@ -54,6 +54,8 @@ in
     kdePackages.okular
     kdePackages.kcalc
     yubioath-flutter
+    zotero
+    spotify
 
     # Multimedia
     kdePackages.gwenview
