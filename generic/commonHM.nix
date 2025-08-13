@@ -46,7 +46,7 @@
         if stable then
           modules ++ [ inputs.nixvim-stable.homeManagerModules.nixvim ]
         else
-          modules ++ [ inputs.nixvim.homeManagerModules.nixvim ];
+          modules ++ [ inputs.nixvim.homeModules.nixvim ];
 
       home.username = userName;
       home.homeDirectory = if userName == "root" then "/root" else "/home/${userName}";

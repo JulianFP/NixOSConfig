@@ -246,43 +246,39 @@
   #enable xdg desktop integration (mainly for flatpaks)
   xdg.portal.enable = true;
 
-  systemd =
-    let
-      shutdownServiceTimout = "DefaultTimeoutStopSec=5s";
-    in
-    {
-      #this makes shutdowns and reboots quicker by not waiting nearly as long for services to stop (90s -> 5s)
-      extraConfig = shutdownServiceTimout;
-      user.extraConfig = shutdownServiceTimout;
+  systemd = {
+    #this makes shutdowns and reboots quicker by not waiting nearly as long for services to stop (90s -> 5s)
+    settings.Manager.DefaultTimeoutStopSec = "5s";
+    user.extraConfig = "DefaultTimeoutStopSec=5s";
 
-      #shutdown timer and service
-      services."shutdown" = {
-        startAt = "*-*-* 00:15:00"; # automatically configures timer for this service
-        #shutdown only happens if logFile exists, currentTime is between 00:10 and 00:20 and the logFile was last modified today
-        script = ''
-          currentTime=$(date +%H:%M)
-          currentDay=$(date +%Y%m%d)
-          logFile="/home/julian/shutdownFailures.log"
-          if [ -f "$logFile" ]; then
-              logFileModifyDay=$(date +%Y%m%d -r "$logFile")
-              if [[ "$currentTime" > "00:10" ]] && [[ "$currentTime" < "00:20" ]] && [[ "$logFileModifyDay" == "$currentDay" ]]; then
-                  sed -i '$ d' "$logFile"
-                  shutdown now
-              fi
-          else
-              echo "$logFile missing, shutdown-reminder didn't run?" >> "$logFile"
-              chown julian:users "$logFile"
-          fi
-        '';
-        serviceConfig = {
-          Type = "oneshot";
-          User = "root";
-        };
+    #shutdown timer and service
+    services."shutdown" = {
+      startAt = "*-*-* 00:15:00"; # automatically configures timer for this service
+      #shutdown only happens if logFile exists, currentTime is between 00:10 and 00:20 and the logFile was last modified today
+      script = ''
+        currentTime=$(date +%H:%M)
+        currentDay=$(date +%Y%m%d)
+        logFile="/home/julian/shutdownFailures.log"
+        if [ -f "$logFile" ]; then
+            logFileModifyDay=$(date +%Y%m%d -r "$logFile")
+            if [[ "$currentTime" > "00:10" ]] && [[ "$currentTime" < "00:20" ]] && [[ "$logFileModifyDay" == "$currentDay" ]]; then
+                sed -i '$ d' "$logFile"
+                shutdown now
+            fi
+        else
+            echo "$logFile missing, shutdown-reminder didn't run?" >> "$logFile"
+            chown julian:users "$logFile"
+        fi
+      '';
+      serviceConfig = {
+        Type = "oneshot";
+        User = "root";
       };
-
-      #workaround until https://github.com/nix-community/impermanence/issues/229 is fixed
-      suppressedSystemUnits = [ "systemd-machine-id-commit.service" ];
     };
+
+    #workaround until https://github.com/nix-community/impermanence/issues/229 is fixed
+    suppressedSystemUnits = [ "systemd-machine-id-commit.service" ];
+  };
 
   #workaround until https://github.com/nix-community/impermanence/issues/229 is fixed
   boot.initrd.systemd.suppressedUnits = [ "systemd-machine-id-commit.service" ];
