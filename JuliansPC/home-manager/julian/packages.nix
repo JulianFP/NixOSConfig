@@ -1,33 +1,27 @@
 {
   pkgs,
-  lib,
   nix-gaming,
   ...
 }:
 
 let
-  #fixes gamemode when using omu-launcher. See https://github.com/FeralInteractive/gamemode/issues/254#issuecomment-643648779
-  gamemodeSharedObjects = lib.concatMapStringsSep ":" (v: "${lib.getLib pkgs.gamemode}/lib/${v}") [
-    "libgamemodeauto.so"
-    "libgamemode.so"
-  ];
-
+  /*
+    I also needed to add pl_pit.forceSoftwareCursor = 1 to the user.cfg file of the star citizen installation.
+    This needs to be done manually and is not handled by this nix derivation.
+    See https://wiki.starcitizen-lug.org/Troubleshooting/unexpected-behavior#mousecursor-warp-issues-and-view-snapping-in-interaction-mode for more info
+  */
+  writeScriptBinWrapper =
+    name: text:
+    (pkgs.writeShellScriptBin name ''
+      #to activate wine wayland:
+      export DISPLAY=
+      #to fix keyboard layout issues with wine wayland (https://bugs.winehq.org/show_bug.cgi?id=57097):
+      export LC_ALL=de
+      #then execute actual star-citizen script:
+      ${text}
+    '');
   star-citizen = nix-gaming.packages.${pkgs.system}.star-citizen.override (prev: {
-    disableEac = false;
-    useUmu = true;
-    gameScopeEnable = true;
-    gameScopeArgs = [
-      "--fullscreen"
-      "--force-grab-cursor"
-      "--nested-width=2560"
-      "--output-width=2560"
-      "--nested-height=1440"
-      "--output-height=1440"
-      "--force-windows-fullscreen"
-    ];
-    preCommands = ''
-      export LD_PRELOAD="${gamemodeSharedObjects}"
-    '';
+    writeShellScriptBin = writeScriptBinWrapper;
   });
 in
 {

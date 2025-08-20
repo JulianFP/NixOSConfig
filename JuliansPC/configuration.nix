@@ -54,11 +54,9 @@
   };
   #set the "uaccess" tag for raw HID access for Thrustmaster T.16000M Joystick in wine
   #needed for newer wine/proton versions only (I think wine >= 9.22), disabled for now since I use proton-ge
-  /*
-    services.udev.extraRules = ''
-      KERNEL=="hidraw*", ATTRS{idVendor}=="044f", ATTRS{idProduct}=="b10a", MODE="0666", TAG+="uaccess"
-    '';
-  */
+  services.udev.extraRules = ''
+    KERNEL=="hidraw*", ATTRS{idVendor}=="044f", ATTRS{idProduct}=="b10a", MODE="0666", TAG+="uaccess"
+  '';
 
   #for running jobs remotely
   programs.tmux = {
