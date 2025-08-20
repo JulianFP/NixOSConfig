@@ -17,8 +17,8 @@ let
       pkgs.fetchFromGitHub {
         owner = "StevenBlack";
         repo = "hosts";
-        rev = "3.16.5";
-        sha256 = "sha256-nNfRcWqETuuAwKqjAxP8+b7L+CHWEkjLZHHIY3cOcrk=";
+        rev = "3.16.13";
+        sha256 = "sha256-tvtHai3Z/kXhHSVOwopJBqTwrBFckcuj/GSe8wtk7u4=";
       }
       + "/hosts"
     );
