@@ -185,6 +185,15 @@
             "hass"
           ];
         };
+        "raoul" = {
+          displayName = "raoul";
+          legalName = "Raoul Honermann";
+          mailAddresses = [ "raoul@honermann.info" ];
+          groups = [
+            "nextcloud"
+            "jellyfin"
+          ];
+        };
       };
     };
   };
