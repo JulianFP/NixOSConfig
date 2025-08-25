@@ -66,6 +66,12 @@
       OnCalendar = "03:00";
       Persistent = true;
     };
+    pruneOpts = [
+      "--keep-daily 7"
+      "--keep-weekly 4"
+      "--keep-monthly 12"
+      "--keep-yearly 3"
+    ];
   };
   systemd.services."restic-backups-backupServer" = {
     wants = [
@@ -129,6 +135,12 @@
       OnCalendar = "05:00";
       Persistent = true;
     };
+    pruneOpts = [
+      "--keep-daily 7"
+      "--keep-weekly 4"
+      "--keep-monthly 12"
+      "--keep-yearly 3"
+    ];
   };
   systemd.services."restic-backups-backupServerOffsite" = {
     wants = [

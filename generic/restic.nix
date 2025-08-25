@@ -10,7 +10,6 @@
     enable = true;
     dataDir = "/mnt/backupHDD";
     privateRepos = true;
-    appendOnly = true;
     prometheus = true;
     htpasswd-file = config.sops.secrets."restic-server".path;
   };
