@@ -43,9 +43,9 @@
   # -- services --
   services = {
     #logind disable lidSwitch and PowerButtoon (managed by wm)
-    logind = {
-      lidSwitch = "ignore";
-      extraConfig = "HandlePowerKey=ignore";
+    logind.settings.Login = {
+      HandleLidSwitch = "ignore";
+      HandlePowerKey = "ignore";
     };
 
     # Enable CUPS to print documents.

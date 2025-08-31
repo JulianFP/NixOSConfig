@@ -27,7 +27,7 @@ in
     ripgrep-all
     fortune # for hyprlock
     adwaita-icon-theme
-    nur.repos.mikilio.xwaylandvideobridge-hypr
+    kdePackages.xwaylandvideobridge
 
     # CLI Applications
     file # needed for open command of lf

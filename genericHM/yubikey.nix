@@ -10,11 +10,13 @@
   #ssh support
   programs.ssh = {
     enable = true;
-    forwardAgent = true;
-    #needed for terminal based pinentry to always appear in current terminal window
-    extraConfig = ''
-      Match host * exec "gpg-connect-agent UPDATESTARTUPTTY /bye"
-    '';
+    matchBlocks."*" = {
+      forwardAgent = true;
+      #needed for terminal based pinentry to always appear in current terminal window
+      match = ''
+        host * exec "gpg-connect-agent UPDATESTARTUPTTY /bye"
+      '';
+    };
   };
 
   #gpg setup

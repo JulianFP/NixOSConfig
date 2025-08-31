@@ -134,7 +134,13 @@
           overlays = [
             nur.overlays.default
             (import ./generic/overlays/clevis_with_fido2.nix)
-            (import ./generic/overlays/qtct.nix)
+            ((import ./generic/overlays/qtct.nix) {
+              pkgs-stable = (
+                import inputs.nixpkgs-stable {
+                  system = "x86_64-linux";
+                }
+              );
+            })
             #(import ./generic/overlays/lyx.nix)
           ];
           stateVersion = "24.11";
@@ -162,7 +168,13 @@
           overlays = [
             nur.overlays.default
             (import ./generic/overlays/clevis_with_fido2.nix)
-            (import ./generic/overlays/qtct.nix)
+            ((import ./generic/overlays/qtct.nix) {
+              pkgs-stable = (
+                import inputs.nixpkgs-stable {
+                  system = "x86_64-linux";
+                }
+              );
+            })
           ];
           stateVersion = "25.05";
         };

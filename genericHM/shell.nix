@@ -31,6 +31,7 @@
   #ssh
   programs.ssh = {
     enable = true;
+    enableDefaultConfig = false;
     matchBlocks = {
       "Ionos1" = {
         hostname = "82.165.49.241";
