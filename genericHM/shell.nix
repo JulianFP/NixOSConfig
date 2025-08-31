@@ -1,4 +1,9 @@
-{ config, ... }:
+{
+  config,
+  lib,
+  stable,
+  ...
+}:
 
 # config for some shell stuff shared by julian and root user of JuliansFramework
 {
@@ -31,7 +36,6 @@
   #ssh
   programs.ssh = {
     enable = true;
-    enableDefaultConfig = false;
     matchBlocks = {
       "Ionos1" = {
         hostname = "82.165.49.241";
@@ -58,6 +62,9 @@
         user = "jpartanen";
       };
     };
+  }
+  // lib.optionalAttrs (!stable) {
+    enableDefaultConfig = false;
   };
 
   # git
