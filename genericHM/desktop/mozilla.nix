@@ -131,6 +131,11 @@ in
           icon = "chill";
           id = 8;
         };
+        microsoft = {
+          color = "yellow";
+          icon = "dollar";
+          id = 9;
+        };
       };
       containersForce = true;
 
