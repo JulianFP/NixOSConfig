@@ -6,9 +6,6 @@
   ...
 }:
 
-let
-  hostNebulaIP = config.myModules.nebula."serverNetwork".ipMap."${hostName}";
-in
 {
   sops.secrets."restic/metricsPassword" = {
     sopsFile = ../secrets/${hostName}/restic.yaml;
@@ -99,7 +96,6 @@ in
     configuration = {
       auth_enabled = false;
       server = {
-        http_listen_address = hostNebulaIP;
         http_listen_port = 3100;
         grpc_listen_port = 9096;
         log_level = "warn";
@@ -110,7 +106,7 @@ in
         grpc_server_max_send_msg_size = 20971520;
       };
       common = {
-        instance_addr = hostNebulaIP;
+        instance_addr = "127.0.0.1";
         path_prefix = "/persist/loki";
         storage.filesystem = {
           chunks_directory = "/persist/loki/chunks";
@@ -119,7 +115,7 @@ in
         replication_factor = 1;
         ring = {
           kvstore.store = "inmemory";
-          instance_addr = hostNebulaIP;
+          instance_addr = "127.0.0.1";
         };
       };
       query_range.results_cache.cache.embedded_cache = {
@@ -165,7 +161,7 @@ in
     dataDir = "/persist/grafana";
     settings = {
       server = {
-        http_addr = "${hostNebulaIP}";
+        http_addr = config.myModules.nebula."serverNetwork".ipMap."${hostName}";
         enable_gzip = true;
       };
       security = {
@@ -188,7 +184,7 @@ in
           name = "Loki";
           type = "loki";
           uid = "P8E80F9AEF21F6940"; # this is referenced in some of my dashboards, so I make it declarative
-          url = "http://${hostNebulaIP}:3100";
+          url = "http://127.0.0.1:3100";
         }
       ];
 
