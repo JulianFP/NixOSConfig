@@ -2,6 +2,7 @@
   inputs,
   pkgs,
   hostName,
+  trustedProxyIP,
   ...
 }:
 
@@ -68,7 +69,7 @@ in
       http = {
         trusted_proxies = [
           "10.42.42.1"
-          "48.42.0.5"
+          trustedProxyIP
         ];
         use_x_forwarded_for = true;
       };

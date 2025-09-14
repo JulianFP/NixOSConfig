@@ -121,7 +121,9 @@
     '';
   };
   services.restic.backups."backupServerOffsite" = {
-    repository = "rest:http://48.42.0.8:8000/julian/mainserver";
+    repository = "rest:http://${
+      config.myModules.nebula."serverNetwork".ipMap.backupServerOffsite
+    }:8000/julian/mainserver";
     environmentFile = config.sops.secrets."restic/backupServerOffsite".path;
     passwordFile = config.sops.secrets."restic/backupServerOffsiteRepository".path;
     initialize = true;

@@ -3,6 +3,7 @@
   lib,
   pkgs,
   hostName,
+  trustedProxyIP,
   ...
 }:
 
@@ -75,7 +76,7 @@ in
       #setup reverse proxy config
       trusted_proxies = [
         "10.42.42.1"
-        "48.42.0.5"
+        trustedProxyIP
       ];
       overwriteprotocol = "https";
       overwritehost = cfg.hostName;

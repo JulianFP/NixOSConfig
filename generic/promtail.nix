@@ -1,43 +1,60 @@
-{ hostName, ... }:
-
 {
-  services.promtail = {
-    enable = true;
-    configuration = {
-      server = {
-        http_listen_port = 9080;
-        grpc_listen_port = 0;
-        log_level = "warn";
-      };
-      positions.filename = "/persist/promtail/positions.yaml";
-      clients = [
-        {
-          url = "http://48.42.0.2:3100/loki/api/v1/push";
-        }
-      ];
-      scrape_configs = [
-        {
-          job_name = "journal";
-          journal = {
-            max_age = "12h";
-            labels = {
-              job = "systemd-journal";
-              host = hostName;
-            };
-          };
-          relabel_configs = [
-            {
-              source_labels = [ "__journal__systemd_unit" ];
-              target_label = "unit";
-            }
-          ];
-        }
-      ];
+  config,
+  lib,
+  hostName,
+  ...
+}:
+
+let
+  cfg = config.myModules.promtail;
+in
+{
+  options.myModules.promtail = {
+    host = lib.mkOption {
+      type = lib.types.str;
+      default = config.myModules.nebula."serverNetwork".ipMap.mainserver;
     };
   };
-  systemd.tmpfiles.settings."10-promtail"."/persist/promtail"."d" = {
-    user = "promtail";
-    group = "promtail";
-    mode = "0700";
+
+  config = {
+    services.promtail = {
+      enable = true;
+      configuration = {
+        server = {
+          http_listen_port = 9080;
+          grpc_listen_port = 0;
+          log_level = "warn";
+        };
+        positions.filename = "/persist/promtail/positions.yaml";
+        clients = [
+          {
+            url = "http://${cfg.host}:3100/loki/api/v1/push";
+          }
+        ];
+        scrape_configs = [
+          {
+            job_name = "journal";
+            journal = {
+              max_age = "12h";
+              labels = {
+                job = "systemd-journal";
+                host = hostName;
+              };
+            };
+            relabel_configs = [
+              {
+                source_labels = [ "__journal__systemd_unit" ];
+                target_label = "unit";
+              }
+            ];
+          }
+        ];
+      };
+    };
+    systemd.tmpfiles.settings."10-promtail"."/persist/promtail"."d" = {
+      user = "promtail";
+      group = "promtail";
+      mode = "0700";
+    };
   };
 }

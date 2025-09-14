@@ -10,8 +10,7 @@
 let
   cfg = config.myModules.container;
   enabledContainers = lib.filterAttrs (n: v: v.enable) cfg.containers;
-  nebulaSubnet = "48.42.0.0/16";
-  nebulaContainerIPNetId = "48.42.1";
+  nebulaContainerIPNetId = "10.28.129";
 in
 {
   imports = [
@@ -76,6 +75,11 @@ in
               default = { };
               description = "Additional configuration that will be put into the NixOS module under containers.<name>, e.g. to configure extra capabilities";
             };
+            additionalSpecialArgs = lib.mkOption {
+              type = lib.types.attrs;
+              default = { };
+              description = "A set of special arguments to be passed to the containers NixOS modules";
+            };
             config = lib.mkOption {
               type = lib.types.path;
               description = "Path to config file. Note that some things like stateVersion and DNS fixes are already being configured by this module for all containers.";
@@ -91,6 +95,8 @@ in
     myModules.nebula = builtins.mapAttrs (n: v: {
       secretHostName = hostName;
       installHostName = n;
+      ipMap = config.myModules.nebula."serverNetwork".ipMap;
+      lighthouseMap = config.myModules.nebula."serverNetwork".lighthouseMap;
     }) enabledContainers;
     services.nebula.networks = (
       builtins.mapAttrs (n: v: {
@@ -416,7 +422,9 @@ in
                           ${iproute2}/bin/ip -n ${shortenedN} link set ${nebulaInterfaceName} netns neb-${shortenedN}
                           ${iproute2}/bin/ip -n neb-${shortenedN} addr add ${nebulaContainerIPNetId}.${builtins.toString v.hostID} dev ${nebulaInterfaceName}
                           ${iproute2}/bin/ip -n neb-${shortenedN} link set ${nebulaInterfaceName} up
-                          ${iproute2}/bin/ip -n neb-${shortenedN} route add ${nebulaSubnet} dev ${nebulaInterfaceName}
+                          ${iproute2}/bin/ip -n neb-${shortenedN} route add ${
+                            config.myModules.nebula."serverNetwork".subnet
+                          } dev ${nebulaInterfaceName}
                           ${iproute2}/bin/ip -n neb-${shortenedN} route add default via ${v.nebulaGateway}
                         '';
                     in
@@ -526,7 +534,8 @@ in
         specialArgs = {
           hostName = n;
           inputs = inputs;
-        };
+        }
+        // v.additionalSpecialArgs;
 
         config =
           { hostName, ... }:
@@ -536,6 +545,7 @@ in
               ./promtail.nix # to get systemd-journal out of container into loki
             ]
             ++ lib.lists.optional v.enableSops ./sops.nix;
+            myModules.promtail.host = "10.42.42.1";
             nixpkgs.config.allowUnfreePredicate =
               pkg: builtins.elem (lib.getName pkg) v.permittedUnfreePackages;
             networking = {

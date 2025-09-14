@@ -48,13 +48,17 @@
         content = ''
           chain postrouting {
             type nat hook postrouting priority srcnat; policy accept;
-            ip saddr 48.42.0.0/16 ip daddr 192.168.3.0/24 counter masquerade
+            ip saddr ${
+              config.myModules.nebula."serverNetwork".subnet
+            } ip daddr 192.168.3.0/24 counter masquerade
           }
 
           chain forward {
             type filter hook forward priority filter; policy accept;
             ct state related,established counter accept
-            iifname nebula1 oifname enp0s4 ip saddr 48.42.0.0/16 ip daddr 192.168.3.0/24 counter accept
+            iifname nebula1 oifname enp0s4 ip saddr ${
+              config.myModules.nebula."serverNetwork".subnet
+            } ip daddr 192.168.3.0/24 counter accept
           }
         '';
       };

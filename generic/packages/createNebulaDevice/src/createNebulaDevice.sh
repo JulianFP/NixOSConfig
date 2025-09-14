@@ -7,7 +7,7 @@ show_help() {
 	printf "   for example: Nextcloud\n\n"
 	printf "nebula ip:\n"
 	printf "   ip of device in nebula network in CIDR notation (with prefix length)\n"
-	printf "   for example: 48.42.1.130/16\n\n"
+	printf "   for example: 10.28.129.130/21\n\n"
 	printf "option -i <flakeSecretHostName>:\n"
 	printf "   name of machine that should have access to the key and crt (i.e. be able to decrypt it using sops-nix)\n"
 	printf "   if not specified this will be the same as flakeInstallHostName (which you should leave it at unless you are creating this certificate for a container)\n"

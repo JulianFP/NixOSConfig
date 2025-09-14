@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   envFile,
   oldConfigFile,
@@ -7,15 +8,15 @@ let
   unsafeRoutes = {
     "Telgte server network" = {
       route = "192.168.3.0/24";
-      via = "48.42.0.2";
+      via = config.myModules.nebula."serverNetwork".ipMap.mainserver;
     };
     "Telgte home network" = {
       route = "192.168.1.0/24";
-      via = "48.42.0.2";
+      via = config.myModules.nebula."serverNetwork".ipMap.mainserver;
     };
     "Heidelberg home network" = {
       route = "192.168.10.0/24";
-      via = "48.42.0.8";
+      via = config.myModules.nebula."serverNetwork".ipMap.backupServerOffsite;
     };
   };
 

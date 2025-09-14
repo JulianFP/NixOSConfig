@@ -78,7 +78,7 @@ in
           {
             targets = [
               "192.168.3.30:8000"
-              "48.42.0.8:8000"
+              config.myModules.nebula."serverNetwork".ipMap.backupServerOffsite
             ];
           }
         ];

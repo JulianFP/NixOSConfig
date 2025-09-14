@@ -1,4 +1,4 @@
-{ ... }:
+{ config, ... }:
 
 {
   imports = [
@@ -26,6 +26,7 @@
             isReadOnly = false;
           };
         };
+        additionalSpecialArgs.trustedProxyIP = config.myModules.nebula."serverNetwork".ipMap.IonosVPS;
         config = ./nextcloud/configuration.nix;
       };
       "Nextcloud-Testing" = {
@@ -46,6 +47,7 @@
             isReadOnly = false;
           };
         };
+        additionalSpecialArgs.trustedProxyIP = config.myModules.nebula."serverNetwork".ipMap.IonosVPS;
         config = ./nextcloud/configuration.nix;
       };
       "Jellyfin" = {
@@ -109,6 +111,7 @@
             isReadOnly = false;
           };
         };
+        additionalSpecialArgs.trustedProxyIP = config.myModules.nebula."serverNetwork".ipMap.IonosVPS;
         config = ./home-assistant/configuration.nix;
       };
       "ValheimMarvin" = {
@@ -117,7 +120,7 @@
           2456
           2457
         ];
-        nebulaGateway = "48.42.0.5";
+        nebulaGateway = config.myModules.nebula."serverNetwork".ipMap.IonosVPS;
         enableSops = true;
         permittedUnfreePackages = [
           "steamcmd"
@@ -141,7 +144,7 @@
           2458
           2459
         ];
-        nebulaGateway = "48.42.0.5";
+        nebulaGateway = config.myModules.nebula."serverNetwork".ipMap.IonosVPS;
         enableSops = true;
         permittedUnfreePackages = [
           "steamcmd"
@@ -176,6 +179,7 @@
             isReadOnly = false;
           };
         };
+        additionalSpecialArgs.trustedProxyIP = config.myModules.nebula."serverNetwork".ipMap.IonosVPS;
         config = ./kanidm/configuration.nix;
       };
       "Email" = {
@@ -192,7 +196,7 @@
           #995 #POP3 TLS, enable if enablePop3Ssl is set in snm
           #4190 #sieve, enable if enableManageSieve is set in snm
         ];
-        nebulaGateway = "48.42.0.1";
+        nebulaGateway = config.myModules.nebula."serverNetwork".ipMap.IonosVPS2;
         enableSops = true;
         additionalBindMounts = {
           "/var/lib/acme" = {
@@ -213,32 +217,6 @@
           };
         };
         config = ./email/configuration.nix;
-      };
-      "Unifi" = {
-        hostID = 139;
-        permittedUnfreePackages = [
-          "unifi-controller"
-          "mongodb"
-        ];
-        openTCPPorts = [
-          8080 # Port for UAP to inform controller.
-          8443 # Web UI
-          8880 # Port for HTTP portal redirect, if guest portal is enabled.
-          8843 # Port for HTTPS portal redirect, ditto.
-          6789 # Port for UniFi mobile speed test.
-        ];
-        openUDPPorts = [
-          3478 # UDP port used for STUN.
-          10001 # UDP port used for device discovery.
-        ];
-        forwardPorts = true;
-        additionalBindMounts = {
-          "/var/lib/unifi" = {
-            hostPath = "/persist/backMeUp/Unifi";
-            isReadOnly = false;
-          };
-        };
-        config = ./unifi-controller/configuration.nix;
       };
     };
   };

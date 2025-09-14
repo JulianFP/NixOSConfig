@@ -2,6 +2,7 @@
   config,
   pkgs,
   hostName,
+  trustedProxyIP,
   ...
 }:
 
@@ -44,7 +45,7 @@
       tls_chain = "/var/lib/acme/account.partanengroup.de/fullchain.pem";
       http_client_address_info.proxy-v2 = [
         "10.42.42.1"
-        "48.42.0.5"
+        trustedProxyIP
       ];
       bindaddress = "0.0.0.0:443";
       ldapbindaddress = "10.42.42.137:3636";

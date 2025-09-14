@@ -62,7 +62,7 @@ in
   environment.systemPackages = [
     (import ../packages/shellScriptBin/vlan.nix { inherit pkgs; })
     (import ../packages/shellScriptBin/nebulaRoutes.nix {
-      inherit pkgs envFile;
+      inherit config pkgs envFile;
       oldConfigFile = builtins.head (
         builtins.match "^.*(\/nix\/store\/.{32}-nebula-config.*)$" nebulaSystemdService.serviceConfig.ExecStart
       );

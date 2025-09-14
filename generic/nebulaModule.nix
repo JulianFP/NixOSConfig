@@ -69,9 +69,17 @@ in
               Whether to listen on IPv6 interfaces and add IPv6 addresses to static maps (in addition to IPv4)
             '';
           };
+          subnet = lib.mkOption {
+            description = "The Subnet of the Nebula network in CIDR notation";
+            type = lib.types.str;
+          };
           ipMap = lib.mkOption {
             description = "Each entry in this attribute set is a hostName - nebula ip address pair for easy lookup. See ./nebula.nix for how it is populated";
             type = lib.types.attrsOf lib.types.str;
+          };
+          lighthouseMap = lib.mkOption {
+            description = "Map Hostnames in ipMap to non-nebula IP-addresses and mark these hostnames as lighthouses";
+            type = lib.types.attrsOf (lib.types.listOf lib.types.str);
           };
         };
       }
@@ -132,22 +140,15 @@ in
             host = if netCfg.enableIPv6 then "[::]" else "0.0.0.0";
             port = netCfg.port;
           };
-          lighthouses = lib.mkIf (!netCfg.isLighthouse) [
-            "48.42.0.1"
-            "48.42.0.5"
-          ];
+          lighthouses = lib.mkIf (!netCfg.isLighthouse) (
+            lib.attrVals (builtins.attrNames netCfg.lighthouseMap) netCfg.ipMap
+          );
           isLighthouse = netCfg.isLighthouse;
           isRelay = netCfg.isLighthouse;
           relays = lib.mkIf (!netCfg.isLighthouse) lighthouses;
-          staticHostMap = {
-            "48.42.0.1" = [
-              "82.165.49.241:51821"
-            ];
-            "48.42.0.5" = [
-              "85.215.33.173:51821"
-            ]
-            ++ lib.optional netCfg.enableIPv6 "[2a02:247a:23e:d300::1]:51821";
-          };
+          staticHostMap = lib.mapAttrs' (
+            name: value: lib.nameValuePair (builtins.getAttr name netCfg.ipMap) value
+          ) netCfg.lighthouseMap;
           settings = {
             cipher = "aes";
             punchy = {
