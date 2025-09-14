@@ -3,7 +3,6 @@
 {
   programs.rofi = {
     enable = true;
-    package = pkgs.rofi-wayland;
 
     #converted from this template: https://github.com/tinted-theming/base16-rofi
     theme =

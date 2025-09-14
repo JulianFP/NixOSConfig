@@ -93,12 +93,19 @@
         sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
       };
 
-      gestures.workspace_swipe = true;
-
       binds.allow_workspace_cycles = true; # previous now cycles between last two used workspaces (alt+tab behaviour)
 
       "$mainMod" = "SUPER";
       "$screenshotDir" = "/home/julian/Pictures/Screenshots";
+
+      #trackpad gestures
+      gesture = [
+        "3, horizontal, workspace"
+        "3, vertical, fullscreen"
+        "2, pinchout, scale: 0.5, float, float"
+        "2, pinchin, scale: 0.5, float, tile"
+        "3, swipe, mod: $mainMod, resize"
+      ];
 
       #regular bindings
       bind = [
