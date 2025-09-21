@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 let
   firefoxProfileName = "JuliansDefaultProfile";
@@ -140,12 +140,91 @@ in
       containersForce = true;
 
       #as of now I don't declaratively configure extension settings yet, support for it has been added recently though
-      extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
-        multi-account-containers
-        keepassxc-browser
-        floccus
-        ublock-origin
-      ];
+      extensions = {
+        force = true;
+        packages = with pkgs.nur.repos.rycee.firefox-addons; [
+          multi-account-containers
+          keepassxc-browser
+          floccus
+          ublock-origin
+        ];
+        settings = {
+          "uBlock0@raymondhill.net".settings = {
+            selectedFilterLists = [
+              "user-filters"
+              "ublock-filters"
+              "ublock-badware"
+              "ublock-privacy"
+              "ublock-quick-fixes"
+              "ublock-unbreak"
+              "easylist"
+              "easyprivacy"
+              "urlhaus-1"
+              "plowe-0"
+              "fanboy-cookiemonster"
+              "ublock-cookies-easylist"
+              "adguard-cookies"
+              "ublock-cookies-adguard"
+              "fanboy-social"
+              "adguard-social"
+              "fanboy-thirdparty_social"
+              "easylist-chat"
+              "easylist-newsletters"
+              "easylist-notifications"
+              "easylist-annoyances"
+              "adguard-mobile-app-banners"
+              "adguard-other-annoyances"
+              "adguard-popup-overlays"
+              "adguard-widgets"
+              "ublock-annoyances"
+              "DEU-0"
+              "FIN-0"
+            ];
+          };
+          "keepassxc-browser@keepassxc.org".settings.settings = {
+            showOTPIcon = false;
+            autoFillAndSend = true;
+          };
+          "@testpilot-containers".settings = {
+            mozillaVpnServers = [ ];
+            mozillaVpnHiddenToutsList = [ ];
+            browserActionBadgesClicked = [ "8.3.0" ];
+            onboarding-stage = 8;
+            syncEnabled = false;
+          }
+          //
+            lib.mapAttrs'
+              (
+                name: value:
+                lib.nameValuePair ("siteContainerMap@@_" + name) ({
+                  userContextId = value;
+                  neverAsk = true;
+                })
+              )
+              {
+                "partanengroup.de" = "1";
+                "account.partanengroup.de" = "1";
+                "mail.partanengroup.de" = "1";
+                "rspamd.mail.partanengroup.de" = "1";
+                "media.partanengroup.de" = "1";
+                "request.media.partanengroup.de" = "1";
+                "192.168.3.1" = "1";
+                "www.netflix.com" = "2";
+                "www.disneyplus.com" = "3";
+                "www.amazon.de" = "4";
+                "web.whatsapp.com" = "5";
+                "www.ebay.de" = "6";
+                "www.kleinanzeigen.de" = "7";
+                "robertsspaceindustries.com" = "8";
+                "status.robertsspaceindustries.com" = "8";
+                "issue-council.robertsspaceindustries.com" = "8";
+                "support.robertsspaceindustries.com" = "8";
+                "www.microsoft.com" = "9";
+                "www.linkedin.com" = "9";
+                "chatgpt.com" = "9";
+              };
+        };
+      };
 
       search = {
         default = "ddg";
@@ -220,9 +299,13 @@ in
       };
     };
   };
-  stylix.targets.firefox.profileNames = [
-    firefoxProfileName
-  ];
+  stylix.targets.firefox = {
+    enable = true;
+    colorTheme.enable = true;
+    profileNames = [
+      firefoxProfileName
+    ];
+  };
 
   programs.thunderbird = {
     enable = true;
