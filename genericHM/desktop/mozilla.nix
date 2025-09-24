@@ -139,7 +139,6 @@ in
       };
       containersForce = true;
 
-      #as of now I don't declaratively configure extension settings yet, support for it has been added recently though
       extensions = {
         force = true;
         packages = with pkgs.nur.repos.rycee.firefox-addons; [
@@ -181,10 +180,13 @@ in
               "FIN-0"
             ];
           };
-          "keepassxc-browser@keepassxc.org".settings.settings = {
-            showOTPIcon = false;
-            autoFillAndSend = true;
-          };
+          #disabled this because keepassxc also stores the connection id and key in the settings.js file which would get overwritten forcibly everytime the home-manager service runs
+          /*
+            "keepassxc-browser@keepassxc.org".settings.settings = {
+              showOTPIcon = false;
+              autoFillAndSend = true;
+            };
+          */
           "@testpilot-containers".settings = {
             mozillaVpnServers = [ ];
             mozillaVpnHiddenToutsList = [ ];
@@ -203,11 +205,14 @@ in
               )
               {
                 "partanengroup.de" = "1";
+                "test.partanengroup.de" = "1";
+                "media.partanengroup.de" = "1";
+                "request.media.partanengroup.de" = "1";
+                "vtt.partanengroup.de" = "1";
+                "home.partanengroup.de" = "1";
                 "account.partanengroup.de" = "1";
                 "mail.partanengroup.de" = "1";
                 "rspamd.mail.partanengroup.de" = "1";
-                "media.partanengroup.de" = "1";
-                "request.media.partanengroup.de" = "1";
                 "192.168.3.1" = "1";
                 "www.netflix.com" = "2";
                 "www.disneyplus.com" = "3";
