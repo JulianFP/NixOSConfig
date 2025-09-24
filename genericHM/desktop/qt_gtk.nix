@@ -18,7 +18,7 @@ let
       inactive_colors=#ff${base05}, #ff${base01}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base0D}, #ff${base06}, #ff${base0B}, #ff${base0E}, #ff${base01}, #ff${base05}, #ff${base01}, #ff${base0C}, #ff${base0D}, #ff${base0D}
     '';
 
-  #custom KColorScheme defintion, used for patched qt6ct and kdeglobals
+  #custom KColorScheme definition, used for patched qt6ct and kdeglobals
   #Since KDE-Frameworks 6.8 this is the only way of theming some KDE apps (like dolphin, okular) outside of Plasma
   #see https://github.com/trialuser02/qt6ct/pull/43
   #also more in-depth explanation: https://nicolasfella.de/posts/how-platform-integration-works/

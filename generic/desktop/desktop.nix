@@ -223,7 +223,7 @@
     #enable polkit. polkitagent needs to be started separately (will be done in home-manager)
     polkit.enable = true;
 
-    # Hyprlock needs an entry in PAM to proberly unlock
+    # Hyprlock needs an entry in PAM to properly unlock
     pam.services.hyprlock = { };
 
     #enable basic tpm2 support for clevis

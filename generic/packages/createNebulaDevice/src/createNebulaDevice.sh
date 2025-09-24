@@ -25,7 +25,7 @@ show_help() {
 #define function make error output easier
 echoerr() { echo "$@" 1>&2; }
 
-luksUSBDevice="/dev/disk/by-uuid/66f96bfc-45f0-4436-81a1-8a07a548a5bb" #path to device which contains nebula crt (should be reproducible, i.e. relient on uuid or label)
+luksUSBDevice="/dev/disk/by-uuid/66f96bfc-45f0-4436-81a1-8a07a548a5bb" #path to device which contains nebula crt (should be reproducible, i.e. reliant on uuid or label)
 #luksUSBNebulaPath is not allowed to begin or end with '/', './' or similar
 luksUSBNebulaPath="nebula" #path to directory in which nebula crt is stored relative from root of usb device
 
@@ -143,7 +143,7 @@ fi
 eval "${nebula_cmd}"
 
 #generate yaml file to store secrets
-# the file shouldn't be opened with sudo privileges, so this is correct as is. We can savely disable the shellcheck warning here
+# the file shouldn't be opened with sudo privileges, so this is correct as is. We can safely disable the shellcheck warning here
 # shellcheck disable=SC2024
 sudo printf "    %s.key: |\n        %s\n    %s.crt: |\n        %s" "${flakeInstallHostName}" "$(sudo sed ':a;N;$!ba;s/\n/\n        /g' "/mnt/${luksUSBNebulaPath}/${nebname}.key")" "${flakeInstallHostName}" "$(sudo sed ':a;N;$!ba;s/\n/\n        /g' "/mnt/${luksUSBNebulaPath}/${nebname}.crt")" >>"./secrets/${flakeSecretHostName}/nebula.yaml"
 sops --config "./.sops.yaml" -e -i "./secrets/${flakeSecretHostName}/nebula.yaml"

@@ -42,7 +42,7 @@ in
   assertions = [
     {
       assertion = !config.system.etc.overlay.enable;
-      message = "Custom assertion: Because of custom initrd script and switchting into /sysroot/root instead of /sysroot the etc overlay can't work currently. Modify it to make it work first, then remove this warning";
+      message = "Custom assertion: Because of custom initrd script and switching into /sysroot/root instead of /sysroot the etc overlay can't work currently. Modify it to make it work first, then remove this warning";
     }
   ];
 
@@ -264,7 +264,7 @@ in
         -- impermanence setup --
         differences to setup in ../disk-config-btrfs-impermanence.nix:
         - bcachefs instead of btrfs!
-        - More old copies with timestaps
+        - More old copies with timestamps
         - home partition doesn't get erased
         - is done with systemd instead of initrd.postDeviceCommands because of full disk encryption
       */
@@ -299,7 +299,7 @@ in
               timestamp=$(date --date="@$(stat -c %Y /bcachefs_tmp/root)" "+%Y-%m-%-d_%H:%M:%S")
               bcachefs subvolume snapshot -r /bcachefs_tmp/root "/bcachefs_tmp/old_roots/$timestamp"
               bcachefs subvolume delete /bcachefs_tmp/root
-              echo "Successfully snapshoted and removed root subvolume"
+              echo "Successfully snapshotted and removed root subvolume"
           fi
 
           for i in $(find /bcachefs_tmp/old_roots/ -maxdepth 1 -mtime +30); do

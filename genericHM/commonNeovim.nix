@@ -2,7 +2,7 @@
 
 # this is a neovim configuration for (pretty much) all my devices & users.
 # basic stuff only
-# some devices/users may expand uppon this
+# some devices/users may expand upon this
 {
   programs.nixvim = {
     enable = true;

@@ -16,7 +16,7 @@ Requirements:
 - logged in as root
 - internet access working
 - yubikey with existing challenge response slot plugged in
-- target disc already partitioned into EFI partition and system partition (these partitions will be formated in this script!)
+- target disc already partitioned into EFI partition and system partition (these partitions will be formatted in this script!)
 This script expects the following parameters:
 1) SLOT number of yubikey to use
 2) EFI partition

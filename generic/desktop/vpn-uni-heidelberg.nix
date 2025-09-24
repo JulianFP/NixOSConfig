@@ -11,7 +11,7 @@
   networking = {
     openconnect.interfaces."uni-heidelberg" = {
       autoStart = false;
-      gateway = "vpnsrv0.urz.uni-heidelberg.de"; # now vpnsrv2.urz.uni-heidelberg.de is broken, welp. Just switch around the server if this doesn't work in the future
+      gateway = "vpnsrv0.urz.uni-heidelberg.de"; # now vpnsrv2.urz.uni-heidelberg.de is broken, whelp. Just switch around the server if this doesn't work in the future
       protocol = "anyconnect";
       user = "me272";
       passwordFile = config.sops.secrets."openconnect/password".path;

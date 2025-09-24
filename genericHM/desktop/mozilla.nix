@@ -180,7 +180,7 @@ in
               "FIN-0"
             ];
           };
-          #disabled this because keepassxc also stores the connection id and key in the settings.js file which would get overwritten forcibly everytime the home-manager service runs
+          #disabled this because keepassxc also stores the connection id and key in the settings.js file which would get overwritten forcibly every time the home-manager service runs
           /*
             "keepassxc-browser@keepassxc.org".settings.settings = {
               showOTPIcon = false;

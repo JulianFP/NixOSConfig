@@ -63,7 +63,7 @@ in
                       mountpoint = "/.swapvol";
                       swap.swapfile.size = "16G";
                     };
-                    #stable subvolumes (will persist accross reboots)
+                    #stable subvolumes (will persist across reboots)
                     "/nix" = {
                       mountOptions = [ "noatime" ];
                       mountpoint = "/nix";
@@ -116,7 +116,7 @@ in
                       mountpoint = "/.swapvol";
                       swap.swapfile.size = "4G";
                     };
-                    #stable subvolumes (will persist accross reboots)
+                    #stable subvolumes (will persist across reboots)
                     "/nix" = {
                       mountOptions = [ "noatime" ];
                       mountpoint = "/nix";
