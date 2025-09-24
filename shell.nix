@@ -13,9 +13,10 @@ let
       check-added-large-files.enable = true;
       check-merge-conflicts.enable = true;
       check-symlinks.enable = true;
-      cspell = {
+      codespell = {
         enable = true;
-        args = [ "-w" ];
+        name = "codespell";
+        entry = "${pkgs.codespell}/bin/codespell -w --ignore-words-list=hass,edn,pinchin,bootup";
       };
       #nix
       nixfmt-rfc-style.enable = true;
