@@ -2,6 +2,7 @@
 hyprlockProcesses=$(pgrep -c hyprlock)
 if [ "$hyprlockProcesses" -eq 0 ]; then
 	hyprlock &
+	sleep 1
 
 elif [ "$1" -eq 1 ] && journalctl -u sleep.target -S "$(date +%H:%M)" | grep -q "Stopped"; then
 	#do not suspend if power button called this and machine already woke up recently (during the current minute). Makes it possible to wake machine pressing the power button

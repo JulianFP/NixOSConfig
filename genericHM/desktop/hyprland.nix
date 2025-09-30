@@ -298,12 +298,12 @@
         blur_passes = 3;
       };
       input-field = {
-        shadow-passes = 2;
+        shadow_passes = 2;
         placeholder_text = "<i>UwU :3</i>";
       };
       label = [
         {
-          shadow-passes = 2;
+          shadow_passes = 2;
           text = "$TIME";
           color = "rgb(${base05})";
           font_size = 100;
@@ -313,7 +313,7 @@
           position = "0, 165";
         }
         {
-          shadow-passes = 2;
+          shadow_passes = 2;
           color = "rgb(${base04})";
           text = "cmd[update:30000] echo \"<span>$(fortune -s | sed 's/&/\\&amp;/g; s/</\\&lt;/g; s/>/\\&gt;/g')</span>\"";
           halign = "center";
