@@ -30,7 +30,6 @@
     ignores = [
       # add direnv stuff to global gitignore
       "*.direnv"
-      "*.envrc"
     ];
   };
 
