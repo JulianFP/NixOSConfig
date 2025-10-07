@@ -26,7 +26,6 @@
     ../impermanence.nix
     ./networking.nix
     ./vpn-uni-heidelberg.nix
-    ./project-W-services.nix
   ];
 
   # -- boot --
@@ -90,8 +89,9 @@
     nixseparatedebuginfod.enable = true;
 
     kanidm = {
+      package = pkgs.kanidm_1_7;
       enableClient = true;
-      clientSettings."partanengroup".uri = "https://account.partanengroup.de";
+      clientSettings.uri = "https://account.partanengroup.de";
     };
   };
 
@@ -205,6 +205,7 @@
         "render"
         "dialout"
         "wireshark"
+        "podman"
       ];
 
       packages = with pkgs; [
@@ -238,6 +239,11 @@
     waydroid.enable = true; # waydroid to run android apps
     libvirtd.enable = true; # for qemu/kvm VMs in virt-manager
     spiceUSBRedirection.enable = true; # for virt-manager usb forwarding
+    podman = {
+      enable = true;
+      dockerCompat = true;
+      defaultNetwork.settings.dns_enabled = true;
+    };
   };
 
   # -- misc --
