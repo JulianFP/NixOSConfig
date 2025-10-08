@@ -218,6 +218,29 @@
         };
         config = ./email/configuration.nix;
       };
+      "Project-W" = {
+        hostID = 139;
+        openTCPPorts = [
+          5000
+        ];
+        enableSops = true;
+        additionalBindMounts = {
+          "/var/lib/postgresql" = {
+            hostPath = "/persist/Project-W/postgresql";
+            isReadOnly = false;
+          };
+          "/var/lib/project-W-runner" = {
+            hostPath = "/persist/Project-W/runner-models";
+            isReadOnly = false;
+          };
+          "/persist/backMeUp" = {
+            hostPath = "/persist/backMeUp/Project-W";
+            isReadOnly = false;
+          };
+        };
+        additionalSpecialArgs.trustedProxyIP = config.myModules.nebula."serverNetwork".ipMap.IonosVPS;
+        config = ./project-w/configuration.nix;
+      };
     };
   };
 }

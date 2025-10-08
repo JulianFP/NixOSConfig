@@ -163,12 +163,12 @@ in
       initrd-nixos-activation = {
         script = lib.mkForce (
           builtins.replaceStrings [ "/sysroot" ] [ "/sysroot/root" ]
-            oldSystemdInitrd.services.initrd-nixos-activation.script
+            oldSystemdInitrd.services.initrd-nixos-activation.content.script
         );
         unitConfig.RequiresMountsFor = lib.mkForce (
           builtins.map (
             x: builtins.replaceStrings [ "/sysroot" ] [ "/sysroot/root" ] x
-          ) oldSystemdInitrd.services.initrd-nixos-activation.unitConfig.RequiresMountsFor
+          ) oldSystemdInitrd.services.initrd-nixos-activation.content.unitConfig.RequiresMountsFor
         );
       };
       systemd-tmpfiles-setup-sysroot.serviceConfig.ExecStart = lib.mkForce (

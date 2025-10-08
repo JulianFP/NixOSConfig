@@ -63,6 +63,11 @@
           }
         '';
       };
+      "project-w.partanengroup.de" = {
+        destIP = "10.42.42.139";
+        destIPedge = config.myModules.nebula."serverNetwork".ipMap.Project-W;
+        destPort = 5000;
+      };
     };
     edgeHostName = "IonosVPS";
   };

@@ -34,6 +34,10 @@
     sopsFile = ../../secrets/${hostName}/Nextcloud_client-secret.yaml;
     owner = "kanidm";
   };
+  sops.secrets."project-w_service" = {
+    sopsFile = ../../secrets/${hostName}/Project-W_client-secret.yaml;
+    owner = "kanidm";
+  };
   services.kanidm = {
     package = pkgs.kanidmWithSecretProvisioning;
     enableServer = true;
@@ -63,6 +67,8 @@
         "nextcloud" = { };
         "hass-admin" = { };
         "hass" = { };
+        "project-w" = { };
+        "project-w-admin" = { };
         "family" = { };
       };
 
@@ -103,6 +109,23 @@
             };
           };
         };
+        "project-w_service" = {
+          displayName = "Project-W instance";
+          originLanding = "https://project-w.partanengroup.de/api/oidc/login/partanengroup%20account";
+          originUrl = "https://project-w.partanengroup.de/api/oidc/auth/partanengroup%20account";
+          basicSecretFile = config.sops.secrets."project-w_service".path;
+          scopeMaps."project-w" = [
+            "openid"
+            "profile"
+            "email"
+          ];
+          claimMaps = {
+            "role".valuesByGroup = {
+              "project-w" = [ "user" ];
+              "project-w-admin" = [ "admin" ];
+            };
+          };
+        };
       };
 
       persons = {
@@ -127,6 +150,8 @@
             "jellyfin-admin"
             "hass"
             "hass-admin"
+            "project-w"
+            "project-w-admin"
           ];
         };
         "marvin" = {

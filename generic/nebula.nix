@@ -24,6 +24,7 @@
       ValheimBrueder = "10.28.129.136";
       Kanidm = "10.28.129.137";
       Email = "10.28.129.138";
+      Project-W = "10.28.129.139";
       Nextcloud-Testing = "10.28.129.150";
       #client devices
       JuliansFramework = "10.28.130.1";

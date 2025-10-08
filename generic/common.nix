@@ -57,6 +57,13 @@
         "@wheel"
       ];
       download-buffer-size = 524288000; # 500MiB
+      #nix-community binary cache, especially for Project-W
+      substituters = [
+        "https://nix-community.cachix.org"
+      ];
+      trusted-public-keys = [
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      ];
     };
     nixPath = [ "nixpkgs=/run/current-system/nixpkgs" ];
   };

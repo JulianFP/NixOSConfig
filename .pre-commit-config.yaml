@@ -39,6 +39,7 @@ repos:
     rev: v2.4.1
     hooks:
       - id: codespell
+        exclude: "^secrets/"
         args: [ -w, "--ignore-words-list=hass,edn,pinchin,bootup" ]
 
   - repo: https://github.com/yuvipanda/pre-commit-hook-ensure-sops

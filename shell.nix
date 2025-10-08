@@ -16,6 +16,7 @@ let
       codespell = {
         enable = true;
         name = "codespell";
+        excludes = [ "^secrets/" ];
         entry = "${pkgs.codespell}/bin/codespell -w --ignore-words-list=hass,edn,pinchin,bootup";
       };
       #nix
