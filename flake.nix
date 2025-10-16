@@ -37,7 +37,7 @@
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
     sops-nix.url = "github:Mic92/sops-nix";
-    project-W.url = "github:JulianFP/project-W/repo-merge";
+    project-W.url = "github:JulianFP/project-W";
     nix-gaming = {
       url = "github:fufexan/nix-gaming";
       inputs.nixpkgs.follows = "nixpkgs";
