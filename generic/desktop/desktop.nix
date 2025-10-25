@@ -158,6 +158,9 @@
 
       #for virtualisation virt-manager
       virtiofsd
+
+      #to add compose support to podman
+      podman-compose
     ];
 
     #additional impermanence directories
@@ -328,6 +331,12 @@
       package = pkgs.capitaine-cursors;
       name = "capitaine-cursors";
       size = 24;
+    };
+    icons = {
+      enable = true;
+      package = pkgs.papirus-icon-theme;
+      dark = "Papirus-Dark";
+      light = "Papirus";
     };
   };
 }
