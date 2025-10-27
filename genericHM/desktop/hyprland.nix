@@ -29,13 +29,6 @@
       windowrule = [
         #start some apps in their designated workspace
         "workspace 10 silent,class:thunderbird"
-        # xwayland screen sharing (xwayland is not autostarted anymore though because I rarely need it)
-        "opacity 0.0 override 0.0 override,class:^(xwaylandvideobridge)$"
-        "noanim,class:^(xwaylandvideobridge)$"
-        "nofocus,class:^(xwaylandvideobridge)$"
-        "noinitialfocus,class:^(xwaylandvideobridge)$"
-        "noblur,class:^(xwaylandvideobridge)$"
-        "maxsize 1 1,class:^(xwaylandvideobridge)$"
       ];
 
       # -- Look & Feel --

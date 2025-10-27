@@ -86,7 +86,7 @@
 
     flatpak.enable = true; # enable flatpak
 
-    nixseparatedebuginfod.enable = true;
+    nixseparatedebuginfod2.enable = true;
 
     kanidm = {
       package = pkgs.kanidm_1_7;
