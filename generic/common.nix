@@ -35,6 +35,9 @@
     git
   ];
 
+  #zsh completion for system packages
+  environment.pathsToLink = [ "/share/zsh" ];
+
   #system settings
   system = {
     # get git revision of system with command 'nixos-version --configuration-revision'
