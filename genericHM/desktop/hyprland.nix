@@ -280,6 +280,20 @@
       enable = true;
       allowImages = true;
     };
+    #set hyprsunset as a blue light filter for the evenings
+    hyprsunset = {
+      enable = true;
+      settings.profile = [
+        {
+          time = "8:00";
+          identity = true;
+        }
+        {
+          time = "22:00";
+          temperature = 3500;
+        }
+      ];
+    };
   };
 
   programs.hyprlock = {
@@ -315,18 +329,6 @@
           position = "0, -125";
         }
       ];
-    };
-  };
-
-  #set hyprsunset as a blue light filter for the evenings
-  systemd.user = {
-    timers."hyprsunset" = {
-      Install.WantedBy = [ "timers.target" ];
-      Timer.OnCalendar = "*-*-* 22:30:00";
-    };
-    services."hyprsunset" = {
-      Service.ExecStart = "${pkgs.hyprsunset}/bin/hyprsunset -t 3500";
-      Unit.Requisite = [ "graphical-session.target" ];
     };
   };
 }

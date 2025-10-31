@@ -5,26 +5,6 @@ import os
 import socket
 import sys
 
-import dbus
-
-session_bus = dbus.SessionBus()
-systemd1 = session_bus.get_object("org.freedesktop.systemd1", "/org/freedesktop/systemd1")
-manager = dbus.Interface(systemd1, "org.freedesktop.systemd1.Manager")
-
-runtimeDir = os.environ["XDG_RUNTIME_DIR"]
-his = os.environ["HYPRLAND_INSTANCE_SIGNATURE"]
-
-
-def send(msg: str) -> str:
-    client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    client.connect(runtimeDir + "/hypr/" + his + "/.socket.sock")
-    client.send(msg.encode())
-    returnVal = client.recv(4096)
-    client.close()
-    return returnVal.decode()
-
-
-monitors = json.loads(send("-j/monitors"))
 
 usedMonitorDescriptions = [
     "Samsung Electric Company C27HG7x HTHK300334",
@@ -33,24 +13,36 @@ usedMonitorDescriptions = [
 options = {
     "Reset to Hyprland config": "reload",
     "Inhibit suspend": "dispatch submap inhibitSuspend",
+    "Enable blue light filter": "hyprsunset temperature 3500",
+    "Disable blue light filter": "hyprsunset identity",
 }
 
-systemdUnits = {
-    "blue light filter": "hyprsunset.service",
-}
-systemdUnitsStart = {}
 
+def send(msg: str) -> str:
+    runtimeDir = os.environ["XDG_RUNTIME_DIR"]
+    his = os.environ["HYPRLAND_INSTANCE_SIGNATURE"]
 
-# add systemd units depending on current state
-for unitDesc, unitName in systemdUnits.items():
-    unit = session_bus.get_object("org.freedesktop.systemd1", object_path=manager.GetUnit(unitName))
-    interface = dbus.Interface(unit, dbus_interface="org.freedesktop.DBus.Properties")
-    if interface.Get("org.freedesktop.systemd1.Unit", "ActiveState") == "active":
-        options["Disable " + unitDesc] = unitName
-        systemdUnitsStart[unitName] = False
+    # hyprsunset and hyprpaper are using their own sockets
+    if msg.startswith("hyprsunset "):
+        socket_name = ".hyprsunset.sock"
+        msg = msg.removeprefix("hyprsunset ")
+    elif msg.startswith("hyprpaper "):
+        socket_name = ".hyprpaper.sock"
+        msg = msg.removeprefix("hyprpaper ")
     else:
-        options["Enable " + unitDesc] = unitName
-        systemdUnitsStart[unitName] = True
+        socket_name = ".socket.sock"
+
+    client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    client.connect(f"{runtimeDir}/hypr/{his}/{socket_name}")
+    client.send(msg.encode())
+    returnVal = client.recv(4096)
+    client.close()
+
+    return returnVal.decode()
+
+
+# get list of connected monitors
+monitors = json.loads(send("-j/monitors"))
 
 # check if eDP-1 exists
 internalExists = False
@@ -86,14 +78,8 @@ for monitor in monitors:
 
 if len(sys.argv) > 1:
     option = sys.argv[1]
-    if options[option] in systemdUnits.values():
-        if systemdUnitsStart[options[option]]:
-            manager.StartUnit("hyprsunset.service", "fail")
-        else:
-            manager.StopUnit("hyprsunset.service", "fail")
-    else:
-        command = options[option]
-        send(command)
+    command = options[option]
+    send(command)
 else:
     print("\0no-custom\x1ftrue")  # set no-custom option of rofi
     print("\n".join(options.keys()))
