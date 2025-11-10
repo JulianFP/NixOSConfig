@@ -10,6 +10,10 @@
     containers = {
       "Nextcloud" = {
         hostID = 131;
+        after = [
+          "Kanidm"
+          "Email"
+        ];
         openTCPPorts = [ 80 ];
         enableSops = true;
         additionalBindMounts = {
@@ -31,6 +35,10 @@
       };
       "Nextcloud-Testing" = {
         hostID = 150;
+        after = [
+          "Kanidm"
+          "Email"
+        ];
         openTCPPorts = [ 80 ];
         enableSops = true;
         additionalBindMounts = {
@@ -52,6 +60,7 @@
       };
       "Jellyfin" = {
         hostID = 132;
+        after = [ "Kanidm" ];
         openTCPPorts = [
           8096
           5055
@@ -90,6 +99,7 @@
       "HomeAssistant" = {
         hostID = 134;
         openTCPPorts = [ 8123 ];
+        after = [ "Kanidm" ];
         enableSops = true;
         additionalContainerConfig.allowedDevices = [
           {
@@ -184,6 +194,7 @@
       };
       "Email" = {
         hostID = 138;
+        after = [ "Kanidm" ];
         openTCPPorts = [
           25 # SMTP
           80 # ACME challenge
@@ -220,6 +231,10 @@
       };
       "Project-W" = {
         hostID = 139;
+        after = [
+          "Kanidm"
+          "Email"
+        ];
         openTCPPorts = [
           5000
         ];

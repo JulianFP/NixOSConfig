@@ -31,6 +31,11 @@ in
               default = true;
               description = "Whether this container should be enabled";
             };
+            after = lib.mkOption {
+              type = lib.types.listOf lib.types.singleLineStr;
+              default = [ ];
+              description = "List of container names that are required for running this container";
+            };
             enableSops = lib.mkOption {
               type = lib.types.bool;
               default = false;
@@ -338,20 +343,28 @@ in
               };
 
             #overwriting default systemd services
-            "container@${n}" = {
-              requires =
-                if (v.nebulaGateway != null) then
-                  [
-                    "lo@neb-${n}.service"
-                    "moveNebNS@${n}.service"
-                    "veth@neb-${n}.service"
-                  ]
-                else
-                  [
-                    "lo@${n}.service"
-                    "nebulaVeth@${n}.service"
-                  ];
-            };
+            "container@${n}" =
+              let
+                serviceList =
+                  (builtins.map (v: "container@${v}.service") v.after)
+                  ++ (
+                    if (v.nebulaGateway != null) then
+                      [
+                        "lo@neb-${n}.service"
+                        "moveNebNS@${n}.service"
+                        "veth@neb-${n}.service"
+                      ]
+                    else
+                      [
+                        "lo@${n}.service"
+                        "nebulaVeth@${n}.service"
+                      ]
+                  );
+              in
+              {
+                requires = serviceList;
+                after = serviceList;
+              };
             "nebula@${n}".enable = lib.mkForce false; # we have our own systemd service
           }
           // lib.optionalAttrs (v.nebulaGateway != null) {
