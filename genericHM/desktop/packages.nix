@@ -84,6 +84,6 @@ in
     font-awesome
     nerd-fonts.symbols-only # for waybar
     corefonts
-    vistafonts
+    vista-fonts
   ];
 }

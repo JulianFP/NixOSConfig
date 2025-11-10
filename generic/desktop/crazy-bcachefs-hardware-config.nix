@@ -308,7 +308,7 @@ in
           done
 
           bcachefs subvolume create /bcachefs_tmp/root
-          echo "Successfully create new root subvolume"
+          echo "Successfully created new root subvolume"
           umount /bcachefs_tmp
         '';
       };
