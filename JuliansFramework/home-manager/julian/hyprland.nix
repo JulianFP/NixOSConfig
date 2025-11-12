@@ -19,6 +19,9 @@
       "desc:Samsung Electric Company C27HG7x HTHK300334, 2560x1440@144, 1440x0, 1"
       # Iiyama PL2280H
       "HDMI-A-1, 1920x1080@60, 4000x0, 1"
+      # office monitors
+      "desc:LG Electronics LG ULTRAFINE 304MAMBEWH47, 3840x2160@60, 1440x0, 2"
+      "desc:LG Electronics LG HDR 4K 0x00075BF1, 3840x2160@60, 3360x0, 2"
       # fallback rule for random monitors
       ",preferred,auto,auto"
     ];

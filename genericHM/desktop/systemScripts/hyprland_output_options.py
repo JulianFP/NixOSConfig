@@ -35,7 +35,7 @@ def send(msg: str) -> str:
     client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     client.connect(f"{runtimeDir}/hypr/{his}/{socket_name}")
     client.send(msg.encode())
-    returnVal = client.recv(4096)
+    returnVal = client.recv(32768)
     client.close()
 
     return returnVal.decode()
