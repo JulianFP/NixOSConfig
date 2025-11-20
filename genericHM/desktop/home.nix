@@ -160,10 +160,6 @@
       on-notify = "exec kill -35 $(pidof waybar)";
       on-button-left = "exec ${pkgs.mako}/bin/makoctl invoke -n \"$id\" && ${pkgs.mako}/bin/makoctl dismiss -n \"$id\" && kill -35 $(pidof waybar)";
       on-button-right = "exec ${pkgs.mako}/bin/makoctl dismiss -n \"$id\" && kill -35 $(pidof waybar)";
-      "app-name=\"shutdown-reminder\"" = {
-        layer = "overlay";
-        on-notify = "exec kill -35 $(pidof waybar) && ${pkgs.mpv}/bin/mpv ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/dialog-warning.oga";
-      };
       "mode=doNotDisturb" = {
         invisible = 1;
       };
@@ -245,40 +241,4 @@
     [Basic Settings]
     Indexing-Enabled=false
   '';
-
-  #shutdown reminder timer and service
-  home.file."shutdownReminder.sh" = {
-    target = ".systemScripts/shutdownReminder.sh";
-    text = ''
-      #!/usr/bin/env bash
-      currentTime=$(date +%H:%M)
-      currentDay=$(date +%Y%m%d)
-      logFile="/home/julian/shutdownFailures.log"
-      logFileModifyDay=$(date +%Y%m%d -r "$logFile")
-      if [[ ! "$currentTime" < "00:00" ]] && [[ "$currentTime" < "00:15" ]]; then
-          if [[ "$logFileModifyDay" != "$currentDay" ]]; then
-              date >> "$logFile"
-          fi
-          currentMinute=$(date +%M)
-          minuteDiff=$((15-currentMinute))
-          notify-send -u critical -a "shutdown-reminder" "  Shutdown Reminder " "The system will shut down in ~$minuteDiff minutes 󱈸󱈸󱈸"
-      fi
-    '';
-    executable = true;
-  };
-  systemd.user = {
-    timers."shutdown-reminder" = {
-      Install.WantedBy = [ "timers.target" ];
-      Timer.OnCalendar = "*-*-* 00:00:00";
-    };
-    services."shutdown-reminder" = {
-      Service = {
-        ExecStart = "/home/julian/.systemScripts/shutdownReminder.sh";
-        Type = "oneshot";
-      };
-      #this is specifically for when I dismiss the notification and stop the shutdown.timer, but then reboot within the 15 min timeframe and forget to do that again and my system just shuts down. Sounds unlikely, happened to my multiple times though.
-      Unit.After = [ "graphical-session.target" ];
-      Install.WantedBy = [ "graphical-session.target" ];
-    };
-  };
 }

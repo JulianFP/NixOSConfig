@@ -30,7 +30,6 @@ in
 
     # CLI Applications
     file # needed for open command of lf
-    libnotify # needed for shutdown reminder
     tree
     unzip
 
