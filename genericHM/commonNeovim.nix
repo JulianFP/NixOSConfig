@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, lib, ... }:
 
 # this is a neovim configuration for (pretty much) all my devices & users.
 # basic stuff only
@@ -70,6 +70,21 @@
       #improved highlighting
       treesitter = {
         enable = true;
+        grammarPackages =
+          with pkgs.vimPlugins.nvim-treesitter.builtGrammars;
+          lib.mkDefault [
+            bash
+            json
+            markdown
+            nix
+            regex
+            toml
+            vim
+            vimdoc
+            xml
+            yaml
+            python
+          ];
         settings.highlight.disable = [ "latex" ];
       };
 

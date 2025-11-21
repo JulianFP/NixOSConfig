@@ -185,6 +185,9 @@
     '';
 
     plugins = {
+      #install all treesitter grammars (as by default)
+      treesitter.grammarPackages = pkgs.vimPlugins.nvim-treesitter.passthru.allGrammars;
+
       #LaTeX support
       vimtex = {
         enable = true;
