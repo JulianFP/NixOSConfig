@@ -202,10 +202,4 @@ in
       )
     );
   };
-
-  #all other gtk stuff is done by stylix
-  gtk.iconTheme = {
-    package = pkgs.papirus-icon-theme;
-    name = "Papirus-Dark";
-  };
 }
