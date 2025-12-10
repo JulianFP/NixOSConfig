@@ -23,7 +23,7 @@
   boot.loader.grub.copyKernels = true;
 
   #since this is a laptop
-  services.logind.lidSwitch = "ignore";
+  services.logind.settings.Login.HandleLidSwitch = "ignore";
 
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
