@@ -7,7 +7,7 @@
 
   services.foundryvtt = {
     enable = true;
-    package = inputs.foundryvtt.packages.${pkgs.system}.foundryvtt_12;
+    package = inputs.foundryvtt.packages.${pkgs.stdenv.hostPlatform.system}.foundryvtt_12;
     hostName = "vtt.partanengroup.de";
     dataDir = "/persist/backMeUp/foundryvtt";
     minifyStaticFiles = true;

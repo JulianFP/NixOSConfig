@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
     lanzaboote.url = "github:nix-community/lanzaboote";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nixos-generators = {
@@ -19,7 +19,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixvim-stable = {
-      url = "github:nix-community/nixvim/nixos-25.05";
+      url = "github:nix-community/nixvim/nixos-25.11";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
     home-manager = {
@@ -27,7 +27,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager-stable = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
     stylix.url = "github:danth/stylix";
@@ -49,7 +49,7 @@
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    simple-nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-25.05";
+    simple-nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-25.11";
   };
 
   outputs =
@@ -131,13 +131,6 @@
           overlays = [
             nur.overlays.default
             (import ./generic/overlays/clevis_with_fido2.nix)
-            ((import ./generic/overlays/qtct.nix) {
-              pkgs-stable = (
-                import inputs.nixpkgs-stable {
-                  system = "x86_64-linux";
-                }
-              );
-            })
             #(import ./generic/overlays/lyx.nix)
           ];
           stateVersion = "24.11";
@@ -165,13 +158,6 @@
           overlays = [
             nur.overlays.default
             (import ./generic/overlays/clevis_with_fido2.nix)
-            ((import ./generic/overlays/qtct.nix) {
-              pkgs-stable = (
-                import inputs.nixpkgs-stable {
-                  system = "x86_64-linux";
-                }
-              );
-            })
           ];
           stateVersion = "25.05";
         };

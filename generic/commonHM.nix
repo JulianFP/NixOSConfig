@@ -42,11 +42,7 @@
       the following will change the users to attribute sets with home manager config
     */
     users = builtins.mapAttrs (userName: modules: {
-      imports =
-        if stable then
-          modules ++ [ inputs.nixvim-stable.homeManagerModules.nixvim ]
-        else
-          modules ++ [ inputs.nixvim.homeModules.nixvim ];
+      imports = modules ++ [ inputs.nixvim.homeModules.nixvim ];
 
       home.username = userName;
       home.homeDirectory = if userName == "root" then "/root" else "/home/${userName}";

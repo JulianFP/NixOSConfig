@@ -93,11 +93,10 @@ in
       mail_smtpmode = "smtp";
       mail_sendmailmode = "smtp";
       mail_from_address = "noreply";
-      mail_smtpauth = 1;
+      mail_smtpauth = true;
       mail_smtphost = "mail.partanengroup.de";
-      mail_smtpport = "587";
+      mail_smtpport = 587;
       mail_smtpname = "noreply@partanengroup.de";
-      mail_smtpsecure = "tls";
       mail_domain = "partanengroup.de";
       mail_smtpauthtype = "PLAIN";
 

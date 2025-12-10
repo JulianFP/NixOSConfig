@@ -26,6 +26,7 @@
   };
   mailserver = {
     enable = true;
+    stateVersion = 3;
     fqdn = "mail.partanengroup.de";
     domains = [ "partanengroup.de" ];
 

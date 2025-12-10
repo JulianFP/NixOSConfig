@@ -4,8 +4,8 @@
 {
   programs.ssh = {
     enable = true;
-    userKnownHostsFile = "~/.ssh/known_hosts ~/.ssh/known_hostsHM";
     matchBlocks = {
+      "*".userKnownHostsFile = "~/.ssh/known_hosts ~/.ssh/known_hostsHM";
       "IonosVPS" = {
         hostname = "10.28.128.1";
         user = "root";

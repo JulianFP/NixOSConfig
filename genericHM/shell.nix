@@ -2,7 +2,6 @@
   config,
   osConfig,
   lib,
-  stable,
   ...
 }:
 
@@ -50,6 +49,7 @@
   #ssh
   programs.ssh = {
     enable = true;
+    enableDefaultConfig = false;
     matchBlocks = {
       "Ionos1" = {
         hostname = "82.165.49.241";
@@ -88,18 +88,17 @@
         user = "root";
       }) osConfig.myModules.nebula."serverNetwork".ipMap
     );
-  }
-  // lib.optionalAttrs (!stable) {
-    enableDefaultConfig = false;
   };
 
   # git
   programs.git = {
     enable = true;
-    userName = "JulianFP";
-    userEmail = "julian@partanengroup.de";
     #a lot of this is stolen from this great blog post: https://blog.gitbutler.com/how-git-core-devs-configure-git/
-    extraConfig = {
+    settings = {
+      user = {
+        name = "JulianFP";
+        email = "julian@partanengroup.de";
+      };
       column.ui = "auto"; # makes commands like git branch, git status, git tag print their output in multiple columns
       branch.sort = "-committerdate"; # sort branches in git branch output by commit date instead of alphabetically
       tag.sort = "version:refname"; # sort tags by version number instead of alphabetically

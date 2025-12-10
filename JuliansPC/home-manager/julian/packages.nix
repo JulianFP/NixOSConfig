@@ -20,7 +20,7 @@ let
       #then execute actual star-citizen script:
       ${text}
     '');
-  star-citizen = nix-gaming.packages.${pkgs.system}.star-citizen.override (prev: {
+  star-citizen = nix-gaming.packages.${pkgs.stdenv.hostPlatform.system}.star-citizen.override (prev: {
     writeShellScriptBin = writeScriptBinWrapper;
   });
 in

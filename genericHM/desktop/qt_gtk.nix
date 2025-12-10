@@ -7,11 +7,11 @@
 
 let
 
-  #custom qtct color palette (only used for qt5ct)
+  #custom qtct color palette
   #inspiration from following base16 template: https://github.com/mnussbaum/base16-qt5ct
   qtct-color-file =
     with config.lib.stylix.colors;
-    pkgs.writeText "stylix-qt5ct-colors.conf" ''
+    pkgs.writeText "stylix-qtct-colors.conf" ''
       [ColorScheme]
       active_colors=#ff${base05}, #ff${base01}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base0D}, #ff${base06}, #ff${base0B}, #ff${base0E}, #ff${base02}, #ff${base05}, #ff${base01}, #ff${base0C}, #ff${base0D}, #ff${base0D}
       disabled_colors=#ff${base04}, #ff${base00}, #ff${base01}, #ff${base02}, #ff${base03}, #ff${base04}, #ff${base04}, #ff${base04}, #ff${base04}, #ff${base00}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base06}, #ff${base0B}, #ff${base0E}, #ff${base01}, #ff${base05}, #ff${base01}, #ff${base0C}, #ff${base0D}, #ff${base0D}
@@ -138,20 +138,6 @@ let
     }
   '';
 
-  qtct-configFile = version: ''
-    [Appearance]
-    color_scheme_path=${qtct-color-file}
-    custom_palette=true
-    icon_theme=Papirus-Dark
-    style=Breeze
-
-    [Fonts]
-    fixed="${config.stylix.fonts.monospace.name},${builtins.toString config.stylix.fonts.sizes.applications},-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular"
-    general="${config.stylix.fonts.serif.name},${builtins.toString config.stylix.fonts.sizes.applications},-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular"
-
-    [Interface]
-    stylesheets=${qtct-qss}
-  '';
 in
 {
   qt = {
@@ -166,8 +152,20 @@ in
 
   #qtct config
   xdg.configFile = {
-    "qt5ct/qt5ct.conf".text = (qtct-configFile 5);
-    "qt6ct/qt6ct.conf".text = (qtct-configFile 6);
+    "qt6ct/qt6ct.conf".text = ''
+      [Appearance]
+      color_scheme_path=${qtct-color-file}
+      custom_palette=true
+      icon_theme=Papirus-Dark
+      style=Breeze
+
+      [Fonts]
+      fixed="${config.stylix.fonts.monospace.name},${builtins.toString config.stylix.fonts.sizes.applications},-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular"
+      general="${config.stylix.fonts.serif.name},${builtins.toString config.stylix.fonts.sizes.applications},-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular"
+
+      [Interface]
+      stylesheets=${qtct-qss}
+    '';
 
     "kdeglobals".text = (
       lib.generators.toINI { } (

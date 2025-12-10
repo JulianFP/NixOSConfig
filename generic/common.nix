@@ -42,7 +42,7 @@
   system = {
     # get git revision of system with command 'nixos-version --configuration-revision'
     configurationRevision = self.shortRev or self.dirtyShortRev;
-    extraSystemBuilderCmds = ''
+    systemBuilderCommands = ''
       ln -s ${pkgs.path} $out/nixpkgs
     '';
   };
