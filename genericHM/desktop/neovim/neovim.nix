@@ -172,6 +172,18 @@
         key = "<LocalLeader>t";
         action = ":Telescope file_browser<CR>";
       }
+
+      #for typst
+      {
+        mode = "";
+        key = "<LocalLeader>tt";
+        action = ":TypstPreviewToggle<CR>";
+      }
+      {
+        mode = "";
+        key = "<LocalLeader>tc";
+        action = ":TypstPreviewSyncCursor<CR>";
+      }
     ];
 
     #change lsp icons from default "E,W,H,I" to custom nerdfont icons
@@ -258,6 +270,7 @@
             installRustc = true;
             installCargo = true;
           };
+          tinymist.enable = true; # lsp server for Typst
         };
       };
       cmp.settings = {
@@ -297,6 +310,9 @@
         signs.dapBreakpoint.text = "🛑";
       };
       dap-ui.enable = true;
+
+      #typst
+      typst-preview.enable = true;
     };
     extraConfigLuaPost = ''
       require("ibl").setup()

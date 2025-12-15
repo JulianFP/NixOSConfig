@@ -68,6 +68,7 @@ in
     # Development
     #note: texlive (latex) is also installed in neovim config
     texlive.combined.scheme-full
+    typst
     lyx
     gcc
     cmake
