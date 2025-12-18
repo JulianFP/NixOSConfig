@@ -1,4 +1,4 @@
-{ lib, config, ... }:
+{ config, ... }:
 
 {
   imports = [
@@ -47,13 +47,24 @@
     };
   };
 
-  # Star Citizen tweaks
-  boot.kernel.sysctl = {
-    "vm.max_map_count" = lib.mkDefault 16777216; # also set by nix-gaming
-    "fs.file-max" = 524288;
+  # Star Citizen stuff
+  /*
+    I also needed to add pl_pit.forceSoftwareCursor = 1 to the user.cfg file of the star citizen installation.
+    This needs to be done manually and is not handled by this nix derivation.
+    See https://wiki.starcitizen-lug.org/Troubleshooting/unexpected-behavior#mousecursor-warp-issues-and-view-snapping-in-interaction-mode for more info
+  */
+  nix.settings = {
+    substituters = [ "https://nix-citizen.cachix.org" ];
+    trusted-public-keys = [ "nix-citizen.cachix.org-1:lPMkWc2X8XD4/7YPEEwXKKBg+SVbYTVrAaLA2wQTKCo=" ];
   };
-  #set the "uaccess" tag for raw HID access for Thrustmaster T.16000M Joystick in wine
-  #needed for newer wine/proton versions only (I think wine >= 9.22), disabled for now since I use proton-ge
+  programs.rsi-launcher = {
+    enable = true;
+    enforceWaylandDrv = true;
+    preCommands = ''
+      #to fix keyboard layout issues with wine wayland (https://bugs.winehq.org/show_bug.cgi?id=57097):
+      export LC_ALL=de
+    '';
+  };
   services.udev.extraRules = ''
     KERNEL=="hidraw*", ATTRS{idVendor}=="044f", ATTRS{idProduct}=="b10a", MODE="0666", TAG+="uaccess"
   '';

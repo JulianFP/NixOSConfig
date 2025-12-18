@@ -42,6 +42,10 @@
       url = "github:fufexan/nix-gaming";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-citizen = {
+      url = "github:LovingMelody/nix-citizen";
+      inputs.nix-gaming.follows = "nix-gaming";
+    };
     impermanence.url = "github:nix-community/impermanence";
     foundryvtt.url = "github:reckenrode/nix-foundryvtt";
     systems.url = "github:nix-systems/default";
@@ -143,10 +147,12 @@
             ./generic/desktop/crazy-bcachefs-hardware-config.nix
             nixos-hardware.nixosModules.common-gpu-amd
             nixos-hardware.nixosModules.common-cpu-amd
+            nix-citizen.nixosModules.default
           ];
           permittedUnfreePackages = [
             "steam"
             "steam-unwrapped"
+            "rsi-launcher"
             "corefonts"
             "vista-fonts"
             "xow_dongle-firmware"
