@@ -30,7 +30,7 @@
       url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
-    stylix.url = "github:danth/stylix";
+    stylix.url = "github:nix-community/stylix/release-25.11";
     nur.url = "github:nix-community/NUR";
     disko = {
       url = "github:nix-community/disko";
@@ -114,7 +114,7 @@
       nixosConfigurations = mkSystems {
         "JuliansFramework" = {
           desktop = true;
-          stable = false;
+          stable = true;
           boot = 2;
           systemModules = [
             ./generic/desktop/crazy-bcachefs-hardware-config.nix
@@ -127,7 +127,6 @@
             "corefonts"
             "vista-fonts"
             "xow_dongle-firmware"
-            "idea-ultimate"
             "discord"
             "guilded"
             "spotify"
@@ -141,7 +140,7 @@
         };
         "JuliansPC" = {
           desktop = true;
-          stable = false;
+          stable = true;
           boot = 2;
           systemModules = [
             ./generic/desktop/crazy-bcachefs-hardware-config.nix
@@ -156,7 +155,6 @@
             "corefonts"
             "vista-fonts"
             "xow_dongle-firmware"
-            "idea-ultimate"
             "discord"
             "guilded"
             "spotify"

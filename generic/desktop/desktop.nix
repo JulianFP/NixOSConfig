@@ -29,7 +29,7 @@
   ];
 
   # -- boot --
-  boot.kernelPackages = pkgs.linuxPackages_6_17;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # -- hardware --
   # enable Vulkan (32- and 64-bit), Hardware Video encoding/decoding is done in nixos-hardware
