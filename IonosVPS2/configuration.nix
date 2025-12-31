@@ -4,7 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ../generic/proxyConfig.nix
-    ./dnat.nix
+    ../generic/dnat.nix
   ];
 
   networking.domain = "";
@@ -23,4 +23,63 @@
       via = config.myModules.nebula."serverNetwork".ipMap.mainserver;
     }
   ];
+
+  #dnat setup
+  myModules.dnat = {
+    enable = true;
+    externalInterface = "ens6";
+    portForwards = [
+      {
+        # SMTP
+        sourcePort = 25;
+        destinationNebulaHost = "Email";
+      }
+      {
+        # ACME challenge
+        sourcePort = 80;
+        destinationNebulaHost = "Email";
+      }
+      /*
+        { # POP3 STARTTLS, enable if enablePop3 is set in snm
+          sourcePort = 80;
+          destinationNebulaHost = "Email";
+        }
+      */
+      {
+        # IMAP STARTTLS
+        sourcePort = 143;
+        destinationNebulaHost = "Email";
+      }
+      {
+        # HTTPS for roundcube and rspamd UI
+        sourcePort = 443;
+        destinationNebulaHost = "Email";
+      }
+      {
+        # SMTP TLS
+        sourcePort = 465;
+        destinationNebulaHost = "Email";
+      }
+      {
+        # SMTP STARTTLS
+        sourcePort = 587;
+        destinationNebulaHost = "Email";
+      }
+      {
+        # IMAP TLS
+        sourcePort = 993;
+        destinationNebulaHost = "Email";
+      }
+      /*
+        { # POP3 TLS, enable if enablePop3Ssl is set in snm
+          sourcePort = 995;
+          destinationNebulaHost = "Email";
+        }
+        { # sieve, enable if enableManageSieve is set in snm
+          sourcePort = 4190;
+          destinationNebulaHost = "Email";
+        }
+      */
+    ];
+  };
 }

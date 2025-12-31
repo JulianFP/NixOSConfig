@@ -4,7 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ../generic/proxyConfig.nix
-    ./dnat.nix
+    ../generic/dnat.nix
   ];
 
   networking.domain = "";
@@ -28,6 +28,35 @@
   myModules.proxy = {
     enable = true;
     isEdge = true;
+  };
+
+  #dnat setup
+  myModules.dnat = {
+    enable = true;
+    externalInterface = "ens6";
+    portForwards = [
+      #Valheim
+      {
+        sourcePort = 2456;
+        proto = "udp";
+        destinationNebulaHost = "ValheimMarvin";
+      }
+      {
+        sourcePort = 2457;
+        proto = "udp";
+        destinationNebulaHost = "ValheimMarvin";
+      }
+      {
+        sourcePort = 2458;
+        proto = "udp";
+        destinationNebulaHost = "ValheimBrueder";
+      }
+      {
+        sourcePort = 2459;
+        proto = "udp";
+        destinationNebulaHost = "ValheimBrueder";
+      }
+    ];
   };
 
   #use options of generic/wireguard.nix module
