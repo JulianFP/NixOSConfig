@@ -228,6 +228,7 @@ in
                 "www.microsoft.com" = "9";
                 "www.linkedin.com" = "9";
                 "chatgpt.com" = "9";
+                "github.com" = "9";
               };
         };
       };
@@ -278,10 +279,35 @@ in
           };
 
           "NixOS Wiki" = {
-            urls = [ { template = "https://wiki.nixos.org/w/index.php?search={searchTerms}"; } ];
+            urls = [
+              {
+                template = "https://wiki.nixos.org/w/index.php";
+                params = [
+                  {
+                    name = "search";
+                    value = "{searchTerms}";
+                  }
+                ];
+              }
+            ];
             icon = "https://wiki.nixos.org/favicon.ico";
             updateInterval = 24 * 60 * 60 * 1000; # every day
             definedAliases = [ "@nw" ];
+          };
+
+          "Google Maps" = {
+            urls = [
+              {
+                template = "https://www.google.com/maps";
+                params = [
+                  {
+                    name = "q";
+                    value = "{searchTerms}";
+                  }
+                ];
+              }
+            ];
+            definedAliases = [ "@gm" ];
           };
 
           "bing".metaData.hidden = true;

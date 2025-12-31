@@ -34,6 +34,7 @@ in
     unzip
 
     # Applications
+    mullvad-vpn
     libreoffice-qt
     pdfarranger
     hunspell

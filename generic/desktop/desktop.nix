@@ -93,6 +93,12 @@
       enableClient = true;
       clientSettings.uri = "https://account.partanengroup.de";
     };
+
+    # mullvad vpn
+    mullvad-vpn = {
+      enable = true;
+      enableExcludeWrapper = false;
+    };
   };
 
   # -- programs --
