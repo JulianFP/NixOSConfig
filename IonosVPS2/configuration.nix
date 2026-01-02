@@ -7,6 +7,13 @@
     ../generic/dnat.nix
   ];
 
+  # set a password for a root user as a fallback if there is no networking
+  sops.secrets."users/root" = {
+    neededForUsers = true;
+    sopsFile = ../secrets/IonosVPS2/users.yaml;
+  };
+  users.users.root.hashedPasswordFile = config.sops.secrets."users/root".path;
+
   networking.domain = "";
 
   zramSwap.enable = true; # enable zram (instead of swap)
@@ -41,7 +48,7 @@
       }
       /*
         { # POP3 STARTTLS, enable if enablePop3 is set in snm
-          sourcePort = 80;
+          sourcePort = 110;
           destinationNebulaHost = "Email";
         }
       */

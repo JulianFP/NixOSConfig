@@ -74,6 +74,7 @@
         #network forwarding
         port = "any";
         proto = "any";
+        local_cidr = "192.168.10.0/24";
         group = "admin";
       }
     ];

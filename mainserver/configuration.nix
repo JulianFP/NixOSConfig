@@ -139,9 +139,17 @@
     settings.preferred_ranges = [ "192.168.3.0/24" ];
     firewall.inbound = [
       {
-        #network forwarding
+        #network forwarding for server network
         port = "any";
         proto = "any";
+        local_cidr = "192.168.3.0/24";
+        group = "admin";
+      }
+      {
+        #network forwarding for container network
+        port = "any";
+        proto = "any";
+        local_cidr = "10.42.42.0/24";
         group = "admin";
       }
     ];

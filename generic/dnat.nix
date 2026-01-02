@@ -90,6 +90,7 @@ in
       {
         port = "any";
         proto = "any";
+        local_cidr = "any";
         group = "server";
       }
     ];
