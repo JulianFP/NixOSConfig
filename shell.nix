@@ -20,7 +20,7 @@ let
         entry = "${pkgs.codespell}/bin/codespell -w --ignore-words-list=hass,edn,pinchin,bootup";
       };
       #nix
-      nixfmt-rfc-style.enable = true;
+      nixfmt.enable = true;
       #bash
       shellcheck = {
         enable = true;

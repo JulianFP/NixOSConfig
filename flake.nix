@@ -40,7 +40,7 @@
     project-W.url = "github:JulianFP/project-W";
     nix-gaming = {
       url = "github:fufexan/nix-gaming";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
     };
     nix-citizen = {
       url = "github:LovingMelody/nix-citizen";
