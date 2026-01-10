@@ -167,6 +167,9 @@
 
       #to add compose support to podman
       podman-compose
+
+      #to add exfat support
+      exfatprogs
     ];
 
     #additional impermanence directories
