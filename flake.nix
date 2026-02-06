@@ -152,6 +152,7 @@
             "steam"
             "steam-unwrapped"
             "rsi-launcher"
+            "rsi-installer"
             "corefonts"
             "vista-fonts"
             "xow_dongle-firmware"
