@@ -70,6 +70,7 @@
         "project-w" = { };
         "project-w-admin" = { };
         "family" = { };
+        "higher-quota" = { };
       };
 
       systems.oauth2 = {
@@ -105,6 +106,7 @@
             "groups".valuesByGroup."family" = [ "Familie" ];
             "quota" = {
               valuesByGroup."family" = [ "2199023255552" ]; # 2TiB
+              valuesByGroup."higher-quota" = [ "102400" ]; # 100GiB
               joinType = "ssv";
             };
           };
@@ -217,6 +219,16 @@
           mailAddresses = [ "raoul@honermann.info" ];
           groups = [
             "nextcloud"
+            "jellyfin"
+          ];
+        };
+        "annalena" = {
+          displayName = "annalena";
+          legalName = "Annalena Frey";
+          mailAddresses = [ "annalena-frey1@web.de" ];
+          groups = [
+            "nextcloud"
+            "higher-quota"
             "jellyfin"
           ];
         };
