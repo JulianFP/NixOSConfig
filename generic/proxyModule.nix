@@ -39,12 +39,12 @@ in
             };
             additionalConfig = lib.mkOption {
               type = lib.types.lines;
-              default = '''';
+              default = "";
               description = "Additional config added to the virtualHosts section (e.g. for adding additional locations)";
             };
             additionalReverseProxyConfig = lib.mkOption {
               type = lib.types.lines;
-              default = '''';
+              default = "";
               description = "Additional config added to the reverse_proxy section of the caddy config";
             };
           };
@@ -114,7 +114,7 @@ in
         enable = true;
         package = pkgs.caddy.withPlugins {
           plugins = [ "github.com/pberkel/caddy-storage-redis@v1.4.0" ];
-          hash = "sha256-PhauEX9CdYyqnWjefVXMN7N6m8nOM+Uq3SciKsOhtp8=";
+          hash = "sha256-a0qASWglUVxciRXIxH0uLzMwsH/NhttetkAcVOZKC2I=";
         };
         dataDir = "/persist/caddy";
         logDir = "/persist/caddy-log";
