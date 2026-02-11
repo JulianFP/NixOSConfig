@@ -136,6 +136,11 @@ in
           icon = "dollar";
           id = 9;
         };
+        google = {
+          color = "red";
+          icon = "fingerprint";
+          id = 10;
+        };
       };
       containersForce = true;
 
@@ -229,6 +234,9 @@ in
                 "www.linkedin.com" = "9";
                 "chatgpt.com" = "9";
                 "github.com" = "9";
+                "www.google.com" = "10";
+                "www.youtube.com" = "10";
+                "cloud.google.com" = "10";
               };
         };
       };
