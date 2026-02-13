@@ -137,40 +137,40 @@
       #for dap (debugging)
       {
         mode = "n";
-        key = "<LocalLeader>c";
+        key = "<LocalLeader>dc";
         action = ":DapContinue<CR>";
       }
       {
         mode = "n";
-        key = "<LocalLeader>n";
+        key = "<LocalLeader>dn";
         action = ":DapStepOver<CR>";
       }
       {
         mode = "n";
-        key = "<LocalLeader>s";
+        key = "<LocalLeader>ds";
         action = ":DapStepInto<CR>";
       }
       {
         mode = "n";
-        key = "<LocalLeader>f";
+        key = "<LocalLeader>df";
         action = ":DapStepOut<CR>";
       }
       {
         mode = "n";
-        key = "<LocalLeader>b";
+        key = "<LocalLeader>db";
         action = ":DapToggleBreakpoint<CR>";
       }
       {
         mode = "n";
-        key = "<LocalLeader>q";
+        key = "<LocalLeader>dq";
         action = ":DapTerminate<CR>";
       }
 
-      #telescope
+      #file browser
       {
         mode = "";
-        key = "<LocalLeader>t";
-        action = ":Telescope file_browser<CR>";
+        key = "<LocalLeader>f";
+        action = ":Neotree toggle<CR>";
       }
 
       #for typst
@@ -207,18 +207,19 @@
       };
 
       #file browser/switcher
-      telescope = {
+      neo-tree = {
         enable = true;
-        settings.defaults = {
-          initial_mode = "normal";
-          mappings.n = {
-            "l" = "select_default";
-          };
-        };
-        extensions.file-browser = {
-          enable = true;
-          settings.mappings."n" = {
-            "h" = "require('telescope._extensions.file_browser.actions').goto_parent_dir";
+        settings = {
+          close_if_last_window = true;
+          enable_git_status = true;
+          enable_diagnostics = true;
+          clipboard.sync = "global";
+          filesystem = {
+            follow_current_file = {
+              enabled = true;
+              leave_dirs_open = true;
+            };
+            use_libuv_file_watcher = true;
           };
         };
       };
@@ -274,7 +275,7 @@
         };
       };
       cmp.settings = {
-        snippet.expand = ''function(args) require('luasnip').lsp_expand(args.body) end'';
+        snippet.expand = "function(args) require('luasnip').lsp_expand(args.body) end";
         sources = [
           { name = "nvim_lsp"; }
           { name = "luasnip"; } # For luasnip users.
