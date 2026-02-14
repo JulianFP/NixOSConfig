@@ -106,7 +106,7 @@
             "groups".valuesByGroup."family" = [ "Familie" ];
             "quota" = {
               valuesByGroup."family" = [ "2199023255552" ]; # 2TiB
-              valuesByGroup."higher-quota" = [ "102400" ]; # 100GiB
+              valuesByGroup."higher-quota" = [ "107374182400" ]; # 100GiB
               joinType = "ssv";
             };
           };
