@@ -284,11 +284,7 @@
   #stylix define system wide theme (can be overwritten on a per-user level in home-manager)
   stylix = {
     enable = true;
-    image = pkgs.fetchurl {
-      url = "https://w.wallhaven.cc/full/4d/wallhaven-4dmxg4.jpg";
-      hash = "sha256-TjbV20mckBX4QcvKgzxLaXAZgn0qQvFVtl34csEsm+U=";
-      curlOptsList = [ "-HUser-Agent: Wget/1.21.4" ]; # some sides want a valid user agent
-    };
+    image = ./wallpaper.JPG;
     polarity = "dark";
     override = {
       # swap 'cause better. Comments should not be blue
