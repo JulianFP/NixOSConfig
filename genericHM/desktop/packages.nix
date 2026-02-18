@@ -80,6 +80,7 @@ in
     (python3.withPackages python-packages)
 
     # Fonts
+    roboto
     roboto-mono
     font-awesome
     nerd-fonts.symbols-only # for waybar
