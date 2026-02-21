@@ -59,6 +59,7 @@
   };
   programs.rsi-launcher = {
     enable = true;
+    umu.enable = true; # to make EAC work
     enforceWaylandDrv = true;
     preCommands = ''
       #to fix keyboard layout issues with wine wayland (https://bugs.winehq.org/show_bug.cgi?id=57097):
