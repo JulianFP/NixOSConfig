@@ -13,15 +13,7 @@ let
   blocklistLocalZones = pkgs.stdenv.mkDerivation {
     name = "StevenBlack-blocklist-unbound";
 
-    src = (
-      pkgs.fetchFromGitHub {
-        owner = "StevenBlack";
-        repo = "hosts";
-        rev = "3.16.58";
-        sha256 = "sha256-DT9HK9iYTmXUfjKcTxLRMZOeCLb9CAoFEpBiDpEku3g=";
-      }
-      + "/hosts"
-    );
+    src = "${pkgs.stevenblack-blocklist}/hosts";
 
     phases = [ "installPhase" ];
 

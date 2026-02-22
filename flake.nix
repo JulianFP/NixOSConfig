@@ -190,6 +190,7 @@
           ];
           overlays = [
             (import ./generic/overlays/caddy-unstable.nix { inherit inputs; })
+            (import ./generic/overlays/stevenblack-unstable.nix { inherit inputs; })
           ];
           stateVersion = "24.11";
         };
