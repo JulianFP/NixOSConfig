@@ -235,4 +235,8 @@
       };
     };
   };
+
+  environment.systemPackages = [
+    config.services.kanidm.package
+  ];
 }
