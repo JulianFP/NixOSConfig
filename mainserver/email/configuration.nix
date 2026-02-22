@@ -50,6 +50,11 @@
         passAttrs = "user=mail";
         userFilter = "(&(class=account)(memberof=spn=mail-server@account.partanengroup.de)(mail=%{user}))";
         passFilter = userFilter;
+
+        #see https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/issues/342
+        userAttrs = ''
+          =home=${config.mailserver.mailDirectory}/ldap/%{user}
+        '';
       };
       postfix.filter = "(&(class=account)(memberof=spn=mail-server@account.partanengroup.de)(mail=%s))";
       searchBase = "dc=account,dc=partanengroup,dc=de";
