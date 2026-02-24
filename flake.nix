@@ -134,6 +134,7 @@
           overlays = [
             nur.overlays.default
             (import ./generic/overlays/clevis_with_fido2.nix)
+            (import ./generic/overlays/desktop-unstables.nix { inherit inputs; })
             #(import ./generic/overlays/lyx.nix)
           ];
           stateVersion = "24.11";
@@ -163,6 +164,7 @@
           overlays = [
             nur.overlays.default
             (import ./generic/overlays/clevis_with_fido2.nix)
+            (import ./generic/overlays/desktop-unstables.nix { inherit inputs; })
           ];
           stateVersion = "25.05";
         };
