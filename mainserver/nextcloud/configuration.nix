@@ -94,11 +94,13 @@ in
       mail_sendmailmode = "smtp";
       mail_from_address = "noreply";
       mail_smtpauth = true;
+      mail_smtpauthtype = "PLAIN";
+      mail_smtpsecure = "ssl";
+      mail_send_plaintext_only = false;
       mail_smtphost = "mail.partanengroup.de";
-      mail_smtpport = 587;
+      mail_smtpport = 465;
       mail_smtpname = "noreply@partanengroup.de";
       mail_domain = "partanengroup.de";
-      mail_smtpauthtype = "PLAIN";
 
       #log as file for better compatibility with Nextcloud logreader and promtail
       log_type = "file";

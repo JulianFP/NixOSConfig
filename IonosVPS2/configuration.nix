@@ -68,11 +68,6 @@
         destinationNebulaHost = "Email";
       }
       {
-        # SMTP STARTTLS
-        sourcePort = 587;
-        destinationNebulaHost = "Email";
-      }
-      {
         # IMAP TLS
         sourcePort = 993;
         destinationNebulaHost = "Email";

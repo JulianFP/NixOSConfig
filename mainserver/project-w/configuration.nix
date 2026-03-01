@@ -70,8 +70,8 @@
           };
           smtp_server = {
             hostname = "mail.partanengroup.de";
-            port = 587;
-            secure = "starttls";
+            port = 465;
+            secure = "ssl";
             sender_email = "noreply@partanengroup.de";
             username = "noreply@partanengroup.de";
             password = "!ENV \${SMTP_PASSWORD}";

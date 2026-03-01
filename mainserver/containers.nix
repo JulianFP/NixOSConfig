@@ -202,7 +202,7 @@
           143 # IMAP STARTTLS
           443 # HTTPS for roundcube and rspamd UI
           465 # SMTP TLS
-          587 # SMTP STARTTLS
+          #587 # SMTP STARTTLS, enable if needed but discouraged
           993 # IMAP TLS
           #995 #POP3 TLS, enable if enablePop3Ssl is set in snm
           #4190 #sieve, enable if enableManageSieve is set in snm
