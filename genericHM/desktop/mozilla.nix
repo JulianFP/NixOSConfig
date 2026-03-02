@@ -151,6 +151,8 @@ in
           keepassxc-browser
           floccus
           ublock-origin
+          sponsorblock
+          return-youtube-dislikes
         ];
         settings = {
           "uBlock0@raymondhill.net".settings = {
