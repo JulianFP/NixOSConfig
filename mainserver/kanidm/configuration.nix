@@ -232,6 +232,15 @@
             "jellyfin"
           ];
         };
+        "maximilian" = {
+          displayName = "maximilian.inckmann";
+          legalName = "Maximilian Inckmann";
+          mailAddresses = [ "maximilian@inckmann.de" ];
+          groups = [
+            "nextcloud"
+            "jellyfin"
+          ];
+        };
       };
     };
   };
