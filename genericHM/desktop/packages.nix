@@ -79,6 +79,16 @@ in
     arduino-ide
     (python3.withPackages python-packages)
 
+    # Gaming
+    wineWowPackages.stagingFull
+    winetricks
+    gamescope
+    lutris
+    heroic
+    protonup-qt
+    superTuxKart
+    prismlauncher
+
     # Fonts
     roboto
     roboto-mono

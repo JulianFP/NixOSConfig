@@ -233,6 +233,7 @@
       enable = true;
       package = pkgs.htop-vim;
     };
+    mangohud.enable = true;
   };
 
   # -- misc --
