@@ -1,12 +1,31 @@
-{ config, ... }:
+{
+  config,
+  lib,
+  hostName,
+  ...
+}:
 
 {
   imports = [
     ../generic/containerModule.nix
   ];
 
+  sops.secrets."mullvad/privatekey" = {
+    mode = "640";
+    owner = "systemd-network";
+    group = "systemd-network";
+    sopsFile = ../secrets/${hostName}/mullvad.yaml;
+  };
+
   myModules.container = {
     externalNetworkInterface = "enp0s25";
+    mullvadPrivateKeyFile = config.sops.secrets."mullvad/privatekey".path;
+    associatedHostDomains = builtins.concatLists (
+      lib.mapAttrsToList (n: _: [
+        n
+        "www.${n}"
+      ]) (lib.filterAttrs (_: v: !v.destIsHttps) config.myModules.proxy.proxies)
+    );
     containers = {
       "Nextcloud" = {
         hostID = 131;
@@ -179,6 +198,7 @@
           3636
         ];
         enableSops = true;
+        associatedDomains = [ "account.partanengroup.de" ];
         additionalBindMounts = {
           "/var/lib/acme" = {
             hostPath = "/persist/Kanidm-acme";
@@ -209,6 +229,7 @@
         ];
         nebulaGateway = config.myModules.nebula."serverNetwork".ipMap.IonosVPS2;
         enableSops = true;
+        associatedDomains = [ "mail.partanengroup.de" ];
         additionalBindMounts = {
           "/var/lib/acme" = {
             hostPath = "/persist/Email/acme";
@@ -229,32 +250,48 @@
         };
         config = ./email/configuration.nix;
       };
+      /*
+        "Project-W" = {
+          hostID = 139;
+          after = [
+            "Kanidm"
+            "Email"
+          ];
+          openTCPPorts = [
+            5000
+          ];
+          enableSops = true;
+          additionalBindMounts = {
+            "/var/lib/postgresql" = {
+              hostPath = "/persist/Project-W/postgresql";
+              isReadOnly = false;
+            };
+            "/var/lib/project-W-runner" = {
+              hostPath = "/persist/Project-W/runner-models";
+              isReadOnly = false;
+            };
+            "/persist/backMeUp" = {
+              hostPath = "/persist/backMeUp/Project-W";
+              isReadOnly = false;
+            };
+          };
+          additionalSpecialArgs.trustedProxyIP = config.myModules.nebula."serverNetwork".ipMap.IonosVPS;
+          config = ./project-w/configuration.nix;
+        };
+      */
       "Project-W" = {
         hostID = 139;
-        after = [
-          "Kanidm"
-          "Email"
-        ];
+        mullvadRouting = true;
         openTCPPorts = [
-          5000
+          7878
         ];
-        enableSops = true;
         additionalBindMounts = {
-          "/var/lib/postgresql" = {
-            hostPath = "/persist/Project-W/postgresql";
-            isReadOnly = false;
-          };
-          "/var/lib/project-W-runner" = {
-            hostPath = "/persist/Project-W/runner-models";
-            isReadOnly = false;
-          };
           "/persist/backMeUp" = {
-            hostPath = "/persist/backMeUp/Project-W";
+            hostPath = "/persist//backMeUp/Starrs";
             isReadOnly = false;
           };
         };
-        additionalSpecialArgs.trustedProxyIP = config.myModules.nebula."serverNetwork".ipMap.IonosVPS;
-        config = ./project-w/configuration.nix;
+        config = ./starrs/configuration.nix;
       };
     };
   };

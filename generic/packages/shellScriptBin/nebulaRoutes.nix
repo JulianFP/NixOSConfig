@@ -10,6 +10,10 @@ let
       route = "192.168.3.0/24";
       via = config.myModules.nebula."serverNetwork".ipMap.mainserver;
     };
+    "mainserver container network (nebula containers)" = {
+      route = "10.42.42.0/24";
+      via = config.myModules.nebula."serverNetwork".ipMap.mainserver;
+    };
     "Telgte home network" = {
       route = "192.168.1.0/24";
       via = config.myModules.nebula."serverNetwork".ipMap.mainserver;

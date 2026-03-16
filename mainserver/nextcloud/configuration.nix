@@ -12,11 +12,6 @@ let
   oidc_client_id = if hostName == "Nextcloud" then "nextcloud_service" else "test-nextcloud_service";
 in
 {
-  networking.hosts = {
-    #to access Kanidm using it's domain over local container ip
-    "10.42.42.137" = [ "account.partanengroup.de" ];
-  };
-
   #setup sops secrets for nextcloud
   sops.secrets."nextcloud/adminPass" = {
     mode = "0440";

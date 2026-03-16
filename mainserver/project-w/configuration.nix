@@ -10,11 +10,6 @@
     inputs.project-W.nixosModules.default
   ];
 
-  networking.hosts = {
-    #to access Kanidm using it's domain over local container ip
-    "10.42.42.137" = [ "account.partanengroup.de" ];
-  };
-
   sops.secrets = {
     "project-w_secrets".sopsFile = ../../secrets/${hostName}/project-w.yaml;
     "project-w-runner_secrets" = {

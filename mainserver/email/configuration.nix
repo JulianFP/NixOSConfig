@@ -11,14 +11,6 @@
     inputs.simple-nixos-mailserver.nixosModule
   ];
 
-  networking.hosts = {
-    #to access Kanidm using it's domain over local container ip
-    "10.42.42.137" = [ "account.partanengroup.de" ];
-
-    #to access itself, e.g. for roundcube webmail
-    "127.0.0.1" = [ "mail.partanengroup.de" ];
-  };
-
   sops.secrets."ldap_token" = {
     sopsFile = ../../secrets/${hostName}/ldap.yaml;
     owner = config.services.postfix.user;

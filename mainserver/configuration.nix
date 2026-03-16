@@ -26,11 +26,7 @@
   environment.systemPackages = with pkgs; [ age ];
 
   #networking config
-  networking = {
-    useDHCP = false;
-    #to access Kanidm using it's domain over local container ip
-    hosts."10.42.42.137" = [ "account.partanengroup.de" ];
-  };
+  networking.useDHCP = false;
   systemd.network = {
     enable = true;
     networks."10-serverLAN" = {
@@ -71,52 +67,6 @@
     };
   };
 
-  #nebula extend network
-  boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
-  networking.nftables = {
-    enable = true;
-    tables = {
-      "nebula_server-network" = {
-        family = "ip";
-        content = ''
-          chain postrouting {
-            type nat hook postrouting priority srcnat; policy accept;
-            ip saddr ${
-              config.myModules.nebula."serverNetwork".subnet
-            } ip daddr 192.168.3.0/24 counter masquerade
-          }
-
-          chain forward {
-            type filter hook forward priority filter; policy accept;
-            ct state related,established counter accept
-            iifname nebula1 oifname enp6s0 ip saddr ${
-              config.myModules.nebula."serverNetwork".subnet
-            } ip daddr 192.168.3.0/24 counter accept
-          }
-        '';
-      };
-      "nebula_container-network" = {
-        family = "ip";
-        content = ''
-          chain postrouting {
-            type nat hook postrouting priority srcnat; policy accept;
-            ip saddr ${
-              config.myModules.nebula."serverNetwork".subnet
-            } ip daddr 10.42.42.0/24 counter masquerade
-          }
-
-          chain forward {
-            type filter hook forward priority filter; policy accept;
-            ct state related,established counter accept
-            iifname nebula1 oifname enp6s0 ip saddr ${
-              config.myModules.nebula."serverNetwork".subnet
-            } ip daddr 10.42.42.0/24 counter accept
-          }
-        '';
-      };
-    };
-  };
-
   #zfs & btrfs config
   environment.persistence."/persist".files = [
     "/etc/zfs/zpool.cache" # see nixos manual
@@ -135,6 +85,10 @@
 
   networking.hostId = "39c10fc6"; # see option description
 
+  myModules.nebula."serverNetwork".unsafeRoutes = {
+    "enp0s25" = [ "192.168.3.0/24" ];
+    "br0" = [ "10.42.42.0/24" ];
+  };
   services.nebula.networks."serverNetwork" = {
     settings.preferred_ranges = [ "192.168.3.0/24" ];
     firewall.inbound = [

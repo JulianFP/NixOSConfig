@@ -17,6 +17,8 @@ let
   }) enabledInterfacesList portList;
   enabledInterfacesWithPort = builtins.listToAttrs enabledInterfacesWithPortList;
   serviceGroup = "nebulaUsers"; # group that all nebula users are in so that they all can access the same ca.crt file
+  getNetName = (netName: builtins.substring 0 15 "neb-${netName}");
+  unsafeRoutesEnabled = lib.any (v: v.unsafeRoutes != { }) (builtins.attrValues enabledNetworks);
 in
 {
   #sops config for nebula key
@@ -81,6 +83,11 @@ in
             description = "Map Hostnames in ipMap to non-nebula IP-addresses and mark these hostnames as lighthouses";
             type = lib.types.attrsOf (lib.types.listOf lib.types.str);
           };
+          unsafeRoutes = lib.mkOption {
+            type = lib.types.attrsOf (lib.types.listOf lib.types.singleLineStr);
+            default = { };
+            description = "An attribute set mapping interface names to lists of subnets";
+          };
         };
       }
     );
@@ -125,7 +132,7 @@ in
 
     #exclude nebula interface from networkmanager
     networking.networkmanager.unmanaged = lib.mapAttrsToList (
-      netName: _: builtins.substring 0 15 "neb-${netName}"
+      netName: _: getNetName netName
     ) enabledInterfacesWithPort;
 
     services.nebula.networks = lib.mkMerge (
@@ -180,5 +187,38 @@ in
         };
       }) enabledInterfacesWithPort
     );
+
+    boot.kernel.sysctl."net.ipv4.ip_forward" = lib.mkIf unsafeRoutesEnabled 1;
+    networking.nftables = lib.mkIf unsafeRoutesEnabled {
+      enable = true;
+      tables = lib.mergeAttrsList (
+        lib.mapAttrsToList (
+          netName: netCfg:
+          lib.mergeAttrsList (
+            lib.mapAttrsToList (interface: subnets: {
+              "nebula_${netName}_unsafeRoutes_${interface}" = {
+                family = "ip";
+                content = ''
+                  chain postrouting {
+                    type nat hook postrouting priority srcnat; policy accept;
+                    ip saddr ${
+                      config.myModules.nebula."serverNetwork".subnet
+                    } ip daddr { ${lib.concatStringsSep ", " subnets} } counter masquerade
+                  }
+
+                  chain forward {
+                    type filter hook forward priority filter; policy accept;
+                    ct state related,established counter accept
+                    iifname ${getNetName netName} oifname ${interface} ip saddr ${
+                      config.myModules.nebula."serverNetwork".subnet
+                    } ip daddr ${lib.concatStringsSep ", " subnets} counter accept
+                  }
+                '';
+              };
+            }) netCfg.unsafeRoutes
+          )
+        ) enabledNetworks
+      );
+    };
   };
 }
