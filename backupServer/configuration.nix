@@ -38,7 +38,7 @@
     };
   };
 
-  myModules.nebula."serverNetwork".unsafeRoutes."enp0s4" = [ "192.168.3.0/24" ];
+  myModules.nebula."serverNetwork".unsafeRoutes."eno1" = [ "192.168.3.0/24" ];
   services.nebula.networks."serverNetwork" = {
     settings.preferred_ranges = [ "192.168.3.0/24" ];
     firewall.inbound = [
