@@ -39,18 +39,6 @@
   };
 
   myModules.nebula."serverNetwork".unsafeRoutes."eno1" = [ "192.168.3.0/24" ];
-  services.nebula.networks."serverNetwork" = {
-    settings.preferred_ranges = [ "192.168.3.0/24" ];
-    firewall.inbound = [
-      {
-        #network forwarding
-        port = "any";
-        proto = "any";
-        local_cidr = "192.168.3.0/24";
-        group = "admin";
-      }
-    ];
-  };
 
   #auto-mount backup HDD
   fileSystems."/mnt/backupHDD" = {

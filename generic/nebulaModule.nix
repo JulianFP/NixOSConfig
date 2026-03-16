@@ -136,56 +136,70 @@ in
     ) enabledInterfacesWithPort;
 
     services.nebula.networks = lib.mkMerge (
-      lib.mapAttrsToList (netName: netCfg: {
-        "${netName}" = rec {
-          enable = true;
-          ca = config.sops.secrets."nebula/ca.crt".path;
-          key = config.sops.secrets."nebula/${netCfg.installHostName}.key".path;
-          cert = config.sops.secrets."nebula/${netCfg.installHostName}.crt".path;
-          tun.device = "neb-${netName}"; # shorter interface names
-          listen = {
-            host = if netCfg.enableIPv6 then "[::]" else "0.0.0.0";
-            port = netCfg.port;
-          };
-          lighthouses = lib.mkIf (!netCfg.isLighthouse) (
-            lib.attrVals (builtins.attrNames netCfg.lighthouseMap) netCfg.ipMap
-          );
-          isLighthouse = netCfg.isLighthouse;
-          isRelay = netCfg.isLighthouse;
-          relays = lib.mkIf (!netCfg.isLighthouse) lighthouses;
-          staticHostMap = lib.mapAttrs' (
-            name: value: lib.nameValuePair (builtins.getAttr name netCfg.ipMap) value
-          ) netCfg.lighthouseMap;
-          settings = {
-            cipher = "aes";
-            punchy = {
-              punch = true;
-              respond = true;
+      lib.mapAttrsToList (
+        netName: netCfg:
+        let
+          allUnsafeSubnets = builtins.concatLists (builtins.attrValues netCfg.unsafeRoutes);
+        in
+        {
+          "${netName}" = rec {
+            enable = true;
+            ca = config.sops.secrets."nebula/ca.crt".path;
+            key = config.sops.secrets."nebula/${netCfg.installHostName}.key".path;
+            cert = config.sops.secrets."nebula/${netCfg.installHostName}.crt".path;
+            tun.device = "neb-${netName}"; # shorter interface names
+            listen = {
+              host = if netCfg.enableIPv6 then "[::]" else "0.0.0.0";
+              port = netCfg.port;
+            };
+            lighthouses = lib.mkIf (!netCfg.isLighthouse) (
+              lib.attrVals (builtins.attrNames netCfg.lighthouseMap) netCfg.ipMap
+            );
+            isLighthouse = netCfg.isLighthouse;
+            isRelay = netCfg.isLighthouse;
+            relays = lib.mkIf (!netCfg.isLighthouse) lighthouses;
+            staticHostMap = lib.mapAttrs' (
+              name: value: lib.nameValuePair (builtins.getAttr name netCfg.ipMap) value
+            ) netCfg.lighthouseMap;
+            settings = {
+              cipher = "aes";
+              punchy = {
+                punch = true;
+                respond = true;
+              };
+              preferred_ranges = allUnsafeSubnets;
+            };
+            firewall = {
+              outbound = [
+                {
+                  host = "any";
+                  port = "any";
+                  proto = "any";
+                }
+              ];
+              inbound =
+                (builtins.map (subnet: {
+                  port = "any";
+                  proto = "any";
+                  local_cidr = subnet;
+                  group = "admin";
+                }) allUnsafeSubnets)
+                ++ lib.optionals netCfg.serverFirewallRules [
+                  {
+                    port = "any";
+                    proto = "icmp";
+                    host = "any";
+                  }
+                  {
+                    port = 22;
+                    proto = "tcp";
+                    group = "admin";
+                  }
+                ];
             };
           };
-          firewall = {
-            outbound = [
-              {
-                host = "any";
-                port = "any";
-                proto = "any";
-              }
-            ];
-            inbound = lib.mkIf netCfg.serverFirewallRules [
-              {
-                port = "any";
-                proto = "icmp";
-                host = "any";
-              }
-              {
-                port = 22;
-                proto = "tcp";
-                group = "admin";
-              }
-            ];
-          };
-        };
-      }) enabledInterfacesWithPort
+        }
+      ) enabledInterfacesWithPort
     );
 
     boot.kernel.sysctl."net.ipv4.ip_forward" = lib.mkIf unsafeRoutesEnabled 1;
