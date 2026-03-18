@@ -112,7 +112,7 @@
       });
 
       nixosConfigurations = mkSystems {
-        "JuliansFramework" = {
+        "JuliansFramework" = rec {
           desktop = true;
           stable = true;
           boot = 2;
@@ -130,16 +130,19 @@
             "discord"
             "guilded"
             "spotify"
+            "zoom"
           ];
           overlays = [
             nur.overlays.default
             (import ./generic/overlays/clevis_with_fido2.nix)
-            (import ./generic/overlays/desktop-unstables.nix { inherit inputs; })
+            (import ./generic/overlays/desktop-unstables.nix {
+              inherit inputs permittedUnfreePackages permittedInsecurePackages;
+            })
             #(import ./generic/overlays/lyx.nix)
           ];
           stateVersion = "24.11";
         };
-        "JuliansPC" = {
+        "JuliansPC" = rec {
           desktop = true;
           stable = true;
           boot = 2;
@@ -164,7 +167,9 @@
           overlays = [
             nur.overlays.default
             (import ./generic/overlays/clevis_with_fido2.nix)
-            (import ./generic/overlays/desktop-unstables.nix { inherit inputs; })
+            (import ./generic/overlays/desktop-unstables.nix {
+              inherit inputs permittedUnfreePackages permittedInsecurePackages;
+            })
           ];
           stateVersion = "25.05";
         };

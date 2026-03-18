@@ -32,6 +32,8 @@
     geoclue2.geoProviderUrl = "https://api.beacondb.net/v1/geolocate"; # mozilla's service is deprecated
   };
 
+  programs.zoom-us.enable = true;
+
   environment = {
     variables = {
       RADV_PERFTEST = "nosam"; # performance improvement for eGPUs
