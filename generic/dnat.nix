@@ -48,18 +48,7 @@ in
 
   config = lib.mkIf cfg.enable {
     networking = {
-      nftables = {
-        enable = true;
-        flushRuleset = true;
-        tables."nixos-nat" = {
-          family = "ip";
-          content = ''
-            chain post {
-              masquerade
-            }
-          '';
-        };
-      };
+      nftables.enable = true;
       firewall = {
         allowedTCPPorts = builtins.map (x: x.sourcePort) (
           builtins.filter (x: x.proto == "tcp") cfg.portForwards
@@ -86,13 +75,25 @@ in
       };
     };
 
-    services.nebula.networks."serverNetwork".firewall.inbound = [
-      {
-        port = "any";
-        proto = "any";
-        local_cidr = "any";
-        group = "server";
-      }
-    ];
+    services.nebula.networks."serverNetwork".firewall = {
+      inbound = [
+        {
+          port = "any";
+          proto = "any";
+          local_cidr = "any";
+          group = "server";
+        }
+      ];
+      outbound = [
+        # VPS -> nebula network port forwarding is outbound traffic (from nebulas perspective)
+        # The NAT doesn't do IP masquerading for port forwarding, so we need to add local_cidr to the firewall rule here
+        {
+          host = "any";
+          port = "any";
+          proto = "any";
+          local_cidr = "any";
+        }
+      ];
+    };
   };
 }
