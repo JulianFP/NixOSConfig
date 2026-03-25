@@ -29,13 +29,13 @@
       };
       "media.partanengroup.de" = {
         # jellyfin
-        destIP = "10.42.42.132";
+        destIP = "10.42.44.132";
         destIPedge = config.myModules.nebula."serverNetwork".ipMap.Jellyfin;
         destPort = 8096;
       };
       "request.media.partanengroup.de" = {
         # jellyseerr
-        destIP = "10.42.42.132";
+        destIP = "10.42.44.132";
         destIPedge = config.myModules.nebula."serverNetwork".ipMap.Jellyfin;
         destPort = 5055;
       };

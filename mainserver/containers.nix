@@ -81,16 +81,21 @@
         hostID = 132;
         after = [ "Kanidm" ];
         openTCPPorts = [
-          8096
-          5055
+          8096 # jellyfin
+          5055 # jellyserr
+          7878 # radarr
+          8989 # sonarr
+          9117 # jackett
+          9091 # transmission
         ];
+        mullvadRouting = true;
         additionalBindMounts = {
           "/mnt/mediadata" = {
             hostPath = "/newData/Jellyfin";
             isReadOnly = false;
           };
           "/persist/jellyfin" = {
-            hostPath = "/persist/Jellyfin";
+            hostPath = "/persist/Jellyfin/Jellyfin";
             isReadOnly = false;
           };
           "/var/lib/jellyfin" = {
@@ -99,6 +104,14 @@
           };
           "/var/lib/private/jellyseerr" = {
             hostPath = "/persist/backMeUp/Jellyfin/var/lib/private/jellyseerr";
+            isReadOnly = false;
+          };
+          "/persist/backMeUp" = {
+            hostPath = "/persist/backMeUp/Jellyfin/Servarr";
+            isReadOnly = false;
+          };
+          "/var/lib/transmission" = {
+            hostPath = "/persist/Jellyfin/transmission";
             isReadOnly = false;
           };
         };
@@ -250,48 +263,32 @@
         };
         config = ./email/configuration.nix;
       };
-      /*
-        "Project-W" = {
-          hostID = 139;
-          after = [
-            "Kanidm"
-            "Email"
-          ];
-          openTCPPorts = [
-            5000
-          ];
-          enableSops = true;
-          additionalBindMounts = {
-            "/var/lib/postgresql" = {
-              hostPath = "/persist/Project-W/postgresql";
-              isReadOnly = false;
-            };
-            "/var/lib/project-W-runner" = {
-              hostPath = "/persist/Project-W/runner-models";
-              isReadOnly = false;
-            };
-            "/persist/backMeUp" = {
-              hostPath = "/persist/backMeUp/Project-W";
-              isReadOnly = false;
-            };
-          };
-          additionalSpecialArgs.trustedProxyIP = config.myModules.nebula."serverNetwork".ipMap.IonosVPS;
-          config = ./project-w/configuration.nix;
-        };
-      */
       "Project-W" = {
         hostID = 139;
-        mullvadRouting = true;
-        openTCPPorts = [
-          7878
+        after = [
+          "Kanidm"
+          "Email"
         ];
+        openTCPPorts = [
+          5000
+        ];
+        enableSops = true;
         additionalBindMounts = {
+          "/var/lib/postgresql" = {
+            hostPath = "/persist/Project-W/postgresql";
+            isReadOnly = false;
+          };
+          "/var/lib/project-W-runner" = {
+            hostPath = "/persist/Project-W/runner-models";
+            isReadOnly = false;
+          };
           "/persist/backMeUp" = {
-            hostPath = "/persist//backMeUp/Starrs";
+            hostPath = "/persist/backMeUp/Project-W";
             isReadOnly = false;
           };
         };
-        config = ./starrs/configuration.nix;
+        additionalSpecialArgs.trustedProxyIP = config.myModules.nebula."serverNetwork".ipMap.IonosVPS;
+        config = ./project-w/configuration.nix;
       };
     };
   };
