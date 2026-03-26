@@ -6,10 +6,33 @@
   ...
 }:
 
+let
+  mail_domain = "mail.partanengroup.de";
+  rspamd_domain = "rspamd.${mail_domain}";
+in
 {
   imports = [
     inputs.simple-nixos-mailserver.nixosModule
   ];
+
+  #ACME with DNS challenge
+  sops.secrets."ionos".sopsFile = ../../secrets/${hostName}/email.yaml;
+  security.acme = {
+    acceptTerms = true;
+    defaults = {
+      email = "admin@partanengroup.de";
+      dnsProvider = "ionos";
+      environmentFile = config.sops.secrets."ionos".path;
+      extraLegoFlags = [
+        "--dns.resolvers=1.1.1.1:53,8.8.8.8:53"
+      ];
+      group = config.services.nginx.group;
+    };
+    certs = {
+      ${mail_domain} = { };
+      ${rspamd_domain} = { };
+    };
+  };
 
   sops.secrets."ldap_token" = {
     sopsFile = ../../secrets/${hostName}/ldap.yaml;
@@ -19,7 +42,7 @@
   mailserver = {
     enable = true;
     stateVersion = 3;
-    fqdn = "mail.partanengroup.de";
+    fqdn = mail_domain;
     domains = [ "partanengroup.de" ];
 
     mailDirectory = "/persist/backMeUp/vmail";
@@ -29,7 +52,7 @@
 
     virusScanning = true;
 
-    certificateScheme = "acme-nginx";
+    certificateScheme = "acme";
 
     ldap = {
       enable = true;
@@ -87,15 +110,15 @@
   #webmail
   services.roundcube = {
     enable = true;
-    hostName = config.mailserver.fqdn;
+    hostName = mail_domain;
     dicts = with pkgs.aspellDicts; [
       en
       de
     ];
     extraConfig = ''
-      $config['imap_host'] = 'ssl://${config.mailserver.fqdn}:993';
+      $config['imap_host'] = 'ssl://${mail_domain}:993';
       $config['username_domain'] = [
-        '${config.mailserver.fqdn}' => 'partanengroup.de',
+        '${mail_domain}' => 'partanengroup.de',
       ];
       $config['smtp_host'] = 'ssl://%h:465';
       $config['smtp_user'] = '%u';
@@ -116,14 +139,23 @@
   };
   services.nginx = {
     enable = true;
-    virtualHosts.rspamd = {
-      forceSSL = true;
-      enableACME = true;
-      basicAuthFile = config.sops.secrets."rspamd_ui".path;
-      serverName = "rspamd.mail.partanengroup.de";
-      locations = {
-        "/" = {
-          proxyPass = "http://unix:/run/rspamd/worker-controller.sock:/";
+    virtualHosts = {
+      ${mail_domain} = {
+        # roundcube nginx overwrite
+        enableACME = false;
+        acmeRoot = null; # DNS challenge
+        useACMEHost = mail_domain;
+      };
+      ${rspamd_domain} = {
+        forceSSL = true;
+        useACMEHost = rspamd_domain;
+        acmeRoot = null;
+        basicAuthFile = config.sops.secrets."rspamd_ui".path;
+        serverName = rspamd_domain;
+        locations = {
+          "/" = {
+            proxyPass = "http://unix:/run/rspamd/worker-controller.sock:/";
+          };
         };
       };
     };
@@ -131,9 +163,4 @@
 
   #for migration
   services.dovecot2.extraConfig = "doveadm_password = Trash-80";
-
-  security.acme = {
-    acceptTerms = true;
-    defaults.email = "admin@partanengroup.de";
-  };
 }

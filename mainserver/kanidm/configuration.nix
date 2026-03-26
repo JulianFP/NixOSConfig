@@ -10,11 +10,16 @@
   sops.secrets."ionos".sopsFile = ../../secrets/${hostName}/kanidm.yaml;
   security.acme = {
     acceptTerms = true;
-    defaults.email = "admin@partanengroup.de";
-    certs."account.partanengroup.de" = {
-      group = "kanidm";
+    defaults = {
+      email = "admin@partanengroup.de";
       dnsProvider = "ionos";
       environmentFile = config.sops.secrets."ionos".path;
+      extraLegoFlags = [
+        "--dns.resolvers=1.1.1.1:53,8.8.8.8:53"
+      ];
+    };
+    certs."account.partanengroup.de" = {
+      group = "kanidm";
     };
   };
 
