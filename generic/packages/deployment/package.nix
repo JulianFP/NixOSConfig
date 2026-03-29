@@ -5,7 +5,6 @@
   sops,
   nixos-rebuild,
   nixos-anywhere,
-  nixos-generators,
   openssh,
   makeWrapper,
 }:
@@ -18,7 +17,6 @@ stdenv.mkDerivation rec {
     sops
     nixos-rebuild
     nixos-anywhere
-    nixos-generators
     openssh
   ];
   nativeBuildInputs = [ makeWrapper ];

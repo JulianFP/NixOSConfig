@@ -6,14 +6,6 @@
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
     lanzaboote.url = "github:nix-community/lanzaboote";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    nixos-generators = {
-      url = "github:nix-community/nixos-generators";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nixos-generators-stable = {
-      url = "github:nix-community/nixos-generators";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
-    };
     nixvim = {
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -48,7 +40,6 @@
     };
     impermanence.url = "github:nix-community/impermanence";
     foundryvtt.url = "github:reckenrode/nix-foundryvtt";
-    systems.url = "github:nix-systems/default";
     pre-commit-hooks = {
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -59,7 +50,7 @@
   outputs =
     inputs:
     let
-      eachSystem = inputs.nixpkgs.lib.genAttrs (import inputs.systems);
+      eachSystem = inputs.nixpkgs.lib.genAttrs inputs.nixpkgs.lib.systems.flakeExposed;
       pkgsFor = eachSystem (
         system:
         import inputs.nixpkgs {
@@ -67,7 +58,11 @@
         }
       );
       mkSystems = import ./generic/utils/mkSystems.nix inputs;
-      genSystems = import ./generic/utils/genSystems.nix inputs;
+      genSystems =
+        systems:
+        (builtins.mapAttrs (
+          name: value: inputs.self.nixosConfigurations.${name}.config.system.build.images.${value}
+        ) systems);
     in
     with inputs;
     {
@@ -92,16 +87,8 @@
         - (genSystems only) format (string): output format, see nixos-generators github for all options. No default, always needs to be set
       */
 
-      packages = genSystems {
-        "installISO" = {
-          format = "install-iso";
-          stable = false;
-          nebula = false;
-          systemModules = [
-            ./generic/ssh.nix # for nixos-anywhere installations
-          ];
-          stateVersion = "25.11";
-        };
+      packages.x86_64-linux = genSystems {
+        "installISO" = "iso-installer";
       };
 
       devShells = eachSystem (system: {
@@ -173,18 +160,14 @@
           ];
           stateVersion = "25.05";
         };
-        "rescueSystem" = {
-          stable = false;
-          boot = 1;
+        "installISO" = {
+          stable = true;
           nebula = false;
-          homeManagerModules = {
-            julian = [
-              ./genericHM/shell.nix
-              ./genericHM/yubikey.nix
-              ./genericHM/desktop/neovim/neovim-basic.nix
-            ];
-          };
-          stateVersion = "24.11";
+          boot = 1;
+          systemModules = [
+            ./generic/ssh.nix # for nixos-anywhere installations
+          ];
+          stateVersion = "25.11";
         };
         "mainserver" = {
           server = true;

@@ -147,7 +147,7 @@ iso() {
 	done
 
 	#run generation script and inform user about output file name
-	nixos-generate -f iso -o "$path/$isoname" --flake ".#$1"
+	nixos-rebuild build-image --image-variant iso --flake ".#$1"
 	echo "you can find your iso in $path/$isoname"
 }
 
@@ -171,7 +171,7 @@ lxc() {
 	done
 
 	#run generation script and inform user about output file name
-	nixos-generate -f proxmox-lxc -o "$path/$templateName" --flake ".#$1"
+	nixos-rebuild build-image --image-variant proxmox-lxc --flake ".#$1"
 	echo "you can find your Proxmox LXC template in $path/$templateName"
 }
 
