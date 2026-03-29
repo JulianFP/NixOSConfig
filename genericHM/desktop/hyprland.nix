@@ -95,8 +95,8 @@
       gesture = [
         "3, horizontal, workspace"
         "3, vertical, fullscreen"
-        "2, pinchout, scale: 0.5, float, float"
-        "2, pinchin, scale: 0.5, float, tile"
+        "3, pinchout, scale: 0.5, float, float"
+        "3, pinchin, scale: 0.5, float, tile"
         "3, swipe, mod: $mainMod, resize"
       ];
 
