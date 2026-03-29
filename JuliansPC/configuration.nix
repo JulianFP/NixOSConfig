@@ -1,4 +1,9 @@
-{ config, ... }:
+{
+  config,
+  lib,
+  inputs,
+  ...
+}:
 
 {
   imports = [
@@ -65,6 +70,12 @@
       #to fix keyboard layout issues with wine wayland (https://bugs.winehq.org/show_bug.cgi?id=57097):
       export LC_ALL=de
     '';
+
+    #if umu is enabled, we don't need wine-astral
+    includeOverlay = !config.programs.rsi-launcher.umu.enable;
+    package =
+      lib.mkIf config.programs.rsi-launcher.umu.enable
+        inputs.nix-citizen.packages."x86_64-linux".rsi-launcher;
   };
   services.udev.extraRules = ''
     KERNEL=="hidraw*", ATTRS{idVendor}=="044f", ATTRS{idProduct}=="b10a", MODE="0666", TAG+="uaccess"
