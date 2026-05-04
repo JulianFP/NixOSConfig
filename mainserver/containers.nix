@@ -111,7 +111,7 @@
             isReadOnly = false;
           };
           "/var/lib/transmission" = {
-            hostPath = "/persist/Jellyfin/transmission";
+            hostPath = "/newData/Transmission";
             isReadOnly = false;
           };
         };
