@@ -12,45 +12,47 @@
   ];
 
   # -- Networking --
-  networking = {
-    useDHCP = false; # overwrite default. See networkd config below
-    enableIPv6 = true;
-    interfaces."enp14s0".wakeOnLan.enable = true; # enable wake-on-lan
+  /*
+    networking = {
+      useDHCP = false; # overwrite default. See networkd config below
+      enableIPv6 = true;
+      interfaces."enp14s0".wakeOnLan.enable = true; # enable wake-on-lan
 
-    #manage main lan interface through systemd-networkd instead of networkmanager so that it is declarative and also available in initrd
-    networkmanager.unmanaged = [ "enp14s0" ];
-  };
-
-  systemd.network = {
-    enable = true;
-    networks."10-enp" = {
-      name = "enp14s0";
-      DHCP = "no";
-      networkConfig.IPv6AcceptRA = true;
-      address = [
-        "192.168.10.35/24"
-      ];
-      gateway = [
-        "192.168.10.1"
-      ];
-      dns = [
-        "1.1.1.1"
-        "1.0.0.1"
-        "2606:4700:4700::1111"
-        "2606:4700:4700::1001"
-      ];
-      linkConfig.RequiredForOnline = "routable";
+      #manage main lan interface through systemd-networkd instead of networkmanager so that it is declarative and also available in initrd
+      networkmanager.unmanaged = [ "enp14s0" ];
     };
-  };
 
-  #add networking to initrd
-  boot.initrd = {
-    availableKernelModules = [ "r8169" ];
     systemd.network = {
       enable = true;
-      networks = config.systemd.network.networks;
+      networks."10-enp" = {
+        name = "enp14s0";
+        DHCP = "no";
+        networkConfig.IPv6AcceptRA = true;
+        address = [
+          "192.168.10.35/24"
+        ];
+        gateway = [
+          "192.168.10.1"
+        ];
+        dns = [
+          "1.1.1.1"
+          "1.0.0.1"
+          "2606:4700:4700::1111"
+          "2606:4700:4700::1001"
+        ];
+        linkConfig.RequiredForOnline = "routable";
+      };
     };
-  };
+
+    #add networking to initrd
+    boot.initrd = {
+      availableKernelModules = [ "r8169" ];
+      systemd.network = {
+        enable = true;
+        networks = config.systemd.network.networks;
+      };
+    };
+  */
 
   # Star Citizen stuff
   /*
@@ -64,6 +66,7 @@
   };
   programs.rsi-launcher = {
     enable = true;
+    wine = inputs.nix-citizen.packages."x86_64-linux".wine-astral;
     umu.enable = true; # to make EAC work
     enforceWaylandDrv = true;
     preCommands = ''
