@@ -85,7 +85,7 @@
             yaml
             python
           ];
-        settings.highlight.disable = [ "latex" ];
+        highlight.disable = [ "latex" ];
       };
 
       #shows indentation levels and variable scopes (treesitter)
