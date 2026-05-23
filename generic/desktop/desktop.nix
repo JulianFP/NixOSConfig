@@ -89,7 +89,7 @@
     nixseparatedebuginfod2.enable = true;
 
     kanidm = {
-      package = pkgs.kanidm_1_9;
+      package = pkgs.kanidm_1_10;
       enableClient = true;
       clientSettings.uri = "https://account.partanengroup.de";
     };
