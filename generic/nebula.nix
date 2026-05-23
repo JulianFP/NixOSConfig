@@ -34,7 +34,7 @@
       IonosVPS = [
         "85.215.33.173:51821"
       ]
-      ++ lib.optional config.myModules.nebula."serverNetwork".enableIPv6 "[2a02:247a:23e:d300::1]:51821";
+      ++ lib.optional config.myModules.nebula."serverNetwork".enableIPv6 "[2a02:2479:61:4500::1]:51821";
       IonosVPS2 = [
         "82.165.49.241:51821"
       ];

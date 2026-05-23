@@ -39,7 +39,7 @@
         }
         {
           #this is an Ionos IP that I own and have a static route in place so that it points to this server
-          Address = "2a02:247a:23e:d300:0:4000:0:1/128";
+          Address = "2a02:2479:61:4500:0:4000:0:1/128";
           PreferredLifetime = 0; # dont use for outgoing connections
         }
       ];
@@ -63,7 +63,7 @@
     localDNS = {
       enable = true;
       localForwardIPv4 = "192.168.3.10";
-      localForwardIPv6 = "2a02:247a:23e:d300:0:4000:0:1";
+      localForwardIPv6 = "2a02:2479:61:4500:0:4000:0:1";
     };
   };
 

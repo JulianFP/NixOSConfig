@@ -244,12 +244,17 @@ in
       ];
 
       #Firewall stuff
-      networking.firewall.allowedTCPPorts = [
-        80
-        443
-        7000
-        2019
-      ];
+      networking.firewall = {
+        allowedTCPPorts = [
+          80
+          443
+          7000
+          2019
+        ];
+        allowedUDPPorts = [
+          443 # for HTTP/3
+        ];
+      };
       services.nebula.networks."serverNetwork" = {
         firewall.inbound =
           (lib.optional cfg.isEdge {
