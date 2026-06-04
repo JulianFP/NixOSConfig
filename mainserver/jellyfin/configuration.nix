@@ -2,17 +2,9 @@
   pkgs,
   lib,
   config,
-  inputs,
   ...
 }:
 
-let
-  pkgs-unstable = (
-    import inputs.nixpkgs {
-      system = "x86_64-linux";
-    }
-  );
-in
 {
   services = {
     jellyfin = {
@@ -36,7 +28,6 @@ in
     };
     jackett = {
       enable = true;
-      package = pkgs-unstable.jackett;
       dataDir = "/persist/backMeUp/jackett";
     };
     flaresolverr.enable = true;

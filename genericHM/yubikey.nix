@@ -10,12 +10,8 @@
   #ssh support
   programs.ssh = {
     enable = true;
-    matchBlocks."*" = {
-      forwardAgent = true;
-      #needed for terminal based pinentry to always appear in current terminal window
-      match = ''
-        host * exec "gpg-connect-agent UPDATESTARTUPTTY /bye"
-      '';
+    settings."Match host * exec gpg-connect-agent UPDATESTARTUPTTY /bye" = {
+      ForwardAgent = true;
     };
   };
 

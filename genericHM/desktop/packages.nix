@@ -23,7 +23,6 @@ in
     qt5.qtwayland
     qt6.qtwayland
     kdePackages.qtsvg # qt6 needs this to load icons
-    libsForQt5.kservice # qt5 version needed by dolphin for some reason?
     ripgrep-all
     fortune # for hyprlock
     adwaita-icon-theme
@@ -80,13 +79,13 @@ in
     (python3.withPackages python-packages)
 
     # Gaming
-    wineWowPackages.stagingFull
+    wineWow64Packages.stagingFull
     winetricks
     gamescope
     lutris
     heroic
     protonup-qt
-    superTuxKart
+    supertuxkart
     prismlauncher
 
     # Fonts

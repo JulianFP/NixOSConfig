@@ -23,6 +23,7 @@
   # Hyprland config
   wayland.windowManager.hyprland = {
     enable = true;
+    configType = "lua";
 
     settings = {
       # -- Window Rules --

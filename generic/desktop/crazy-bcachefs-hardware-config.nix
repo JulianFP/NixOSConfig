@@ -137,13 +137,7 @@ in
   };
   #define how long system should suspend before waking up and hibernating (hibernation always happens on low battery, whatever happens first)
   boot.resumeDevice = if withTangFallback then "" else "/dev/disk/by-label/${unlockedSwapLabel}";
-  systemd.sleep.extraConfig =
-    if withTangFallback then
-      ""
-    else
-      ''
-        HibernateDelaySec=1h30min
-      '';
+  systemd.sleep.settings.Sleep.HibernateDelaySec = lib.mkIf withTangFallback "1h30min";
 
   boot.initrd.systemd = {
     enable = true;

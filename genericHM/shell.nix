@@ -12,6 +12,7 @@
   #zsh
   programs.zsh = {
     enable = true;
+    dotDir = "${config.xdg.configHome}/zsh";
     enableCompletion = true;
     shellAliases = {
       # set vi and vim as aliases for neovim
@@ -50,42 +51,42 @@
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    matchBlocks = {
+    settings = {
       "Ionos1" = {
-        hostname = "82.165.49.241";
-        user = "root";
+        HostName = "82.165.49.241";
+        User = "root";
       };
       "Ionos2" = {
-        hostname = "85.215.33.173";
-        user = "root";
+        HostName = "85.215.33.173";
+        User = "root";
       };
       "project-w_urz" = {
-        hostname = "project-w.urz.uni-heidelberg.de";
-        user = "debian";
+        HostName = "project-w.urz.uni-heidelberg.de";
+        User = "debian";
       };
       "project-w-runner_urz" = {
-        hostname = "129.206.119.205";
-        user = "localadmin";
+        HostName = "129.206.119.205";
+        User = "localadmin";
       };
       "project-w-runner_urz_2" = {
-        hostname = "129.206.119.206";
-        user = "localadmin";
+        HostName = "129.206.119.206";
+        User = "localadmin";
       };
       "ssc-whisper" = {
-        hostname = "ssc-whisper.iwr.uni-heidelberg.de";
-        user = "jpartanen";
+        HostName = "ssc-whisper.iwr.uni-heidelberg.de";
+        User = "jpartanen";
       };
       "ssc-hgscomp01" = {
-        hostname = "hgscomp01.iwr.uni-heidelberg.de";
-        user = "partanen";
-        port = 6205;
+        HostName = "hgscomp01.iwr.uni-heidelberg.de";
+        User = "partanen";
+        Port = 6205;
       };
     }
     // lib.optionalAttrs (lib.hasAttrByPath [ "myModules" "nebula" "serverNetwork" ] osConfig) (
       builtins.mapAttrs (_: v: {
         # my nebula devices
-        hostname = v;
-        user = "root";
+        HostName = v;
+        User = "root";
       }) osConfig.myModules.nebula."serverNetwork".ipMap
     );
   };
