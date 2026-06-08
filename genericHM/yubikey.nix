@@ -10,7 +10,7 @@
   #ssh support
   programs.ssh = {
     enable = true;
-    settings."Match host * exec gpg-connect-agent UPDATESTARTUPTTY /bye" = {
+    settings."Match host * exec \"gpg-connect-agent UPDATESTARTUPTTY /bye\"" = {
       ForwardAgent = true;
     };
   };
