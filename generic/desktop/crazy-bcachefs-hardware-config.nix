@@ -175,12 +175,12 @@ in
         description = "Temporarily mount partition that holds encryption keys";
         before = [ "systemd-cryptsetup@${unlockedSwapLabel}.service" ];
         wants = [
-          "systemd-udev-settle.service"
+          "dev-disk-by\\x2dlabel-${encryptedKeyPartitionLabel}.device"
         ]
         ++ lib.lists.optional withTangFallback "network-online.target";
         after = [
           "systemd-modules-load.service"
-          "systemd-udev-settle.service"
+          "dev-disk-by\\x2dlabel-${encryptedKeyPartitionLabel}.device"
         ]
         ++ lib.lists.optional withTangFallback "network-online.target";
         unitConfig.DefaultDependencies = false;
