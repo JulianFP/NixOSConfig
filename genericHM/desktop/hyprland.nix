@@ -453,86 +453,6 @@
               "hl.dsp.window.resize()"
               { mouse = true; }
             ]
-
-            # mute audio/mic
-            [
-              "Pause"
-              "hl.dsp.exec_cmd(\"pactl set-source-mute @DEFAULT_SOURCE@ toggle\")"
-              { locked = true; }
-            ]
-            [
-              "XF86AudioMute"
-              "hl.dsp.exec_cmd(\"pactl set-sink-mute @DEFAULT_SINK@ toggle\")"
-              { locked = true; }
-            ]
-            [
-              "XF86AudioMicMute"
-              "hl.dsp.exec_cmd(\"pactl set-source-mute @DEFAULT_SOURCE@ toggle\")"
-              { locked = true; }
-            ]
-
-            # lid suspend & lock screen & dpms (Lid Switch)
-            [
-              "switch:[Lid Switch]"
-              "hl.dsp.exec_cmd(\"/home/julian/.systemScripts/clamshell_mode_hypr.sh\")"
-              { locked = true; }
-            ]
-
-            # special keys: audio player, power off
-            [
-              "XF86AudioPlay"
-              "hl.dsp.exec_cmd(\"playerctl play-pause\")"
-              { locked = true; }
-            ]
-            [
-              "XF86AudioNext"
-              "hl.dsp.exec_cmd(\"playerctl next\")"
-              { locked = true; }
-            ]
-            [
-              "XF86AudioPrev"
-              "hl.dsp.exec_cmd(\"playerctl previous\")"
-              { locked = true; }
-            ]
-            [
-              "XF86PowerOff"
-              "hl.dsp.exec_cmd(\"/home/julian/.systemScripts/lockAndSuspend.sh 1\")"
-              { locked = true; }
-            ]
-
-            # audio volume control
-            [
-              "XF86AudioRaiseVolume"
-              "hl.dsp.exec_cmd(\"pactl set-sink-volume @DEFAULT_SINK@ +5%\")"
-              {
-                locked = true;
-                repeating = true;
-              }
-            ]
-            [
-              "XF86AudioLowerVolume"
-              "hl.dsp.exec_cmd(\"pactl set-sink-volume @DEFAULT_SINK@ -5%\")"
-              {
-                locked = true;
-                repeating = true;
-              }
-            ]
-            [
-              "XF86MonBrightnessDown"
-              "hl.dsp.exec_cmd(\"brightnessctl set 5%-\")"
-              {
-                locked = true;
-                repeating = true;
-              }
-            ]
-            [
-              "XF86MonBrightnessUp"
-              "hl.dsp.exec_cmd(\"brightnessctl set 5%+\")"
-              {
-                locked = true;
-                repeating = true;
-              }
-            ]
           ]
           ++ (
             # generate workspace keybindings since they are very repetitive
@@ -564,27 +484,32 @@
         );
       };
 
-    # inhibitSuspend submap
-    submaps."inhibitSuspend".settings = {
-      bind = [
-        ",escape,submap,reset"
-      ];
-      bindl = [
-        ", switch:Lid Switch, exec, /home/julian/.systemScripts/clamshell_mode_hypr.sh inhibitSuspend"
-        ", XF86AudioMute, exec, pactl set-sink-mute @DEFAULT_SINK@ toggle"
-        ", XF86AudioMicMute, exec, pactl set-source-mute @DEFAULT_SOURCE@ toggle"
-        ", XF86AudioPlay, exec, playerctl play-pause"
-        ", XF86AudioNext, exec, playerctl next"
-        ", XF86AudioPrev, exec, playerctl previous"
-        ", XF86PowerOff, exec, /home/julian/.systemScripts/lockAndSuspend.sh 1 inhibitSuspend"
-      ];
-      bindle = [
-        ", XF86AudioRaiseVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ +5%"
-        ", XF86AudioLowerVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ -5%"
-        ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
-        ", XF86MonBrightnessUp, exec, brightnessctl set 5%+"
-      ];
-    };
+    extraConfig = ''
+      function setLockedBindings()
+        -- mute audio/mic
+        hl.bind("Pause", (hl.dsp.exec_cmd("pactl set-source-mute @DEFAULT_SOURCE@ toggle")), {["locked"] = true})
+        hl.bind("XF86AudioMute", (hl.dsp.exec_cmd("pactl set-sink-mute @DEFAULT_SINK@ toggle")), {["locked"] = true})
+        hl.bind("XF86AudioMicMute", (hl.dsp.exec_cmd("pactl set-source-mute @DEFAULT_SOURCE@ toggle")), {["locked"] = true})
+        -- lid suspend & lock screen & dpms (Lid Switch)
+        hl.bind("switch:[Lid Switch]", (hl.dsp.exec_cmd("/home/julian/.systemScripts/clamshell_mode_hypr.sh")), {["locked"] = true})
+        -- special keys: audio player, power off
+        hl.bind("XF86AudioPlay", (hl.dsp.exec_cmd("playerctl play-pause")), {["locked"] = true})
+        hl.bind("XF86AudioNext", (hl.dsp.exec_cmd("playerctl next")), {["locked"] = true})
+        hl.bind("XF86AudioPrev", (hl.dsp.exec_cmd("playerctl previous")), {["locked"] = true})
+        hl.bind("XF86PowerOff", (hl.dsp.exec_cmd("/home/julian/.systemScripts/lockAndSuspend.sh 1")), {["locked"] = true})
+        -- audio volume control
+        hl.bind("XF86AudioRaiseVolume", (hl.dsp.exec_cmd("pactl set-sink-volume @DEFAULT_SINK@ +5%")), {["locked"] = true,["repeating"] = true})
+        hl.bind("XF86AudioLowerVolume", (hl.dsp.exec_cmd("pactl set-sink-volume @DEFAULT_SINK@ -5%")), {["locked"] = true,["repeating"] = true})
+        -- display brightness control
+        hl.bind("XF86MonBrightnessDown", (hl.dsp.exec_cmd("brightnessctl set 5%-")), {["locked"] = true,["repeating"] = true})
+        hl.bind("XF86MonBrightnessUp", (hl.dsp.exec_cmd("brightnessctl set 5%+")), {["locked"] = true,["repeating"] = true})
+      end
+      setLockedBindings()
+      hl.define_submap("inhibitSuspend", function()
+        setLockedBindings()
+        hl.bind("escape", (hl.dsp.submap("reset")))
+      end)
+    '';
   };
 
   xdg.configFile."uwsm/env".text = ''

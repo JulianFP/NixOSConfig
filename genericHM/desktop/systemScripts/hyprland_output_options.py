@@ -8,11 +8,13 @@ import sys
 
 usedMonitorDescriptions = [
     "Samsung Electric Company C27HG7x HTHK300334",
+    "Samsung Electric Company LS32A70 HNMR400480",
+    "Samsung Electric Company Odyssey G70B H1AK500000",
 ]
 
 options = {
     "Reset to Hyprland config": "reload",
-    "Inhibit suspend": "dispatch submap inhibitSuspend",
+    "Inhibit suspend": 'dispatch hl.dsp.submap("inhibitSuspend")',
     "Enable blue light filter": "hyprsunset temperature 3500",
     "Disable blue light filter": "hyprsunset identity",
 }
@@ -62,24 +64,28 @@ for monitor in monitors:
 
     # add scaling options
     scale = "2" if monitor["scale"] == 1 else "1"
-    options["Scale " + name + " to " + scale] = (
-        "keyword monitor " + name + "," + size + "," + pos + "," + scale
+    options[f"Scale {name} to {scale}"] = (
+        f'eval hl.monitor({{output="{name}",mode="{size}",position="{pos}",scale={scale}}})'
     )
 
     if monitor["name"] != "eDP-1":
         # add mirror options
         if internalExists:
-            options["Mirror eDP-1 to " + name] = (
-                "keyword monitor eDP-1,2256x1504,-1440x0,1,mirror," + name
+            options[f"Mirror eDP-1 to {name}"] = (
+                f'eval hl.monitor({{output="eDP-1",mode="2256x1504",position="-1440x0",scale=1,mirror="{name}"}})'
             )
 
         # add tablet binding options
-        options["Bind tablets to " + name] = "keyword input:tablet:output " + name
+        options[f"Bind tablets to {name}"] = (
+            f'eval hl.config({{input={{tablet={{output="{name}"}}}}}})'
+        )
 
 if len(sys.argv) > 1:
     option = sys.argv[1]
     command = options[option]
-    send(command)
+    response = send(command)
+    if response != "ok":
+        print(response, file=sys.stderr)
 else:
     print("\0no-custom\x1ftrue")  # set no-custom option of rofi
     print("\n".join(options.keys()))

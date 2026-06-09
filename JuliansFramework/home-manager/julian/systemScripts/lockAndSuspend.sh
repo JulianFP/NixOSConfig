@@ -12,9 +12,9 @@ fi
 if [ "$2" == "inhibitSuspend" ]; then
 	#toggle dpms if called from power button, set to off if not
 	if [ "$1" -eq 1 ] && hyprctl monitors | grep -q "dpmsStatus: 0"; then
-		hyprctl dispatch dpms on
+		hyprctl dispatch 'hl.dsp.dpms({action="enable"})'
 	else
-		hyprctl dispatch dpms off
+		hyprctl dispatch 'hl.dsp.dpms({action="disable"})'
 	fi
 else
 	systemctl suspend-then-hibernate -i
