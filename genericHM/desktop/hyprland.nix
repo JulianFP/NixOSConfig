@@ -251,7 +251,7 @@
             #basic stuff
             [
               "${mainMod} + SHIFT + Q"
-              "hl.dsp.window.kill()"
+              "hl.dsp.window.close()"
             ]
             [
               "${mainMod} + SHIFT + E"
