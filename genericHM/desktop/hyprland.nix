@@ -453,6 +453,18 @@
               "hl.dsp.window.resize()"
               { mouse = true; }
             ]
+
+            # Power button, lid suspend & lock screen & dpms (Lid Switch)
+            [
+              "XF86PowerOff"
+              "hl.dsp.exec_cmd(\"/home/julian/.systemScripts/lockAndSuspend.sh 1\")"
+              { locked = true; }
+            ]
+            [
+              "switch:Lid Switch"
+              "hl.dsp.exec_cmd(\"/home/julian/.systemScripts/clamshell_mode_hypr.sh\")"
+              { locked = true; }
+            ]
           ]
           ++ (
             # generate workspace keybindings since they are very repetitive
@@ -490,13 +502,10 @@
         hl.bind("Pause", (hl.dsp.exec_cmd("pactl set-source-mute @DEFAULT_SOURCE@ toggle")), {["locked"] = true})
         hl.bind("XF86AudioMute", (hl.dsp.exec_cmd("pactl set-sink-mute @DEFAULT_SINK@ toggle")), {["locked"] = true})
         hl.bind("XF86AudioMicMute", (hl.dsp.exec_cmd("pactl set-source-mute @DEFAULT_SOURCE@ toggle")), {["locked"] = true})
-        -- lid suspend & lock screen & dpms (Lid Switch)
-        hl.bind("switch:[Lid Switch]", (hl.dsp.exec_cmd("/home/julian/.systemScripts/clamshell_mode_hypr.sh")), {["locked"] = true})
-        -- special keys: audio player, power off
+        -- special audio player keys
         hl.bind("XF86AudioPlay", (hl.dsp.exec_cmd("playerctl play-pause")), {["locked"] = true})
         hl.bind("XF86AudioNext", (hl.dsp.exec_cmd("playerctl next")), {["locked"] = true})
         hl.bind("XF86AudioPrev", (hl.dsp.exec_cmd("playerctl previous")), {["locked"] = true})
-        hl.bind("XF86PowerOff", (hl.dsp.exec_cmd("/home/julian/.systemScripts/lockAndSuspend.sh 1")), {["locked"] = true})
         -- audio volume control
         hl.bind("XF86AudioRaiseVolume", (hl.dsp.exec_cmd("pactl set-sink-volume @DEFAULT_SINK@ +5%")), {["locked"] = true,["repeating"] = true})
         hl.bind("XF86AudioLowerVolume", (hl.dsp.exec_cmd("pactl set-sink-volume @DEFAULT_SINK@ -5%")), {["locked"] = true,["repeating"] = true})
@@ -507,6 +516,8 @@
       setLockedBindings()
       hl.define_submap("inhibitSuspend", function()
         setLockedBindings()
+        hl.bind("switch:Lid Switch", (hl.dsp.exec_cmd("/home/julian/.systemScripts/clamshell_mode_hypr.sh inhibitSuspend")), {["locked"] = true})
+        hl.bind("XF86PowerOff", (hl.dsp.exec_cmd("/home/julian/.systemScripts/lockAndSuspend.sh 1 inhibitSuspend")), {["locked"] = true})
         hl.bind("escape", (hl.dsp.submap("reset")))
       end)
     '';
