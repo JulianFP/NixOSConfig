@@ -24,7 +24,8 @@
     oh-my-zsh = {
       enable = true;
       plugins = [ "git" ];
-      custom = if config.home.username == "root" then "$HOME/.ohMyZshCustom" else "";
+      custom =
+        if config.home.username == "root" then "${config.programs.zsh.dotDir}/ohMyZshCustom" else "";
       theme = if config.home.username == "root" then "juanghurtado-rootPatch" else "juanghurtado";
     };
     #environmental variables for zsh session
@@ -126,7 +127,7 @@
     };
   };
 
-  home.file.".ohMyZshCustom/themes/juanghurtado-rootPatch.zsh-theme" = {
+  home.file."${config.programs.zsh.dotDir}/ohMyZshCustom/themes/juanghurtado-rootPatch.zsh-theme" = {
     enable = if config.home.username == "root" then true else false;
     source = ./juanghurtado-rootPatch.zsh-theme;
   };

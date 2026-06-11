@@ -135,32 +135,50 @@ in
 
     #this is inspired by script used by nix-community/impermanence, but I don't need to keep that many old roots.
     #Since I keep everything I want to keep in /persist or /persist-noBackup anyway (this is a server!), there shouldn't be a reason to keep old roots around at all. I will still keep the last root to be safe.
-    boot.initrd.postDeviceCommands = lib.mkAfter ''
-      mkdir /btrfs_tmp
-      mount /dev/disk/by-partlabel/disk-_dev_${bootDev}-nixos /btrfs_tmp
+    boot.initrd.systemd.services."impermanence-wipe" = {
+      description = "Copy current root partition away and create new one";
+      after = [
+        "systemd-modules-load.service"
+        "dev-disk-by\\x2dpartlabel-disk\\x2d_dev_${bootDev}\\x2dnixos.device"
+      ];
+      before = [
+        "sysroot.mount"
+      ];
+      wants = [ "dev-disk-by\\x2dpartlabel-disk\\x2d_dev_${bootDev}\\x2dnixos.device" ];
+      wantedBy = [ "initrd.target" ];
+      unitConfig.DefaultDependencies = false;
+      serviceConfig = {
+        Type = "oneshot";
+        TimeoutSec = "infinity";
+        RemainAfterExit = true; # so that wants/requires statements don't restart this service
+      };
+      script = ''
+        mkdir /btrfs_tmp
+        mount /dev/disk/by-partlabel/disk-_dev_${bootDev}-nixos /btrfs_tmp
 
-      delete_subvolume_recursively() {
-          IFS=$'\n'
-          for i in $(btrfs subvolume list -o "$1" | cut -f 9- -d ' '); do
-              delete_subvolume_recursively "/btrfs_tmp/$i"
-          done
-          btrfs subvolume delete "$1"
-      }
+        delete_subvolume_recursively() {
+            IFS=$'\n'
+            for i in $(btrfs subvolume list -o "$1" | cut -f 9- -d ' '); do
+                delete_subvolume_recursively "/btrfs_tmp/$i"
+            done
+            btrfs subvolume delete "$1"
+        }
 
-      cycle_subvolume() {
-          if [[ -e "/btrfs_tmp/$1" ]]; then
-              if [[ -e "/btrfs_tmp/old_$1" ]]; then
-                  delete_subvolume_recursively "/btrfs_tmp/old_$1"
-              fi
-              mv "/btrfs_tmp/$1" "/btrfs_tmp/old_$1"
-          fi
-          btrfs subvolume create "/btrfs_tmp/$1"
-      }
+        cycle_subvolume() {
+            if [[ -e "/btrfs_tmp/$1" ]]; then
+                if [[ -e "/btrfs_tmp/old_$1" ]]; then
+                    delete_subvolume_recursively "/btrfs_tmp/old_$1"
+                fi
+                mv "/btrfs_tmp/$1" "/btrfs_tmp/old_$1"
+            fi
+            btrfs subvolume create "/btrfs_tmp/$1"
+        }
 
-      cycle_subvolume root
-      cycle_subvolume home
+        cycle_subvolume root
+        cycle_subvolume home
 
-      umount /btrfs_tmp
-    '';
+        umount /btrfs_tmp
+      '';
+    };
   };
 }
