@@ -1,5 +1,6 @@
 {
   config,
+  options,
   lib,
   hostName,
   pkgs,
@@ -25,7 +26,6 @@ in
           inputs = [
             {
               name = "systemd";
-              systemd_filter = "_SYSTEMD_UNIT=fluent-bit.service";
               db = "/var/lib/private/fluent-bit/systemd.db";
               tag = "journal";
             }
@@ -74,6 +74,8 @@ in
         '';
       };
     };
+  }
+  // lib.optionalAttrs (options.environment ? "persistence") {
     environment.persistence."/persist".directories = [ "/var/lib/private/fluent-bit" ];
   };
 }
