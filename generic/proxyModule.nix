@@ -86,6 +86,10 @@ in
           assertion = if cfg.localDNS.enable then config.services.unbound.enable else true;
           message = "Custom assertion: to use localDNS.enable in proxy module please configure unbound elsewhere. This just adds some entries to an existing unbound server";
         }
+        {
+          assertion = lib.hasAttrByPath [ "myModules" "fluent-bit" ] config;
+          message = "Custom assertion: to use the proxy module you also have to import the fluent-bit module";
+        }
       ];
 
       sops.secrets."redis/caddy-server" = lib.mkIf cfg.isEdge {
@@ -208,38 +212,41 @@ in
         environment.CADDY_ADMIN = lib.mkIf (hostName != "mainserver") "${hostNebulaIP}:2019";
       };
 
-      #scrape configs with promtail
-      services.promtail.configuration.scrape_configs = [
-        {
-          job_name = "caddy";
-          static_configs = [
+      #fluent-bit config
+      services.fluent-bit.settings = {
+        parsers.json.format = "json";
+        pipeline = {
+          inputs = [
             {
-              targets = [ "localhost" ];
-              labels = {
-                job = "caddy";
-                host = hostName;
-                __path__ = "/persist/caddy-log/*";
-                agent = "caddy-promtail";
-              };
+              name = "tail";
+              path = "/persist/caddy-log/*";
+              tag = "caddy";
+              db = "/var/lib/private/fluent-bit/caddy.db";
+              parser = "json";
             }
           ];
-          pipeline_stages = [
+          filters = [
             {
-              json.expressions = {
-                duration = "duration";
-                status = "status";
-              };
-            }
-            {
-              labels = {
-                duration = "";
-                status = "";
-              };
+              name = "modify";
+              match = "caddy";
+
+              add = [
+                "job caddy"
+                "host ${hostName}"
+              ];
             }
           ];
-        }
-      ];
-      users.users.promtail.extraGroups = lib.mkIf config.services.promtail.enable [
+          outputs = [
+            {
+              name = "loki";
+              match = "caddy";
+              host = config.myModules.fluent-bit.host;
+              labels = "job=$job,host=$host,status=$status,duration=$duration";
+            }
+          ];
+        };
+      };
+      systemd.services.fluent-bit.serviceConfig.SupplementaryGroups = [
         config.services.caddy.group
       ];
 
