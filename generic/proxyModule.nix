@@ -214,7 +214,12 @@ in
 
       #fluent-bit config
       services.fluent-bit.settings = {
-        parsers.json.format = "json";
+        parsers = [
+          {
+            name = "json";
+            format = "json";
+          }
+        ];
         pipeline = {
           inputs = [
             {
@@ -223,6 +228,7 @@ in
               tag = "caddy";
               db = "/var/lib/private/fluent-bit/caddy.db";
               parser = "json";
+              path_key = "filename";
             }
           ];
           filters = [
@@ -241,7 +247,7 @@ in
               name = "loki";
               match = "caddy";
               host = config.myModules.fluent-bit.host;
-              labels = "job=$job,host=$host,status=$status,duration=$duration";
+              labels = "job=$job,host=$host,filename=$filename,status=$status,duration=$duration";
             }
           ];
         };
