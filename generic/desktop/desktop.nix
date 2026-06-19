@@ -101,6 +101,8 @@
       enable = true;
       enableExcludeWrapper = false;
     };
+
+    gvfs.enable = true; # needed by PCManFM-qt
   };
 
   # -- programs --
