@@ -67,8 +67,8 @@
       "x" = "\$\$f";
       "X" = "!\$f";
 
-      #open current dir in dolphin
-      "<c-a>" = "&{{dolphin --new-window --select \$ &; disown}}";
+      #open current dir in pcmanfm-qt
+      "<c-a>" = "&{{pcmanfm-qt --new-window; disown}}";
     };
   };
   xdg.configFile."lf/icons".source = ./lf-icons;
@@ -92,7 +92,7 @@
       enable = true;
       defaultApplications = {
         "inode/directory" = [
-          "org.kde.dolphin.desktop"
+          "pcmanfm-qt.desktop"
           "lf.desktop"
         ];
         "application/pdf" = [

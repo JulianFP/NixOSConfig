@@ -233,7 +233,7 @@
             ]
             [
               "${mainMod} + A"
-              "hl.dsp.exec_cmd(\"uwsm app -- org.kde.dolphin.desktop\")"
+              "hl.dsp.exec_cmd(\"uwsm app -- pcmanfm-qt.desktop\")"
             ]
             [
               "${mainMod} + D"

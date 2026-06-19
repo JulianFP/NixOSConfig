@@ -46,8 +46,8 @@ in
     signal-desktop
     iamb
     discord
+    pcmanfm-qt
     kdePackages.ark
-    kdePackages.dolphin
     kdePackages.filelight
     kdePackages.okular
     kdePackages.kcalc
