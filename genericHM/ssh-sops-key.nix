@@ -4,17 +4,17 @@
 {
   programs.ssh = {
     enable = true;
-    matchBlocks = {
-      "*".userKnownHostsFile = "~/.ssh/known_hosts ~/.ssh/known_hostsHM";
+    settings = {
+      "*".UserKnownHostsFile = "~/.ssh/known_hosts ~/.ssh/known_hostsHM";
       "IonosVPS" = {
-        hostname = "10.28.128.1";
-        user = "root";
-        identityFile = "/root/.ssh/${hostName}";
+        HostName = "10.28.128.1";
+        User = "root";
+        IdentityFile = "/root/.ssh/${hostName}";
       };
       "mainserver" = {
-        hostname = "10.28.128.3";
-        user = "root";
-        identityFile = "/root/.ssh/${hostName}";
+        HostName = "10.28.128.3";
+        User = "root";
+        IdentityFile = "/root/.ssh/${hostName}";
       };
     };
   };
