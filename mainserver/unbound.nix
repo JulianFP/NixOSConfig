@@ -28,9 +28,7 @@ in
 {
   services = {
     #systemd-resolved's stub listener clashes with unbound on localhost otherwise
-    resolved.extraConfig = ''
-      DNSStubListener=no
-    '';
+    resolved.settings.Resolve.DNSStubListener = false;
     unbound = {
       enable = true;
       stateDir = "/persist/unbound";
@@ -180,17 +178,21 @@ in
           ];
         }
       ];
-      outputs = [{
-        name = "loki";
-        match = "unbound";
-        host = config.myModules.fluent-bit.host;
-        labels = "job=$job,dns=$dns";
-      }];
+      outputs = [
+        {
+          name = "loki";
+          match = "unbound";
+          host = config.myModules.fluent-bit.host;
+          labels = "job=$job,dns=$dns";
+        }
+      ];
     };
   };
-  systemd.services.fluent-bit.serviceConfig.SupplementaryGroups = lib.mkIf config.services.fluent-bit.enable [
-    config.services.unbound.group
-  ];
+  systemd.services.fluent-bit.serviceConfig.SupplementaryGroups =
+    lib.mkIf config.services.fluent-bit.enable
+      [
+        config.services.unbound.group
+      ];
 
   systemd.services."prometheus-unbound-exporter-by-ar51an" =
     let

@@ -14,7 +14,7 @@
       cacheDir = "/persist/jellyfin/cache";
       logDir = "/persist/jellyfin/log";
     };
-    jellyseerr = {
+    seerr = {
       enable = true;
       openFirewall = true;
     };
