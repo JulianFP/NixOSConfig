@@ -118,7 +118,7 @@ in
         enable = true;
         package = pkgs.caddy.withPlugins {
           plugins = [ "github.com/pberkel/caddy-storage-redis@v1.8.0" ];
-          hash = "sha256-uDDwiH5eUjn3BCbuZwfUew/XklNyqD0xF7xssAjvZnQ=";
+          hash = "sha256-m/8sKCk1apKhG1NuJ1tlmKuWWr0KRPmel58bJ7KLINk=";
         };
         dataDir = "/persist/caddy";
         logDir = "/persist/caddy-log";
@@ -252,9 +252,11 @@ in
           ];
         };
       };
-      systemd.services.fluent-bit.serviceConfig.SupplementaryGroups = lib.mkIf config.services.fluent-bit.enable [
-        config.services.caddy.group
-      ];
+      systemd.services.fluent-bit.serviceConfig.SupplementaryGroups =
+        lib.mkIf config.services.fluent-bit.enable
+          [
+            config.services.caddy.group
+          ];
 
       #Firewall stuff
       networking.firewall = {
