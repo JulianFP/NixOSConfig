@@ -89,7 +89,7 @@
     listenAddress = "localhost";
   };
 
-  #loki and promtail for log aggregation
+  #loki and fluent-bit for log aggregation
   services.loki = {
     enable = true;
     dataDir = "/persist/loki";

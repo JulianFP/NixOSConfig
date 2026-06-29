@@ -252,7 +252,7 @@ in
           ];
         };
       };
-      systemd.services.fluent-bit.serviceConfig.SupplementaryGroups = [
+      systemd.services.fluent-bit.serviceConfig.SupplementaryGroups = lib.mkIf config.services.fluent-bit.enable [
         config.services.caddy.group
       ];
 
