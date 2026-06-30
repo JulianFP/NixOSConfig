@@ -47,7 +47,6 @@ in
 
     storage.path = "/persist/backMeUp/vmail";
     dkim.keyDirectory = "/persist/backMeUp/dkim";
-    indexDir = "/persist/backMeUp/indexes";
 
     virusScanning = true;
 
@@ -60,14 +59,21 @@ in
         dn = "dn=token";
         passwordFile = config.sops.secrets."ldap_token".path;
       };
-      dovecot = rec {
-        userFilter = "(&(class=account)(memberof=spn=mail-server@account.partanengroup.de)(mail=%{user}))";
-        passFilter = userFilter;
+      dovecot = {
+        userFilter =
+          with config.mailserver.ldap.attributes;
+          "(&(class=account)(memberof=spn=mail-server@account.partanengroup.de)(|(${mail}=%{user})(${username}=%{user})))";
+        passFilter = config.mailserver.ldap.dovecot.userFilter;
       };
       postfix.filter = "(&(class=account)(memberof=spn=mail-server@account.partanengroup.de)(mail=%s))";
       base = "dc=account,dc=partanengroup,dc=de";
       scope = "sub";
-      attributes.username = "mail";
+      attributes = {
+        username = "name";
+        mail = "mail";
+        password = null;
+        uuid = "uuid";
+      };
     };
 
     #full text search
