@@ -147,18 +147,14 @@ in
             {
               name = "content_modifier";
               condition = {
-                op = "regex";
-                field = "log";
-                value = "( start | stopped |.*in-addr\\.arpa\\.)";
-              };
-              action = "drop";
-            }
-            {
-              name = "content_modifier";
-              condition = {
-                op = "regex";
-                field = "log";
-                value = "reply:";
+                op = "and";
+                rules = [
+                  {
+                    field = "log";
+                    op = "regex";
+                    value = ".*reply:.*";
+                  }
+                ];
               };
               action = "insert";
               key = "dns";
@@ -167,14 +163,30 @@ in
             {
               name = "content_modifier";
               condition = {
-                op = "regex";
-                field = "log";
-                value = "(always_null|redirect |always_nxdomain)";
+                op = "and";
+                rules = [
+                  {
+                    field = "log";
+                    op = "regex";
+                    value = "(.*always_null.*|.*redirect .*|.*always_nxdomain.*)";
+                  }
+                ];
               };
               action = "insert";
               key = "dns";
               value = "block";
             }
+          ];
+        }
+      ];
+      filters = [
+        {
+          name = "grep";
+          match = "unbound";
+          exclude = [
+            "log .* start .*"
+            "log .* stopped .*"
+            "log .*in-addr\\.arpa\\..*"
           ];
         }
       ];
