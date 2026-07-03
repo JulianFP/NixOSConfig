@@ -45,19 +45,21 @@
   };
   services.kanidm = {
     package = pkgs.kanidmWithSecretProvisioning_1_10;
-    enableServer = true;
-    serverSettings = {
-      version = "2";
-      domain = "account.partanengroup.de";
-      origin = "https://account.partanengroup.de";
-      tls_key = "/var/lib/acme/account.partanengroup.de/key.pem";
-      tls_chain = "/var/lib/acme/account.partanengroup.de/fullchain.pem";
-      http_client_address_info.proxy-v2 = [
-        "10.42.42.1"
-        trustedProxyIP
-      ];
-      bindaddress = "0.0.0.0:443";
-      ldapbindaddress = "10.42.42.137:3636";
+    server = {
+      enable = true;
+      settings = {
+        version = "2";
+        domain = "account.partanengroup.de";
+        origin = "https://account.partanengroup.de";
+        tls_key = "/var/lib/acme/account.partanengroup.de/key.pem";
+        tls_chain = "/var/lib/acme/account.partanengroup.de/fullchain.pem";
+        http_client_address_info.proxy-v2 = [
+          "10.42.42.1"
+          trustedProxyIP
+        ];
+        bindaddress = "0.0.0.0:443";
+        ldapbindaddress = "10.42.42.137:3636";
+      };
     };
     provision = {
       enable = true;

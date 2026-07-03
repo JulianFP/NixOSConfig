@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   #additional system script for laptop lid
@@ -14,26 +14,51 @@
   wayland.windowManager.hyprland.settings = {
     monitor = [
       # internal monitor (fractional scaling)
-      "eDP-1, 2256x1504, 0x0, 1.566667"
+      {
+        output = "eDP-1";
+        mode = "2256x1504";
+        position = "0x0";
+        scale = 1.566667;
+      }
       # Samsung C27HG7x
-      "desc:Samsung Electric Company C27HG7x HTHK300334, 2560x1440@144, 1440x0, 1"
+      {
+        output = "desc:Samsung Electric Company C27HG7x HTHK300334";
+        mode = "2560x1440@144";
+        position = "1440x0";
+        scale = 1;
+      }
       # Iiyama PL2280H
-      "HDMI-A-1, 1920x1080@60, 4000x0, 1"
-      # office monitors
-      "desc:LG Electronics LG ULTRAFINE 304MAMBEWH47, 3840x2160@60, 1440x0, 2"
-      "desc:LG Electronics LG HDR 4K 0x00075BF1, 3840x2160@60, 3360x0, 2"
+      {
+        output = "HDMI-A-1";
+        mode = "1920x1080@60";
+        position = "4000x0";
+        scale = 1;
+      }
       # fallback rule for random monitors
-      ",preferred,auto,auto"
+      {
+        output = "";
+        mode = "preferred";
+        position = "auto";
+        scale = "auto";
+      }
     ];
 
-    input = {
-      tablet.output = "eDP-1";
-    };
+    config.input.tablet.output = "eDP-1";
 
     bind = [
       #framework button
-      ", XF86AudioMedia, exec, ${pkgs.grimblast}/bin/grimblast --notify --freeze copy area"
-      "$mainMod, XF86AudioMedia, exec, ${pkgs.grimblast}/bin/grimblast --notify --freeze copysave area \"$screenshotDir/$(date +\"%Y%m%d_%T\")-Screenshot-area.png\""
+      {
+        _args = [
+          "XF86AudioMedia"
+          (lib.generators.mkLuaInline "hl.dsp.exec_cmd(\"${pkgs.grimblast}/bin/grimblast --notify --freeze copy area\")")
+        ];
+      }
+      {
+        _args = [
+          "SUPER + XF86AudioMedia"
+          (lib.generators.mkLuaInline "hl.dsp.exec_cmd('${pkgs.grimblast}/bin/grimblast --notify --freeze copysave area \"$screenshotDir/$(date +\"%Y%m%d_%T\")-Screenshot-area.png\"')")
+        ];
+      }
     ];
   };
 

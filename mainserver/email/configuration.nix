@@ -37,22 +37,20 @@ in
   sops.secrets."ldap_token" = {
     sopsFile = ../../secrets/${hostName}/ldap.yaml;
     owner = config.services.postfix.user;
-    group = config.services.dovecot2.group;
+    group = config.services.dovecot2.settings.default_internal_group;
   };
   mailserver = {
     enable = true;
-    stateVersion = 3;
+    stateVersion = 4;
     fqdn = mail_domain;
     domains = [ "partanengroup.de" ];
 
-    mailDirectory = "/persist/backMeUp/vmail";
-    sieveDirectory = "/persist/backMeUp/sieve";
-    dkimKeyDirectory = "/persist/backMeUp/dkim";
-    indexDir = "/persist/backMeUp/indexes";
+    storage.path = "/persist/backMeUp/vmail";
+    dkim.keyDirectory = "/persist/backMeUp/dkim";
 
     virusScanning = true;
 
-    certificateScheme = "acme";
+    x509.useACMEHost = mail_domain;
 
     ldap = {
       enable = true;
@@ -61,27 +59,31 @@ in
         dn = "dn=token";
         passwordFile = config.sops.secrets."ldap_token".path;
       };
-      dovecot = rec {
-        passAttrs = "user=mail";
-        userFilter = "(&(class=account)(memberof=spn=mail-server@account.partanengroup.de)(mail=%{user}))";
-        passFilter = userFilter;
-
-        #see https://gitlab.com/simple-nixos-mailserver/nixos-mailserver/-/issues/342
-        userAttrs = ''
-          =home=${config.mailserver.mailDirectory}/ldap/%{user}
-        '';
+      dovecot = {
+        userFilter =
+          with config.mailserver.ldap.attributes;
+          "(&(class=account)(memberof=spn=mail-server@account.partanengroup.de)(${mail}=%{user}))";
+        passFilter = config.mailserver.ldap.dovecot.userFilter;
       };
-      postfix.filter = "(&(class=account)(memberof=spn=mail-server@account.partanengroup.de)(mail=%s))";
-      searchBase = "dc=account,dc=partanengroup,dc=de";
-      searchScope = "sub";
+      postfix.filter =
+        with config.mailserver.ldap.attributes;
+        "(&(class=account)(memberof=spn=mail-server@account.partanengroup.de)(${mail}=%s))";
+      base = "dc=account,dc=partanengroup,dc=de";
+      scope = "sub";
+      attributes = {
+        username = "mail";
+        mail = "mail";
+        password = null;
+        uuid = "uuid";
+      };
     };
 
     #full text search
     fullTextSearch = {
       enable = true;
       autoIndex = true;
-      enforced = "body";
       memoryLimit = 2000;
+      fallback = true;
     };
 
     rejectRecipients = [
@@ -160,7 +162,4 @@ in
       };
     };
   };
-
-  #for migration
-  services.dovecot2.extraConfig = "doveadm_password = Trash-80";
 }

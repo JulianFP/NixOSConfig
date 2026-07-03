@@ -17,6 +17,5 @@ let
   );
 in
 final: prev: {
-  iamb = pkgs-unstable.iamb;
   zoom-us = pkgs-unstable.zoom-us;
 }

@@ -1,31 +1,31 @@
 final: prev:
 let
-  clevis-pin-fido2 = (prev.callPackage ../packages/clevis-pin-fido2/package.nix { });
+  clevis-pin-fido2 = (final.callPackage ../packages/clevis-pin-fido2/package.nix { });
 in
 {
   clevis = prev.clevis.overrideAttrs (old: {
     buildInputs = old.buildInputs ++ [
-      prev.jq
+      final.jq
       clevis-pin-fido2
     ];
     postInstall =
       let
         includeIntoPath = [
-          prev.coreutils
-          prev.cryptsetup
-          prev.gnugrep
-          prev.gnused
-          prev.jose
-          prev.libpwquality
-          prev.luksmeta
-          prev.tpm2-tools
-          prev.jq
+          final.coreutils
+          final.cryptsetup
+          final.gnugrep
+          final.gnused
+          final.jose
+          final.libpwquality
+          final.luksmeta
+          final.tpm2-tools
+          final.jq
           clevis-pin-fido2
         ];
       in
       ''
         wrapProgram $out/bin/clevis \
-          --prefix PATH ':' "${prev.lib.makeBinPath includeIntoPath}:${placeholder "out"}/bin"
+          --prefix PATH ':' "${final.lib.makeBinPath includeIntoPath}:${placeholder "out"}/bin"
       '';
   });
 }

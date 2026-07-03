@@ -774,10 +774,10 @@ in
           {
             imports = [
               v.config
-              ./promtail.nix # to get systemd-journal out of container into loki
+              ./fluent-bit.nix # to get systemd-journal out of container into loki
             ]
             ++ lib.lists.optional v.enableSops ./sops.nix;
-            myModules.promtail.host = "${getPrefix v}.1";
+            myModules.fluent-bit.host = "${getPrefix v}.1";
             nixpkgs.config.allowUnfreePredicate =
               pkg: builtins.elem (lib.getName pkg) v.permittedUnfreePackages;
             networking = {

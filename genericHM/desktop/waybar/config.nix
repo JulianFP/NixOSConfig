@@ -6,7 +6,7 @@
     height = 30;
     spacing = 4;
     modules-left = [
-      "hyprland/workspaces"
+      "ext/workspaces" # hyprland/workspaces currently broken because of lua
       "hyprland/submap"
       "hyprland/window"
     ];
@@ -25,8 +25,8 @@
       "clock"
     ];
 
-    "hyprland/workspaces" = {
-      sort-by-number = true;
+    "ext/workspaces" = {
+      # hyprland/workspaces currently broken because of lua
       on-click = "activate";
       format-icons = {
         urgent = "󰂚";

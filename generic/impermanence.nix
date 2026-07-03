@@ -23,7 +23,7 @@
     directories = [
       "/var/log"
       "/var/lib/nixos"
-      "/var/lib/systemd/coredump"
+      "/var/lib/systemd" # whole systemd directory because some services (like libvirtd) depend on files in here (like credential.secret)
     ];
     files = [
       "/etc/machine-id"

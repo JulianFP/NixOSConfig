@@ -13,7 +13,7 @@
     ./common.nix
     ./nebula.nix
     ./ssh.nix
-    ./promtail.nix # promtail to get all system logs
+    ./fluent-bit.nix # fluent-bit to get all system logs
   ];
 
   #automatic maintenance services

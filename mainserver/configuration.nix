@@ -72,7 +72,10 @@
     "/etc/zfs/zpool.cache" # see nixos manual
   ];
   boot.supportedFilesystems = [ "zfs" ];
-  boot.zfs.extraPools = [ "newData" ];
+  boot.zfs = {
+    extraPools = [ "newData" ];
+    forceImportRoot = false;
+  };
   services.zfs.autoScrub = {
     enable = true;
     interval = "weekly";

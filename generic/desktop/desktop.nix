@@ -90,8 +90,10 @@
 
     kanidm = {
       package = pkgs.kanidm_1_10;
-      enableClient = true;
-      clientSettings.uri = "https://account.partanengroup.de";
+      client = {
+        enable = true;
+        settings.uri = "https://account.partanengroup.de";
+      };
     };
 
     # mullvad vpn
@@ -99,11 +101,12 @@
       enable = true;
       enableExcludeWrapper = false;
     };
+
+    gvfs.enable = true; # needed by PCManFM-qt
   };
 
   # -- programs --
   programs = {
-    adb.enable = true; # android adb setup. See users user permission (adbusers group)
     virt-manager.enable = true; # to run qemu/kvm VMs. See virtualisation for more
     hyprland = {
       enable = true;
@@ -170,6 +173,9 @@
 
       #to add exfat support
       exfatprogs
+
+      #to get adb command for android
+      android-tools
     ];
 
     #additional impermanence directories

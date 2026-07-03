@@ -86,6 +86,10 @@ in
           assertion = if cfg.localDNS.enable then config.services.unbound.enable else true;
           message = "Custom assertion: to use localDNS.enable in proxy module please configure unbound elsewhere. This just adds some entries to an existing unbound server";
         }
+        {
+          assertion = lib.hasAttrByPath [ "myModules" "fluent-bit" ] config;
+          message = "Custom assertion: to use the proxy module you also have to import the fluent-bit module";
+        }
       ];
 
       sops.secrets."redis/caddy-server" = lib.mkIf cfg.isEdge {
@@ -114,7 +118,7 @@ in
         enable = true;
         package = pkgs.caddy.withPlugins {
           plugins = [ "github.com/pberkel/caddy-storage-redis@v1.8.0" ];
-          hash = "sha256-NsxmAVaDQxyzVxG0rm8ln22ivkQZ8zMdT1DJhsFeZYs=";
+          hash = "sha256-m/8sKCk1apKhG1NuJ1tlmKuWWr0KRPmel58bJ7KLINk=";
         };
         dataDir = "/persist/caddy";
         logDir = "/persist/caddy-log";
@@ -208,40 +212,51 @@ in
         environment.CADDY_ADMIN = lib.mkIf (hostName != "mainserver") "${hostNebulaIP}:2019";
       };
 
-      #scrape configs with promtail
-      services.promtail.configuration.scrape_configs = [
-        {
-          job_name = "caddy";
-          static_configs = [
+      #fluent-bit config
+      services.fluent-bit.settings = {
+        parsers = [
+          {
+            name = "json";
+            format = "json";
+          }
+        ];
+        pipeline = {
+          inputs = [
             {
-              targets = [ "localhost" ];
-              labels = {
-                job = "caddy";
-                host = hostName;
-                __path__ = "/persist/caddy-log/*";
-                agent = "caddy-promtail";
-              };
+              name = "tail";
+              path = "/persist/caddy-log/*";
+              tag = "caddy";
+              db = "/var/lib/private/fluent-bit/caddy.db";
+              parser = "json";
+              path_key = "filename";
             }
           ];
-          pipeline_stages = [
+          filters = [
             {
-              json.expressions = {
-                duration = "duration";
-                status = "status";
-              };
-            }
-            {
-              labels = {
-                duration = "";
-                status = "";
-              };
+              name = "modify";
+              match = "caddy";
+
+              add = [
+                "job caddy"
+                "host ${hostName}"
+              ];
             }
           ];
-        }
-      ];
-      users.users.promtail.extraGroups = lib.mkIf config.services.promtail.enable [
-        config.services.caddy.group
-      ];
+          outputs = [
+            {
+              name = "loki";
+              match = "caddy";
+              host = config.myModules.fluent-bit.host;
+              labels = "job=$job,host=$host,filename=$filename,status=$status,duration=$duration";
+            }
+          ];
+        };
+      };
+      systemd.services.fluent-bit.serviceConfig.SupplementaryGroups =
+        lib.mkIf config.services.fluent-bit.enable
+          [
+            config.services.caddy.group
+          ];
 
       #Firewall stuff
       networking.firewall = {

@@ -89,7 +89,7 @@
     listenAddress = "localhost";
   };
 
-  #loki and promtail for log aggregation
+  #loki and fluent-bit for log aggregation
   services.loki = {
     enable = true;
     dataDir = "/persist/loki";
@@ -151,10 +151,17 @@
   };
 
   #grafana for nice dashboards
-  sops.secrets."grafana/admin" = {
-    mode = "0440";
-    owner = "grafana";
-    sopsFile = ../secrets/${hostName}/grafana.yaml;
+  sops.secrets = {
+    "grafana/admin" = {
+      mode = "0440";
+      owner = "grafana";
+      sopsFile = ../secrets/${hostName}/grafana.yaml;
+    };
+    "grafana/secret_key" = {
+      mode = "0440";
+      owner = "grafana";
+      sopsFile = ../secrets/${hostName}/grafana.yaml;
+    };
   };
   services.grafana = {
     enable = true;
@@ -167,6 +174,7 @@
       security = {
         admin_email = "admin@partanengroup.de";
         admin_password = "$__file{${config.sops.secrets."grafana/admin".path}}";
+        secret_key = "$__file{${config.sops.secrets."grafana/secret_key".path}}";
       };
     };
     provision = {

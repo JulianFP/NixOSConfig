@@ -1,4 +1,9 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 
 let
   firefoxProfileName = "JuliansDefaultProfile";
@@ -6,6 +11,7 @@ in
 {
   programs.firefox = {
     enable = true;
+    configPath = "${config.xdg.configHome}/mozilla/firefox";
     languagePacks = [
       "en-US"
       "de"

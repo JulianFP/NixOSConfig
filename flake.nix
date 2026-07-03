@@ -3,26 +3,20 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.05";
     lanzaboote.url = "github:nix-community/lanzaboote";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    nixvim = {
-      url = "github:nix-community/nixvim";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nixvim-stable = {
-      url = "github:nix-community/nixvim/nixos-25.11";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
-    };
+    nixvim.url = "github:nix-community/nixvim";
+    nixvim-stable.url = "github:nix-community/nixvim/nixos-26.05";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager-stable = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
-    stylix.url = "github:nix-community/stylix/release-25.11";
+    stylix.url = "github:nix-community/stylix/release-26.05";
     nur.url = "github:nix-community/NUR";
     disko = {
       url = "github:nix-community/disko";
@@ -44,7 +38,7 @@
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    simple-nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-25.11";
+    simple-nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-26.05";
   };
 
   outputs =
@@ -113,11 +107,14 @@
             "steam-unwrapped"
             "corefonts"
             "vista-fonts"
-            "xow_dongle-firmware"
+            "xone-dongle-firmware"
             "discord"
             "guilded"
             "spotify"
             "zoom"
+          ];
+          permittedInsecurePackages = [
+            "electron-39.8.10" # needed by logseq
           ];
           overlays = [
             nur.overlays.default
@@ -146,10 +143,13 @@
             "rsi-installer"
             "corefonts"
             "vista-fonts"
-            "xow_dongle-firmware"
+            "xone-dongle-firmware"
             "discord"
             "guilded"
             "spotify"
+          ];
+          permittedInsecurePackages = [
+            "electron-39.8.10" # needed by logseq
           ];
           overlays = [
             nur.overlays.default
@@ -179,7 +179,6 @@
             ./genericHM/ssh-sops-key.nix
           ];
           overlays = [
-            (import ./generic/overlays/caddy-unstable.nix { inherit inputs; })
             (import ./generic/overlays/stevenblack-unstable.nix { inherit inputs; })
           ];
           stateVersion = "24.11";
@@ -192,9 +191,6 @@
           ];
           homeManagerModules.root = [
             ./genericHM/ssh-sops-key.nix
-          ];
-          overlays = [
-            (import ./generic/overlays/caddy-unstable.nix { inherit inputs; })
           ];
           stateVersion = "23.11";
         };

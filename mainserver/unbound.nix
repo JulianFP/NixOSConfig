@@ -23,14 +23,12 @@ let
   };
   unboundSocketPath = "/run/unbound/unbound.socket";
   unboundLogFileDir = "/persist/unbound-log";
-  unboundLogFilePath = "${unboundLogFileDir}/unbound.log"; # different from unbound stateDir below because to that only unbound has access and not promtail. Dir also has to already exist
+  unboundLogFilePath = "${unboundLogFileDir}/unbound.log"; # different from unbound stateDir below because to that only unbound has access and not fluent-bit. Dir also has to already exist
 in
 {
   services = {
     #systemd-resolved's stub listener clashes with unbound on localhost otherwise
-    resolved.extraConfig = ''
-      DNSStubListener=no
-    '';
+    resolved.settings.Resolve.DNSStubListener = false;
     unbound = {
       enable = true;
       stateDir = "/persist/unbound";
@@ -131,60 +129,82 @@ in
     };
   };
 
-  services.promtail.configuration.scrape_configs = [
-    {
-      job_name = "unbound";
-      static_configs = [
+  services.fluent-bit.settings = {
+    pipeline = {
+      inputs = [
         {
-          targets = [ "localhost" ];
-          labels = {
-            job = "unbound";
-            __path__ = unboundLogFilePath;
-          };
+          name = "tail";
+          path = unboundLogFilePath;
+          tag = "unbound";
+          db = "/var/lib/private/fluent-bit/unbound.db";
+          processors.logs = [
+            {
+              name = "content_modifier";
+              action = "insert";
+              key = "job";
+              value = "unbound";
+            }
+            {
+              name = "content_modifier";
+              condition = {
+                op = "and";
+                rules = [
+                  {
+                    field = "$log";
+                    op = "regex";
+                    value = ".*reply:.*";
+                  }
+                ];
+              };
+              action = "insert";
+              key = "dns";
+              value = "reply";
+            }
+            {
+              name = "content_modifier";
+              condition = {
+                op = "and";
+                rules = [
+                  {
+                    field = "$log";
+                    op = "regex";
+                    value = "(.*always_null.*|.*redirect .*|.*always_nxdomain.*)";
+                  }
+                ];
+              };
+              action = "insert";
+              key = "dns";
+              value = "block";
+            }
+          ];
         }
       ];
-      pipeline_stages = [
+      filters = [
         {
-          labeldrop = [ "filename" ];
-        }
-        {
-          match = {
-            selector = ''
-              {job="unbound"} |~ " start | stopped |.*in-addr.arpa."
-            '';
-            action = "drop";
-          };
-        }
-        {
-          match = {
-            selector = ''
-              {job="unbound"} |= "reply:"
-            '';
-            stages = [
-              {
-                static_labels.dns = "reply";
-              }
-            ];
-          };
-        }
-        {
-          match = {
-            selector = ''
-              {job="unbound"} |~ "always_null|redirect |always_nxdomain"
-            '';
-            stages = [
-              {
-                static_labels.dns = "block";
-              }
-            ];
-          };
+          name = "grep";
+          match = "unbound";
+          exclude = [
+            "log .* start .*"
+            "log .* stopped .*"
+            "log .*in-addr\\.arpa\\..*"
+          ];
         }
       ];
-    }
-  ];
-  users.users.promtail.extraGroups = lib.mkIf config.services.promtail.enable [
-    config.services.unbound.group
-  ];
+      outputs = [
+        {
+          name = "loki";
+          match = "unbound";
+          host = config.myModules.fluent-bit.host;
+          labels = "job=$job,dns=$dns";
+        }
+      ];
+    };
+  };
+  systemd.services.fluent-bit.serviceConfig.SupplementaryGroups =
+    lib.mkIf config.services.fluent-bit.enable
+      [
+        config.services.unbound.group
+      ];
 
   systemd.services."prometheus-unbound-exporter-by-ar51an" =
     let
