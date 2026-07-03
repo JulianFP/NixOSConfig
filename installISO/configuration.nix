@@ -33,6 +33,7 @@ in
       btrfs = true;
       zfs = true;
     };
+    zfs.forceImportRoot = false;
   };
 
   environment = {
