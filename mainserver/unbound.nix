@@ -150,7 +150,7 @@ in
                 op = "and";
                 rules = [
                   {
-                    field = "log";
+                    field = "$log";
                     op = "regex";
                     value = ".*reply:.*";
                   }
@@ -166,7 +166,7 @@ in
                 op = "and";
                 rules = [
                   {
-                    field = "log";
+                    field = "$log";
                     op = "regex";
                     value = "(.*always_null.*|.*redirect .*|.*always_nxdomain.*)";
                   }
