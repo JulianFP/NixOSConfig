@@ -32,7 +32,7 @@ in
     home = "/persist/backMeUp/nextcloud";
     datadir = "/mnt/cloudData/nextcloud";
     hostName = if hostName == "Nextcloud" then "partanengroup.de" else "test.partanengroup.de";
-    package = pkgs.nextcloud32;
+    package = pkgs.nextcloud33;
     secretFile = config.sops.secrets."nextcloud/secrets.json".path;
     config.adminuser = "admin";
     config.adminpassFile = config.sops.secrets."nextcloud/adminPass".path;
@@ -161,34 +161,40 @@ in
 
   #scrape Nextcloud logs with fluent-bit
   services.fluent-bit.settings.pipeline = {
-    inputs = [{
-      name = "tail";
-      tag = "nextcloud";
-      path = "${config.services.nextcloud.datadir}/data/nextcloud.log";
-      db = "/var/lib/private/fluent-bit/nextcloud.db";
-      processors.logs = [
-        {
-          name = "content_modifier";
-          action = "insert";
-          key = "job";
-          value = "nextcloud";
-        }
-        {
-          name = "content_modifier";
-          action = "insert";
-          key = "host";
-          value = hostName;
-        }
-      ];
-    }];
-    outputs = [{
-      name = "loki";
-      match = "nextcloud";
-      host = config.myModules.fluent-bit.host;
-      labels = "job=$job,host=$host";
-    }];
+    inputs = [
+      {
+        name = "tail";
+        tag = "nextcloud";
+        path = "${config.services.nextcloud.datadir}/data/nextcloud.log";
+        db = "/var/lib/private/fluent-bit/nextcloud.db";
+        processors.logs = [
+          {
+            name = "content_modifier";
+            action = "insert";
+            key = "job";
+            value = "nextcloud";
+          }
+          {
+            name = "content_modifier";
+            action = "insert";
+            key = "host";
+            value = hostName;
+          }
+        ];
+      }
+    ];
+    outputs = [
+      {
+        name = "loki";
+        match = "nextcloud";
+        host = config.myModules.fluent-bit.host;
+        labels = "job=$job,host=$host";
+      }
+    ];
   };
-  systemd.services.fluent-bit.serviceConfig.SupplementaryGroups = lib.mkIf config.services.fluent-bit.enable [
-    "nextcloud"
-  ];
+  systemd.services.fluent-bit.serviceConfig.SupplementaryGroups =
+    lib.mkIf config.services.fluent-bit.enable
+      [
+        "nextcloud"
+      ];
 }
