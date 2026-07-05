@@ -77,6 +77,7 @@ in
     rustup
     arduino-ide
     (python3.withPackages python-packages)
+    jetbrains.idea
 
     # Gaming
     wineWow64Packages.stagingFull

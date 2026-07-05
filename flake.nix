@@ -112,6 +112,7 @@
             "guilded"
             "spotify"
             "zoom"
+            "idea"
           ];
           permittedInsecurePackages = [
             "electron-39.8.10" # needed by logseq
@@ -147,6 +148,7 @@
             "discord"
             "guilded"
             "spotify"
+            "idea"
           ];
           permittedInsecurePackages = [
             "electron-39.8.10" # needed by logseq
