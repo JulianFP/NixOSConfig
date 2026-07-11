@@ -56,7 +56,7 @@ def main():
             if is_admin:
                 print("group = system-admin")
             else:
-                print("group = system-user")
+                print("group = system-users")
             print("local_only = false")
             return
         else:
