@@ -28,8 +28,8 @@
     script = ''
       echo "Creating zfs and btrfs snapshots..."
       mkdir /zfs-backup-snapshot
-      zfs snapshot newData@backup-snapshot
-      mount -t zfs newData@backup-snapshot /zfs-backup-snapshot
+      zfs snapshot -r newData/backMeUp@backup-snapshot
+      mount -t zfs newData/backMeUp@backup-snapshot /zfs-backup-snapshot
       btrfs subvolume snapshot /persist/backMeUp btrfs-backup-snapshot
       echo "Successfully created zfs and btrfs snapshots"
     '';
@@ -46,7 +46,7 @@
       echo "Destroying zfs and btrfs snapshots..."
       umount /zfs-backup-snapshot
       rm /zfs-backup-snapshot -r
-      zfs destroy newData@backup-snapshot
+      zfs destroy -r newData/backMeUp@backup-snapshot
       btrfs subvolume delete btrfs-backup-snapshot
       echo "Successfully destroyed zfs and btrfs snapshots"
     '';
@@ -97,8 +97,8 @@
     script = ''
       echo "Creating zfs and btrfs snapshots..."
       mkdir /zfs-offsite-backup-snapshot
-      zfs snapshot newData@offsite-backup-snapshot
-      mount -t zfs newData@offsite-backup-snapshot /zfs-offsite-backup-snapshot
+      zfs snapshot -r newData/backMeUp@offsite-backup-snapshot
+      mount -t zfs newData/backMeUp@offsite-backup-snapshot /zfs-offsite-backup-snapshot
       btrfs subvolume snapshot /persist/backMeUp btrfs-offsite-backup-snapshot
       echo "Successfully created zfs and btrfs snapshots"
     '';
@@ -115,7 +115,7 @@
       echo "Destroying zfs and btrfs snapshots..."
       umount /zfs-offsite-backup-snapshot
       rm /zfs-offsite-backup-snapshot -r
-      zfs destroy newData@offsite-backup-snapshot
+      zfs destroy -r newData/backMeUp@offsite-backup-snapshot
       btrfs subvolume delete btrfs-offsite-backup-snapshot
       echo "Successfully destroyed zfs and btrfs snapshots"
     '';

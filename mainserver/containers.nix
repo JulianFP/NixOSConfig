@@ -45,7 +45,7 @@
             isReadOnly = false;
           };
           "/mnt/cloudData/nextcloud" = {
-            hostPath = "/newData/Nextcloud";
+            hostPath = "/newData/backMeUp/Nextcloud";
             isReadOnly = false;
           };
         };
