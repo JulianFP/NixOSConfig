@@ -47,14 +47,20 @@
     RootDirectory = lib.mkForce null;
   };
 
-  users.groups = {
-    ${config.services.jellyfin.group}.members = [
-      "radarr"
-      "sonarr"
+  users = {
+    users."${config.services.jellyfin.user}".extraGroups = [
+      "video"
+      "render"
     ];
-    ${config.services.transmission.group}.members = [
-      "radarr"
-      "sonarr"
-    ];
+    groups = {
+      ${config.services.jellyfin.group}.members = [
+        "radarr"
+        "sonarr"
+      ];
+      ${config.services.transmission.group}.members = [
+        "radarr"
+        "sonarr"
+      ];
+    };
   };
 }

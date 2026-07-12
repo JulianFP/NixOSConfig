@@ -89,7 +89,17 @@
           9091 # transmission
         ];
         mullvadRouting = true;
+        additionalContainerConfig.allowedDevices = [
+          {
+            modifier = "rw";
+            node = "/dev/dri/renderD128";
+          }
+        ];
         additionalBindMounts = {
+          "/dev/dri" = {
+            hostPath = "/dev/dri";
+            isReadOnly = false;
+          };
           "/mnt/mediadata" = {
             hostPath = "/newData/Jellyfin";
             isReadOnly = false;

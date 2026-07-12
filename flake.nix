@@ -176,6 +176,7 @@
           boot = 1;
           systemModules = [
             ./generic/ssh-sops-key.nix
+            nixos-hardware.nixosModules.common-gpu-amd
           ];
           homeManagerModules.root = [
             ./genericHM/ssh-sops-key.nix
