@@ -1,4 +1,5 @@
 {
+  inputs,
   pkgs,
   lib,
   config,
@@ -6,6 +7,10 @@
 }:
 
 {
+  imports = [
+    inputs.nixos-hardware.nixosModules.common-gpu-amd
+  ];
+
   services = {
     jellyfin = {
       enable = true;
