@@ -83,6 +83,7 @@
         "family" = { };
         "higher-quota" = { };
         "audiobookshelf" = { };
+        "audiobookshelf_admin" = { };
       };
 
       systems.oauth2 = {
@@ -154,7 +155,12 @@
             "openid"
             "profile"
             "email"
+            "audiobookshelf_group"
           ];
+          claimMaps."audiobookshelf_group".valuesByGroup = {
+            "audiobookshelf" = [ "user" ];
+            "audiobookshelf_admin" = [ "admin" ];
+          };
         };
       };
 
@@ -183,6 +189,7 @@
             "project-w"
             "project-w-admin"
             "audiobookshelf"
+            "audiobookshelf_admin"
           ];
         };
         "marvin" = {
