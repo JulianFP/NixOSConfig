@@ -300,6 +300,26 @@
         additionalSpecialArgs.trustedProxyIP = config.myModules.nebula."serverNetwork".ipMap.IonosVPS;
         config = ./project-w/configuration.nix;
       };
+      "Audiobookshelf" = {
+        hostID = 140;
+        after = [
+          "Kanidm"
+        ];
+        openTCPPorts = [
+          8000
+        ];
+        additionalBindMounts = {
+          "/var/lib/audiobookshelf" = {
+            hostPath = "/persist/backMeUp/Audiobookshelf";
+            isReadOnly = false;
+          };
+          "/mnt/Audiobookshelf" = {
+            hostPath = "/newData/Audiobookshelf";
+            isReadOnly = false;
+          };
+        };
+        config = ./audiobookshelf/configuration.nix;
+      };
     };
   };
 }

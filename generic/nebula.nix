@@ -9,6 +9,7 @@
     serverFirewallRules = config.services.openssh.enable;
     subnet = "10.28.128.0/21";
     ipMap = {
+      Audiobookshelf = "10.28.129.140";
       #servers
       IonosVPS = "10.28.128.1";
       IonosVPS2 = "10.28.128.2";

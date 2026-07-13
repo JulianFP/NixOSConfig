@@ -43,6 +43,10 @@
     sopsFile = ../../secrets/${hostName}/Project-W_client-secret.yaml;
     owner = "kanidm";
   };
+  sops.secrets."audiobookshelf_service" = {
+    sopsFile = ../../secrets/${hostName}/Audiobookshelf_client-secret.yaml;
+    owner = "kanidm";
+  };
   services.kanidm = {
     package = pkgs.kanidmWithSecretProvisioning_1_10;
     server = {
@@ -78,6 +82,7 @@
         "project-w-admin" = { };
         "family" = { };
         "higher-quota" = { };
+        "audiobookshelf" = { };
       };
 
       systems.oauth2 = {
@@ -135,6 +140,22 @@
             };
           };
         };
+        "audiobookshelf_service" = {
+          displayName = "Audiobookshelf";
+          originLanding = "https://audiobooks.partanengroup.de";
+          originUrl = [
+            "https://audiobooks.partanengroup.de/auth/openid/callback"
+            "https://audiobooks.partanengroup.de/auth/openid/mobile-redirect"
+            "https://audiobooks.partanengroup.de/audiobookshelf/auth/openid/callback"
+            "https://audiobooks.partanengroup.de/audiobookshelf/auth/openid/mobile-redirect"
+          ];
+          basicSecretFile = config.sops.secrets."audiobookshelf_service".path;
+          scopeMaps."audiobookshelf" = [
+            "openid"
+            "profile"
+            "email"
+          ];
+        };
       };
 
       persons = {
@@ -161,6 +182,7 @@
             "hass-admin"
             "project-w"
             "project-w-admin"
+            "audiobookshelf"
           ];
         };
         "marvin" = {
@@ -173,6 +195,7 @@
             "mail-server"
             "jellyfin"
             "hass"
+            "audiobookshelf"
           ];
         };
         "robin" = {
@@ -185,6 +208,7 @@
             "mail-server"
             "jellyfin"
             "hass"
+            "audiobookshelf"
           ];
         };
         "finn" = {
@@ -196,6 +220,7 @@
             "nextcloud"
             "jellyfin"
             "hass"
+            "audiobookshelf"
           ];
         };
         "maria" = {
@@ -207,6 +232,7 @@
             "nextcloud"
             "jellyfin"
             "hass"
+            "audiobookshelf"
           ];
         };
         "fabian" = {
@@ -218,6 +244,7 @@
             "nextcloud"
             "jellyfin"
             "hass"
+            "audiobookshelf"
           ];
         };
         "raoul" = {
@@ -227,6 +254,7 @@
           groups = [
             "nextcloud"
             "jellyfin"
+            "audiobookshelf"
           ];
         };
         "annalena" = {
@@ -237,6 +265,7 @@
             "nextcloud"
             "higher-quota"
             "jellyfin"
+            "audiobookshelf"
           ];
         };
         "maximilian" = {
@@ -246,6 +275,7 @@
           groups = [
             "nextcloud"
             "jellyfin"
+            "audiobookshelf"
           ];
         };
       };

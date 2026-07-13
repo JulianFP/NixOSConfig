@@ -68,6 +68,11 @@
         destIPedge = config.myModules.nebula."serverNetwork".ipMap.Project-W;
         destPort = 5000;
       };
+      "audiobooks.partanengroup.de" = {
+        destIP = "10.42.42.140";
+        destIPedge = config.myModules.nebula."serverNetwork".ipMap.Audiobookshelf;
+        destPort = 8000;
+      };
     };
     edgeHostName = "IonosVPS";
   };
