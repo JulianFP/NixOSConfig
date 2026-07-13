@@ -227,6 +227,7 @@ in
                 "mail.partanengroup.de" = "1";
                 "rspamd.mail.partanengroup.de" = "1";
                 "project-w.partanengroup.de" = "1";
+                "audiobooks.partanengroup.de" = "1";
                 "192.168.3.1" = "1";
                 "www.netflix.com" = "2";
                 "www.disneyplus.com" = "3";
