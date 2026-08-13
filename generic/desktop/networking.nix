@@ -13,7 +13,12 @@ in
 {
   networking = {
     hostName = hostName; # Define your hostname.
-    networkmanager.enable = true;
+    networkmanager = {
+      enable = true;
+      plugins = with pkgs; [
+        networkmanager-openvpn
+      ];
+    };
 
     # rpfilter allow Wireguard traffic (see https://wiki.nixos.org/wiki/WireGuard#Setting_up_WireGuard_with_NetworkManager)
     firewall = {

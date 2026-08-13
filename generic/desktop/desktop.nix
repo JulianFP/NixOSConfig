@@ -25,7 +25,6 @@
     ../common.nix
     ../impermanence.nix
     ./networking.nix
-    ./vpn-uni-heidelberg.nix
   ];
 
   # -- boot --
