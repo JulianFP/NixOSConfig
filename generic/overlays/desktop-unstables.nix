@@ -18,4 +18,5 @@ let
 in
 final: prev: {
   zoom-us = pkgs-unstable.zoom-us;
+  spotdl = pkgs-unstable.spotdl;
 }
