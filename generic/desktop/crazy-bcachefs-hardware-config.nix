@@ -25,6 +25,7 @@ let
 
   #to be able to boot without yubikey or when the tpm values temporarily don't fit anymore add a tang server in the local network as a fallback
   #requires networking, so currently not enabled for JuliansFramework
+  #also hibernation may not work correctly with tang enabled
   withTangFallback = if hostName == "JuliansPC" then true else false; # make sure you added networking to initrd first!
 
   #JuliansPC also uses a tang server as an alternative for fido2, so change display message
@@ -137,7 +138,7 @@ in
   };
   #define how long system should suspend before waking up and hibernating (hibernation always happens on low battery, whatever happens first)
   boot.resumeDevice = if withTangFallback then "" else "/dev/disk/by-label/${unlockedSwapLabel}";
-  systemd.sleep.settings.Sleep.HibernateDelaySec = lib.mkIf withTangFallback "1h30min";
+  systemd.sleep.settings.Sleep.HibernateDelaySec = lib.mkIf (!withTangFallback) "1h30min";
 
   boot.initrd.systemd = {
     enable = true;
