@@ -2,15 +2,24 @@
   pkgs,
   lib,
   config,
+  hostName,
   ...
 }:
 
+let
+  lockAndSuspendOperation = if (hostName == "JuliansPC") then "suspend" else "suspend-then-hibernate";
+in
 {
   # set scripts for extended Hyprland behavior (suspend, lock, etc.)
   home.file = {
     "lockAndSuspend.sh" = {
       target = ".systemScripts/lockAndSuspend.sh";
-      source = lib.mkDefault ./systemScripts/lockAndSuspend.sh; # can be overwritten by the hibernate equivalent
+      source = ./systemScripts/lockAndSuspend.sh;
+      executable = true;
+    };
+    "clamshell_mode_hypr.sh" = {
+      target = ".systemScripts/clamshell_mode_hypr.sh";
+      source = ./systemScripts/clamshell_mode_hypr.sh;
       executable = true;
     };
     "hyprland_output_options.py" = {
@@ -453,18 +462,6 @@
               "hl.dsp.window.resize()"
               { mouse = true; }
             ]
-
-            # Power button, lid suspend & lock screen & dpms (Lid Switch)
-            [
-              "XF86PowerOff"
-              "hl.dsp.exec_cmd(\"/home/julian/.systemScripts/lockAndSuspend.sh 1\")"
-              { locked = true; }
-            ]
-            [
-              "switch:Lid Switch"
-              "hl.dsp.exec_cmd(\"/home/julian/.systemScripts/clamshell_mode_hypr.sh\")"
-              { locked = true; }
-            ]
           ]
           ++ (
             # generate workspace keybindings since they are very repetitive
@@ -498,6 +495,8 @@
 
     extraConfig = ''
       function setLockedBindings()
+        hl.bind("switch:Lid Switch", (hl.dsp.exec_cmd("/home/julian/.systemScripts/clamshell_mode_hypr.sh")), {["locked"] = true})
+        hl.bind("XF86PowerOff", (hl.dsp.exec_cmd("/home/julian/.systemScripts/lockAndSuspend.sh 1 ${lockAndSuspendOperation}")), {["locked"] = true})
         -- mute audio/mic
         hl.bind("Pause", (hl.dsp.exec_cmd("pactl set-source-mute @DEFAULT_SOURCE@ toggle")), {["locked"] = true})
         hl.bind("XF86AudioMute", (hl.dsp.exec_cmd("pactl set-sink-mute @DEFAULT_SINK@ toggle")), {["locked"] = true})
@@ -516,8 +515,6 @@
       setLockedBindings()
       hl.define_submap("inhibitSuspend", function()
         setLockedBindings()
-        hl.bind("switch:Lid Switch", (hl.dsp.exec_cmd("/home/julian/.systemScripts/clamshell_mode_hypr.sh inhibitSuspend")), {["locked"] = true})
-        hl.bind("XF86PowerOff", (hl.dsp.exec_cmd("/home/julian/.systemScripts/lockAndSuspend.sh 1 inhibitSuspend")), {["locked"] = true})
         hl.bind("escape", (hl.dsp.submap("reset")))
       end)
     '';

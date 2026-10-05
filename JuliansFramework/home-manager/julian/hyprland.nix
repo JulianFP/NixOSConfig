@@ -1,16 +1,6 @@
 { pkgs, lib, ... }:
 
 {
-  #additional system script for laptop lid
-  home.file = {
-    "clamshell_mode_hypr.sh" = {
-      target = ".systemScripts/clamshell_mode_hypr.sh";
-      source = ./systemScripts/clamshell_mode_hypr.sh;
-      executable = true;
-    };
-    "lockAndSuspend.sh".source = ./systemScripts/lockAndSuspend.sh; # this device supports hibernation
-  };
-
   wayland.windowManager.hyprland.settings = {
     monitor = [
       # internal monitor (fractional scaling)

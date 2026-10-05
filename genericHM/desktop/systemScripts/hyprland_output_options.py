@@ -5,7 +5,6 @@ import os
 import socket
 import sys
 
-
 usedMonitorDescriptions = [
     "Samsung Electric Company C27HG7x HTHK300334",
     "Samsung Electric Company LS32A70 HNMR400480",
@@ -17,6 +16,7 @@ options = {
     "Inhibit suspend": 'dispatch hl.dsp.submap("inhibitSuspend")',
     "Enable blue light filter": "hyprsunset temperature 3500",
     "Disable blue light filter": "hyprsunset identity",
+    "Lock and hibernate": 'dispatch hl.dsp.exec_cmd("/home/julian/.systemScripts/lockAndSuspend.sh 0 hibernate")',
 }
 
 
