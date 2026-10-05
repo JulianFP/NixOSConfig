@@ -117,8 +117,8 @@ in
       services.caddy = {
         enable = true;
         package = pkgs.caddy.withPlugins {
-          plugins = [ "github.com/pberkel/caddy-storage-redis@v1.8.1" ];
-          hash = "sha256-CGj9SkkcJIosINvXvjT8VRjGcVwNdHV7qKNR8t/Owik=";
+          plugins = [ "github.com/pberkel/caddy-storage-redis@v1.8.2" ];
+          hash = "sha256-DQFkxF+UeQSPzCQY9c5+3yMJpDcVIsMlhrbLbR44n7U=";
         };
         dataDir = "/persist/caddy";
         logDir = "/persist/caddy-log";
