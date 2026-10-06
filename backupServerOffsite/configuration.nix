@@ -8,28 +8,45 @@
     ./tang.nix
   ];
 
-  # set a password for a root user as a fallback if there is no networking
-  sops.secrets."users/root" = {
-    neededForUsers = true;
-    sopsFile = ../secrets/backupServerOffsite/users.yaml;
+  sops.secrets = {
+    "users/root" = {
+      neededForUsers = true;
+      sopsFile = ../secrets/backupServerOffsite/users.yaml;
+    };
+    "wifi" = {
+      sopsFile = ../secrets/backupServerOffsite/wifi.yaml;
+      owner = "wpa_supplicant";
+      group = "wpa_supplicant";
+    };
   };
+
+  # set a password for a root user as a fallback if there is no networking
   users.users.root.hashedPasswordFile = config.sops.secrets."users/root".path;
 
   #networking config
   networking = {
     useDHCP = false;
+    wireless = {
+      enable = true;
+      interfaces = [ "wlp1s0" ];
+      extraConfig = ''
+        freq_list=2412 2417 2422 2427 2432 2437 2442 2447 2452 2457 2462 2467 2472 2484
+      '';
+      secretsFile = config.sops.secrets."wifi".path;
+      networks."WGLan".pskRaw = "ext:psk_wglan";
+    };
   };
   systemd.network = {
     enable = true;
-    networks."10-serverLAN" = {
-      name = "enp0*";
+    networks."10-WGLan" = {
+      name = "wlp1s0";
       DHCP = "no";
       networkConfig.IPv6AcceptRA = true;
       address = [
-        "192.168.10.30/24"
+        "192.168.0.30/24"
       ];
       gateway = [
-        "192.168.10.1"
+        "192.168.0.1"
       ];
       dns = [
         "1.1.1.1"
@@ -39,7 +56,7 @@
     };
   };
 
-  myModules.nebula."serverNetwork".unsafeRoutes."enp0s4" = [ "192.168.10.0/24" ];
+  myModules.nebula."serverNetwork".unsafeRoutes."wlp1s0" = [ "192.168.0.0/24" ];
 
   #auto-mount backup HDD
   fileSystems."/mnt/backupHDD" = {
