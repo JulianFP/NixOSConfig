@@ -285,6 +285,16 @@
             "audiobookshelf"
           ];
         };
+        "teodor" = {
+          displayName = "teodor";
+          legalName = "Teodor Ticu";
+          mailAddresses = [ "teodor.ticu@gmail.com" ];
+          groups = [
+            "nextcloud"
+            "jellyfin"
+            "audiobookshelf"
+          ];
+        };
       };
     };
   };
