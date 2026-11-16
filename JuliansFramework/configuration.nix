@@ -1,9 +1,19 @@
-{ pkgs, ... }:
+{ pkgs, hostName, ... }:
 
 {
   imports = [
     ./hardware-configuration.nix # Include the results of the hardware scan.
+    ./robotics_practical.nix
   ];
+
+  #opencode API keys
+  sops.secrets.kit-toolbox-api-key = {
+    sopsFile = ../secrets/${hostName}/opencode.yaml;
+    key = "api_keys/kit_toolbox";
+    owner = "julian";
+    group = "users";
+    mode = "0400";
+  };
 
   boot = {
     #egpu set to PCIe 3.0 speed
