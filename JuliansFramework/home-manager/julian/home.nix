@@ -6,6 +6,16 @@
     ./hyprland.nix
   ];
 
+  home.file.".ssh/prakti_ws26_max.pub" = {
+    source = ../../../publicKeys/prakti_ws26_max.pub;
+  };
+  programs.ssh.settings."FZI" = {
+    HostName = "141.21.44.116";
+    User = "prakti_ws26_max";
+    Port = 1422;
+    IdentityFile = "~/.ssh/prakti_ws26_max";
+  };
+
   programs.opencode = {
     enable = true;
     settings =
@@ -60,11 +70,9 @@
           question = entryAfter [ "grep" ] (rule "question" "*" "allow");
           subagent = entryAfter [ "question" ] (rule "subagent" "*" "allow");
           skill = entryAfter [ "subagent" ] (rule "skill" "*" "allow");
-          webfetch = entryAfter [ "skill" ] (rule "webfetch" "*" "allow");
-          websearch = entryAfter [ "webfetch" ] (rule "websearch" "*" "allow");
 
           # Allow some git commands
-          gitStatus = entryAfter [ "grep" ] (rule "shell" "git status *" "allow");
+          gitStatus = entryAfter [ "skill" ] (rule "shell" "git status *" "allow");
           gitDiff = entryAfter [ "gitStatus" ] (rule "shell" "git diff *" "allow");
           gitLog = entryAfter [ "gitDiff" ] (rule "shell" "git log *" "allow");
           gitShow = entryAfter [ "gitLog" ] (rule "shell" "git show *" "allow");
@@ -88,4 +96,24 @@
         };
       };
   };
+  xdg.configFile."opencode/AGENTS.md".text = ''
+    # Rule: never use the shell when a dedicated tool can do the job
+
+    Before every `shell` call, ask: "Is there a built-in tool for this?" If yes,
+    use the tool. The shell is a last resort, reserved for tasks that genuinely
+    require it (builds, tests, package managers, git, processes, or anything
+    with no dedicated tool).
+
+    | Instead of shell                        | Use                                        |
+    | --------------------------------------- | ------------------------------------------ |
+    | `ls`, `find`, `tree`                    | `glob`, or `read` on a directory           |
+    | `grep`, `rg`, `ack`                     | `grep`                                     |
+    | `cat`, `head`, `tail`, `less`, `nl`     | `read` (with `offset`/`limit` for slices)  |
+    | `sed`, `awk`, `perl` inline edits       | `edit`                                     |
+    | `echo >`, `tee`, `cp`, `mv`, `rm`       | `write`                                    |
+    | `printf` to compose output for the user | Answer directly in your reply              |
+
+    Also prefer batching independent tool calls in parallel instead of chaining
+    shell commands with `;`, `&&`, or `echo "---"` separators.
+  '';
 }

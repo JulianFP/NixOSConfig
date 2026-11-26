@@ -6,6 +6,15 @@
     ./robotics_practical.nix
   ];
 
+  # FZI ssh private key
+  sops.secrets."prakti_ws26_max" = {
+    sopsFile = ../secrets/${hostName}/privatekey.yaml;
+    owner = "julian";
+    group = "users";
+    mode = "0400";
+    path = "/home/julian/.ssh/prakti_ws26_max";
+  };
+
   #opencode API keys
   sops.secrets.kit-toolbox-api-key = {
     sopsFile = ../secrets/${hostName}/opencode.yaml;
